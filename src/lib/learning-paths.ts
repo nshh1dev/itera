@@ -2,9 +2,11 @@ import type { Language, Level } from "./types";
 
 export const introductorySteps = ["tu-primer-resultado", "cambia-un-numero", "devuelve-la-entrada", "suma-uno", "el-doble", "guarda-un-resultado", "lee-un-dato-con-nombre", "suma-de-dos-numeros"];
 export const foundationSteps = [
-  "compara-con-cero", "elige-con-una-condicion", "resto-entre-dos", "par-o-impar",
+  "compara-con-cero", "elige-con-una-condicion", "compara-igualdad", "tres-caminos", "resto-entre-dos", "par-o-impar",
   "primer-elemento", "cuenta-los-elementos", "suma-del-arreglo", "el-mayor-de-tres",
-  "construye-una-lista", "invertir-cadena", "contar-vocales", "factorial", "fizzbuzz",
+  "construye-una-lista", "repite-cada-letra", "invertir-cadena",
+  "texto-en-minusculas", "reconoce-una-vocal", "contar-vocales",
+  "numeros-del-uno-al-n", "producto-de-una-lista", "factorial", "dos-condiciones-a-la-vez", "fizzbuzz",
 ];
 
 // No deducir el nivel a partir de la posición: puede haber varias rutas del mismo nivel.

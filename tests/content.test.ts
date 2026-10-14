@@ -44,12 +44,24 @@ test("las rutas editoriales cubren fundamentos sin duplicados ni referencias ine
     assert.ok(foundationSteps.includes(lesson.slug), lesson.slug);
     for (const language of ["python", "javascript"] as const) assert.ok(lesson.starters?.[language].includes("return"), lesson.slug);
   }
-  const before = (a: string, b: string) => assert.ok(foundationSteps.indexOf(a) < foundationSteps.indexOf(b), `${a} antes de ${b}`);
+  const before = (a: string, b: string) => {
+    assert.ok(foundationSteps.includes(a), `Falta ${a}`);
+    assert.ok(foundationSteps.includes(b), `Falta ${b}`);
+    assert.ok(foundationSteps.indexOf(a) < foundationSteps.indexOf(b), `${a} antes de ${b}`);
+  };
   before("compara-con-cero", "par-o-impar");
   before("resto-entre-dos", "par-o-impar");
   before("cuenta-los-elementos", "suma-del-arreglo");
   before("suma-del-arreglo", "factorial");
   before("construye-una-lista", "fizzbuzz");
+  before("compara-igualdad", "par-o-impar");
+  before("tres-caminos", "fizzbuzz");
+  before("repite-cada-letra", "invertir-cadena");
+  before("texto-en-minusculas", "contar-vocales");
+  before("reconoce-una-vocal", "contar-vocales");
+  before("numeros-del-uno-al-n", "factorial");
+  before("producto-de-una-lista", "factorial");
+  before("dos-condiciones-a-la-vez", "fizzbuzz");
 });
 
 test("continuar respeta el orden y el final de cada ruta", () => {
@@ -66,14 +78,41 @@ test("las soluciones JavaScript superan todos los casos editoriales", () => {
     const actual=new vm.Script(`${exercise.javascript}\nsolve(data)`).runInContext(context,{timeout:1000});
     assert.deepEqual(JSON.parse(JSON.stringify(actual)),fixture.expected,`${exercise.slug}: ${JSON.stringify(fixture.input)}`);
   }
+});
+
+test("las plantillas JavaScript son ejecutables y retiran ayuda de forma progresiva", () => {
   for (const exercise of exercises.filter(e => e.starters)) {
-    const context = vm.createContext({ data: structuredClone(exercise.tests[0].input) });
-    new vm.Script(`${exercise.starters!.javascript}\nsolve(data)`).runInContext(context, { timeout: 1000 });
+    let allPassed = true;
+    for (const fixture of exercise.tests) {
+      const context = vm.createContext({ data: structuredClone(fixture.input) });
+      const actual = new vm.Script(`${exercise.starters!.javascript}\nsolve(data)`).runInContext(context, { timeout: 1000 });
+      assert.notEqual(JSON.stringify(actual), undefined, `${exercise.slug}: plantilla sin resultado JSON`);
+      if (JSON.stringify(actual) !== JSON.stringify(fixture.expected)) allPassed = false;
+    }
+    assert.equal(allPassed, exercise.slug === "tu-primer-resultado", `${exercise.slug}: solo la actividad de observación debe estar resuelta`);
   }
 });
 
 test("las soluciones Python superan los mismos casos editoriales", () => {
-  const driver="import json,sys\nitems=json.load(sys.stdin)\nfor item in items:\n if item.get('starters'):\n  compile(item['starters']['python'], item['slug'], 'exec')\n scope={}\n exec(item['python'],scope)\n for case in item['tests']:\n  actual=scope['solve'](case['input'])\n  assert actual == case['expected'], item['slug'] + ': ' + repr(case['input']) + ' -> ' + repr(actual)\nprint('Casos Python correctos')\n";
+  const driver = `import json,sys
+items=json.load(sys.stdin)
+for item in items:
+ if item.get('starters'):
+  starter_scope={}
+  exec(item['starters']['python'],starter_scope)
+  starter_passes=[]
+  for case in item['tests']:
+   actual=starter_scope['solve'](case['input'])
+   encoded=json.dumps(actual,sort_keys=True,allow_nan=False)
+   starter_passes.append(encoded == json.dumps(case['expected'],sort_keys=True))
+  assert all(starter_passes) == (item['slug'] == 'tu-primer-resultado'), item['slug'] + ': plantilla ya resuelta'
+ scope={}
+ exec(item['python'],scope)
+ for case in item['tests']:
+  actual=scope['solve'](case['input'])
+  assert json.dumps(actual,sort_keys=True,allow_nan=False) == json.dumps(case['expected'],sort_keys=True), item['slug'] + ': ' + repr(case['input']) + ' -> ' + repr(actual)
+print('Casos Python correctos')
+`;
   const result=spawnSync(process.env.PYTHON_BIN || "python",["-c",driver],{input:JSON.stringify(exercises),encoding:"utf8",timeout:15000});
   assert.equal(result.status,0,result.error?.message || result.stderr);
   assert.match(result.stdout,/Casos Python correctos/);

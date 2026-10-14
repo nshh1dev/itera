@@ -27,10 +27,18 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 - `content:paths` muestra una vista previa; `content:paths -- --apply` actualiza explícitamente las dos rutas iniciales en una transacción, sin tocar el trabajo de estudiantes ni rutas personalizadas. El seed continúa sin reemplazar contenido existente.
 - Aplicado en la base local. Verificados lint, tipos, 13 pruebas unitarias/editoriales, build y 12 recorridos de navegador con doble HTTP. Sigue pendiente la comprobación del catálogo ampliado dentro de Piston.
 
+## Tercera entrega: cadenas, rangos y productos
+
+- Ocho actividades guiadas: igualdad, selección entre tres caminos, construcción de cadenas, minúsculas, pertenencia a vocales, recorrido del 1 al n, producto de una lista y combinación de dos condiciones.
+- Construye tus bases pasa a 21 pasos. Las introducciones preceden a paridad, inversión de cadenas, vocales, factorial y FizzBuzz.
+- Pruebas que ejecutan las plantillas con todos sus ejemplos en ambos lenguajes y detectan actividades resueltas accidentalmente. La comparación de referencias Python también distingue booleanos y números, como el evaluador real.
+- Pruebas de navegador que comprueban el orden completo de la ruta y las plantillas de rangos en Python y JavaScript.
+- Incorporado en la base local sin resetearla. Verificados lint, tipos, 14 pruebas unitarias/editoriales, build y 14 recorridos con doble HTTP. No equivale a validación en Piston ni a una prueba de aprendizaje con principiantes reales.
+
 ## Pendiente: progresión completa
 
-1. Profundizar en igualdad, condiciones combinadas y else antes de FizzBuzz.
-2. Introducir cadenas, pertenencia, normalización, rangos y acumulación de productos antes de vocales y factorial. Las nuevas introducciones a listas y bucles no cubren todavía todos esos conceptos.
+1. Validar el recorrido con principiantes y ajustar la retirada de ayuda: las introducciones ya cubren igualdad, condiciones combinadas, selección, cadenas, pertenencia, rangos y productos.
+2. Dar a los retos de integración plantillas y explicaciones coherentes con lo enseñado; la instalación existente conserva todavía sus versiones antiguas. Revisar también tiempos y terminología por lenguaje.
 3. Publicar nuevas versiones didácticas de los retos existentes tras validarlas en Piston; el seed no las reemplaza.
 4. Registrar objetivo y prerrequisitos por versión, y ejemplos explicados por lenguaje. Evitar conceptos que aún no se han presentado.
 5. Añadir introducciones a conjuntos, mapas, pilas, búsqueda, grafos y programación dinámica antes de sus respectivos retos.

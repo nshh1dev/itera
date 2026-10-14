@@ -7,10 +7,10 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 ## Qué incluye
 
 - Landing, espacio personal, catálogo con filtros y cuatro rutas de aprendizaje.
-- 37 ejercicios originales en español: 21 principiantes, 8 intermedios y 8 avanzados.
+- 45 ejercicios originales en español: 29 principiantes, 8 intermedios y 8 avanzados.
 - Ruta **Desde cero**: siete actividades guiadas antes de sumar dos números, con plantillas propias para Python y JavaScript.
-- Ruta **Construye tus bases**: comparaciones, condiciones, resto, listas y bucles antes de combinar las ideas en retos.
-- Python y JavaScript; 185 casos editoriales por lenguaje, entre visibles y ocultos.
+- Ruta **Construye tus bases**: 21 pasos con comparaciones, condiciones, listas, cadenas, rangos y acumuladores antes de combinarlos en retos.
+- Python y JavaScript; 225 casos editoriales por lenguaje, entre visibles y ocultos.
 - Registro e inicio de sesión con correo y contraseña; recuperación en una bandeja de correo local.
 - Monaco servido localmente, editor sencillo alternativo, tamaño de fuente y paneles ajustables.
 - Borrador local y guardado en PostgreSQL con detección de conflictos entre pestañas.

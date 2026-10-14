@@ -5,12 +5,13 @@ type Lesson = {
   slug: string; title: string; statement: string; explanation: string;
   python: string; javascript: string; starters: { python: string; javascript: string };
   tests: { input: Json; expected: Json }[]; hints: string[];
+  category?: string; constraints?: string[];
 };
 const cases = (inputs: Json[], expected: Json[]) => inputs.map((input, index) => ({ input, expected: expected[index] }));
 const lesson = (data: Lesson): SeedExercise => ({
-  ...data, category: "Fundamentos", level: "BEGINNER", minutes: 10,
+  ...data, category: data.category ?? "Fundamentos", level: "BEGINNER", minutes: 10,
   description: data.statement.split("\n")[0],
-  constraints: ["La aplicación llama a solve(data). Devuelve el resultado con return.", "Lee la plantilla antes de editar: conserva su estructura y cambia solo el paso indicado."],
+  constraints: ["La aplicación llama a solve(data). Devuelve el resultado con return.", "Lee la plantilla antes de editar: conserva su estructura y cambia solo el paso indicado.", ...(data.constraints ?? [])],
 });
 
 export const foundationExercises: SeedExercise[] = [
@@ -67,5 +68,85 @@ export const foundationExercises: SeedExercise[] = [
     hints: ["La estructura para recorrer y añadir ya está escrita.", "Multiplica el valor añadido, no toda la lista.", "Añade numero * 2 usando append en Python o push en JavaScript."],
     explanation: "Cada vuelta calcula un doble y lo añade a la salida. El orden se conserva. Con una entrada vacía no se añade nada y se devuelve []. En JavaScript const permite modificar el contenido de la lista; lo que no permite es reasignar ese nombre a otra lista.",
     tests: cases([[1,3],[],[0],[-2,4],[1,2,3]],[[2,6],[],[0],[-4,8],[2,4,6]]),
+  }),
+  lesson({
+    slug: "compara-igualdad", title: "¿Es igual a diez?",
+    statement: "Distingue guardar un valor de comparar dos valores.\n\nYa usaste = para guardar un valor en una variable. Para preguntar si dos valores son iguales, Python utiliza == y JavaScript utiliza ===. Por ejemplo, 10 == 10 en Python y 10 === 10 en JavaScript producen verdadero. No escribas un solo = para comparar.\n\nLa plantilla pregunta si data es mayor que 10. Cambia únicamente el operador para preguntar si es igual a 10. Debes devolver un booleano, no el texto \"true\". Luego podrás comparar el resto de una división con cero en el ejercicio de paridad.",
+    python: "def solve(data):\n    return data == 10\n", javascript: "function solve(data) {\n  return data === 10;\n}\n",
+    starters: { python: "def solve(data):\n    # Sustituye > por el operador de igualdad.\n    return data > 10\n", javascript: "function solve(data) {\n  // Sustituye > por el operador de igualdad.\n  return data > 10;\n}\n" },
+    constraints: ["La entrada es un entero entre −100 y 100."],
+    hints: ["Guardar y comparar son operaciones distintas.", "Usa == en Python o === en JavaScript.", "Compara data con 10 y devuelve esa comparación."],
+    explanation: "La igualdad da verdadero solo cuando la entrada vale 10. Un número mayor, como 11, también debe dar falso: ser mayor no es lo mismo que ser igual.",
+    tests: cases([10,11,9,0,-10],[true,false,false,false,false]),
+  }),
+  lesson({
+    slug: "tres-caminos", title: "Tres caminos para un número",
+    statement: "Aprende a elegir entre varias condiciones y un caso final.\n\nif prueba la primera condición. Si no se cumple, Python permite probar otra con elif; JavaScript utiliza else if. else significa «en cualquier otro caso» y no lleva una condición. Los bloques se revisan en orden.\n\nLa plantilla ya devuelve \"positivo\" si data > 0 y \"negativo\" si data < 0. Si ninguna se cumple, el número es cero: cambia el texto \"cambiar\" del bloque else por \"cero\". Observa qué bloque se ejecuta con cada entrada. En Python conserva las sangrías; en JavaScript conserva las llaves.",
+    python: "def solve(data):\n    if data > 0:\n        return 'positivo'\n    elif data < 0:\n        return 'negativo'\n    else:\n        return 'cero'\n", javascript: "function solve(data) {\n  if (data > 0) {\n    return 'positivo';\n  } else if (data < 0) {\n    return 'negativo';\n  } else {\n    return 'cero';\n  }\n}\n",
+    starters: { python: "def solve(data):\n    if data > 0:\n        return 'positivo'\n    elif data < 0:\n        return 'negativo'\n    else:\n        return 'cambiar'\n", javascript: "function solve(data) {\n  if (data > 0) {\n    return 'positivo';\n  } else if (data < 0) {\n    return 'negativo';\n  } else {\n    return 'cambiar';\n  }\n}\n" },
+    constraints: ["La entrada es un entero entre −100 y 100."],
+    hints: ["Las dos primeras respuestas ya están escritas.", "Un entero que no es positivo ni negativo es cero.", "En el bloque else, devuelve 'cero'."],
+    explanation: "Con 3 se elige el primer bloque. Con −2 se descarta el primero y se elige el segundo. Con 0 se descartan ambos y se elige else. Más adelante usarás este orden para dar prioridad a FizzBuzz frente a Fizz o Buzz.",
+    tests: cases([3,-2,0,100,-100],["positivo","negativo","cero","positivo","negativo"]),
+  }),
+  lesson({
+    slug: "repite-cada-letra", title: "Construye un texto letra a letra", category: "Cadenas",
+    statement: "Recorre un texto y une letras para construir otro.\n\nUn texto, también llamado cadena, es una secuencia de caracteres. Se escribe entre comillas. '' representa el texto vacío. Un for puede recorrer una cadena igual que recorre una lista: en cada vuelta, letra contiene un carácter. El signo + entre textos los une: 'a' + 'b' produce 'ab'.\n\nLa plantilla copia cada letra una vez. Modifica la instrucción dentro del bucle para añadirla dos veces: resultado + letra + letra. Con \"ab\" debes obtener \"aabb\", no \"abab\". Los espacios también son caracteres y deben repetirse. Usa solo texto en esta suma: no mezcles números y cadenas.",
+    python: "def solve(data):\n    resultado = ''\n    for letra in data:\n        resultado = resultado + letra + letra\n    return resultado\n", javascript: "function solve(data) {\n  let resultado = '';\n  for (const letra of data) {\n    resultado = resultado + letra + letra;\n  }\n  return resultado;\n}\n",
+    starters: { python: "def solve(data):\n    resultado = ''\n    for letra in data:\n        resultado = resultado + letra\n    return resultado\n", javascript: "function solve(data) {\n  let resultado = '';\n  for (const letra of data) {\n    resultado = resultado + letra;\n  }\n  return resultado;\n}\n" },
+    constraints: ["La entrada es una cadena ASCII de hasta 100 caracteres."],
+    hints: ["No repitas la cadena completa: repite cada letra durante el recorrido.", "Usa + para añadir dos copias de letra al texto acumulado.", "La actualización es resultado = resultado + letra + letra."],
+    explanation: "Con ab, el resultado empieza vacío, pasa a aa en la primera vuelta y a aabb en la segunda. Con una cadena vacía no hay vueltas y la respuesta sigue vacía. Esta construcción explícita prepara el ejercicio de invertir cadenas.",
+    tests: cases(["ab","Hola","","a","a b"],["aabb","HHoollaa","","aa","aa  bb"]),
+  }),
+  lesson({
+    slug: "texto-en-minusculas", title: "El mismo texto en minúsculas", category: "Cadenas",
+    statement: "Normaliza las mayúsculas antes de comparar letras.\n\nNormalizar significa poner datos en una forma común. Para convertir un texto a minúsculas, Python usa data.lower() y JavaScript data.toLowerCase(). El punto accede a una operación del texto y los paréntesis la ejecutan. Esa operación devuelve un texto nuevo: debes devolverlo con return.\n\nLa plantilla devuelve data sin cambiarlo. Añade la llamada correspondiente a tu lenguaje para convertirlo a minúsculas. \"HoLa\" debe producir \"hola\". Los espacios y los números escritos dentro del texto se conservan.",
+    python: "def solve(data):\n    return data.lower()\n", javascript: "function solve(data) {\n  return data.toLowerCase();\n}\n",
+    starters: { python: "def solve(data):\n    # Usa la operación lower() del texto.\n    return data\n", javascript: "function solve(data) {\n  // Usa la operación toLowerCase() del texto.\n  return data;\n}\n" },
+    constraints: ["La entrada es una cadena ASCII de hasta 100 caracteres."],
+    hints: ["La operación tiene un nombre distinto en cada lenguaje.", "Conserva los paréntesis: son necesarios para ejecutar la operación.", "Devuelve data.lower() en Python o data.toLowerCase() en JavaScript."],
+    explanation: "Convertir primero a minúsculas permite tratar A y a de la misma forma sin comprobar ambos casos por separado. Esa será la primera parte de contar vocales. No se borran espacios ni se cambia el orden del texto.",
+    tests: cases(["HoLa","AEIOU","","Ya es 2026","hola"],["hola","aeiou","","ya es 2026","hola"]),
+  }),
+  lesson({
+    slug: "reconoce-una-vocal", title: "Reconoce una vocal", category: "Cadenas",
+    statement: "Comprueba si una letra pertenece al grupo de las vocales.\n\nRecibes exactamente una letra minúscula. Python puede preguntar data in 'aeiou'; JavaScript usa 'aeiou'.includes(data). Ambas expresiones devuelven un booleano que indica si la letra aparece en ese texto. Esta vez no necesitas convertir mayúsculas ni recorrer una palabra entera.\n\nSustituye el booleano fijo de la plantilla por la comprobación de pertenencia. Si recibes \"a\", devuelve verdadero; si recibes \"b\", devuelve falso. En el siguiente reto combinarás normalización, un recorrido, esta comprobación y un contador.",
+    python: "def solve(data):\n    return data in 'aeiou'\n", javascript: "function solve(data) {\n  return 'aeiou'.includes(data);\n}\n",
+    starters: { python: "def solve(data):\n    # Comprueba si data está en 'aeiou'.\n    return False\n", javascript: "function solve(data) {\n  // Comprueba si 'aeiou' incluye data.\n  return false;\n}\n" },
+    constraints: ["La entrada es exactamente una letra entre a y z. No hay mayúsculas ni acentos."],
+    hints: ["No necesitas cinco condiciones separadas.", "Busca la letra en el texto 'aeiou'.", "Usa data in 'aeiou' en Python o 'aeiou'.includes(data) en JavaScript."],
+    explanation: "La pertenencia evita escribir una comparación por cada vocal. Como la entrada siempre tiene una sola letra minúscula, no hay que resolver todavía casos de mayúsculas, texto vacío ni palabras completas.",
+    tests: cases(["a","b","u","e","z"],[true,false,true,true,false]),
+  }),
+  lesson({
+    slug: "numeros-del-uno-al-n", title: "Del uno al número recibido",
+    statement: "Genera números consecutivos sin recibir una lista de entrada.\n\nAhora data es un entero no negativo. Debes construir la lista de números desde 1 hasta data, incluyendo ambos extremos. Por ejemplo, con 3 debes obtener [1, 2, 3]. Con 0, devuelve una lista vacía.\n\nEn Python, range(1, data + 1) genera esos números: el límite final de range se excluye, por eso sumamos uno. En JavaScript, el for empieza con numero = 1, continúa mientras numero <= data y actualiza numero = numero + 1 después de cada vuelta. <= significa «menor o igual».\n\nEl recorrido ya está escrito. Cambia el 0 que se añade a la lista por numero. No cambies los límites del bucle ni muevas return a su interior.",
+    python: "def solve(data):\n    resultado = []\n    for numero in range(1, data + 1):\n        resultado.append(numero)\n    return resultado\n", javascript: "function solve(data) {\n  const resultado = [];\n  for (let numero = 1; numero <= data; numero = numero + 1) {\n    resultado.push(numero);\n  }\n  return resultado;\n}\n",
+    starters: { python: "def solve(data):\n    resultado = []\n    for numero in range(1, data + 1):\n        resultado.append(0)\n    return resultado\n", javascript: "function solve(data) {\n  const resultado = [];\n  for (let numero = 1; numero <= data; numero = numero + 1) {\n    resultado.push(0);\n  }\n  return resultado;\n}\n" },
+    constraints: ["La entrada es un entero entre 0 y 100."],
+    hints: ["numero cambia automáticamente en cada vuelta.", "Añade el número de la vuelta actual, no siempre cero.", "Usa resultado.append(numero) en Python o resultado.push(numero) en JavaScript."],
+    explanation: "Con 3, numero toma los valores 1, 2 y 3. Cada valor se añade al final de la salida. Con cero no se entra en el bucle. Generar esta secuencia es el paso previo a recorrer los factores de un factorial o los números de FizzBuzz.",
+    tests: cases([3,1,0,5,2],[[1,2,3],[1],[],[1,2,3,4,5],[1,2]]),
+  }),
+  lesson({
+    slug: "producto-de-una-lista", title: "Un producto que crece",
+    statement: "Acumula multiplicaciones, igual que antes acumulabas sumas.\n\nPara sumar una lista empezamos en cero. Para multiplicar empezamos en uno, porque 1 * numero conserva ese número. Empezar en cero haría que todo el producto fuese cero.\n\nLa plantilla empieza con producto = 1, pero dentro del bucle suma cada número. Cambia solo + por * para multiplicar. Con [2, 3, 4], producto pasa de 1 a 2, luego a 6 y finalmente a 24. En esta actividad definimos el producto de una lista vacía como 1: no hay ninguna multiplicación que cambie el valor inicial.",
+    python: "def solve(data):\n    producto = 1\n    for numero in data:\n        producto = producto * numero\n    return producto\n", javascript: "function solve(data) {\n  let producto = 1;\n  for (const numero of data) {\n    producto = producto * numero;\n  }\n  return producto;\n}\n",
+    starters: { python: "def solve(data):\n    producto = 1\n    for numero in data:\n        producto = producto + numero\n    return producto\n", javascript: "function solve(data) {\n  let producto = 1;\n  for (const numero of data) {\n    producto = producto + numero;\n  }\n  return producto;\n}\n" },
+    constraints: ["La entrada contiene de 0 a 10 enteros entre −5 y 5."],
+    hints: ["El valor inicial ya es el correcto: uno.", "Necesitas multiplicar el producto anterior por el número actual.", "La actualización es producto = producto * numero."],
+    explanation: "El acumulador guarda el producto parcial. Si aparece un cero, el producto final será cero; dos factores negativos pueden producir un positivo. En factorial combinarás esta acumulación con los números del 1 al n. La escritura producto *= numero es una abreviatura de producto = producto * numero.",
+    tests: cases([[2,3,4],[],[5],[2,0,4],[-2,3,-1]],[24,1,5,0,6]),
+  }),
+  lesson({
+    slug: "dos-condiciones-a-la-vez", title: "Dos condiciones a la vez",
+    statement: "Comprueba que dos condiciones se cumplan al mismo tiempo.\n\nUn número es múltiplo de 3 si su resto al dividir entre 3 es cero. Lo mismo ocurre con 5. Python une dos condiciones con and; JavaScript utiliza &&. La respuesta es verdadera solo cuando ambas son verdaderas.\n\nLa plantilla ya guarda las comparaciones en multiplo_de_tres y multiplo_de_cinco. Modifica return para unirlas con el operador de tu lenguaje. Con 15 devuelve verdadero; con 3 o con 5 devuelve falso porque solo cumplen una condición. El cero cumple ambas: sus dos restos son cero.",
+    python: "def solve(data):\n    multiplo_de_tres = data % 3 == 0\n    multiplo_de_cinco = data % 5 == 0\n    return multiplo_de_tres and multiplo_de_cinco\n", javascript: "function solve(data) {\n  const multiplo_de_tres = data % 3 === 0;\n  const multiplo_de_cinco = data % 5 === 0;\n  return multiplo_de_tres && multiplo_de_cinco;\n}\n",
+    starters: { python: "def solve(data):\n    multiplo_de_tres = data % 3 == 0\n    multiplo_de_cinco = data % 5 == 0\n    # Une las dos condiciones con and.\n    return multiplo_de_tres\n", javascript: "function solve(data) {\n  const multiplo_de_tres = data % 3 === 0;\n  const multiplo_de_cinco = data % 5 === 0;\n  // Une las dos condiciones con &&.\n  return multiplo_de_tres;\n}\n" },
+    constraints: ["La entrada es un entero entre 0 y 100."],
+    hints: ["No basta con que se cumpla una de las condiciones.", "Ambas comparaciones ya están guardadas en variables.", "Devuelve multiplo_de_tres and multiplo_de_cinco en Python; en JavaScript sustituye and por &&."],
+    explanation: "Con 15, ambas comparaciones son verdaderas. Con 3 solo lo es la primera y la unión da falso. Para enteros, cumplir ambas condiciones equivale a ser múltiplo de 15. En FizzBuzz debes comprobar este caso antes que los múltiplos de 3 o de 5 por separado.",
+    tests: cases([15,3,5,0,7],[true,false,false,true,false]),
   }),
 ];
