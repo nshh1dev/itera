@@ -3,7 +3,7 @@ import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { learningPaths } from "../src/lib/learning-paths";
 
-// Actualización explícita de las dos rutas editoriales con secuencia definida.
+// Actualización explícita de las rutas editoriales con secuencia definida.
 // No toca ejercicios, versiones, borradores, envíos, progreso ni rutas personalizadas.
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 const apply = process.argv.includes("--apply");

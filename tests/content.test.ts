@@ -5,7 +5,8 @@ import { spawnSync } from "node:child_process";
 import { exercises } from "../prisma/content";
 import { introductoryExercises } from "../prisma/introductory-content";
 import { foundationExercises } from "../prisma/foundation-content";
-import { exerciseHref, foundationSteps, introductorySteps, learningPaths, nextExerciseSlug } from "../src/lib/learning-paths";
+import { collectionsExercises } from "../prisma/collections-content";
+import { exerciseHref, foundationSteps, introductorySteps, intermediateSteps, learningPaths, nextExerciseSlug } from "../src/lib/learning-paths";
 
 // Solo se ejecutan las soluciones de referencia escritas en este repositorio.
 // Este código de verificación editorial no forma parte del servidor ni acepta programas de usuarios.
@@ -65,11 +66,51 @@ test("las rutas editoriales cubren fundamentos sin duplicados ni referencias ine
 });
 
 test("continuar respeta el orden y el final de cada ruta", () => {
+  assert.equal(nextExerciseSlug("cuenta-valores-distintos", intermediateSteps), "sin-duplicados");
+  assert.equal(nextExerciseSlug("incrementa-contadores", intermediateSteps), "frecuencia-caracteres");
+  assert.equal(nextExerciseSlug("parentesis-equilibrados", intermediateSteps), undefined);
   assert.equal(nextExerciseSlug("suma-del-arreglo", foundationSteps), "el-mayor-de-tres");
   assert.equal(nextExerciseSlug("suma-de-dos-numeros", introductorySteps), undefined);
   assert.equal(nextExerciseSlug("no-existe", introductorySteps), undefined);
   assert.equal(exerciseHref("suma-del-arreglo", "python", "primeros-pasos"), "/ejercicios/suma-del-arreglo?lenguaje=python&ruta=primeros-pasos");
   assert.equal(exerciseHref("suma-del-arreglo", "javascript"), "/ejercicios/suma-del-arreglo?lenguaje=javascript");
+});
+
+test("conjuntos y mapas se presentan antes de sus retos y retiran la ayuda al integrar", () => {
+  assert.deepEqual(new Set(intermediateSteps), new Set(exercises.filter(e => e.level === "INTERMEDIATE").map(e => e.slug)));
+  const before = (a: string, b: string) => assert.ok(intermediateSteps.indexOf(a) >= 0 && intermediateSteps.indexOf(a) < intermediateSteps.indexOf(b), `${a} antes de ${b}`);
+  before("pertenece-al-conjunto", "cuenta-valores-distintos");
+  before("cuenta-valores-distintos", "sin-duplicados");
+  before("guarda-con-una-clave", "incrementa-contadores");
+  before("incrementa-contadores", "frecuencia-caracteres");
+  for (const lesson of collectionsExercises) {
+    assert.ok(intermediateSteps.includes(lesson.slug), lesson.slug);
+    for (const language of ["python", "javascript"] as const) assert.ok(lesson.starters?.[language].includes("return"), lesson.slug);
+  }
+  for (const slug of ["sin-duplicados", "frecuencia-caracteres"]) {
+    const exercise = exercises.find(e => e.slug === slug)!;
+    for (const language of ["python", "javascript"] as const) {
+      assert.ok(exercise[language].includes("for"), slug);
+      assert.ok(exercise.starters?.[language], slug);
+      assert.equal(exercise.starters![language].includes("for "), false, `${slug}: el reto pide reconstruir el recorrido`);
+    }
+  }
+});
+
+test("el cambio indicado en cada actividad de colecciones resuelve sus casos en ambos lenguajes", () => {
+  const changes: Record<string, { python: [string, string]; javascript: [string, string] }> = {
+    "pertenece-al-conjunto": { python: ["return False", "return objetivo in vistos"], javascript: ["return false", "return vistos.has(objetivo)"] },
+    "cuenta-valores-distintos": { python: ["vistos.add(0)", "vistos.add(numero)"], javascript: ["vistos.add(0)", "vistos.add(numero)"] },
+    "guarda-con-una-clave": { python: ["marcas[data] = 0", "marcas[data] = 1"], javascript: ["marcas[data] = 0", "marcas[data] = 1"] },
+    "incrementa-contadores": { python: ["frecuencias[letra] + 0", "frecuencias[letra] + 1"], javascript: ["frecuencias[letra] + 0", "frecuencias[letra] + 1"] },
+  };
+  for (const exercise of collectionsExercises) for (const language of ["python", "javascript"] as const) {
+    const [from, to] = changes[exercise.slug][language];
+    const starter = exercise.starters![language];
+    assert.equal(starter.split(from).length, 2, `${exercise.slug}: cambio inequívoco en ${language}`);
+    const withoutComments = (code: string) => code.split("\n").filter(line => !/^\s*(#|\/\/)/.test(line)).join("\n");
+    assert.equal(withoutComments(starter.replace(from, to)), withoutComments(exercise[language]), `${exercise.slug}: el cambio explicado coincide con la referencia ${language}`);
+  }
 });
 
 test("las soluciones JavaScript superan todos los casos editoriales", () => {

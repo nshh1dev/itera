@@ -3,6 +3,7 @@ import { introductoryExercises } from "./introductory-content";
 import { foundationExercises } from "./foundation-content";
 import { beginnerRevisions } from "./beginner-revisions";
 import { learningMetadata } from "./learning-metadata";
+import { collectionsExercises, collectionsRevisions } from "./collections-content";
 
 export type SeedExercise = {
   slug: string; title: string; description: string; category: string; level: Level; minutes: number;
@@ -73,6 +74,7 @@ export const exercises: SeedExercise[] = [
     [t(5,[1,2,"Fizz",4,"Buzz"]),t(3,[1,2,"Fizz"]),t(0,[]),t(1,[1]),t(15,[1,2,"Fizz",4,"Buzz","Fizz",7,8,"Fizz","Buzz",11,"Fizz",13,14,"FizzBuzz"])],
     ["La condición de múltiplo se comprueba con el resto.", "Comprueba primero el caso que cumple ambas condiciones.", "Un múltiplo de 15 es múltiplo de 3 y de 5."],
     "La condición más específica debe evaluarse antes que las otras. Recorremos n valores: tiempo y espacio O(n).", ["0 ≤ n ≤ 100."]),
+  ...collectionsExercises,
   base("palindromo", "De ida y vuelta", "Cadenas", "INTERMEDIATE", 15,
     "Determina si una cadena es un palíndromo después de convertirla a minúsculas y quitar todos los caracteres que no sean letras a-z o dígitos. Devuelve un booleano.",
     "def solve(data):\n    import re\n    text = re.sub('[^a-z0-9]', '', data.lower())\n    return text == text[::-1]", "function solve(data) {\n  const text = data.toLowerCase().replace(/[^a-z0-9]/g, '');\n  return text === [...text].reverse().join('');\n}",
@@ -170,7 +172,7 @@ export const exercises: SeedExercise[] = [
     ["Resuelve primero el problema para prefijos más cortos.", "Si las últimas letras coinciden, no necesitas una operación nueva.", "En otro caso toma el mínimo entre insertar, eliminar y sustituir, sumando uno."],
     "La distancia de Levenshtein compara prefijos. Cada celda depende de la izquierda, arriba y diagonal. Tiempo O(nm), espacio O(m) al conservar solo una fila anterior.", ["Cadenas ASCII de hasta 200 caracteres."]),
   ...foundationExercises,
-].map(exercise => ({ ...exercise, ...beginnerRevisions[exercise.slug], ...learningMetadata[exercise.slug] }));
+].map(exercise => ({ ...exercise, ...beginnerRevisions[exercise.slug], ...collectionsRevisions[exercise.slug], ...learningMetadata[exercise.slug] }));
 
 export const starter = {
   python: "def solve(data):\n    # Escribe tu solución aquí\n    pass\n",

@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { exerciseHref, foundationSteps } from "../../src/lib/learning-paths";
+import { exerciseHref, foundationSteps, intermediateSteps } from "../../src/lib/learning-paths";
 
 test("Desde cero ofrece ocho pasos y comienza con un programa completo", async ({ page }) => {
   await page.goto("/rutas/desde-cero");
@@ -55,3 +55,38 @@ test("la plantilla guiada también está disponible en JavaScript", async ({ pag
   await expect(page.getByRole("textbox", { name: "Editor sencillo de JavaScript" })).toHaveValue(/Cambia solo el 7 por un 10/);
   await expect(page.getByRole("textbox", { name: "Editor sencillo de JavaScript" })).toHaveValue(/return 7/);
 });
+
+test("Conecta las ideas introduce conjuntos y mapas antes de sus retos", async ({ page }) => {
+  await page.goto("/rutas/pensar-en-soluciones");
+  await expect(page.getByRole("heading", { name: "Conecta las ideas", exact: true })).toBeVisible();
+  const steps = page.locator('a[href^="/ejercicios/"]');
+  await expect(steps).toHaveCount(intermediateSteps.length);
+  expect(await steps.evaluateAll(links => links.map(link => link.getAttribute("href"))))
+    .toEqual(intermediateSteps.map(slug => exerciseHref(slug, "python", "pensar-en-soluciones")));
+  await steps.first().click();
+  await page.getByLabel("Lenguaje del ejercicio").selectOption("javascript");
+  await expect(page).toHaveURL(/lenguaje=javascript&ruta=pensar-en-soluciones/);
+  await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", "/rutas/pensar-en-soluciones?lenguaje=javascript");
+});
+
+for (const language of ["python", "javascript"] as const) {
+  test(`las cuatro actividades de colecciones muestran su guía y plantilla en ${language}`, async ({ page }) => {
+    const lessons = [
+      { slug: "pertenece-al-conjunto", title: "¿Está en el conjunto?", code: language === "python" ? "return False" : "return false;" },
+      { slug: "cuenta-valores-distintos", title: "Recuerda cada valor una vez", code: "vistos.add(0)" },
+      { slug: "guarda-con-una-clave", title: "Guarda un valor con nombre", code: "marcas[data] = 0" },
+      { slug: "incrementa-contadores", title: "Un contador por letra", code: "frecuencias[letra] + 0" },
+    ];
+    for (const lesson of lessons) {
+      await page.goto(exerciseHref(lesson.slug, language, "pensar-en-soluciones"));
+      await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
+      const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
+      await expect(guide.getByRole("heading", { name: "Qué vas a practicar" })).toBeVisible();
+      await expect(guide.locator("li").first()).toBeVisible();
+      await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+      const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
+      await expect(editor).toHaveValue(new RegExp(lesson.code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+      await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/pensar-en-soluciones?lenguaje=${language}`);
+    }
+  });
+}

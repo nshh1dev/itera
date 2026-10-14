@@ -11,6 +11,7 @@ const email=`itera-e2e-${Date.now()}@example.test`;
 const password="Itera-test-local-12345";
 const otherEmail=`other-${email}`;
 const editorialSlug=`prueba-editorial-${Date.now()}`;
+const revisionSlugs=["suma-de-dos-numeros","sin-duplicados","frecuencia-caracteres"];
 let server:Server;
 let providerRequests=0;
 let providerOnline=true;
@@ -43,7 +44,7 @@ test.afterAll(async()=>{
   await new Promise<void>(resolve=>server.close(()=>resolve()));
   // Borrar únicamente las versiones en borrador creadas por este usuario temporal.
   const revisions=await db.auditLog.findMany({where:{user:{email},action:{in:["exercise.version.imported","exercise.version.created"]}},select:{resource:true}});
-  await db.exerciseVersion.deleteMany({where:{id:{in:revisions.map(log=>log.resource)},exercise:{slug:"suma-de-dos-numeros"},published:false}});
+  await db.exerciseVersion.deleteMany({where:{id:{in:revisions.map(log=>log.resource)},exercise:{slug:{in:revisionSlugs}},published:false}});
   await db.exercise.deleteMany({where:{slug:editorialSlug}});
   await db.auditLog.deleteMany({where:{user:{email:{in:[email,otherEmail]}}}});
   await db.user.deleteMany({where:{email:{in:[email,otherEmail]}}});
@@ -286,9 +287,10 @@ test("administración guarda borradores privados y publica tras validar las refe
   expect((await page.request.get(`/ejercicios/${editorialSlug}`)).status()).toBe(404);
 });
 
-test("la revisión didáctica es privada, idempotente y respeta borradores editoriales",async({page})=>{
+for(const revisionSlug of revisionSlugs){
+test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borradores editoriales`,async({page})=>{
   await page.context().addCookies(authCookies);
-  const exercise=await db.exercise.findUniqueOrThrow({where:{slug:"suma-de-dos-numeros"},include:{versions:{orderBy:{number:"desc"},take:1,include:{variants:{include:{tests:true}}}}}});
+  const exercise=await db.exercise.findUniqueOrThrow({where:{slug:revisionSlug},include:{versions:{orderBy:{number:"desc"},take:1,include:{variants:{include:{tests:true}}}}}});
   const previous=exercise.versions[0];
   const count=await db.exerciseVersion.count({where:{exerciseId:exercise.id}});
   const source=seedVersionContent(catalogRevision(exercise.slug)!);
@@ -333,3 +335,4 @@ test("la revisión didáctica es privada, idempotente y respeta borradores edito
   expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?2:1));
   expect(providerRequests).toBe(requests); // Preparar no publica ni ejecuta referencias.
 });
+}

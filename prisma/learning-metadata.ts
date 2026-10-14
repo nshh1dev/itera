@@ -5,6 +5,10 @@ const m = (objective: string, ...prerequisites: string[]): LearningMetadata => (
 // Describe conocimientos, no bloqueos ni logros del estudiante. Solo se incorpora
 // a versiones nuevas; la migración no atribuye estos datos a versiones históricas.
 export const learningMetadata: Record<string, LearningMetadata> = {
+  "pertenece-al-conjunto": m("Reconocer un conjunto de valores distintos y consultar si contiene un número.", "Acceder a propiedades", "Listas de números", "Valores booleanos"),
+  "cuenta-valores-distintos": m("Construir un conjunto durante un recorrido y consultar su número de valores distintos.", "Conjuntos y pertenencia", "Recorridos con for", "Devolver un número"),
+  "guarda-con-una-clave": m("Crear un diccionario u objeto y guardar un valor bajo una clave variable.", "Variables y asignación", "Acceder a datos con nombre", "Cadenas de texto"),
+  "incrementa-contadores": m("Inicializar cada clave una sola vez y actualizar su contador en cada aparición.", "Guardar valores bajo claves variables", "Recorrer cadenas", "Condiciones y contadores"),
   "tu-primer-resultado": m("Observar cómo la aplicación ejecuta una función y recibe el valor de return."),
   "cambia-un-numero": m("Cambiar un valor de la plantilla y relacionarlo con el resultado devuelto.", "Ejecutar una plantilla", "Reconocer la instrucción return"),
   "devuelve-la-entrada": m("Usar data para devolver la entrada de cada prueba en lugar de un valor fijo.", "Devolver un número con return"),

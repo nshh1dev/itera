@@ -41,7 +41,7 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 2. Publicar las revisiones didácticas ya preparadas de los retos originales tras validarlas en Piston; la instalación existente conserva sus versiones públicas antiguas hasta entonces.
 3. Revisar la calibración de tiempos y la retirada de ayuda con estudiantes reales.
 4. Añadir ejemplos explicados por lenguaje. Objetivos y prerrequisitos por versión ya están implementados; su incorporación a versiones públicas existentes requiere revisión y publicación.
-5. Añadir introducciones a conjuntos, mapas, pilas, búsqueda, grafos y programación dinámica antes de sus respectivos retos.
+5. Continuar con filtrado de textos, pilas, búsqueda, grafos y programación dinámica antes de sus respectivos retos. Las introducciones a conjuntos y mapas ya están incorporadas.
 6. Probar Desde cero con personas sin experiencia: observar dudas y revisar explicaciones y tiempos. No equiparar completar con comprender.
 
 ## Cuarta entrega: revisiones de los retos originales
@@ -62,9 +62,18 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 - Formulario administrativo deshabilitado hasta completar la hidratación para impedir que una edición temprana se mezcle con el texto inicial.
 - Verificados lint, tipos, 25 pruebas unitarias/editoriales, build y 15 recorridos E2E con doble HTTP en desarrollo y producción local. Piston sigue pendiente; no se afirma validación real del catálogo.
 
+## Sexta entrega: conjuntos y mapas
+
+- Cuatro actividades guiadas: pertenencia a conjuntos, construcción de valores distintos, escritura con una clave variable y actualización de contadores por letra. Cada una pide un cambio acotado y tiene cinco casos en ambos lenguajes, objetivo y conocimientos previos.
+- Conecta las ideas pasa de 8 a 12 pasos con una secuencia explícita; el catálogo también respeta ese orden. Los retos posteriores a frecuencias aún requieren conceptos no cubiertos por estas introducciones.
+- Una sola vez y Cada letra cuenta tienen referencias explícitas, plantillas que retiran el recorrido, pistas y explicaciones revisadas. Se pueden importar como borradores; las versiones públicas existentes no se sobrescriben ni publican automáticamente.
+- Nuevas actividades y orden aplicados en la base local. Recuentos y huellas del contenido anterior, borradores, progreso, envíos y cuentas idénticos antes y después.
+- El catálogo llega a 49 ejercicios y 245 casos por lenguaje. `content:paths` ahora abarca las tres rutas con secuencia editorial; no toca la ruta avanzada ni rutas personalizadas.
+- Verificados lint, tipos, 27 pruebas unitarias/editoriales, build y 20 recorridos E2E con doble HTTP en desarrollo y producción local. Las revisiones de ambos retos se importaron y eliminaron únicamente como borradores temporales de prueba. Docker y Piston no están disponibles: siguen pendientes la validación real y la publicación de las revisiones.
+
 ## Siguiente entrega
 
-Introducir conjuntos y mapas con actividades guiadas antes de los retos intermedios que eliminan duplicados o cuentan frecuencias. Revisar su orden y conocimientos previos, sin saltar directamente a grafos o programación dinámica.
+Preparar palíndromos y anagramas con actividades de filtrado y comparación de textos. Continuar retirando ayuda gradualmente antes de abordar búsqueda, pilas o algoritmos avanzados.
 
 ## Fiabilidad y experiencia
 
