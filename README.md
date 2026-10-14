@@ -7,10 +7,10 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 ## Qué incluye
 
 - Landing, espacio personal, catálogo con filtros y cuatro rutas de aprendizaje.
-- 49 ejercicios originales en español: 29 principiantes, 12 intermedios y 8 avanzados.
+- 53 ejercicios originales en español: 29 principiantes, 16 intermedios y 8 avanzados.
 - Ruta **Desde cero**: siete actividades guiadas antes de sumar dos números, con plantillas propias para Python y JavaScript.
 - Ruta **Construye tus bases**: 21 pasos con comparaciones, condiciones, listas, cadenas, rangos y acumuladores antes de combinarlos en retos.
-- Python y JavaScript; 245 casos editoriales por lenguaje, entre visibles y ocultos.
+- Python y JavaScript; 272 casos editoriales por lenguaje, entre visibles y ocultos.
 - Registro e inicio de sesión con correo y contraseña; recuperación en una bandeja de correo local.
 - Monaco servido localmente, editor sencillo alternativo, tamaño de fuente y paneles ajustables.
 - Borrador local y guardado en PostgreSQL con detección de conflictos entre pestañas.
@@ -178,8 +178,8 @@ Prioridades y criterios pedagógicos: [docs/roadmap.md](docs/roadmap.md).
 
 Para incorporar **Desde cero** a una instalación existente, inicia PostgreSQL y ejecuta `npm run db:seed`. Se añaden los siete ejercicios y la ruta sin reemplazar los ejercicios, rutas, borradores ni progresos existentes. No hace falta resetear la base.
 
-Para incorporar la progresión ampliada de **Construye tus bases** y las cuatro actividades de conjuntos y mapas de **Conecta las ideas**, ejecuta `npm run db:seed`, revisa `npm run content:paths` y aplica con `npm run content:paths -- --apply`. Esta actualización solo reemplaza el orden y la composición de las tres rutas editoriales con secuencia definida; no modifica ejercicios, versiones, borradores, intentos, progreso ni rutas personalizadas. Es atómica y comprueba que todos los ejercicios estén publicados antes de cambiar nada. Conecta las ideas tiene 12 pasos; sus retos posteriores a frecuencias todavía requieren conceptos pendientes de introducir con actividades guiadas.
+Para incorporar la progresión ampliada de **Construye tus bases** y las actividades de conjuntos, mapas y textos de **Conecta las ideas**, ejecuta `npm run db:seed`, revisa `npm run content:paths` y aplica con `npm run content:paths -- --apply`. Esta actualización solo reemplaza el orden y la composición de las tres rutas editoriales con secuencia definida; no modifica ejercicios, versiones, borradores, intentos, progreso ni rutas personalizadas. Es atómica y comprueba que todos los ejercicios estén publicados antes de cambiar nada. Conecta las ideas tiene 16 pasos; sus retos de máximos distintos, búsqueda, rotación y pilas todavía requieren conceptos pendientes de introducir con actividades guiadas.
 
-Los cambios en las referencias y la plantilla de ejercicios ya existentes **no** se aplican con el seed. Para importar contenido del catálogo (incluidas las revisiones de los ocho retos principiantes, **Una sola vez** y **Cada letra cuenta**), abre `/admin/ejercicios/<slug>` y usa **Preparar revisión didáctica** → **Crear borrador didáctico**. El botón exige permisos de administrador, conserva versiones anteriores y no crea duplicados si la revisión ya está incorporada. Si hay un borrador distinto o una actualización concurrente, se detiene sin reemplazarlo. Guarda o copia los cambios sin guardar del formulario antes de importar.
+Los cambios en las referencias y la plantilla de ejercicios ya existentes **no** se aplican con el seed. Para importar contenido del catálogo (incluidas las revisiones de los ocho retos principiantes, **Una sola vez**, **Cada letra cuenta**, **De ida y vuelta** y **Las mismas letras**), abre `/admin/ejercicios/<slug>` y usa **Preparar revisión didáctica** → **Crear borrador didáctico**. El botón exige permisos de administrador, conserva versiones anteriores y no crea duplicados si la revisión ya está incorporada. Si hay un borrador distinto o una actualización concurrente, se detiene sin reemplazarlo. Guarda o copia los cambios sin guardar del formulario antes de importar.
 
 Revisa el borrador y usa **Validar y publicar versión guardada** con Piston disponible. Preparar una revisión nunca la publica ni cambia el progreso, los borradores de estudiantes o los intentos históricos. Los demás cambios editoriales se guardan manualmente como nuevas versiones desde `/admin`.

@@ -41,7 +41,7 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 2. Publicar las revisiones didácticas ya preparadas de los retos originales tras validarlas en Piston; la instalación existente conserva sus versiones públicas antiguas hasta entonces.
 3. Revisar la calibración de tiempos y la retirada de ayuda con estudiantes reales.
 4. Añadir ejemplos explicados por lenguaje. Objetivos y prerrequisitos por versión ya están implementados; su incorporación a versiones públicas existentes requiere revisión y publicación.
-5. Continuar con filtrado de textos, pilas, búsqueda, grafos y programación dinámica antes de sus respectivos retos. Las introducciones a conjuntos y mapas ya están incorporadas.
+5. Continuar con máximos distintos, ausencia de resultado, pilas, búsqueda, grafos y programación dinámica antes de sus respectivos retos. Las introducciones a conjuntos, mapas, filtrado y comparación de textos ya están incorporadas.
 6. Probar Desde cero con personas sin experiencia: observar dudas y revisar explicaciones y tiempos. No equiparar completar con comprender.
 
 ## Cuarta entrega: revisiones de los retos originales
@@ -71,9 +71,18 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 - El catálogo llega a 49 ejercicios y 245 casos por lenguaje. `content:paths` ahora abarca las tres rutas con secuencia editorial; no toca la ruta avanzada ni rutas personalizadas.
 - Verificados lint, tipos, 27 pruebas unitarias/editoriales, build y 20 recorridos E2E con doble HTTP en desarrollo y producción local. Las revisiones de ambos retos se importaron y eliminaron únicamente como borradores temporales de prueba. Docker y Piston no están disponibles: siguen pendientes la validación real y la publicación de las revisiones.
 
+## Séptima entrega: filtrado y comparación de textos
+
+- Cuatro actividades guiadas: omitir espacios con desigualdad, filtrar letras y dígitos en minúsculas, comparar cadenas y comparar tablas de frecuencias. Incluyen objetivos, conocimientos previos y un cambio acotado por plantilla.
+- Conecta las ideas pasa de 12 a 16 pasos; palíndromos y anagramas aparecen después de sus introducciones, antes de los retos aún pendientes de máximos, búsqueda, rotación y pilas.
+- De ida y vuelta y Las mismas letras tienen referencias con recorridos explícitos, plantillas que retiran ayuda y explicaciones sin exigir regex, slicing, ordenación ni funciones auxiliares. Se mantienen las reglas originales de entrada y normalización. Las referencias, casos y metadatos se importan como nuevas versiones en borrador, nunca sobrescribiendo las públicas.
+- Nuevos casos cubren puntuación, dígitos, frecuencias distintas en ambos sentidos y discrepancias al final del alfabeto. Catálogo de 53 ejercicios y 272 casos por lenguaje.
+- Nuevas actividades y orden incorporados localmente. Recuentos y huellas de las versiones, variantes y casos anteriores, borradores, progreso, envíos y cuentas iguales antes y después.
+- Verificados lint, tipos, build, 30 pruebas unitarias/editoriales y 24 recorridos E2E en desarrollo. En producción local, dos ejecuciones se bloquearon esperando el cierre de la respuesta del segundo guardado administrativo: 18 recorridos aprobados, uno fallido y cinco no ejecutados en cada intento. Las actividades nuevas pasan en ambos modos, pero la suite completa de producción no está aprobada. Piston sigue sin estar disponible.
+
 ## Siguiente entrega
 
-Preparar palíndromos y anagramas con actividades de filtrado y comparación de textos. Continuar retirando ayuda gradualmente antes de abordar búsqueda, pilas o algoritmos avanzados.
+Priorizar el bloqueo de streaming del guardado administrativo reproducido en producción local, conservando las comprobaciones de cierre de respuesta. Después introducir máximos distintos y ausencia de resultado (None/null) antes de El segundo lugar, sin exigir ordenación como conocimiento previo, y continuar con búsqueda, rotación y pilas.
 
 ## Fiabilidad y experiencia
 

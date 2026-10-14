@@ -56,7 +56,7 @@ test("la plantilla guiada también está disponible en JavaScript", async ({ pag
   await expect(page.getByRole("textbox", { name: "Editor sencillo de JavaScript" })).toHaveValue(/return 7/);
 });
 
-test("Conecta las ideas introduce conjuntos y mapas antes de sus retos", async ({ page }) => {
+test("Conecta las ideas introduce estructuras y textos antes de sus retos", async ({ page }) => {
   await page.goto("/rutas/pensar-en-soluciones");
   await expect(page.getByRole("heading", { name: "Conecta las ideas", exact: true })).toBeVisible();
   const steps = page.locator('a[href^="/ejercicios/"]');
@@ -82,6 +82,27 @@ for (const language of ["python", "javascript"] as const) {
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.getByRole("heading", { name: "Qué vas a practicar" })).toBeVisible();
+      await expect(guide.locator("li").first()).toBeVisible();
+      await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+      const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
+      await expect(editor).toHaveValue(new RegExp(lesson.code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+      await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/pensar-en-soluciones?lenguaje=${language}`);
+    }
+  });
+}
+
+for (const language of ["python", "javascript"] as const) {
+  test(`las actividades de textos muestran filtros y comparaciones en ${language}`, async ({ page }) => {
+    const lessons = [
+      { slug: "quita-los-espacios", title: "Conserva lo que no es espacio", code: language === "python" ? "letra == ' '" : "letra === ' '" },
+      { slug: "filtra-letras-y-digitos", title: "Solo letras y dígitos", code: "abcdefghijklmnopqrstuvwxyz'" },
+      { slug: "compara-dos-textos", title: "¿Son el mismo texto?", code: language === "python" ? "return False" : "return false" },
+      { slug: "compara-contadores", title: "Las mismas cantidades", code: "primero > segundo" },
+    ];
+    for (const lesson of lessons) {
+      await page.goto(exerciseHref(lesson.slug, language, "pensar-en-soluciones"));
+      await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
+      const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.locator("li").first()).toBeVisible();
       await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
       const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });

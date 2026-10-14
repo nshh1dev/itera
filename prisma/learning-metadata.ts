@@ -5,6 +5,10 @@ const m = (objective: string, ...prerequisites: string[]): LearningMetadata => (
 // Describe conocimientos, no bloqueos ni logros del estudiante. Solo se incorpora
 // a versiones nuevas; la migración no atribuye estos datos a versiones históricas.
 export const learningMetadata: Record<string, LearningMetadata> = {
+  "quita-los-espacios": m("Filtrar caracteres con una condición de desigualdad conservando el orden del resto.", "Recorrer cadenas", "Construir textos con +", "Comparaciones y condiciones"),
+  "filtra-letras-y-digitos": m("Normalizar mayúsculas y filtrar por pertenencia a un grupo explícito de caracteres.", "Convertir a minúsculas", "Filtrar caracteres", "Comprobar pertenencia en textos"),
+  "compara-dos-textos": m("Comparar el contenido de dos cadenas distinguiendo el orden, las mayúsculas y los espacios.", "Acceder a propiedades", "Comparación de igualdad", "Cadenas de texto"),
+  "compara-contadores": m("Comparar tablas de frecuencias por sus valores y rechazar cualquier diferencia.", "Diccionarios u objetos con claves variables", "Recorridos y condiciones", "Comparación de desigualdad", "Contadores por letra"),
   "pertenece-al-conjunto": m("Reconocer un conjunto de valores distintos y consultar si contiene un número.", "Acceder a propiedades", "Listas de números", "Valores booleanos"),
   "cuenta-valores-distintos": m("Construir un conjunto durante un recorrido y consultar su número de valores distintos.", "Conjuntos y pertenencia", "Recorridos con for", "Devolver un número"),
   "guarda-con-una-clave": m("Crear un diccionario u objeto y guardar un valor bajo una clave variable.", "Variables y asignación", "Acceder a datos con nombre", "Cadenas de texto"),
@@ -38,12 +42,12 @@ export const learningMetadata: Record<string, LearningMetadata> = {
   "factorial": m("Combinar un recorrido numérico y un producto acumulado, incluido el caso de cero.", "Recorrer del 1 al n", "Acumular productos", "Devolver el resultado después del bucle"),
   "dos-condiciones-a-la-vez": m("Unir dos comparaciones booleanas para exigir que ambas se cumplan.", "Operador de resto %", "Comparación de igualdad", "Variables booleanas"),
   "fizzbuzz": m("Integrar un rango, restos, selección de casos y construcción de listas sin duplicar resultados.", "Recorrer del 1 al n", "Operador de resto %", "Combinar condiciones", "Selección con if y else", "Añadir valores a una lista"),
-  "palindromo": m("Normalizar un texto y comparar su orden de lectura desde ambos extremos.", "Normalización de cadenas", "Recorridos e índices", "Comparación de cadenas"),
+  "palindromo": m("Filtrar un texto, construir su inverso y comparar ambos contenidos.", "Filtrar letras y dígitos en minúsculas", "Invertir una cadena con un recorrido", "Comparar el contenido de cadenas"),
   "sin-duplicados": m("Eliminar repeticiones conservando el orden de la primera aparición.", "Recorrer listas", "Pertenencia en conjuntos", "Construir una lista de salida"),
   "frecuencia-caracteres": m("Acumular frecuencias usando cada carácter como clave de un diccionario u objeto.", "Recorrer cadenas", "Diccionarios u objetos", "Contadores"),
   "segundo-mayor": m("Distinguir valores repetidos al buscar el segundo máximo de una lista.", "Máximos y comparaciones", "Valores distintos", "Ordenación o recorridos con estado", "Representar ausencia con None o null"),
   "busqueda-binaria": m("Reducir a la mitad un intervalo de búsqueda y devolver el índice del objetivo.", "Listas ordenadas e índices", "Bucles con condición", "Límites inclusivos", "División entera"),
-  "anagramas": m("Comparar dos cadenas normalizadas mediante sus letras y frecuencias.", "Normalización de cadenas", "Ordenación o contadores de frecuencias", "Comparación de resultados"),
+  "anagramas": m("Contar y comparar las letras de dos textos ignorando espacios y mayúsculas.", "Convertir a minúsculas y omitir espacios", "Inicializar y actualizar contadores por letra", "Comparar todas las cantidades", "Devolver falso ante una diferencia"),
   "rotar-arreglo": m("Dividir y recombinar una lista para desplazarla sin perder elementos.", "Índices y segmentos de listas", "Operador de resto %", "Tratar listas vacías"),
   "parentesis-equilibrados": m("Usar una pila para comprobar aperturas y cierres en el orden correcto.", "Recorrer cadenas", "Pilas: añadir y retirar el último elemento", "Diccionarios u objetos", "Condiciones y salida anticipada"),
   "ventana-sin-repeticiones": m("Mantener una ventana válida y encontrar la subcadena más larga sin repeticiones.", "Recorridos con índices", "Mapas o diccionarios", "Subcadenas contiguas", "Análisis de recorridos lineales"),
