@@ -2,16 +2,19 @@
 
 ## Cobertura automatizada
 
-- 14 pruebas de dominio, contenido y herramientas locales.
+- 20 pruebas de dominio, contenido, revisión editorial y herramientas locales.
 - Las 45 referencias de Python y las 45 de JavaScript pasan los mismos 225 casos por lenguaje. Las plantillas guiadas también se ejecutan con todos sus ejemplos en ambos lenguajes. Solo la actividad inicial de observación debe venir completamente resuelta.
-- 14 recorridos de navegador con Chromium: catálogo, registro, preferencias, borradores, evaluación, ayudas, responsive, conflictos entre pestañas, recuperación de contraseña, aislamiento entre cuentas, administración y las rutas iniciales. Incluyen comprobación del orden completo de fundamentos, conservación de ruta al cambiar lenguaje o iniciar sesión, rangos en ambos lenguajes y ausencia de salto al catálogo al terminar Desde cero.
+- 15 recorridos de navegador con Chromium: catálogo, registro, preferencias, borradores, evaluación, ayudas, responsive, conflictos entre pestañas, recuperación de contraseña, aislamiento entre cuentas, administración y las rutas iniciales. Incluyen comprobación del orden completo de fundamentos, conservación de ruta al cambiar lenguaje o iniciar sesión, rangos en ambos lenguajes y ausencia de salto al catálogo al terminar Desde cero.
+- La importación editorial se comprueba sin publicar: mantiene intacta la versión anterior, no altera lo que sirve el catálogo público, no llama al ejecutor, no duplica una revisión idéntica y se detiene ante un borrador manual distinto. Las pruebas eliminan solo los borradores que ellas mismas crean.
 - El editor se sirve sin CDN y cambia de tema junto con el resto de la interfaz.
 - El flujo de evaluación verifica idempotencia, progreso separado por lenguaje y ausencia de entradas, salidas y errores de pruebas ocultas en la respuesta pública.
 - Se comprobó el ciclo de parada y arranque del clúster PostgreSQL del proyecto.
 
 ## Sandbox real
 
-Revisión del 14 de octubre de 2026 tras completar las introducciones a cadenas y rangos: lint, TypeScript, 14 pruebas unitarias/editoriales, build y los 14 recorridos E2E con doble HTTP aprobados. Se añadieron ocho actividades y se aplicó la actualización explícita de rutas: Desde cero conserva 8 pasos y Construye tus bases tiene 21. Piston no estaba disponible: no se verificó la ejecución real del nuevo contenido.
+Revisión del 14 de octubre de 2026 tras preparar las versiones didácticas de los retos originales: lint, TypeScript, 20 pruebas unitarias/editoriales, build y los 15 recorridos E2E con doble HTTP aprobados, tanto con `next dev` como con `next start`. Desde cero conserva 8 pasos y Construye tus bases tiene 21. Las revisiones están disponibles para importar desde administración; no se han publicado automáticamente en la base local. Piston no estaba disponible: no se verificó la ejecución real del nuevo contenido.
+
+Se corrigió una doble navegación/refresco al guardar versiones administrativas: cancelaba la respuesta que `revalidatePath` ya estaba actualizando y producía un error de streaming. La prueba espera ahora a que termine la respuesta de la acción y pasa sin ese error en desarrollo y en producción local.
 
 Las pruebas de navegador de `npm run test:e2e` usan un doble HTTP de Piston en el puerto 2001. Verifican la integración, no el aislamiento real del motor. Para eso hay dos suites separadas que **sí usan Piston** en el puerto 2000:
 
@@ -45,5 +48,16 @@ npm run doctor
 ```
 
 `npm run test:e2e` usa el doble HTTP y solo necesita libre el puerto 3000 y el 2001.
+
+Para repetir esos mismos recorridos contra el build de producción **local**, en PowerShell:
+
+```powershell
+npm.cmd run build
+$env:ITERA_E2E_PRODUCTION = "1"
+npm.cmd run test:e2e
+Remove-Item Env:ITERA_E2E_PRODUCTION
+```
+
+Este modo usa `next start` en vez de `next dev`, pero conserva el doble HTTP de Piston en 2001. No verifica aislamiento real ni despliega nada. Es necesario volver a compilar después de modificar el código.
 
 Las capturas de referencia están en `.local/screenshots/`, excluidas de Git.

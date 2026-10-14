@@ -4,6 +4,8 @@ import { ArrowLeft } from "lucide-react";
 import { requireAdmin } from "@/server/auth";
 import { db } from "@/server/db";
 import { AdminEditor, type EditorialData } from "@/components/admin-editor";
+import { CatalogRevisionButton } from "@/components/catalog-revision-button";
+import { catalogRevision } from "../../../../../../prisma/editorial-revision";
 
 export default async function AdminExercisePage({params}:{params:Promise<{slug:string}>}){
   await requireAdmin();
@@ -18,5 +20,5 @@ export default async function AdminExercisePage({params}:{params:Promise<{slug:s
     if(!python||!javascript)notFound();
     initial={id:exercise.id,versionId:version.id,published:exercise.published,slug:exercise.slug,title:version.title,description:version.description,statement:version.statement,category:exercise.category,level:version.level,minutes:version.minutes,hints:version.hints,constraints:version.constraints,python:{starter:python.starter,solution:python.solution,explanation:python.explanation},javascript:{starter:javascript.starter,solution:javascript.solution,explanation:javascript.explanation},tests:JSON.stringify(python.tests.map(t=>({input:t.input,expected:t.expected,visible:t.visible})),null,2)};
   }
-  return <div className="page-container max-w-4xl"><Link href="/admin" className="text-link"><ArrowLeft className="size-3.5"/>Volver al catálogo</Link><h1 className="page-title mt-6">{slug==="nuevo"?"Una nueva oportunidad de aprender.":initial.title}</h1><p className="mt-3 text-sm leading-7 text-muted-foreground">Cada guardado crea una versión nueva. Los intentos anteriores conservan el contenido con el que fueron evaluados.</p><AdminEditor key={initial.versionId??"new"} initial={initial}/></div>;
+  return <div className="page-container max-w-4xl"><Link href="/admin" className="text-link"><ArrowLeft className="size-3.5"/>Volver al catálogo</Link><h1 className="page-title mt-6">{slug==="nuevo"?"Una nueva oportunidad de aprender.":initial.title}</h1><p className="mt-3 text-sm leading-7 text-muted-foreground">Cada guardado crea una versión nueva. Los intentos anteriores conservan el contenido con el que fueron evaluados.</p>{initial.versionId && catalogRevision(slug) && <CatalogRevisionButton slug={slug} versionId={initial.versionId} />}<AdminEditor key={initial.versionId??"new"} initial={initial}/></div>;
 }

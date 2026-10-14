@@ -17,6 +17,7 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 - Ejecución asíncrona, ejemplos, comprobación completa y progreso por lenguaje.
 - Pistas progresivas y soluciones explicadas a petición.
 - Administración con nuevas versiones, pruebas, validación de referencias y publicación.
+- Revisiones didácticas de los ocho retos originales, importables como borradores privados desde administración, sin sobrescribir el trabajo existente.
 - Temas claro/oscuro, fuentes locales Geist, navegación por teclado y adaptación móvil.
 
 ## Requisitos
@@ -141,6 +142,8 @@ Las pruebas E2E levantan su propia aplicación en el puerto 3000; detén antes c
 
 `npm run test:e2e:real` sí usa el Piston real (puerto 2000, sin dobles): comprueba que un envío se apruebe, que un resultado distinto y un bucle infinito no aprueben, que JavaScript tenga progreso independiente y que la administración solo publique tras ejecutar las referencias. Se omite solo si el sandbox está apagado.
 
+Los recorridos con doble HTTP también se pueden ejecutar contra `next start`, tras compilar, estableciendo `ITERA_E2E_PRODUCTION=1`. No publica un sitio ni ejecuta programas reales. Instrucciones para PowerShell y límites de la verificación: [docs/verification.md](docs/verification.md).
+
 ## Arquitectura
 
 ```text
@@ -177,4 +180,6 @@ Para incorporar **Desde cero** a una instalación existente, inicia PostgreSQL y
 
 Para incorporar la progresión ampliada de **Construye tus bases**, ejecuta `npm run db:seed`, revisa `npm run content:paths` y aplica con `npm run content:paths -- --apply`. Esta actualización solo reemplaza el orden y la composición de las dos rutas editoriales iniciales; no modifica ejercicios, versiones, borradores, intentos, progreso ni rutas personalizadas. Es atómica y comprueba que todos los ejercicios estén publicados antes de cambiar nada.
 
-Los cambios en las referencias y la plantilla de ejercicios ya existentes **no** se aplican con el seed. Deben guardarse como una nueva versión desde `/admin` y validarse con Piston antes de publicarse. Conserva las versiones anteriores para los intentos históricos.
+Los cambios en las referencias y la plantilla de ejercicios ya existentes **no** se aplican con el seed. Para los ocho retos originales de principiantes, abre `/admin/ejercicios/<slug>` y usa **Preparar revisión didáctica** → **Crear borrador didáctico**. El botón exige permisos de administrador, conserva versiones anteriores y no crea duplicados si la revisión ya está incorporada. Si hay un borrador distinto o una actualización concurrente, se detiene sin reemplazarlo. Guarda o copia los cambios sin guardar del formulario antes de importar.
+
+Revisa el borrador y usa **Validar y publicar versión guardada** con Piston disponible. Preparar una revisión nunca la publica ni cambia el progreso, los borradores de estudiantes o los intentos históricos. Los demás cambios editoriales se guardan manualmente como nuevas versiones desde `/admin`.

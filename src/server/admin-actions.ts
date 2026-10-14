@@ -7,6 +7,7 @@ import { Prisma } from "@/generated/prisma/client";
 import { levels, type Json, type Language } from "@/lib/types";
 import { availableRuntime, runCode, RunnerUnavailable } from "./execution/piston";
 import { judge } from "./execution/judge";
+import { catalogRevision, catalogRevisionDecision, seedVersionContent } from "../../prisma/editorial-revision";
 
 const variantSchema = z.object({ starter: z.string().min(1).max(30000), solution: z.string().min(1).max(30000), explanation: z.string().min(10).max(5000) });
 const schema = z.object({
@@ -76,4 +77,49 @@ export async function hideExercise(id: string) {
   if (!z.string().min(1).max(100).safeParse(id).success) return {error:"Ejercicio inválido."};
   await db.$transaction([db.exercise.update({where:{id},data:{published:false}}),db.auditLog.create({data:{userId:user.id,action:"exercise.hidden",resource:id}})]);
   revalidatePath("/", "layout"); return {success:true};
+}
+
+export async function prepareCatalogRevision(input: unknown) {
+  const user = await requireAdmin();
+  const parsed = z.object({ slug: z.string().min(1).max(100), versionId: z.string().min(1).max(100) }).safeParse(input);
+  if (!parsed.success) return { error: "La solicitud de actualización no es válida." };
+  const source = catalogRevision(parsed.data.slug);
+  if (!source) return { error: "Este ejercicio no tiene una revisión didáctica del catálogo." };
+  const content = seedVersionContent(source);
+  const variant = (language: string) => content.variants.find(item => item.language === language)!;
+  const validated = schema.safeParse({ ...source, python: variant("python"), javascript: variant("javascript"), tests: content.variants[0].tests });
+  if (!validated.success) return { error: "La revisión del catálogo no supera la validación editorial. No se ha guardado nada." };
+  const data = validated.data;
+  try {
+    const result = await db.$transaction(async tx => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(742902)`;
+      const exercise = await tx.exercise.findUnique({ where: { slug: data.slug }, include: {
+        versions: { orderBy: { number: "desc" }, take: 1, include: { variants: { include: { tests: true } } } },
+      } });
+      const current = exercise?.versions[0];
+      if (!exercise || !current) return { error: "El ejercicio ya no está disponible." };
+      const decision = catalogRevisionDecision(current, content, parsed.data.versionId);
+      if (decision === "unchanged") return { created: false, number: current.number };
+      if (decision === "stale") return { error: "La versión cambió en otra pestaña. Recarga antes de preparar la actualización." };
+      if (decision === "draft") return { error: "Ya existe un borrador editorial distinto. Revísalo antes de importar otra versión; no hemos modificado nada." };
+      const version = await tx.exerciseVersion.create({ data: {
+        exerciseId: exercise.id, number: current.number + 1, published: false,
+        title: data.title, description: data.description, statement: data.statement, constraints: data.constraints,
+        hints: data.hints, level: data.level, minutes: data.minutes,
+        variants: { create: (["python", "javascript"] as const).map(language => ({
+          language, ...data[language], tests: { create: data.tests.map((test, order) => ({
+            order, visible: test.visible, input: test.input === null ? Prisma.JsonNull : test.input, expected: test.expected === null ? Prisma.JsonNull : test.expected,
+          })) },
+        })) },
+      } });
+      await tx.auditLog.create({ data: { userId: user.id, action: "exercise.version.imported", resource: version.id } });
+      return { created: true, number: version.number };
+    });
+    if ("error" in result) return result;
+    if (result.created) revalidatePath("/admin");
+    revalidatePath(`/admin/ejercicios/${data.slug}`);
+    return result;
+  } catch {
+    return { error: "No pudimos preparar el borrador. Las versiones anteriores no se han modificado." };
+  }
 }

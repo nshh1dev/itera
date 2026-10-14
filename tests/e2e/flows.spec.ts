@@ -4,6 +4,7 @@ import { createServer, type Server } from "node:http";
 import { mkdir, readdir, readFile, unlink } from "node:fs/promises";
 import { PrismaClient } from "../../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { catalogRevision, catalogRevisionDecision, seedVersionContent } from "../../prisma/editorial-revision";
 
 const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.DATABASE_URL})});
 const email=`itera-e2e-${Date.now()}@example.test`;
@@ -40,6 +41,9 @@ test.beforeAll(async()=>{
 });
 test.afterAll(async()=>{
   await new Promise<void>(resolve=>server.close(()=>resolve()));
+  // Borrar únicamente las versiones en borrador creadas por este usuario temporal.
+  const revisions=await db.auditLog.findMany({where:{user:{email},action:{in:["exercise.version.imported","exercise.version.created"]}},select:{resource:true}});
+  await db.exerciseVersion.deleteMany({where:{id:{in:revisions.map(log=>log.resource)},exercise:{slug:"suma-de-dos-numeros"},published:false}});
   await db.exercise.deleteMany({where:{slug:editorialSlug}});
   await db.auditLog.deleteMany({where:{user:{email:{in:[email,otherEmail]}}}});
   await db.user.deleteMany({where:{email:{in:[email,otherEmail]}}});
@@ -251,4 +255,52 @@ test("administración guarda borradores privados y publica tras validar las refe
   await page.getByRole("button",{name:"Ocultar del catálogo"}).click();
   await expect(page.getByText("Ejercicio oculto del catálogo.")).toBeVisible();
   expect((await page.request.get(`/ejercicios/${editorialSlug}`)).status()).toBe(404);
+});
+
+test("la revisión didáctica es privada, idempotente y respeta borradores editoriales",async({page})=>{
+  await page.context().addCookies(authCookies);
+  const exercise=await db.exercise.findUniqueOrThrow({where:{slug:"suma-de-dos-numeros"},include:{versions:{orderBy:{number:"desc"},take:1,include:{variants:{include:{tests:true}}}}}});
+  const previous=exercise.versions[0];
+  const count=await db.exerciseVersion.count({where:{exerciseId:exercise.id}});
+  const source=seedVersionContent(catalogRevision(exercise.slug)!);
+  const decision=catalogRevisionDecision(previous,source,previous.id);
+  const requests=providerRequests;
+  await page.goto(`/admin/ejercicios/${exercise.slug}`);
+  async function prepare(){
+    await page.getByRole("button",{name:"Preparar revisión didáctica",exact:true}).click();
+    const action=page.waitForResponse(response=>response.request().method()==="POST" && response.request().headers()["next-action"]!==undefined);
+    await page.getByRole("button",{name:"Crear borrador didáctico",exact:true}).click();
+    await (await action).finished();
+  }
+  await prepare();
+  if(decision==="draft"){
+    await expect(page.getByRole("status")).toContainText("Ya existe un borrador editorial distinto");
+    expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count);
+    return; // No modificar un borrador previo del propietario.
+  }
+  if(decision==="create")await expect(page.getByRole("status")).toContainText("preparada en borrador");
+  else await expect(page.getByRole("status")).toContainText("ya contiene esta revisión");
+  const latest=await db.exerciseVersion.findFirstOrThrow({where:{exerciseId:exercise.id},orderBy:{number:"desc"},include:{variants:{include:{tests:true}}}});
+  expect(catalogRevisionDecision(latest,source,latest.id)).toBe("unchanged");
+  expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?1:0));
+  if(decision==="create")expect(latest.published).toBe(false);
+  expect(await db.exerciseVersion.findUniqueOrThrow({where:{id:previous.id},include:{variants:{include:{tests:true}}}})).toEqual(previous);
+  const published=await db.exerciseVersion.findFirstOrThrow({where:{exerciseId:exercise.id,published:true},orderBy:{number:"desc"}});
+  await page.goto(`/ejercicios/${exercise.slug}?lenguaje=python`);
+  await expect(page.locator('section[aria-label="Enunciado"] > p').first()).toHaveText(published.statement);
+  await page.goto(`/admin/ejercicios/${exercise.slug}`);
+  await prepare();
+  await expect(page.getByRole("status")).toContainText("ya contiene esta revisión");
+  expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?1:0));
+  // Un guardado manual posterior debe impedir que una importación lo sobrepase.
+  await page.locator("#description").fill("Borrador temporal para verificar que se conserva el trabajo editorial manual.");
+  const save=page.waitForResponse(response=>response.request().method()==="POST" && response.request().headers()["next-action"]!==undefined);
+  await page.getByRole("button",{name:"Guardar nueva versión",exact:true}).click();
+  await (await save).finished();
+  await expect.poll(async()=>db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?2:1));
+  await page.reload();
+  await prepare();
+  await expect(page.getByRole("status")).toContainText("Ya existe un borrador editorial distinto");
+  expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?2:1));
+  expect(providerRequests).toBe(requests); // Preparar no publica ni ejecuta referencias.
 });

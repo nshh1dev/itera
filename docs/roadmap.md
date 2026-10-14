@@ -38,11 +38,24 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 ## Pendiente: progresión completa
 
 1. Validar el recorrido con principiantes y ajustar la retirada de ayuda: las introducciones ya cubren igualdad, condiciones combinadas, selección, cadenas, pertenencia, rangos y productos.
-2. Dar a los retos de integración plantillas y explicaciones coherentes con lo enseñado; la instalación existente conserva todavía sus versiones antiguas. Revisar también tiempos y terminología por lenguaje.
-3. Publicar nuevas versiones didácticas de los retos existentes tras validarlas en Piston; el seed no las reemplaza.
+2. Publicar las revisiones didácticas ya preparadas de los retos originales tras validarlas en Piston; la instalación existente conserva sus versiones públicas antiguas hasta entonces.
+3. Revisar la calibración de tiempos y la retirada de ayuda con estudiantes reales.
 4. Registrar objetivo y prerrequisitos por versión, y ejemplos explicados por lenguaje. Evitar conceptos que aún no se han presentado.
 5. Añadir introducciones a conjuntos, mapas, pilas, búsqueda, grafos y programación dinámica antes de sus respectivos retos.
 6. Probar Desde cero con personas sin experiencia: observar dudas y revisar explicaciones y tiempos. No equiparar completar con comprender.
+
+## Cuarta entrega: revisiones de los retos originales
+
+- Los ocho retos originales de principiantes tienen plantillas específicas, pistas alineadas con las actividades previas, explicaciones paso a paso y tiempos orientativos revisados. Se evitan slicing, reduce, ternarios y abreviaturas como requisito de resolución.
+- Desde cada ficha administrativa se puede preparar la revisión del catálogo como versión en borrador. La operación exige administrador, valida el contenido y registra auditoría. No publica ni cambia versiones anteriores, progreso o borradores de estudiantes.
+- La importación es idempotente, comprueba la versión que estaba abierta y no sobrepasa un borrador editorial distinto. El formulario avisa sobre cambios locales sin guardar antes de confirmar.
+- El catálogo inicial usa las mismas revisiones en instalaciones nuevas. El seed sigue sin reemplazar ejercicios existentes.
+- Corregida la doble navegación/refresco del editor administrativo al guardar una versión, que cancelaba el stream de la respuesta actualizada.
+- Verificados lint, tipos, build, 20 tests unitarios/editoriales y 15 recorridos con doble HTTP, tanto en desarrollo como en producción local. `ITERA_E2E_PRODUCTION=1` permite repetir la segunda modalidad. Sigue pendiente la publicación real en Piston; este modo de navegador no sustituye al sandbox.
+
+## Siguiente entrega
+
+Añadir objetivos y prerrequisitos por versión, visibles antes de empezar y editables desde administración. Se conservarán las versiones históricas y las cuentas existentes; no se convertirá la progresión en un bloqueo obligatorio.
 
 ## Fiabilidad y experiencia
 
