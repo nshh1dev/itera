@@ -1,26 +1,32 @@
 import type { Json, Level } from "../src/lib/types";
+import { introductoryExercises } from "./introductory-content";
 
 export type SeedExercise = {
   slug: string; title: string; description: string; category: string; level: Level; minutes: number;
   statement: string; constraints: string[]; hints: string[]; python: string; javascript: string; explanation: string;
   tests: { input: Json; expected: Json }[];
+  starters?: { python: string; javascript: string };
 };
 
 const t = (input: Json, expected: Json) => ({ input, expected });
 const base = (slug: string, title: string, category: string, level: Level, minutes: number, statement: string,
-  python: string, javascript: string, tests: SeedExercise["tests"], hints: string[], explanation: string, constraints: string[] = []): SeedExercise => ({
-  slug, title, description: statement.split(". ")[0] + ".", category, level, minutes, statement, python, javascript, tests, hints, explanation,
+  python: string, javascript: string, tests: SeedExercise["tests"], hints: string[], explanation: string, constraints: string[] = [], starters?: SeedExercise["starters"]): SeedExercise => ({
+  slug, title, description: statement.split(". ")[0] + ".", category, level, minutes, statement, python, javascript, tests, hints, explanation, starters,
   constraints: ["Implementa solve(data) y devuelve el resultado; no leas la entrada manualmente.", ...constraints],
 });
 
 export const exercises: SeedExercise[] = [
+  ...introductoryExercises,
   base("suma-de-dos-numeros", "Dos números, una suma", "Fundamentos", "BEGINNER", 5,
     "Recibe un objeto con dos números enteros, a y b, y devuelve su suma. Un primer paso pequeño para empezar a pensar en entradas, operaciones y resultados.",
     "def solve(data):\n    return data['a'] + data['b']",
     "function solve(data) {\n  return data.a + data.b;\n}",
     [t({a: 3,b: 5},8),t({a: -2,b: 7},5),t({a: 0,b: 0},0),t({a: -10,b: -8},-18),t({a: 999,b: 1},1000)],
     ["data contiene dos propiedades: a y b.", "Accede a ambos valores y utiliza el operador +.", "Devuelve la suma con return, en lugar de imprimirla."],
-    "Accedemos a los dos valores del objeto y devolvemos su suma. Tiempo O(1) y espacio O(1).", ["−10⁶ ≤ a, b ≤ 10⁶."]),
+    "Primero obtenemos a y b de la entrada. Después usamos + para sumar sus valores y return para entregar el resultado. Si a vale 3 y b vale 5, obtenemos 8. En Python se accede con data['a']; en JavaScript, con data.a.", ["−10⁶ ≤ a, b ≤ 10⁶."], {
+      python: "def solve(data):\n    primero = data['a']\n    segundo = data['b']\n    # Devuelve la suma de primero y segundo.\n    return primero\n",
+      javascript: "function solve(data) {\n  const primero = data.a;\n  const segundo = data.b;\n  // Devuelve la suma de primero y segundo.\n  return primero;\n}\n",
+    }),
   base("par-o-impar", "¿Par o impar?", "Fundamentos", "BEGINNER", 5,
     "Recibe un número entero y devuelve true si es par o false si es impar. El cero también es par.",
     "def solve(data):\n    return data % 2 == 0", "function solve(data) {\n  return data % 2 === 0;\n}",
@@ -29,22 +35,22 @@ export const exercises: SeedExercise[] = [
     "El resto de dividir por dos identifica la paridad, también para negativos. Tiempo y espacio O(1).", ["La entrada es un entero entre −10⁶ y 10⁶."]),
   base("el-mayor-de-tres", "El mayor de tres", "Fundamentos", "BEGINNER", 8,
     "Recibe un arreglo de exactamente tres números y devuelve el mayor. Puede haber números repetidos o negativos.",
-    "def solve(data):\n    return max(data)", "function solve(data) {\n  return Math.max(...data);\n}",
+    "def solve(data):\n    mayor = data[0]\n    for numero in data:\n        if numero > mayor:\n            mayor = numero\n    return mayor", "function solve(data) {\n  let mayor = data[0];\n  for (const numero of data) {\n    if (numero > mayor) {\n      mayor = numero;\n    }\n  }\n  return mayor;\n}",
     [t([3,9,2],9),t([-8,-2,-5],-2),t([1,1,1],1),t([0,4,4],4),t([100,2,3],100)],
     ["Empieza considerando el primer número como candidato.", "Compara ese candidato con cada uno de los restantes.", "Actualiza el candidato solo cuando encuentres un valor mayor."],
     "Podemos mantener el máximo mientras recorremos los tres valores o utilizar la función estándar. Al ser tres elementos, el coste es constante.", ["El arreglo siempre contiene tres enteros."]),
   base("contar-vocales", "Cuenta las vocales", "Cadenas", "BEGINNER", 10,
     "Recibe una cadena y devuelve cuántas vocales contiene. Cuenta a, e, i, o, u tanto en mayúscula como en minúscula; las vocales acentuadas no forman parte de este ejercicio.",
-    "def solve(data):\n    return sum(c in 'aeiou' for c in data.lower())", "function solve(data) {\n  return [...data.toLowerCase()].filter(c => 'aeiou'.includes(c)).length;\n}",
+    "def solve(data):\n    contador = 0\n    for letra in data.lower():\n        if letra in 'aeiou':\n            contador = contador + 1\n    return contador", "function solve(data) {\n  let contador = 0;\n  for (const letra of data.toLowerCase()) {\n    if ('aeiou'.includes(letra)) {\n      contador = contador + 1;\n    }\n  }\n  return contador;\n}",
     [t("Hola mundo",4),t("Itera",3),t("",0),t("AEIOU",5),t("rhythm",0)],
     ["Convierte el texto a minúsculas para simplificar las comparaciones.", "Recorre el texto y comprueba si cada carácter pertenece a aeiou.", "Incrementa un contador por cada vocal encontrada."],
     "Normalizamos mayúsculas y contamos caracteres del conjunto de cinco vocales. El recorrido tarda O(n).", ["0 ≤ longitud ≤ 1000; caracteres ASCII."]),
   base("invertir-cadena", "Palabras al revés", "Cadenas", "BEGINNER", 8,
     "Recibe una cadena y devuelve otra con sus caracteres en orden inverso. Conserva los espacios y las mayúsculas.",
-    "def solve(data):\n    return data[::-1]", "function solve(data) {\n  return [...data].reverse().join('');\n}",
+    "def solve(data):\n    resultado = ''\n    for letra in data:\n        resultado = letra + resultado\n    return resultado", "function solve(data) {\n  let resultado = '';\n  for (const letra of data) {\n    resultado = letra + resultado;\n  }\n  return resultado;\n}",
     [t("itera","areti"),t("Hola mundo","odnum aloH"),t("",""),t("a","a"),t("123","321")],
     ["El último carácter de la entrada debe ser el primero de la salida.", "Puedes recorrer los índices desde el final hasta el principio.", "También puedes usar slicing en Python o invertir un arreglo de caracteres en JavaScript."],
-    "Construimos una cadena con el orden inverso. Tiempo y espacio O(n).", ["Cadena ASCII de hasta 1000 caracteres."]),
+    "Empezamos con un texto vacío. Colocamos cada letra delante del resultado anterior: con abc obtenemos a, después ba y finalmente cba. Esta versión prioriza la claridad; construir repetidamente cadenas puede costar tiempo cuadrático. Más adelante puedes comparar alternativas como slicing o reverse.", ["Cadena ASCII de hasta 1000 caracteres."]),
   base("factorial", "Un producto en cadena", "Fundamentos", "BEGINNER", 10,
     "Recibe un entero n y devuelve su factorial: el producto de todos los enteros desde 1 hasta n. Por definición, el factorial de cero es 1.",
     "def solve(data):\n    result = 1\n    for n in range(2, data + 1):\n        result *= n\n    return result", "function solve(data) {\n  let result = 1;\n  for (let n = 2; n <= data; n++) result *= n;\n  return result;\n}",
@@ -53,13 +59,13 @@ export const exercises: SeedExercise[] = [
     "Un acumulador guarda el producto parcial. Si n es cero, el bucle no se ejecuta y el resultado sigue siendo 1. Tiempo O(n), espacio O(1).", ["0 ≤ n ≤ 15."]),
   base("suma-del-arreglo", "Todo suma", "Arreglos", "BEGINNER", 8,
     "Recibe un arreglo de números y devuelve la suma de todos sus elementos. Un arreglo vacío debe devolver cero.",
-    "def solve(data):\n    return sum(data)", "function solve(data) {\n  return data.reduce((total, n) => total + n, 0);\n}",
+    "def solve(data):\n    total = 0\n    for numero in data:\n        total = total + numero\n    return total", "function solve(data) {\n  let total = 0;\n  for (const numero of data) {\n    total = total + numero;\n  }\n  return total;\n}",
     [t([1,2,3,4],10),t([],0),t([-3,3],0),t([9],9),t([-1,-2,-3],-6)],
     ["Piensa en una suma que se va construyendo paso a paso.", "Empieza en cero para cubrir el arreglo vacío.", "Acumula cada valor con un bucle o una operación de reducción."],
     "Recorremos todos los elementos y mantenemos una suma acumulada. Tiempo O(n), espacio auxiliar O(1).", ["Hasta 1000 enteros de valor absoluto ≤ 1000."]),
   base("fizzbuzz", "El clásico FizzBuzz", "Fundamentos", "BEGINNER", 12,
     "Recibe un entero n y devuelve un arreglo desde 1 hasta n. Sustituye los múltiplos de 3 por Fizz, los de 5 por Buzz y los de ambos por FizzBuzz; conserva los demás valores como números.",
-    "def solve(data):\n    return [('FizzBuzz' if n % 15 == 0 else 'Fizz' if n % 3 == 0 else 'Buzz' if n % 5 == 0 else n) for n in range(1, data + 1)]", "function solve(data) {\n  return Array.from({ length: data }, (_, i) => {\n    const n = i + 1;\n    return n % 15 === 0 ? 'FizzBuzz' : n % 3 === 0 ? 'Fizz' : n % 5 === 0 ? 'Buzz' : n;\n  });\n}",
+    "def solve(data):\n    resultado = []\n    for numero in range(1, data + 1):\n        if numero % 15 == 0:\n            resultado.append('FizzBuzz')\n        elif numero % 3 == 0:\n            resultado.append('Fizz')\n        elif numero % 5 == 0:\n            resultado.append('Buzz')\n        else:\n            resultado.append(numero)\n    return resultado", "function solve(data) {\n  const resultado = [];\n  for (let numero = 1; numero <= data; numero++) {\n    if (numero % 15 === 0) {\n      resultado.push('FizzBuzz');\n    } else if (numero % 3 === 0) {\n      resultado.push('Fizz');\n    } else if (numero % 5 === 0) {\n      resultado.push('Buzz');\n    } else {\n      resultado.push(numero);\n    }\n  }\n  return resultado;\n}",
     [t(5,[1,2,"Fizz",4,"Buzz"]),t(3,[1,2,"Fizz"]),t(0,[]),t(1,[1]),t(15,[1,2,"Fizz",4,"Buzz","Fizz",7,8,"Fizz","Buzz",11,"Fizz",13,14,"FizzBuzz"])],
     ["La condición de múltiplo se comprueba con el resto.", "Comprueba primero el caso que cumple ambas condiciones.", "Un múltiplo de 15 es múltiplo de 3 y de 5."],
     "La condición más específica debe evaluarse antes que las otras. Recorremos n valores: tiempo y espacio O(n).", ["0 ≤ n ≤ 100."]),

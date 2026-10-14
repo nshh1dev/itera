@@ -6,9 +6,10 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 
 ## Qué incluye
 
-- Landing, espacio personal, catálogo con filtros y tres rutas de aprendizaje.
-- 24 ejercicios originales en español: 8 principiantes, 8 intermedios y 8 avanzados.
-- Python y JavaScript; 120 casos editoriales por lenguaje, entre visibles y ocultos.
+- Landing, espacio personal, catálogo con filtros y cuatro rutas de aprendizaje.
+- 31 ejercicios originales en español: 15 principiantes, 8 intermedios y 8 avanzados.
+- Ruta **Desde cero**: siete actividades guiadas antes de sumar dos números, con plantillas propias para Python y JavaScript.
+- Python y JavaScript; 155 casos editoriales por lenguaje, entre visibles y ocultos.
 - Registro e inicio de sesión con correo y contraseña; recuperación en una bandeja de correo local.
 - Monaco servido localmente, editor sencillo alternativo, tamaño de fuente y paneles ajustables.
 - Borrador local y guardado en PostgreSQL con detección de conflictos entre pestañas.
@@ -30,7 +31,7 @@ La aplicación y el catálogo funcionan sin Piston. El botón de ejecución info
 Desde la carpeta del proyecto:
 
 ```sh
-npm install
+npm ci
 npm run setup
 npm run dev
 ```
@@ -168,6 +169,8 @@ Para respaldar tus datos usa `pg_dump` de tu versión de PostgreSQL, o copia `.l
 
 ## Después
 
-- Añadir el tutor opcional con clave propia del usuario.
-- Ampliar ejercicios y rutas a partir de la práctica.
-- Historial de intentos y estadísticas de práctica.
+Prioridades y criterios pedagógicos: [docs/roadmap.md](docs/roadmap.md).
+
+Para incorporar **Desde cero** a una instalación existente, inicia PostgreSQL y ejecuta `npm run db:seed`. Se añaden los siete ejercicios y la ruta sin reemplazar los ejercicios, rutas, borradores ni progresos existentes. No hace falta resetear la base.
+
+Los cambios en las referencias y la plantilla de ejercicios ya existentes **no** se aplican con el seed. Deben guardarse como una nueva versión desde `/admin` y validarse con Piston antes de publicarse. Conserva las versiones anteriores para los intentos históricos.
