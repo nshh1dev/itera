@@ -1,0 +1,25 @@
+import Link from "next/link";
+import { ArrowRight, Check, ChartNoAxesCombined } from "lucide-react";
+import { currentUser } from "@/server/auth";
+import { db } from "@/server/db";
+import { getCatalog } from "@/server/catalog";
+import { languageNames, type Language } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+
+export const metadata = { title: "Mi progreso" };
+export default async function ProgressPage() {
+  const user = await currentUser();
+  if (!user) return <div className="page-container"><h1 className="page-title">Cada paso deja huella.</h1><div className="empty-state mt-10 rounded-2xl bg-surface"><ChartNoAxesCombined className="size-8 text-muted-foreground" /><h2 className="section-title">Dale un lugar a tu progreso.</h2><p className="max-w-sm text-sm leading-7 text-muted-foreground">Crea una cuenta local para guardar tus intentos y ver cómo avanzas.</p><Button asChild className="mt-3"><Link href="/registro?volver=/progreso">Crear cuenta<ArrowRight /></Link></Button></div></div>;
+  const language = (user.preference?.language ?? "python") as Language;
+  const [catalog, attempts, recent, help] = await Promise.all([
+    getCatalog(user.id, language),
+    db.submission.count({ where: { userId: user.id, mode: "submit", status: { in: ["PASSED", "FAILED"] } } }),
+    db.submission.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 10, select: { id:true, status:true, mode:true, createdAt:true, passedCount:true,totalCount:true,variant:{select:{language:true,version:{select:{title:true,exercise:{select:{slug:true}}}}}} } }),
+    db.helpUsage.findMany({ where: { userId: user.id, language }, select: { exerciseId:true,kind:true } }),
+  ]);
+  const solved = catalog.filter(e => e.solved).length;
+  return <div className="page-container"><p className="eyebrow">Lo que estás construyendo</p><h1 className="page-title mt-3">Tu progreso, paso a paso.</h1><p className="mt-3 text-sm leading-7 text-muted-foreground">Cada intento es información. Cada solución, una nueva conexión.</p><div className="mt-10 grid grid-cols-2 gap-8 border-y py-8 sm:grid-cols-3"><div><p className="text-4xl font-medium tracking-tight">{solved}<span className="text-lg text-muted-foreground"> / {catalog.length}</span></p><p className="mt-2 text-xs text-muted-foreground">Resueltos en {languageNames[language]}</p></div><div><p className="text-4xl font-medium tracking-tight">{attempts}</p><p className="mt-2 text-xs text-muted-foreground">Comprobaciones evaluadas · ambos lenguajes</p></div><div><p className="text-4xl font-medium tracking-tight">{catalog.filter(e => e.solved && help.some(h => h.exerciseId === e.id)).length}</p><p className="mt-2 text-xs text-muted-foreground">Resueltos con ayuda · {languageNames[language]}</p></div></div>
+    <section className="mt-10"><h2 className="section-title">Ideas que vas dominando</h2><p className="mt-2 text-sm text-muted-foreground">Por categoría, en {languageNames[language]}.</p><div className="mt-6 grid gap-x-12 gap-y-6 sm:grid-cols-2">{[...new Set(catalog.map(e=>e.category))].map(category=>{const items=catalog.filter(e=>e.category===category);const done=items.filter(e=>e.solved).length;return <div key={category}><div className="mb-3 flex justify-between text-sm"><span>{category}</span><span className="text-xs text-muted-foreground">{done} / {items.length}</span></div><div className="h-1.5 overflow-hidden rounded-full bg-surface" role="progressbar" aria-label={category} aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={done}><div className="h-full rounded-full bg-primary" style={{width:`${done/items.length*100}%`}} /></div></div>;})}</div></section>
+    <section className="mt-12"><h2 className="section-title">Tus últimos intentos</h2>{recent.length ? <div className="mt-4">{recent.map(item=><Link key={item.id} href={`/ejercicios/${item.variant.version.exercise.slug}?lenguaje=${item.variant.language}`} className="flex items-center gap-4 border-b py-4"><span className="flex size-8 items-center justify-center">{item.status === "PASSED" ? <Check className="size-4 text-success" /> : <span className="size-1.5 rounded-full bg-muted-foreground" />}</span><div className="flex-1"><p className="text-sm font-medium">{item.variant.version.title}</p><p className="mt-1 text-xs text-muted-foreground">{languageNames[item.variant.language as Language]} · {item.mode === "submit" ? "Comprobación" : "Ejemplos"}</p></div><div className="text-right"><p className="text-xs">{item.status === "PASSED" ? item.mode === "submit" ? "Resuelto" : "Ejemplos correctos" : item.status === "FAILED" ? `${item.passedCount}/${item.totalCount} pruebas` : item.status === "RUNNING" ? "En proceso" : "Sin evaluar"}</p><p className="mt-1 text-xs text-muted-foreground">{new Intl.DateTimeFormat("es",{day:"numeric",month:"short",timeZone:"UTC"}).format(item.createdAt)}</p></div></Link>)}</div> : <div className="empty-state"><p className="text-sm text-muted-foreground">Tu historia comienza con el primer intento.</p><Link href="/ejercicios" className="text-link">Elegir un ejercicio<ArrowRight className="size-4" /></Link></div>}</section>
+  </div>;
+}

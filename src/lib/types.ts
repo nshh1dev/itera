@@ -1,0 +1,10 @@
+export const languages = ["python", "javascript"] as const;
+export type Language = (typeof languages)[number];
+export const languageNames: Record<Language, string> = { python: "Python", javascript: "JavaScript" };
+export const levels = ["BEGINNER", "INTERMEDIATE", "ADVANCED"] as const;
+export type Level = (typeof levels)[number];
+export const levelNames: Record<Level, string> = { BEGINNER: "Principiante", INTERMEDIATE: "Intermedio", ADVANCED: "Avanzado" };
+export type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
+export type TestResult = { index: number; visible: boolean; passed: boolean; status: "passed" | "wrong" | "runtime" | "timeout"; input?: Json; expected?: Json; actual?: Json; error?: string };
+export type ExecutionResult = { id: string; status: string; mode: string; passedCount: number; totalCount: number; results: TestResult[]; message?: string | null };
+export type ExerciseCard = { id: string; slug: string; category: string; order: number; title: string; description: string; level: Level; minutes: number; solved: boolean; started: boolean };

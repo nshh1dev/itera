@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example
+.local/
+src/generated/
+public/monaco/
+*.tsbuildinfo
+*.log
+.DS_Store
+Thumbs.db
+.idea/

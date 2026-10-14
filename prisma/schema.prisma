@@ -1,0 +1,237 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum SubmissionStatus {
+  RUNNING
+  PASSED
+  FAILED
+  ERROR
+}
+
+model User {
+  id            String   @id
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  role          Role     @default(USER)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  preference    UserPreference?
+  drafts        Draft[]
+  submissions   Submission[]
+  progress      Progress[]
+  helpUsage     HelpUsage[]
+  auditLogs     AuditLog[]
+}
+
+model Session {
+  id        String   @id
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+}
+
+model Account {
+  id                     String    @id
+  accountId              String
+  providerId             String
+  userId                 String
+  accessToken            String?
+  refreshToken           String?
+  idToken                String?
+  accessTokenExpiresAt   DateTime?
+  refreshTokenExpiresAt  DateTime?
+  scope                  String?
+  password               String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@unique([providerId, accountId])
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@index([identifier])
+}
+
+model UserPreference {
+  userId   String @id
+  language String @default("python")
+  level    Level  @default(BEGINNER)
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Exercise {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  category    String
+  order       Int
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  versions    ExerciseVersion[]
+  progress    Progress[]
+  pathItems   LearningPathItem[]
+  helpUsage   HelpUsage[]
+}
+
+model ExerciseVersion {
+  id           String   @id @default(cuid())
+  exerciseId   String
+  number       Int      @default(1)
+  published    Boolean  @default(false)
+  title        String
+  description  String
+  statement    String
+  constraints  String[]
+  hints        String[]
+  level        Level
+  minutes      Int
+  createdAt    DateTime @default(now())
+  exercise     Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  variants     ExerciseVariant[]
+  @@unique([exerciseId, number])
+}
+
+model ExerciseVariant {
+  id          String @id @default(cuid())
+  versionId   String
+  language    String
+  starter     String
+  solution    String
+  explanation String
+  version     ExerciseVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  tests       TestCase[]
+  drafts      Draft[]
+  submissions Submission[]
+  @@unique([versionId, language])
+}
+
+model TestCase {
+  id        String @id @default(cuid())
+  variantId String
+  input     Json
+  expected  Json
+  visible   Boolean @default(false)
+  order     Int
+  variant   ExerciseVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  @@unique([variantId, order])
+}
+
+model Draft {
+  id        String @id @default(cuid())
+  userId    String
+  variantId String
+  code      String
+  revision  Int @default(1)
+  updatedAt DateTime @updatedAt
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  variant   ExerciseVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  @@unique([userId, variantId])
+}
+
+model Submission {
+  id             String @id @default(cuid())
+  userId         String
+  variantId      String
+  code           String
+  mode           String
+  status         SubmissionStatus @default(RUNNING)
+  idempotencyKey String
+  passedCount    Int @default(0)
+  totalCount     Int @default(0)
+  results        Json?
+  message        String?
+  createdAt      DateTime @default(now())
+  finishedAt     DateTime?
+  user           User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  variant        ExerciseVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  @@unique([userId, idempotencyKey])
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+model Progress {
+  id           String @id @default(cuid())
+  userId       String
+  exerciseId   String
+  language     String
+  firstPassedAt DateTime?
+  lastAttemptAt DateTime @default(now())
+  attempts     Int @default(0)
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise     Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  @@unique([userId, exerciseId, language])
+}
+
+model HelpUsage {
+  id         String @id @default(cuid())
+  userId     String
+  exerciseId String
+  language   String
+  kind       String
+  createdAt  DateTime @default(now())
+  user       User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  @@unique([userId, exerciseId, language, kind])
+}
+
+model LearningPath {
+  id          String @id @default(cuid())
+  slug        String @unique
+  title       String
+  description String
+  order       Int
+  items       LearningPathItem[]
+}
+
+model LearningPathItem {
+  id         String @id @default(cuid())
+  pathId     String
+  exerciseId String
+  position   Int
+  path       LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  @@unique([pathId, exerciseId])
+  @@unique([pathId, position])
+}
+
+model AuditLog {
+  id        String @id @default(cuid())
+  userId    String
+  action    String
+  resource  String
+  createdAt DateTime @default(now())
+  user      User @relation(fields: [userId], references: [id])
+}

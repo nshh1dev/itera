@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@import "@fontsource/geist/latin.css";
+@import "@fontsource/geist-mono/latin.css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #FFFFFF;
+  --foreground: #1D1D1F;
+  --surface: #F5F5F7;
+  --muted: #F5F5F7;
+  --muted-foreground: #6E6E73;
+  --primary: #0071E3;
+  --primary-foreground: #FFFFFF;
+  --success: #34C759;
+  --success-foreground: #1D1D1F;
+  --border: #E5E5EA;
+  --input: #86868B;
+  --ring: #0071E3;
+  --destructive: #B42318;
+  --warning: #7A4B00;
+  --card: var(--background);
+  --card-foreground: var(--foreground);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--foreground);
+  --accent: var(--surface);
+  --accent-foreground: var(--foreground);
+  --radius: 0.75rem;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #F5F5F7;
+  --surface: #1C1C1E;
+  --muted: #1C1C1E;
+  --muted-foreground: #A1A1A6;
+  --primary: #0A84FF;
+  --primary-foreground: #000000;
+  --success: #30D158;
+  --success-foreground: #000000;
+  --border: #38383A;
+  --input: #75757A;
+  --ring: #0A84FF;
+  --destructive: #FF6961;
+  --warning: #E5C07B;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-warning: var(--warning);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --font-sans: "Geist", sans-serif;
+  --font-mono: "Geist Mono", monospace;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+}
+
+@layer base {
+  * { border-color: var(--border); }
+  body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+  button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+  button:not(:disabled), a, select { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
+  ::selection { background: color-mix(in srgb, var(--primary) 20%, transparent); }
+  h1, h2, h3 { text-wrap: balance; }
+}
+
+@layer components {
+  .page-container { @apply mx-auto w-full max-w-[1160px] px-5 py-9 sm:px-9 lg:px-12 lg:py-12; }
+  .eyebrow { @apply text-xs font-medium tracking-[0.13em] uppercase text-muted-foreground; }
+  .page-title { @apply text-3xl font-semibold tracking-[-0.04em] sm:text-[38px] sm:leading-[1.2]; }
+  .section-title { @apply text-xl font-semibold tracking-[-0.025em]; }
+  .field { @apply flex min-h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-50; }
+  .field-label { @apply mb-2 block text-sm font-medium; }
+  .text-link { @apply inline-flex items-center gap-1.5 text-sm font-medium text-primary underline-offset-4 hover:underline; }
+  .subtle-panel { @apply rounded-2xl border border-border bg-background; }
+  .empty-state { @apply flex flex-col items-center justify-center gap-3 px-6 py-14 text-center; }
+  .code-block { @apply overflow-x-auto rounded-lg bg-surface p-4 font-mono text-[13px] leading-7; }
+  .skip-link { @apply fixed top-3 left-3 z-[100] -translate-y-24 rounded-lg bg-primary px-4 py-3 text-primary-foreground focus:translate-y-0; }
+}
+
+.workspace-grid { display: grid; grid-template-columns: minmax(280px, var(--statement-width, 38%)) 8px minmax(0, 1fr); }
+.editor-region { height: clamp(340px, 53vh, 700px); }
+.animate-enter { animation: enter 250ms ease-out both; }
+@keyframes enter { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 767px) {
+  .workspace-grid { display: block; }
+  .editor-region { height: 52dvh; min-height: 280px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
