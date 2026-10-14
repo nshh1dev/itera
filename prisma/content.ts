@@ -6,6 +6,7 @@ import { learningMetadata } from "./learning-metadata";
 import { collectionsExercises, collectionsRevisions } from "./collections-content";
 import { textExercises, textRevisions } from "./text-content";
 import { maximaExercises, maximaRevisions } from "./maxima-content";
+import { searchExercises, searchRevisions } from "./search-content";
 
 export type SeedExercise = {
   slug: string; title: string; description: string; category: string; level: Level; minutes: number;
@@ -79,6 +80,7 @@ export const exercises: SeedExercise[] = [
   ...collectionsExercises,
   ...textExercises,
   ...maximaExercises,
+  ...searchExercises,
   base("palindromo", "De ida y vuelta", "Cadenas", "INTERMEDIATE", 15,
     "Determina si una cadena es un palíndromo después de convertirla a minúsculas y quitar todos los caracteres que no sean letras a-z o dígitos. Devuelve un booleano.",
     "def solve(data):\n    import re\n    text = re.sub('[^a-z0-9]', '', data.lower())\n    return text == text[::-1]", "function solve(data) {\n  const text = data.toLowerCase().replace(/[^a-z0-9]/g, '');\n  return text === [...text].reverse().join('');\n}",
@@ -176,7 +178,7 @@ export const exercises: SeedExercise[] = [
     ["Resuelve primero el problema para prefijos más cortos.", "Si las últimas letras coinciden, no necesitas una operación nueva.", "En otro caso toma el mínimo entre insertar, eliminar y sustituir, sumando uno."],
     "La distancia de Levenshtein compara prefijos. Cada celda depende de la izquierda, arriba y diagonal. Tiempo O(nm), espacio O(m) al conservar solo una fila anterior.", ["Cadenas ASCII de hasta 200 caracteres."]),
   ...foundationExercises,
-].map(exercise => ({ ...exercise, ...beginnerRevisions[exercise.slug], ...collectionsRevisions[exercise.slug], ...textRevisions[exercise.slug], ...maximaRevisions[exercise.slug], ...learningMetadata[exercise.slug] }));
+].map(exercise => ({ ...exercise, ...beginnerRevisions[exercise.slug], ...collectionsRevisions[exercise.slug], ...textRevisions[exercise.slug], ...maximaRevisions[exercise.slug], ...searchRevisions[exercise.slug], ...learningMetadata[exercise.slug] }));
 
 export const starter = {
   python: "def solve(data):\n    # Escribe tu solución aquí\n    pass\n",

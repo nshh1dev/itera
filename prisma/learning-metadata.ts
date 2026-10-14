@@ -5,6 +5,10 @@ const m = (objective: string, ...prerequisites: string[]): LearningMetadata => (
 // Describe conocimientos, no bloqueos ni logros del estudiante. Solo se incorpora
 // a versiones nuevas; la migración no atribuye estos datos a versiones históricas.
 export const learningMetadata: Record<string, LearningMetadata> = {
+  "repite-con-while": m("Controlar una repetición con while y avanzar hacia una condición de parada.", "Comparaciones de números", "Actualizar un contador", "Devolver un resultado después de un bucle"),
+  "recorre-por-indices": m("Recorrer posiciones válidas con while y distinguir el índice del valor que contiene.", "Bucles while y actualización", "Índices desde cero", "Añadir valores a una lista"),
+  "punto-medio-del-intervalo": m("Calcular un índice central entero entre dos límites inclusivos.", "Índices de listas", "Sumas y división", "Acceder a propiedades"),
+  "descarta-una-mitad": m("Usar el orden de una lista para descartar el centro y una mitad imposible.", "Índices y valores", "Calcular el punto medio entero", "Comparaciones y límites inclusivos"),
   "maximo-de-una-lista": m("Mantener el máximo de una lista no vacía sin inventar un valor inicial.", "Acceder al primer elemento", "Recorrer listas", "Comparar y actualizar un candidato"),
   "primer-valor-o-ausencia": m("Representar la ausencia con None o null y evitar acceder a una lista vacía.", "Acceder al primer elemento", "Condiciones y salida con return", "Consultar el tamaño de una lista"),
   "maximo-bajo-un-limite": m("Filtrar candidatos y conservar el mayor distinguiendo ausencia de cero.", "Buscar el máximo con un recorrido", "Representar ausencia con None o null", "Seleccionar con if y elif o else if"),
@@ -49,7 +53,7 @@ export const learningMetadata: Record<string, LearningMetadata> = {
   "sin-duplicados": m("Eliminar repeticiones conservando el orden de la primera aparición.", "Recorrer listas", "Pertenencia en conjuntos", "Construir una lista de salida"),
   "frecuencia-caracteres": m("Acumular frecuencias usando cada carácter como clave de un diccionario u objeto.", "Recorrer cadenas", "Diccionarios u objetos", "Contadores"),
   "segundo-mayor": m("Combinar dos recorridos para hallar el segundo máximo distinto o indicar su ausencia.", "Encontrar el máximo de una lista", "Buscar el mayor bajo un límite estricto", "Comprobar ausencia con None o null", "Tratar listas vacías"),
-  "busqueda-binaria": m("Reducir a la mitad un intervalo de búsqueda y devolver el índice del objetivo.", "Listas ordenadas e índices", "Bucles con condición", "Límites inclusivos", "División entera"),
+  "busqueda-binaria": m("Repetir el descarte de mitades hasta encontrar el índice del objetivo o agotar el intervalo.", "Recorrer posiciones con while", "Calcular un punto medio entero", "Descartar una mitad de una lista ordenada", "Límites inclusivos e intervalo vacío"),
   "anagramas": m("Contar y comparar las letras de dos textos ignorando espacios y mayúsculas.", "Convertir a minúsculas y omitir espacios", "Inicializar y actualizar contadores por letra", "Comparar todas las cantidades", "Devolver falso ante una diferencia"),
   "rotar-arreglo": m("Dividir y recombinar una lista para desplazarla sin perder elementos.", "Índices y segmentos de listas", "Operador de resto %", "Tratar listas vacías"),
   "parentesis-equilibrados": m("Usar una pila para comprobar aperturas y cierres en el orden correcto.", "Recorrer cadenas", "Pilas: añadir y retirar el último elemento", "Diccionarios u objetos", "Condiciones y salida anticipada"),

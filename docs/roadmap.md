@@ -96,9 +96,17 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 - Seed y rutas aplicados localmente: se conservaron las huellas de las diez tablas comprobadas para todas sus filas anteriores. No se modificaron versiones públicas existentes, borradores, envíos, progreso ni cuentas.
 - Lint, tipos, build, 33 pruebas unitarias/editoriales y 29 E2E aprobados en desarrollo y producción local. Las seis importaciones editoriales incluyen El segundo lugar. En desarrollo se sigue observando un error de escritura de stream durante el recorrido administrativo, sin fallo del cierre de las acciones monitorizadas; queda registrado para diagnóstico. En producción no apareció. Piston real continúa pendiente.
 
+## Décima entrega: índices y búsqueda binaria
+
+- Cuatro actividades guiadas: Repite mientras se cumpla, Visita cada posición, Una posición en el centro y Descarta una mitad. Separan condición de parada, índice frente a valor, división entera y reducción estricta de un intervalo inclusivo.
+- Conecta las ideas pasa de 19 a 23 pasos. Busca a la mitad retira el bucle de la plantilla y combina los conceptos anteriores con referencias explícitas en ambos lenguajes. Conserva los cinco casos originales y añade extremos, un único elemento y el índice de un cero. La revisión es importable como borrador nuevo, sin sobrescribir la versión pública.
+- Catálogo de 60 ejercicios y 326 casos por lenguaje. Una prueba adicional comprueba 1718 entradas por lenguaje; usa búsqueda lineal como oráculo, rechaza accesos fuera de rango y limita los accesos de la referencia binaria según el logaritmo del tamaño, también con 10000 elementos. No atribuye esa complejidad a programas de usuarios.
+- Seed y rutas aplicados localmente. Las filas previas de las diez tablas comprobadas conservan sus recuentos y huellas; solo se añadieron cuatro ejercicios, cuatro versiones, ocho variantes y 50 casos. Borradores y datos de estudiantes intactos.
+- Lint, tipos, build, 36 pruebas unitarias/editoriales y 32 E2E aprobados en desarrollo y producción local. Las siete importaciones editoriales incluyen búsqueda binaria. No apareció el error de stream registrado en la entrega anterior, pero no se da por corregido sin diagnóstico. Piston real continúa pendiente.
+
 ## Siguiente entrega
 
-Introducir búsqueda por índices, bucles con condición y reducción del intervalo antes de Busca a la mitad. Después continuar con rotación y pilas.
+Introducir desplazamiento circular, normalización con resto y reconstrucción por índices antes de Un giro a la derecha. Después continuar con pilas y paréntesis equilibrados.
 
 ## Fiabilidad y experiencia
 

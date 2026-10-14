@@ -15,14 +15,15 @@ export const intermediateSteps = [
   "quita-los-espacios", "filtra-letras-y-digitos", "compara-dos-textos", "palindromo",
   "compara-contadores", "anagramas",
   "maximo-de-una-lista", "primer-valor-o-ausencia", "maximo-bajo-un-limite", "segundo-mayor",
-  "busqueda-binaria", "rotar-arreglo", "parentesis-equilibrados",
+  "repite-con-while", "recorre-por-indices", "punto-medio-del-intervalo", "descarta-una-mitad", "busqueda-binaria",
+  "rotar-arreglo", "parentesis-equilibrados",
 ];
 
 // No deducir el nivel a partir de la posición: puede haber varias rutas del mismo nivel.
 export const learningPaths: { slug: string; title: string; description: string; level: Level; order: number; slugs?: string[] }[] = [
   { slug: "desde-cero", title: "Desde cero", description: "No necesitas experiencia. Ejecuta, cambia un valor y aprende a usar entradas antes de sumar dos números.", level: "BEGINNER", order: -1, slugs: introductorySteps },
   { slug: "primeros-pasos", title: "Construye tus bases", description: "Después de Desde cero: aprende comparaciones, condiciones, listas y bucles con actividades guiadas antes de combinar las ideas.", level: "BEGINNER", order: 0, slugs: foundationSteps },
-  { slug: "pensar-en-soluciones", title: "Conecta las ideas", description: "Después de Construye tus bases: practica conjuntos, mapas, textos, máximos y ausencia de resultado antes de sus retos. Los retos de búsqueda, rotación y pilas aún requieren más conceptos.", level: "INTERMEDIATE", order: 1, slugs: intermediateSteps },
+  { slug: "pensar-en-soluciones", title: "Conecta las ideas", description: "Después de Construye tus bases: conecta conjuntos, mapas, textos y máximos; aprende índices, while y descarte de mitades antes de la búsqueda binaria. Rotación y pilas aún requieren más conceptos.", level: "INTERMEDIATE", order: 1, slugs: intermediateSteps },
   { slug: "un-paso-mas", title: "Ve un paso más allá", description: "Ventanas, grafos y programación dinámica. Problemas que invitan a mirar desde otro ángulo.", level: "ADVANCED", order: 2 },
 ];
 
