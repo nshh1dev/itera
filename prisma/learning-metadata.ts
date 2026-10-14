@@ -5,6 +5,9 @@ const m = (objective: string, ...prerequisites: string[]): LearningMetadata => (
 // Describe conocimientos, no bloqueos ni logros del estudiante. Solo se incorpora
 // a versiones nuevas; la migración no atribuye estos datos a versiones históricas.
 export const learningMetadata: Record<string, LearningMetadata> = {
+  "maximo-de-una-lista": m("Mantener el máximo de una lista no vacía sin inventar un valor inicial.", "Acceder al primer elemento", "Recorrer listas", "Comparar y actualizar un candidato"),
+  "primer-valor-o-ausencia": m("Representar la ausencia con None o null y evitar acceder a una lista vacía.", "Acceder al primer elemento", "Condiciones y salida con return", "Consultar el tamaño de una lista"),
+  "maximo-bajo-un-limite": m("Filtrar candidatos y conservar el mayor distinguiendo ausencia de cero.", "Buscar el máximo con un recorrido", "Representar ausencia con None o null", "Seleccionar con if y elif o else if"),
   "quita-los-espacios": m("Filtrar caracteres con una condición de desigualdad conservando el orden del resto.", "Recorrer cadenas", "Construir textos con +", "Comparaciones y condiciones"),
   "filtra-letras-y-digitos": m("Normalizar mayúsculas y filtrar por pertenencia a un grupo explícito de caracteres.", "Convertir a minúsculas", "Filtrar caracteres", "Comprobar pertenencia en textos"),
   "compara-dos-textos": m("Comparar el contenido de dos cadenas distinguiendo el orden, las mayúsculas y los espacios.", "Acceder a propiedades", "Comparación de igualdad", "Cadenas de texto"),
@@ -45,7 +48,7 @@ export const learningMetadata: Record<string, LearningMetadata> = {
   "palindromo": m("Filtrar un texto, construir su inverso y comparar ambos contenidos.", "Filtrar letras y dígitos en minúsculas", "Invertir una cadena con un recorrido", "Comparar el contenido de cadenas"),
   "sin-duplicados": m("Eliminar repeticiones conservando el orden de la primera aparición.", "Recorrer listas", "Pertenencia en conjuntos", "Construir una lista de salida"),
   "frecuencia-caracteres": m("Acumular frecuencias usando cada carácter como clave de un diccionario u objeto.", "Recorrer cadenas", "Diccionarios u objetos", "Contadores"),
-  "segundo-mayor": m("Distinguir valores repetidos al buscar el segundo máximo de una lista.", "Máximos y comparaciones", "Valores distintos", "Ordenación o recorridos con estado", "Representar ausencia con None o null"),
+  "segundo-mayor": m("Combinar dos recorridos para hallar el segundo máximo distinto o indicar su ausencia.", "Encontrar el máximo de una lista", "Buscar el mayor bajo un límite estricto", "Comprobar ausencia con None o null", "Tratar listas vacías"),
   "busqueda-binaria": m("Reducir a la mitad un intervalo de búsqueda y devolver el índice del objetivo.", "Listas ordenadas e índices", "Bucles con condición", "Límites inclusivos", "División entera"),
   "anagramas": m("Contar y comparar las letras de dos textos ignorando espacios y mayúsculas.", "Convertir a minúsculas y omitir espacios", "Inicializar y actualizar contadores por letra", "Comparar todas las cantidades", "Devolver falso ante una diferencia"),
   "rotar-arreglo": m("Dividir y recombinar una lista para desplazarla sin perder elementos.", "Índices y segmentos de listas", "Operador de resto %", "Tratar listas vacías"),

@@ -12,7 +12,7 @@ const email=`itera-e2e-${Date.now()}@example.test`;
 const password="Itera-test-local-12345";
 const otherEmail=`other-${email}`;
 const editorialSlug=`prueba-editorial-${Date.now()}`;
-const revisionSlugs=["suma-de-dos-numeros","sin-duplicados","frecuencia-caracteres","palindromo","anagramas"];
+const revisionSlugs=["suma-de-dos-numeros","sin-duplicados","frecuencia-caracteres","palindromo","anagramas","segundo-mayor"];
 let server:Server;
 let providerRequests=0;
 let providerOnline=true;

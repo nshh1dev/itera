@@ -88,9 +88,17 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 - La regresión comprueba tres guardados, publicación, ocultación y las cinco importaciones editoriales, sin alterar contenido histórico ni el trabajo de estudiantes. No se han añadido reintentos ni ampliado los tiempos de espera.
 - Lint, tipos, build y 30 pruebas unitarias/editoriales aprobados. Los 26 E2E pasan en desarrollo y en dos ejecuciones completas consecutivas de producción local. El catálogo no cambia; Piston real continúa pendiente.
 
+## Novena entrega: máximos distintos y ausencia
+
+- Tres actividades guiadas: Conserva el mayor, Cuando no hay un valor y El mayor por debajo del límite. Presentan el candidato inicial, listas vacías, None/null, comprobación explícita de ausencia y filtrado estricto antes de integrar las ideas.
+- Conecta las ideas pasa de 16 a 19 pasos. El segundo lugar usa dos recorridos consecutivos, sin ordenar ni mantener simultáneamente dos máximos; su plantilla retira los recorridos guiados. La revisión conserva las reglas y los cinco casos originales, añade cobertura y se importa como borrador nuevo.
+- Catálogo de 56 ejercicios y 296 casos editoriales por lenguaje. Una enumeración adicional comprueba 2911 entradas por lenguaje con listas cortas, negativos, cero, repetidos, ausencia y límites iguales o externos.
+- Seed y rutas aplicados localmente: se conservaron las huellas de las diez tablas comprobadas para todas sus filas anteriores. No se modificaron versiones públicas existentes, borradores, envíos, progreso ni cuentas.
+- Lint, tipos, build, 33 pruebas unitarias/editoriales y 29 E2E aprobados en desarrollo y producción local. Las seis importaciones editoriales incluyen El segundo lugar. En desarrollo se sigue observando un error de escritura de stream durante el recorrido administrativo, sin fallo del cierre de las acciones monitorizadas; queda registrado para diagnóstico. En producción no apareció. Piston real continúa pendiente.
+
 ## Siguiente entrega
 
-Introducir máximos distintos y ausencia de resultado (None/null) antes de El segundo lugar, sin exigir ordenación como conocimiento previo. Después continuar con búsqueda, rotación y pilas.
+Introducir búsqueda por índices, bucles con condición y reducción del intervalo antes de Busca a la mitad. Después continuar con rotación y pilas.
 
 ## Fiabilidad y experiencia
 

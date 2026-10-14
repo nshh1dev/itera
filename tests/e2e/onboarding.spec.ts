@@ -56,7 +56,7 @@ test("la plantilla guiada también está disponible en JavaScript", async ({ pag
   await expect(page.getByRole("textbox", { name: "Editor sencillo de JavaScript" })).toHaveValue(/return 7/);
 });
 
-test("Conecta las ideas introduce estructuras y textos antes de sus retos", async ({ page }) => {
+test("Conecta las ideas introduce estructuras, textos y máximos antes de sus retos", async ({ page }) => {
   await page.goto("/rutas/pensar-en-soluciones");
   await expect(page.getByRole("heading", { name: "Conecta las ideas", exact: true })).toBeVisible();
   const steps = page.locator('a[href^="/ejercicios/"]');
@@ -68,6 +68,29 @@ test("Conecta las ideas introduce estructuras y textos antes de sus retos", asyn
   await expect(page).toHaveURL(/lenguaje=javascript&ruta=pensar-en-soluciones/);
   await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", "/rutas/pensar-en-soluciones?lenguaje=javascript");
 });
+
+for (const language of ["python", "javascript"] as const) {
+  test(`las actividades de máximos muestran su guía y ausencia explícita en ${language}`, async ({ page }) => {
+    const lessons = [
+      { slug: "maximo-de-una-lista", title: "Conserva el mayor", code: "numero < mayor" },
+      { slug: "primer-valor-o-ausencia", title: "Cuando no hay un valor", code: "return 0" },
+      { slug: "maximo-bajo-un-limite", title: "El mayor por debajo del límite", code: "numero <= limite" },
+    ];
+    for (const lesson of lessons) {
+      await page.goto(exerciseHref(lesson.slug, language, "pensar-en-soluciones"));
+      await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
+      const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
+      await expect(guide.locator("li").first()).toBeVisible();
+      await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+      const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
+      await expect(editor).toHaveValue(new RegExp(lesson.code));
+      if (lesson.slug === "maximo-bajo-un-limite") {
+        await expect(editor).toHaveValue(language === "python" ? /candidato is None/ : /candidato === null/);
+      }
+      await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/pensar-en-soluciones?lenguaje=${language}`);
+    }
+  });
+}
 
 for (const language of ["python", "javascript"] as const) {
   test(`las cuatro actividades de colecciones muestran su guía y plantilla en ${language}`, async ({ page }) => {
