@@ -80,9 +80,17 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 - Nuevas actividades y orden incorporados localmente. Recuentos y huellas de las versiones, variantes y casos anteriores, borradores, progreso, envíos y cuentas iguales antes y después.
 - Verificados lint, tipos, build, 30 pruebas unitarias/editoriales y 24 recorridos E2E en desarrollo. En producción local, dos ejecuciones se bloquearon esperando el cierre de la respuesta del segundo guardado administrativo: 18 recorridos aprobados, uno fallido y cinco no ejecutados en cada intento. Las actividades nuevas pasan en ambos modos, pero la suite completa de producción no está aprobada. Piston sigue sin estar disponible.
 
+## Octava entrega: cierre de acciones administrativas
+
+- Diagnóstico del bloqueo: se observó `finish` en el servidor y resolución de `reader.closed` en el navegador mientras `Response.finished()` de Playwright seguía pendiente. No era prueba de que el servidor mantuviese abierta la respuesta; la señal de Playwright no era fiable para estos streams en este entorno.
+- Los E2E observan ahora el cierre del lector nativo usado por React, sin clonar, consumir, cancelar ni sustituir su lectura. Siguen esperando EOF y fallan si hay error o si el stream queda pendiente. Dos pruebas controladas verifican esa distinción.
+- El formulario usa `action` de React y publicación/ocultación usan transiciones. Eliminados los refrescos redundantes tras acciones que ya revalidan la página. Se conservan autenticación, auditoría y revalidación del servidor.
+- La regresión comprueba tres guardados, publicación, ocultación y las cinco importaciones editoriales, sin alterar contenido histórico ni el trabajo de estudiantes. No se han añadido reintentos ni ampliado los tiempos de espera.
+- Lint, tipos, build y 30 pruebas unitarias/editoriales aprobados. Los 26 E2E pasan en desarrollo y en dos ejecuciones completas consecutivas de producción local. El catálogo no cambia; Piston real continúa pendiente.
+
 ## Siguiente entrega
 
-Priorizar el bloqueo de streaming del guardado administrativo reproducido en producción local, conservando las comprobaciones de cierre de respuesta. Después introducir máximos distintos y ausencia de resultado (None/null) antes de El segundo lugar, sin exigir ordenación como conocimiento previo, y continuar con búsqueda, rotación y pilas.
+Introducir máximos distintos y ausencia de resultado (None/null) antes de El segundo lugar, sin exigir ordenación como conocimiento previo. Después continuar con búsqueda, rotación y pilas.
 
 ## Fiabilidad y experiencia
 

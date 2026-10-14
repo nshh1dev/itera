@@ -5,6 +5,7 @@ import { mkdir, readdir, readFile, unlink } from "node:fs/promises";
 import { PrismaClient } from "../../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { catalogRevision, catalogRevisionDecision, seedVersionContent } from "../../prisma/editorial-revision";
+import { actionStreamMonitor } from "./action-stream";
 
 const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.DATABASE_URL})});
 const email=`itera-e2e-${Date.now()}@example.test`;
@@ -230,6 +231,11 @@ test("recuperación local, rechazo de roles enviados por cliente y privacidad de
 });
 
 test("administración guarda borradores privados y publica tras validar las referencias",async({page})=>{
+  const completeAction=await actionStreamMonitor(page);
+  const actionFailures:string[]=[];
+  page.on("requestfailed",request=>{
+    if(request.method()==="POST" && request.headers()["next-action"]!==undefined) actionFailures.push(request.failure()?.errorText??"Acción cancelada");
+  });
   await db.user.update({where:{email},data:{role:"ADMIN"}});
   await page.context().addCookies(authCookies);
   await page.goto("/admin/ejercicios/nuevo");
@@ -249,13 +255,13 @@ test("administración guarda borradores privados y publica tras validar las refe
   await page.getByRole("tab",{name:"JavaScript",exact:true}).click();
   await page.locator("#javascript-solution").fill("function solve(data) { return data.a + data.b; }");
   await page.locator("#javascript-explanation").fill("Accede a ambos valores y devuelve la suma. Tiempo constante.");
-  await page.getByRole("button",{name:"Guardar nueva versión"}).click();
+  await completeAction(()=>page.getByRole("button",{name:"Guardar nueva versión"}).click());
   await expect(page).toHaveURL(new RegExp(`/admin/ejercicios/${editorialSlug}`));
   const firstVersion=await db.exerciseVersion.findFirstOrThrow({where:{exercise:{slug:editorialSlug}},orderBy:{number:"desc"}});
   expect(firstVersion.objective).toBe(objective);
   expect(firstVersion.prerequisites).toEqual(["Usar return","Acceder a propiedades"]);
   expect((await page.request.get(`/ejercicios/${editorialSlug}`)).status()).toBe(404);
-  await page.getByRole("button",{name:"Validar y publicar versión guardada"}).click();
+  await completeAction(()=>page.getByRole("button",{name:"Validar y publicar versión guardada"}).click());
   await expect.poll(async()=>(await db.exercise.findUniqueOrThrow({where:{slug:editorialSlug}})).published).toBe(true);
   expect((await page.request.get(`/ejercicios/${editorialSlug}`)).status()).toBe(200);
   await page.goto(`/ejercicios/${editorialSlug}?lenguaje=python`);
@@ -271,9 +277,7 @@ test("administración guarda borradores privados y publica tras validar las refe
   const draftObjective="Practicar una revisión distinta que todavía no debe verse públicamente.";
   await page.getByLabel("Objetivo de aprendizaje",{exact:true}).fill(draftObjective);
   await page.getByLabel("Conocimientos previos recomendados",{exact:true}).fill("Operaciones numéricas");
-  const save=page.waitForResponse(response=>response.request().method()==="POST" && response.request().headers()["next-action"]!==undefined);
-  await page.getByRole("button",{name:"Guardar nueva versión",exact:true}).click();
-  await (await save).finished();
+  await completeAction(()=>page.getByRole("button",{name:"Guardar nueva versión",exact:true}).click());
   await expect.poll(async()=>(await db.exerciseVersion.findFirstOrThrow({where:{exercise:{slug:editorialSlug}},orderBy:{number:"desc"}})).objective).toBe(draftObjective);
   const preserved=await db.exerciseVersion.findUniqueOrThrow({where:{id:firstVersion.id}});
   expect(preserved.objective).toBe(objective);
@@ -282,13 +286,19 @@ test("administración guarda borradores privados y publica tras validar las refe
   await expect(guide.getByText(objective,{exact:true})).toBeVisible();
   await expect(guide.getByText(draftObjective,{exact:true})).toHaveCount(0);
   await page.goto(`/admin/ejercicios/${editorialSlug}`);
-  await page.getByRole("button",{name:"Ocultar del catálogo"}).click();
+  await expect(page.getByLabel("Objetivo de aprendizaje",{exact:true})).toHaveValue(draftObjective);
+  await page.getByLabel("Objetivo de aprendizaje",{exact:true}).fill(`${draftObjective} Tercer guardado.`);
+  await completeAction(()=>page.getByRole("button",{name:"Guardar nueva versión",exact:true}).click());
+  expect(await db.exerciseVersion.count({where:{exercise:{slug:editorialSlug}}})).toBe(3);
+  await completeAction(()=>page.getByRole("button",{name:"Ocultar del catálogo"}).click());
   await expect(page.getByText("Ejercicio oculto del catálogo.")).toBeVisible();
   expect((await page.request.get(`/ejercicios/${editorialSlug}`)).status()).toBe(404);
+  expect(actionFailures).toEqual([]);
 });
 
 for(const revisionSlug of revisionSlugs){
 test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borradores editoriales`,async({page})=>{
+  const completeAction=await actionStreamMonitor(page);
   await page.context().addCookies(authCookies);
   const exercise=await db.exercise.findUniqueOrThrow({where:{slug:revisionSlug},include:{versions:{orderBy:{number:"desc"},take:1,include:{variants:{include:{tests:true}}}}}});
   const previous=exercise.versions[0];
@@ -299,9 +309,7 @@ test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borrador
   await page.goto(`/admin/ejercicios/${exercise.slug}`);
   async function prepare(){
     await page.getByRole("button",{name:"Preparar revisión didáctica",exact:true}).click();
-    const action=page.waitForResponse(response=>response.request().method()==="POST" && response.request().headers()["next-action"]!==undefined);
-    await page.getByRole("button",{name:"Crear borrador didáctico",exact:true}).click();
-    await (await action).finished();
+    await completeAction(()=>page.getByRole("button",{name:"Crear borrador didáctico",exact:true}).click());
   }
   await prepare();
   if(decision==="draft"){
@@ -325,9 +333,7 @@ test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borrador
   expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?1:0));
   // Un guardado manual posterior debe impedir que una importación lo sobrepase.
   await page.locator("#description").fill("Borrador temporal para verificar que se conserva el trabajo editorial manual.");
-  const save=page.waitForResponse(response=>response.request().method()==="POST" && response.request().headers()["next-action"]!==undefined);
-  await page.getByRole("button",{name:"Guardar nueva versión",exact:true}).click();
-  await (await save).finished();
+  await completeAction(()=>page.getByRole("button",{name:"Guardar nueva versión",exact:true}).click());
   await expect.poll(async()=>db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?2:1));
   await page.reload();
   await prepare();
