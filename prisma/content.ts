@@ -1,5 +1,6 @@
 import type { Json, Level } from "../src/lib/types";
 import { introductoryExercises } from "./introductory-content";
+import { foundationExercises } from "./foundation-content";
 
 export type SeedExercise = {
   slug: string; title: string; description: string; category: string; level: Level; minutes: number;
@@ -165,6 +166,7 @@ export const exercises: SeedExercise[] = [
     [t({a:"gato",b:"pato"},1),t({a:"kitten",b:"sitting"},3),t({a:"",b:"abc"},3),t({a:"itera",b:"itera"},0),t({a:"abc",b:""},3)],
     ["Resuelve primero el problema para prefijos más cortos.", "Si las últimas letras coinciden, no necesitas una operación nueva.", "En otro caso toma el mínimo entre insertar, eliminar y sustituir, sumando uno."],
     "La distancia de Levenshtein compara prefijos. Cada celda depende de la izquierda, arriba y diagonal. Tiempo O(nm), espacio O(m) al conservar solo una fila anterior.", ["Cadenas ASCII de hasta 200 caracteres."]),
+  ...foundationExercises,
 ];
 
 export const starter = {

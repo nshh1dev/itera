@@ -16,5 +16,12 @@ export default async function PathPage({ params, searchParams }: { params: Promi
   if (!path) notFound();
   const catalog = await getCatalog(user?.id, language);
   const exercises = path.items.flatMap(item => { const exercise = catalog.find(e => e.id === item.exerciseId); return exercise ? [exercise] : []; });
-  return <div className="page-container"><Link href="/rutas" className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"><ArrowLeft className="size-3.5" />Todas las rutas</Link><h1 className="page-title mt-7">{path.title}</h1><p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground">{path.description}</p><div className="mt-7 flex items-center gap-2">{["python", "javascript"].map(lang => <Link key={lang} href={`?lenguaje=${lang}`} className={cn("rounded-lg px-4 py-2.5 text-sm", language === lang ? "bg-surface font-medium" : "text-muted-foreground")}>{lang === "python" ? "Python" : "JavaScript"}</Link>)}</div><p className="mt-10 border-b pb-4 text-xs text-muted-foreground">{exercises.filter(e => e.solved).length} de {exercises.length} completados · Sin prisa, sin bloqueos</p>{exercises.map(e => <ExerciseRow key={e.id} exercise={e} language={language} />)}</div>;
+  return <div className="page-container">
+    <Link href="/rutas" className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"><ArrowLeft className="size-3.5" />Todas las rutas</Link>
+    <h1 className="page-title mt-7">{path.title}</h1>
+    <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground">{path.description}</p>
+    <div className="mt-7 flex items-center gap-2">{["python", "javascript"].map(lang => <Link key={lang} href={`?lenguaje=${lang}`} className={cn("rounded-lg px-4 py-2.5 text-sm", language === lang ? "bg-surface font-medium" : "text-muted-foreground")}>{lang === "python" ? "Python" : "JavaScript"}</Link>)}</div>
+    <p className="mt-10 border-b pb-4 text-xs text-muted-foreground">{exercises.filter(e => e.solved).length} de {exercises.length} completados · Sin prisa, sin bloqueos</p>
+    {exercises.map((e, index) => <ExerciseRow key={e.id} exercise={{ ...e, order: index }} language={language} pathSlug={slug} />)}
+  </div>;
 }

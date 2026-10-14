@@ -99,7 +99,7 @@ test("registro, preferencias y borrador persistente entre sesiones",async({page}
 
 test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async({page})=>{
   await page.context().addCookies(authCookies);
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python&ruta=desde-cero");
   await page.getByRole("button",{name:"Ejecutar ejemplos",exact:true}).click();
   await expect(page.getByText("Los ejemplos funcionan.",{exact:true})).toBeVisible();
   const user=await db.user.findUniqueOrThrow({where:{email}});
@@ -107,6 +107,9 @@ test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async
   await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
   await expect(page.getByText("Un paso más. Ejercicio resuelto.")).toBeVisible();
   await expect(page.getByText("3 de 3 pruebas ocultas superadas")).toBeVisible();
+  // La suma cierra Desde cero: no saltar al siguiente ejercicio del catálogo global.
+  await expect(page.getByRole("link",{name:"Continuar con otro ejercicio"})).toHaveCount(0);
+  await expect(page.getByRole("link",{name:"Volver a la ruta"})).toHaveAttribute("href","/rutas/desde-cero?lenguaje=python");
   const submission=await db.submission.findFirstOrThrow({where:{userId:user.id,mode:"submit"},orderBy:{createdAt:"desc"}});
   const result=await page.request.get(`/api/executions/${submission.id}`);
   const payload=await result.json();

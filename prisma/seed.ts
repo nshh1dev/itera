@@ -28,9 +28,10 @@ async function seed() {
   for (const path of learningPaths) {
     if (await db.learningPath.findUnique({ where: { slug: path.slug } })) continue;
     const items = await db.exercise.findMany({ where: {
-      slug: path.slug === "desde-cero" ? { in: [...introSlugs, "suma-de-dos-numeros"] } : { notIn: introSlugs },
+      slug: path.slugs ? { in: path.slugs } : { notIn: introSlugs },
       versions: { some: { level: path.level, published: true } },
     }, orderBy: { order: "asc" } });
+    if (path.slugs) items.sort((a, b) => path.slugs!.indexOf(a.slug) - path.slugs!.indexOf(b.slug));
     await db.learningPath.create({ data: { slug: path.slug, title: path.title, description: path.description, order: path.order, items: { create: items.map((e, position) => ({ exerciseId: e.id, position })) } } });
   }
   console.log(`Catálogo listo: ${await db.exercise.count()} ejercicios, Python y JavaScript, tres niveles y una ruta desde cero.`);

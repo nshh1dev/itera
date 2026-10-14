@@ -7,9 +7,10 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 ## Qué incluye
 
 - Landing, espacio personal, catálogo con filtros y cuatro rutas de aprendizaje.
-- 31 ejercicios originales en español: 15 principiantes, 8 intermedios y 8 avanzados.
+- 37 ejercicios originales en español: 21 principiantes, 8 intermedios y 8 avanzados.
 - Ruta **Desde cero**: siete actividades guiadas antes de sumar dos números, con plantillas propias para Python y JavaScript.
-- Python y JavaScript; 155 casos editoriales por lenguaje, entre visibles y ocultos.
+- Ruta **Construye tus bases**: comparaciones, condiciones, resto, listas y bucles antes de combinar las ideas en retos.
+- Python y JavaScript; 185 casos editoriales por lenguaje, entre visibles y ocultos.
 - Registro e inicio de sesión con correo y contraseña; recuperación en una bandeja de correo local.
 - Monaco servido localmente, editor sencillo alternativo, tamaño de fuente y paneles ajustables.
 - Borrador local y guardado en PostgreSQL con detección de conflictos entre pestañas.
@@ -117,6 +118,7 @@ Los usuarios nuevos no pueden asignarse el rol de administrador. Los permisos se
 | `npm run db:start` / `npm run db:stop` | Controlar el clúster privado. |
 | `npm run db:migrate` / `npm run db:seed` | Migraciones y catálogo. |
 | `npm run db:studio` | Inspección local mediante Prisma Studio. |
+| `npm run content:paths` | Vista previa del orden de las dos rutas iniciales. Añade `-- --apply` para actualizarlo explícitamente. |
 | `npm run doctor` | Estado de dependencias locales. |
 | `npm run lint` / `npm run typecheck` | Calidad estática. |
 | `npm test` | Evaluador, validación y referencias editoriales. |
@@ -172,5 +174,7 @@ Para respaldar tus datos usa `pg_dump` de tu versión de PostgreSQL, o copia `.l
 Prioridades y criterios pedagógicos: [docs/roadmap.md](docs/roadmap.md).
 
 Para incorporar **Desde cero** a una instalación existente, inicia PostgreSQL y ejecuta `npm run db:seed`. Se añaden los siete ejercicios y la ruta sin reemplazar los ejercicios, rutas, borradores ni progresos existentes. No hace falta resetear la base.
+
+Para incorporar la progresión ampliada de **Construye tus bases**, ejecuta `npm run db:seed`, revisa `npm run content:paths` y aplica con `npm run content:paths -- --apply`. Esta actualización solo reemplaza el orden y la composición de las dos rutas editoriales iniciales; no modifica ejercicios, versiones, borradores, intentos, progreso ni rutas personalizadas. Es atómica y comprueba que todos los ejercicios estén publicados antes de cambiar nada.
 
 Los cambios en las referencias y la plantilla de ejercicios ya existentes **no** se aplican con el seed. Deben guardarse como una nueva versión desde `/admin` y validarse con Piston antes de publicarse. Conserva las versiones anteriores para los intentos históricos.

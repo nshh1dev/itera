@@ -18,18 +18,27 @@ En esta entrega, Desde cero ya se incorporó a la base local y sus dos recorrido
 
 La primera actividad es de observación: que se apruebe sin editar es intencional, no demuestra dominio de programación. Las siguientes retiran ayuda gradualmente. Las pruebas verifican resultados, no obligan a utilizar una construcción sintáctica concreta.
 
-## Próxima entrega: progresión completa
+## Segunda entrega: fundamentos y navegación
 
-1. Introducir comparaciones, booleanos y condiciones antes de paridad; explicar `%` con ejemplos.
-2. Enseñar listas e índices, luego recorridos y acumuladores antes de vocales y factorial.
-3. Revisar el orden: acumulación antes de factorial; FizzBuzz como integración final.
+- Seis actividades guiadas: comparación con cero, condición, resto, acceso a una lista, bucle con contador y construcción de listas.
+- Construye tus bases pasa a 13 pasos: introducciones antes de paridad, suma, máximos y retos integradores.
+- Catálogo ordenado pedagógicamente y numeración consecutiva; las rutas numeran sus propios pasos.
+- La continuación usa los ejercicios publicados de la ruta seleccionada y termina al finalizarla. Cambiar de lenguaje, registrarse o iniciar sesión conserva el contexto.
+- `content:paths` muestra una vista previa; `content:paths -- --apply` actualiza explícitamente las dos rutas iniciales en una transacción, sin tocar el trabajo de estudiantes ni rutas personalizadas. El seed continúa sin reemplazar contenido existente.
+- Aplicado en la base local. Verificados lint, tipos, 13 pruebas unitarias/editoriales, build y 12 recorridos de navegador con doble HTTP. Sigue pendiente la comprobación del catálogo ampliado dentro de Piston.
+
+## Pendiente: progresión completa
+
+1. Profundizar en igualdad, condiciones combinadas y else antes de FizzBuzz.
+2. Introducir cadenas, pertenencia, normalización, rangos y acumulación de productos antes de vocales y factorial. Las nuevas introducciones a listas y bucles no cubren todavía todos esos conceptos.
+3. Publicar nuevas versiones didácticas de los retos existentes tras validarlas en Piston; el seed no las reemplaza.
 4. Registrar objetivo y prerrequisitos por versión, y ejemplos explicados por lenguaje. Evitar conceptos que aún no se han presentado.
 5. Añadir introducciones a conjuntos, mapas, pilas, búsqueda, grafos y programación dinámica antes de sus respectivos retos.
 6. Probar Desde cero con personas sin experiencia: observar dudas y revisar explicaciones y tiempos. No equiparar completar con comprender.
 
 ## Fiabilidad y experiencia
 
-- Continuar dentro de la ruta elegida, no solo según el catálogo global.
+- Añadir una pantalla de cierre y repaso al completar una ruta; la continuación ya respeta sus límites.
 - Ofrecer recuperación explícita de borradores de versiones anteriores.
 - Mantener la clave idempotente tras una respuesta de ejecución incierta.
 - Consola de depuración solo para ejemplos visibles; preservar confidencialidad de casos ocultos.

@@ -19,6 +19,7 @@
     "db:stop": "node scripts/database.mjs stop",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
+    "content:paths": "tsx scripts/learning-paths.ts",
     "db:studio": "prisma studio",
     "admin": "tsx scripts/admin.ts",
     "runner:setup": "node --env-file-if-exists=.env scripts/piston.mjs"
