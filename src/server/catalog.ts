@@ -25,6 +25,7 @@ export async function getExercise(slug: string, language: Language, userId?: str
     select: { id: true, slug: true, category: true,
       versions: { where: { published: true }, orderBy: { number: "desc" }, take: 1, select: {
         id: true, title: true, statement: true, constraints: true, hints: true, level: true, minutes: true, number: true,
+        objective: true, prerequisites: true,
         variants: { where: { language }, select: { id: true, language: true, starter: true,
           tests: { where: { visible: true }, orderBy: { order: "asc" }, select: { input: true, expected: true } },
           drafts: { where: { userId: userId ?? "__guest__" }, select: { code: true, revision: true } },

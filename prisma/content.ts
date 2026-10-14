@@ -2,12 +2,14 @@ import type { Json, Level } from "../src/lib/types";
 import { introductoryExercises } from "./introductory-content";
 import { foundationExercises } from "./foundation-content";
 import { beginnerRevisions } from "./beginner-revisions";
+import { learningMetadata } from "./learning-metadata";
 
 export type SeedExercise = {
   slug: string; title: string; description: string; category: string; level: Level; minutes: number;
   statement: string; constraints: string[]; hints: string[]; python: string; javascript: string; explanation: string;
   tests: { input: Json; expected: Json }[];
   starters?: { python: string; javascript: string };
+  objective?: string; prerequisites?: string[];
 };
 
 const t = (input: Json, expected: Json) => ({ input, expected });
@@ -168,7 +170,7 @@ export const exercises: SeedExercise[] = [
     ["Resuelve primero el problema para prefijos más cortos.", "Si las últimas letras coinciden, no necesitas una operación nueva.", "En otro caso toma el mínimo entre insertar, eliminar y sustituir, sumando uno."],
     "La distancia de Levenshtein compara prefijos. Cada celda depende de la izquierda, arriba y diagonal. Tiempo O(nm), espacio O(m) al conservar solo una fila anterior.", ["Cadenas ASCII de hasta 200 caracteres."]),
   ...foundationExercises,
-].map(exercise => ({ ...exercise, ...beginnerRevisions[exercise.slug] }));
+].map(exercise => ({ ...exercise, ...beginnerRevisions[exercise.slug], ...learningMetadata[exercise.slug] }));
 
 export const starter = {
   python: "def solve(data):\n    # Escribe tu solución aquí\n    pass\n",

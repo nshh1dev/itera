@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { beginnerRevisions } from "../prisma/beginner-revisions";
+import { exercises } from "../prisma/content";
 import { catalogRevision, catalogRevisionDecision, seedVersionContent } from "../prisma/editorial-revision";
 
 function fixture() {
@@ -8,14 +8,12 @@ function fixture() {
   return { source, current: { ...structuredClone(source), id: "version-1", published: true } };
 }
 
-test("las revisiones solo incluyen los retos originales autorizados", () => {
+test("las revisiones solo incluyen ejercicios del catálogo editorial", () => {
   assert.equal(catalogRevision("no-existe"), undefined);
   assert.equal(catalogRevision("constructor"), undefined);
-  assert.equal(catalogRevision("tu-primer-resultado"), undefined);
-  for (const slug of Object.keys(beginnerRevisions)) {
+  assert.ok(catalogRevision("tu-primer-resultado"));
+  for (const { slug } of exercises) {
     const exercise = catalogRevision(slug)!;
-    assert.equal(exercise.level, "BEGINNER");
-    assert.ok(exercise.starters?.python && exercise.starters?.javascript, slug);
     const content = seedVersionContent(exercise);
     assert.deepEqual(content.variants.map(v => v.language), ["python", "javascript"]);
     for (const variant of content.variants) {
@@ -23,6 +21,15 @@ test("las revisiones solo incluyen los retos originales autorizados", () => {
       assert.ok(variant.tests.some(t => !t.visible), slug);
     }
   }
+});
+
+test("objetivo y conocimientos previos forman parte de la versión importada", () => {
+  const { source, current } = fixture();
+  current.objective = "Objetivo de una versión anterior";
+  assert.equal(catalogRevisionDecision(current, source, current.id), "create");
+  const another = fixture();
+  another.current.prerequisites = [];
+  assert.equal(catalogRevisionDecision(another.current, another.source, another.current.id), "create");
 });
 
 test("importar contenido idéntico es idempotente incluso después de una respuesta perdida", () => {

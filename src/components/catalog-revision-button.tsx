@@ -26,7 +26,7 @@ export function CatalogRevisionButton({ slug, versionId }: { slug: string; versi
 
   return <section className="mt-6 rounded-xl border p-5" aria-label="Revisión didáctica del catálogo">
     <h2 className="text-sm font-medium">Una versión pensada para aprender</h2>
-    <p className="mt-2 text-xs leading-6 text-muted-foreground">El catálogo incluye plantillas, pistas y explicaciones revisadas. Puedes prepararlas como borrador sin cambiar lo que ven los estudiantes.</p>
+    <p className="mt-2 text-xs leading-6 text-muted-foreground">El catálogo incluye objetivos, conocimientos previos y contenido editorial revisado. Puedes prepararlos como borrador sin cambiar lo que ven los estudiantes.</p>
     <Dialog open={open} onOpenChange={value => { if (!pending) setOpen(value); }}>
       <DialogTrigger asChild><Button type="button" variant="outline" className="mt-3">Preparar revisión didáctica</Button></DialogTrigger>
       <DialogContent>

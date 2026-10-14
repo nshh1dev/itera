@@ -105,6 +105,8 @@ test("la administración publica tras ejecutar las referencias y rechaza una ref
   await page.getByLabel("Título",{exact:true}).fill("Suma real de prueba");
   await page.getByLabel("Identificador URL").fill(badSlug);
   await page.getByLabel("Descripción breve").fill("Suma dos valores con una referencia defectuosa a propósito.");
+  await page.getByLabel("Objetivo de aprendizaje",{exact:true}).fill("Practicar la suma de dos valores recibidos en un objeto.");
+  await page.getByLabel("Conocimientos previos recomendados",{exact:true}).fill("Usar return\nAcceder a propiedades");
   await page.getByLabel("Enunciado",{exact:true}).fill("Recibe un objeto con a y b, y devuelve la suma de ambos valores.");
   await page.getByLabel("Pistas progresivas").fill("Utiliza el operador de suma.");
   await page.getByRole("tab",{name:"Pruebas",exact:true}).click();
@@ -125,6 +127,8 @@ test("la administración publica tras ejecutar las referencias y rechaza una ref
   await page.getByLabel("Título",{exact:true}).fill("Suma real correcta");
   await page.getByLabel("Identificador URL").fill(goodSlug);
   await page.getByLabel("Descripción breve").fill("Suma dos valores y valida sus referencias en el sandbox real.");
+  await page.getByLabel("Objetivo de aprendizaje",{exact:true}).fill("Practicar la suma de dos valores recibidos en un objeto.");
+  await page.getByLabel("Conocimientos previos recomendados",{exact:true}).fill("Usar return\nAcceder a propiedades");
   await page.getByLabel("Enunciado",{exact:true}).fill("Recibe un objeto con a y b, y devuelve la suma de ambos valores.");
   await page.getByLabel("Pistas progresivas").fill("Utiliza el operador de suma.");
   await page.getByRole("tab",{name:"Pruebas",exact:true}).click();

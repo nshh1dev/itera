@@ -40,7 +40,7 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 1. Validar el recorrido con principiantes y ajustar la retirada de ayuda: las introducciones ya cubren igualdad, condiciones combinadas, selección, cadenas, pertenencia, rangos y productos.
 2. Publicar las revisiones didácticas ya preparadas de los retos originales tras validarlas en Piston; la instalación existente conserva sus versiones públicas antiguas hasta entonces.
 3. Revisar la calibración de tiempos y la retirada de ayuda con estudiantes reales.
-4. Registrar objetivo y prerrequisitos por versión, y ejemplos explicados por lenguaje. Evitar conceptos que aún no se han presentado.
+4. Añadir ejemplos explicados por lenguaje. Objetivos y prerrequisitos por versión ya están implementados; su incorporación a versiones públicas existentes requiere revisión y publicación.
 5. Añadir introducciones a conjuntos, mapas, pilas, búsqueda, grafos y programación dinámica antes de sus respectivos retos.
 6. Probar Desde cero con personas sin experiencia: observar dudas y revisar explicaciones y tiempos. No equiparar completar con comprender.
 
@@ -53,9 +53,18 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 - Corregida la doble navegación/refresco del editor administrativo al guardar una versión, que cancelaba el stream de la respuesta actualizada.
 - Verificados lint, tipos, build, 20 tests unitarios/editoriales y 15 recorridos con doble HTTP, tanto en desarrollo como en producción local. `ITERA_E2E_PRODUCTION=1` permite repetir la segunda modalidad. Sigue pendiente la publicación real en Piston; este modo de navegador no sustituye al sandbox.
 
+## Quinta entrega: objetivos y conocimientos previos
+
+- Objetivo y conocimientos previos recomendados guardados por versión, editables en administración y visibles en el enunciado antes de los ejemplos. No bloquean la práctica ni conceden progreso.
+- Metadatos definidos para los 45 ejercicios. La importación administrativa permite preparar cualquier ejercicio del catálogo como borrador; conserva autorización, auditoría, idempotencia y protección frente a borradores distintos.
+- Migración aditiva aplicada localmente: las 45 versiones históricas conservan su contenido y reciben valores vacíos, con mensajes públicos que no los confunden con ausencia de requisitos. Recuentos y huellas de versiones, variantes, casos, borradores, progreso, envíos y cuentas iguales antes y después.
+- Los objetivos son obligatorios para guardar y publicar nuevas versiones. Las instalaciones existentes no se actualizan ni publican automáticamente; el seed continúa omitiendo slugs existentes.
+- Formulario administrativo deshabilitado hasta completar la hidratación para impedir que una edición temprana se mezcle con el texto inicial.
+- Verificados lint, tipos, 25 pruebas unitarias/editoriales, build y 15 recorridos E2E con doble HTTP en desarrollo y producción local. Piston sigue pendiente; no se afirma validación real del catálogo.
+
 ## Siguiente entrega
 
-Añadir objetivos y prerrequisitos por versión, visibles antes de empezar y editables desde administración. Se conservarán las versiones históricas y las cuentas existentes; no se convertirá la progresión en un bloqueo obligatorio.
+Introducir conjuntos y mapas con actividades guiadas antes de los retos intermedios que eliminan duplicados o cuentan frecuencias. Revisar su orden y conocimientos previos, sin saltar directamente a grafos o programación dinámica.
 
 ## Fiabilidad y experiencia
 

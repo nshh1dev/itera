@@ -16,6 +16,7 @@ async function seed() {
       slug: exercise.slug, category: exercise.category, order: order - introductoryExercises.length,
       versions: { create: {
         title: exercise.title, description: exercise.description, statement: exercise.statement, published: true,
+        objective: exercise.objective ?? "", prerequisites: exercise.prerequisites ?? [],
         level: exercise.level, minutes: exercise.minutes, constraints: exercise.constraints, hints: exercise.hints,
         variants: { create: (["python", "javascript"] as const).map((language) => ({
           language, starter: exercise.starters?.[language] ?? starter[language], solution: exercise[language], explanation: exercise.explanation,

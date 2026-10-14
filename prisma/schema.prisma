@@ -114,6 +114,8 @@ model ExerciseVersion {
   title        String
   description  String
   statement    String
+  objective    String   @default("")
+  prerequisites String[] @default([])
   constraints  String[]
   hints        String[]
   level        Level
