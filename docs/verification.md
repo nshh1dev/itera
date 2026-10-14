@@ -9,11 +9,18 @@
 - El flujo de evaluación verifica idempotencia, progreso separado por lenguaje y ausencia de entradas, salidas y errores de pruebas ocultas en la respuesta pública.
 - Se comprobó el ciclo de parada y arranque del clúster PostgreSQL del proyecto.
 
-Las pruebas de navegador usan un doble HTTP de Piston en el puerto 2001. La configuración normal apunta al puerto 2000. **Esto verifica la integración, no el aislamiento real del motor.**
+## Sandbox real
 
-## Pendiente por infraestructura
+Las pruebas de navegador de `npm run test:e2e` usan un doble HTTP de Piston en el puerto 2001. Verifican la integración, no el aislamiento real del motor. Para eso hay dos suites separadas que **sí usan Piston** en el puerto 2000:
 
-Docker y WSL2 no están instalados en este equipo. Por tanto, todavía falta probar Piston real, sus runtimes y sus límites de ejecución. La aplicación devuelve un error explícito si no encuentra el ejecutor, sin fabricar resultados ni ejecutar programas en el servidor principal.
+- `npm run test:runner` (`tests/real-runner.integration.ts`) llama al adaptador real y comprueba los runtimes, las soluciones de referencia dentro del sandbox, y los cuatro veredictos: aprobado, incorrecto, error en tiempo de ejecución y tiempo agotado, en Python y JavaScript. Por defecto valida un subconjunto de cinco ejercicios; con `ITERA_RUNNER_ALL=1` valida el catálogo completo, es decir 240 ejecuciones reales. Se salta si el ejecutor no responde.
+- `npm run test:e2e:real` (`tests/real/flows.spec.ts`, `playwright.real.config.ts`) recorre la aplicación completa contra el sandbox: registro, aprobación real, rechazo de una respuesta distinta, tiempo agotado, progreso independiente por lenguaje, y publicación editorial que solo ocurre si las dos referencias superan las pruebas. También comprueba que una referencia defectuosa impida publicar.
+
+Resultado de la última ejecución local: catálogo completo aprobado (240 ejecuciones reales), 5 pruebas de integración y 6 recorridos reales en verde.
+
+## Requisitos del ejecutor
+
+Docker Desktop con WSL2 y cgroup v2. Sin ellos la aplicación funciona igual, pero el botón de ejecución informa de que el sandbox está detenido; nunca se ejecuta código del usuario en Node o Python del servidor principal.
 
 ## Dependencias
 
@@ -23,15 +30,18 @@ La auditoría completa aún informa la cadena `eslint-config-next → fast-glob 
 
 ## Repetir la comprobación
 
-Con PostgreSQL iniciado y el puerto 3000 libre:
+Con PostgreSQL iniciado, el sandbox levantado y los puertos 3000 y 2000 libres:
 
 ```sh
 npm test
 npm run lint
 npm run typecheck
 npm run build
-npm run test:e2e
+npm run test:runner
+npm run test:e2e:real
 npm run doctor
 ```
+
+`npm run test:e2e` usa el doble HTTP y solo necesita libre el puerto 3000 y el 2001.
 
 Las capturas de referencia están en `.local/screenshots/`, excluidas de Git.

@@ -84,7 +84,7 @@ La primera preparación descarga la imagen de Piston y los runtimes gratuitos de
 
 El repositorio no llama a la API pública de Piston ni necesita una clave de terceros. Para detener el sandbox: `docker compose stop`.
 
-**En el equipo de desarrollo inicial no están instalados Docker ni WSL2.** La integración está preparada; su verificación con el sandbox real queda pendiente hasta instalarlos. No hay una ejecución simulada en la aplicación.
+**Verificado contra el sandbox real.** Con Docker Desktop y WSL2 instalados, `npm run test:runner` ejecuta las soluciones de referencia dentro de Piston y `npm run test:e2e:real` recorre la aplicación completa con el ejecutor real. No hay ninguna ejecución simulada en la aplicación normal.
 
 ## Contrato de los ejercicios
 
@@ -136,6 +136,8 @@ Las pruebas editoriales ejecutan **únicamente las referencias fijas del reposit
 
 Las pruebas E2E levantan su propia aplicación en el puerto 3000; detén antes cualquier instancia de Itera. Usan un doble de contrato HTTP en **2001**, sin ejecutar código, para verificar evaluación asíncrona, confidencialidad e idempotencia. La aplicación normal usa **2000**, reservado al Piston real. Crean cuentas y contenido temporales, los eliminan al terminar y dejan capturas en `.local/screenshots`.
 
+`npm run test:e2e:real` sí usa el Piston real (puerto 2000, sin dobles): comprueba que un envío se apruebe, que un resultado distinto y un bucle infinito no aprueben, que JavaScript tenga progreso independiente y que la administración solo publique tras ejecutar las referencias. Se omite solo si el sandbox está apagado.
+
 ## Arquitectura
 
 ```text
@@ -166,6 +168,6 @@ Para respaldar tus datos usa `pg_dump` de tu versión de PostgreSQL, o copia `.l
 
 ## Después
 
-- Verificar el sandbox real al disponer de Docker/WSL2.
 - Añadir el tutor opcional con clave propia del usuario.
 - Ampliar ejercicios y rutas a partir de la práctica.
+- Historial de intentos y estadísticas de práctica.

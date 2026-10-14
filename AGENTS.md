@@ -7,3 +7,40 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Local setup and generated files
+
+- This is a local-only app; GitHub stores the code, not a deployment. Keep fonts and Monaco local; AI is deferred. UI and exercise copy are Spanish.
+- Run commands from the repository root. On Windows PowerShell use `npm.cmd` / `npx.cmd` if the `.ps1` wrappers are blocked.
+- First setup: `npm ci` → `npm run setup`. Setup creates missing secrets, copies Monaco assets, starts the private PostgreSQL cluster, generates Prisma, deploys migrations, then seeds. Installing dependencies alone does not prepare the editor or database.
+- Subsequent starts: `npm run db:start` → `npm run dev`. Use `http://127.0.0.1:3000`; auth and execution origin checks explicitly allow port 3000, so Next's automatic fallback port is not equivalent. Diagnose services with `npm run doctor`.
+- PostgreSQL lives in `.local/postgres` on port **5434**, independently of existing Windows services. `PG_BIN` selects binaries and must match the cluster's major version. `db:stop` targets this private cluster, even with a custom `DATABASE_URL`.
+- The executor is Piston via `compose.yaml` on **2000**. It needs Docker Desktop with WSL2 and **cgroup v2**; `wsl --install --no-distribution` is enough, no Linux distro is required. The first `wsl --install` can leave `VirtualMachinePlatform` disabled, which makes `wsl --status` claim virtualization is off — verify with `Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform` before blaming the firmware.
+- The `docker` CLI is frequently missing from the PATH of a long-lived agent session even when Docker Desktop is installed; use `C:\Program Files\Docker\Docker\resources\bin\docker.exe`. `npm run doctor` already falls back to that path.
+- Prisma 7 reads the URL from `prisma.config.ts` and uses the `pg` adapter. Generate with `npx prisma generate`; imports come from `src/generated/prisma/client`, not `@prisma/client`. `db:migrate` runs **migrate deploy**, not migration creation. Build regenerates Prisma but does not migrate or seed.
+- Do not edit or commit `src/generated/`, `public/monaco/`, `.next/`, `.local/`, or real `.env` files. Rerun setup after updating Monaco to refresh its served assets.
+
+## Verification traps
+
+- Checks: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`. No formatter or CI workflow is configured; do not guess a `format` script.
+- Focused unit suite: `npx tsx --test tests/judge.test.ts`. `npm test` also executes fixed repository reference solutions; Python must be installed (`PYTHON_BIN` overrides `python`). This is not permission to execute submitted user code outside the sandbox.
+- E2E: prepare/seed PostgreSQL, run `npx playwright install chromium`, then `npm run test:e2e` with ports **3000 and 2001 free**. Playwright starts its own app and refuses to reuse an existing server.
+- Two E2E suites exist and must not be confused. `npm run test:e2e` (`tests/e2e`) points `PISTON_URL` at the HTTP double on 2001 and never executes code. `npm run test:e2e:real` (`tests/real`, `playwright.real.config.ts`) uses Piston on 2000 for real; it skips itself when the executor is offline. Both create and delete temporary users and editorial content.
+- `npm run test:runner` exercises the real Piston adapter and is skipped when the executor is down. Its file is `tests/real-runner.integration.ts` on purpose: it imports `server-only` through `piston.ts`, so it must run with `tsx --conditions=react-server` and must stay out of the `tests/*.test.ts` glob used by `npm test`.
+- `tests/e2e/flows.spec.ts` is a **stateful serial sequence**: later tests depend on the account and cookies created earlier. Run the whole file, not an arbitrary later test with `-g`. It writes temporary data to the configured database and cleans it up; screenshots go to `.local/screenshots/`.
+- E2E uses an HTTP Piston double on **2001** which never executes code. Passing E2E does not verify real isolation. Normal Piston uses **2000**; start it with `docker compose up -d` then `npm run runner:setup`. See `docs/verification.md` for verification limits.
+
+## Domain invariants
+
+- Execution flow: `POST /api/executions` reserves an idempotent submission under a short PostgreSQL advisory lock, returns 202, and schedules evaluation using Next `after()`. The client polls `/api/executions/[id]`. There is no durable job worker; interrupted attempts expire after two minutes when endpoints reconcile them.
+- All submitted programs go through `src/server/execution/piston.ts`. Exercises implement `solve(data)` returning JSON. `judge.ts` compares the final JSON output outside the sandbox and strips hidden inputs, expected/actual outputs and stderr before results are persisted or returned.
+- Only completed `submit` evaluations update progress, keyed by user + exercise + language. Example runs, solution views and infrastructure errors must not award completion. Preserve atomic finalization to avoid double-counting retries.
+- Public catalog queries select the highest-numbered **published** version of a published exercise. Admin saves create new draft versions; publication validates both reference solutions in Piston. Preserve old variants for historical submissions.
+- `prisma/content.ts` is the initial editorial catalog. The seed **skips existing slugs and paths**: changing this file and reseeding will not update an existing database. Use a new editorial version or an explicit data migration instead of resetting user data.
+- Draft saves use revision-based optimistic concurrency; do not replace them with unconditional upserts. The workspace also keeps browser-local copies and a separate guest-to-account transfer.
+- Better Auth recovery writes links to `.local/mail/`, not SMTP. Promote an existing account with `npm run admin -- email@example.com`; admin actions call `requireAdmin()` and must keep doing so.
+
+## Design integration
+
+- `src/app/globals.css` owns the light/dark tokens consumed by Tailwind, shadcn/ui and Monaco. Preserve the monochrome palette, blue primary actions and success-only green.
+- Monaco requires six-digit hex values even when CSS optimization shortens tokens to `#fff`. Keep the normalization and root-class observer in `src/components/practice/code-editor.tsx`: `next-themes` can update the DOM after React effects, otherwise the editor retains the wrong theme.
