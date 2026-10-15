@@ -1,4 +1,7 @@
 import type { LearningMetadata } from "../src/lib/learning-metadata";
+import { beginnerExpansion } from "./beginner-expansion";
+import { intermediateExpansion } from "./intermediate-expansion";
+import { advancedExpansion } from "./advanced-expansion";
 
 const m = (objective: string, ...prerequisites: string[]): LearningMetadata => ({ objective, prerequisites });
 
@@ -69,3 +72,14 @@ export const learningMetadata: Record<string, LearningMetadata> = {
   "orden-de-tareas": m("Obtener un orden topológico determinista y detectar dependencias cíclicas.", "Grafos dirigidos", "Listas de adyacencia", "Grado de entrada", "Colas y selección por prioridad"),
   "distancia-edicion": m("Relacionar prefijos de dos cadenas para minimizar inserciones, borrados y sustituciones.", "Índices y prefijos de cadenas", "Mínimos y bucles anidados", "Tablas de programación dinámica", "Casos base y transición de estados"),
 };
+
+// Las ampliaciones describen su objetivo y sus conocimientos previos junto al enunciado.
+// Se incorporan aquí para que el catálogo y la guía compartan una única fuente consultable,
+// sin duplicar el texto editorial.
+const expansionMetadata: Record<string, LearningMetadata> = Object.fromEntries(
+  [...beginnerExpansion, ...intermediateExpansion, ...advancedExpansion].map(exercise => [
+    exercise.slug,
+    { objective: exercise.objective ?? "", prerequisites: exercise.prerequisites ?? [] },
+  ]),
+);
+Object.assign(learningMetadata, expansionMetadata);

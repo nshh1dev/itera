@@ -18,7 +18,7 @@ const entries = exercises.map((exercise, order) => ({ slug: exercise.slug, order
 
 test("R1 revisa doce identidades existentes con contenido completo en ambos lenguajes", () => {
   assert.equal(batch.length, 12);
-  assert.equal(exercises.length, 63, "no amplía todavía el catálogo");
+  assert.equal(exercises.length, 120, "el catálogo completo reúne 120 actividades");
   for (const exercise of batch) {
     assert.ok(exercise);
     const version = seedVersionContent(exercise);

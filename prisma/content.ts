@@ -9,7 +9,27 @@ import { maximaExercises, maximaRevisions } from "./maxima-content";
 import { searchExercises, searchRevisions } from "./search-content";
 import { rotationExercises, rotationRevisions } from "./rotation-content";
 import { initialBatchRevisions } from "./initial-batch";
+import { beginnerExpansion } from "./beginner-expansion";
+import { intermediateExpansion } from "./intermediate-expansion";
+import { advancedExpansion } from "./advanced-expansion";
 import type { ActivityType } from "../src/lib/types";
+
+// Reclasificación editorial acordada al completar el currículo. Se aplica sobre el
+// catálogo ya compuesto para no reescribir las fuentes históricas ni los identificadores:
+// ocho intermedios pasan a principiantes y tres avanzados altos a intermedios.
+const levelOverrides: Record<string, Level> = {
+  "repite-con-while": "BEGINNER",
+  "recorre-por-indices": "BEGINNER",
+  "maximo-de-una-lista": "BEGINNER",
+  "primer-valor-o-ausencia": "BEGINNER",
+  "quita-los-espacios": "BEGINNER",
+  "filtra-letras-y-digitos": "BEGINNER",
+  "compara-dos-textos": "BEGINNER",
+  "reduce-vueltas-completas": "BEGINNER",
+  "ventana-sin-repeticiones": "INTERMEDIATE",
+  "unir-intervalos": "INTERMEDIATE",
+  "suma-maxima": "INTERMEDIATE",
+};
 
 export type SeedExercise = {
   slug: string; title: string; description: string; category: string; level: Level; minutes: number;
@@ -184,7 +204,16 @@ export const exercises: SeedExercise[] = [
     ["Resuelve primero el problema para prefijos más cortos.", "Si las últimas letras coinciden, no necesitas una operación nueva.", "En otro caso toma el mínimo entre insertar, eliminar y sustituir, sumando uno."],
     "La distancia de Levenshtein compara prefijos. Cada celda depende de la izquierda, arriba y diagonal. Tiempo O(nm), espacio O(m) al conservar solo una fila anterior.", ["Cadenas ASCII de hasta 200 caracteres."]),
   ...foundationExercises,
-].map(exercise => ({ ...exercise, ...beginnerRevisions[exercise.slug], ...collectionsRevisions[exercise.slug], ...textRevisions[exercise.slug], ...maximaRevisions[exercise.slug], ...searchRevisions[exercise.slug], ...rotationRevisions[exercise.slug], ...learningMetadata[exercise.slug], ...initialBatchRevisions[exercise.slug] }));
+  ...beginnerExpansion,
+  ...intermediateExpansion,
+  ...advancedExpansion,
+].map(exercise => ({
+  ...exercise,
+  ...beginnerRevisions[exercise.slug], ...collectionsRevisions[exercise.slug], ...textRevisions[exercise.slug],
+  ...maximaRevisions[exercise.slug], ...searchRevisions[exercise.slug], ...rotationRevisions[exercise.slug],
+  ...learningMetadata[exercise.slug], ...initialBatchRevisions[exercise.slug],
+  ...(levelOverrides[exercise.slug] ? { level: levelOverrides[exercise.slug] } : {}),
+}));
 
 export const starter = {
   python: "def solve(data):\n    # Escribe tu solución aquí\n    pass\n",

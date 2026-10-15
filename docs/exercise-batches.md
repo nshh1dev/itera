@@ -19,7 +19,24 @@ Implementado en `prisma/initial-batch.ts`. Conserva las doce identidades y sus c
 
 Cada revisión incluye entrada/salida explícitas, objetivos concretos, conocimientos previos y enlaces, dos ejemplos explicados, tres pistas sin instrucciones de solución completas, restricciones y explicación independiente por lenguaje con razonamiento, pasos, coste y errores comunes. Las referencias y plantillas conservan `solve(data)`; solo la observación empieza resuelta. R1 tiene 74 casos compartidos entre Python y JavaScript.
 
-El catálogo sigue teniendo 63 ejercicios, ahora con 361 casos editoriales por lenguaje. No se han añadido los otros 57 ejercicios del plan ni se han reclasificado niveles en esta entrega.
+El catálogo quedó en 63 ejercicios y 361 casos editoriales por lenguaje, sin añadir entonces los otros 57 ni reclasificar niveles. La ampliación posterior se describe en la sección siguiente.
+
+## Currículo completo: de 63 a 120 actividades
+
+Entrega de ampliación (`prisma/beginner-expansion.ts`, `prisma/intermediate-expansion.ts` y `prisma/advanced-expansion.ts`), compuesta con el ayudante `prisma/educational-exercise.ts`. Añade 57 identidades nuevas —8 principiantes, 19 intermedios y 30 avanzados— y reclasifica once existentes sin cambiar identificadores, slugs, progreso, envíos ni borradores:
+
+- Ocho intermedios pasan a principiantes: `repite-con-while`, `recorre-por-indices`, `maximo-de-una-lista`, `primer-valor-o-ausencia`, `quita-los-espacios`, `filtra-letras-y-digitos`, `compara-dos-textos` y `reduce-vueltas-completas`.
+- Tres avanzados altos pasan a intermedios: `ventana-sin-repeticiones`, `unir-intervalos` y `suma-maxima`.
+
+Recuento resultante: 45 principiantes (8 de Desde cero + 37 de Construye tus bases), 40 intermedios en Conecta las ideas y 35 avanzados en Ve un paso más allá; 120 ejercicios y 648 casos editoriales por lenguaje. Las reclasificaciones se aplican en `prisma/content.ts` mediante `levelOverrides`; los órdenes viven en `src/lib/learning-paths.ts` y la ruta avanzada pasa a tener secuencia explícita.
+
+Cada actividad nueva incluye enunciado, objetivos de práctica, prerrequisitos, dos ejemplos explicados, tres pistas progresivas, referencia y plantilla en ambos lenguajes, explicación por lenguaje con razonamiento, pasos, coste y errores comunes, y entre cinco y ocho casos con al menos una explicación. Las respuestas esperadas se escribieron a mano; las pruebas del repositorio ejecutan la referencia y comparan por valor, nunca por coincidencia del código.
+
+Los metadatos de las nuevas actividades viven junto a su definición y `prisma/learning-metadata.ts` los incorpora, de modo que el mapa sigue cubriendo todo el catálogo. En la base local, `npm run db:seed` inserta las 57 identidades nuevas como versiones publicadas y `npm run content:paths -- --apply` reescribe la pertenencia a las cuatro rutas.
+
+Las once identidades reclasificadas conservan en la base local su nivel publicado anterior (37/45/38) porque cambiarlo exige una nueva versión publicada, y la publicación valida referencias en Piston. El origen y las rutas ya reflejan 45/40/35. Cuando el sandbox vuelva a estar disponible, cada identidad afectada debe prepararse y publicarse desde administración.
+
+Verificaciones y resultados: [verification.md](verification.md#currículo-completo-120-actividades).
 
 ## Compatibilidad y puesta en uso
 
@@ -47,6 +64,6 @@ La migración aditiva está aplicada. Las doce revisiones están disponibles par
 
 Verificaciones y resultados: [verification.md](verification.md#lote-r1-contenido-educativo-inicial).
 
-## Siguiente lote
+## Revisión editorial pendiente
 
-R2 corregirá otros doce ejercicios existentes de decisiones, listas y recorridos. Después se completará la revisión del resto del catálogo; solo entonces se añadirán los conceptos ausentes en lotes pequeños. El objetivo de 120 actividades es curricular y revisable, no una cuota de ejercicios para generar de una vez.
+R1 revisó doce identidades y esta ampliación aportó 57 actividades nuevas, pero quedan **51 ejercicios previos sin revisión pedagógica completa**: conservan enunciado y pruebas originales. La revisión por lotes (R2–R6) debe completarse antes de dar por cerrado el currículo; no se presentan como terminados. Las referencias nuevas tampoco se han validado aún en Piston real.

@@ -4,13 +4,13 @@ import vm from "node:vm";
 import { spawnSync } from "node:child_process";
 import { exercises, type SeedExercise } from "../prisma/content";
 import { maximaExercises } from "../prisma/maxima-content";
-import { intermediateSteps, nextExerciseSlug } from "../src/lib/learning-paths";
+import { intermediateSteps, foundationSteps, nextExerciseSlug } from "../src/lib/learning-paths";
 
 test("máximos y ausencia se presentan antes de buscar el segundo lugar", () => {
-  const slugs = [...maximaExercises.map(exercise => exercise.slug), "segundo-mayor"];
-  const start = intermediateSteps.indexOf(slugs[0]);
+  for (const slug of ["maximo-de-una-lista", "primer-valor-o-ausencia"]) assert.ok(foundationSteps.includes(slug), slug);
+  const start = intermediateSteps.indexOf("maximo-bajo-un-limite");
   assert.ok(start >= 0);
-  assert.deepEqual(intermediateSteps.slice(start, start + slugs.length), slugs);
+  assert.deepEqual(intermediateSteps.slice(start, start + 2), ["maximo-bajo-un-limite", "segundo-mayor"]);
   assert.equal(nextExerciseSlug("maximo-bajo-un-limite", intermediateSteps), "segundo-mayor");
   const challenge = exercises.find(exercise => exercise.slug === "segundo-mayor")!;
   for (const exercise of [...maximaExercises, challenge]) {

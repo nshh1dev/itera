@@ -4,13 +4,13 @@ import vm from "node:vm";
 import { spawnSync } from "node:child_process";
 import { exercises, type SeedExercise } from "../prisma/content";
 import { searchExercises } from "../prisma/search-content";
-import { intermediateSteps, nextExerciseSlug } from "../src/lib/learning-paths";
+import { intermediateSteps, foundationSteps, nextExerciseSlug } from "../src/lib/learning-paths";
 
 test("while, índices, centro y descarte preceden a la búsqueda binaria", () => {
-  const slugs = [...searchExercises.map(exercise => exercise.slug), "busqueda-binaria"];
-  const start = intermediateSteps.indexOf(slugs[0]);
+  for (const slug of ["repite-con-while", "recorre-por-indices"]) assert.ok(foundationSteps.includes(slug), slug);
+  const start = intermediateSteps.indexOf("punto-medio-del-intervalo");
   assert.ok(start >= 0);
-  assert.deepEqual(intermediateSteps.slice(start, start + slugs.length), slugs);
+  assert.deepEqual(intermediateSteps.slice(start, start + 3), ["punto-medio-del-intervalo", "descarta-una-mitad", "busqueda-binaria"]);
   assert.equal(nextExerciseSlug("descarta-una-mitad", intermediateSteps), "busqueda-binaria");
   const challenge = exercises.find(exercise => exercise.slug === "busqueda-binaria")!;
   for (const exercise of [...searchExercises, challenge]) {

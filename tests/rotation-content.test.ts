@@ -4,13 +4,13 @@ import vm from "node:vm";
 import { spawnSync } from "node:child_process";
 import { exercises, type SeedExercise } from "../prisma/content";
 import { rotationExercises } from "../prisma/rotation-content";
-import { intermediateSteps, nextExerciseSlug } from "../src/lib/learning-paths";
+import { intermediateSteps, foundationSteps, nextExerciseSlug } from "../src/lib/learning-paths";
 
 test("resto, avance circular y reconstrucción preceden a la rotación", () => {
-  const slugs = [...rotationExercises.map(exercise => exercise.slug), "rotar-arreglo"];
-  const start = intermediateSteps.indexOf(slugs[0]);
+  assert.ok(foundationSteps.includes("reduce-vueltas-completas"), "reduce-vueltas-completas");
+  const start = intermediateSteps.indexOf("siguiente-indice-circular");
   assert.ok(start >= 0);
-  assert.deepEqual(intermediateSteps.slice(start, start + slugs.length), slugs);
+  assert.deepEqual(intermediateSteps.slice(start, start + 3), ["siguiente-indice-circular", "recorre-en-circulo", "rotar-arreglo"]);
   assert.equal(nextExerciseSlug("recorre-en-circulo", intermediateSteps), "rotar-arreglo");
   const challenge = exercises.find(exercise => exercise.slug === "rotar-arreglo")!;
   for (const exercise of [...rotationExercises, challenge]) assert.ok(exercise.tests.length <= 10, exercise.slug);

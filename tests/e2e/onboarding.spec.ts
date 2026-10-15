@@ -59,18 +59,18 @@ test("la plantilla guiada también está disponible en JavaScript", async ({ pag
 for (const language of ["python", "javascript"] as const) {
   test(`las actividades circulares presentan resto y recorrido desde otro índice en ${language}`, async ({ page }) => {
     const lessons = [
-      { slug: "reduce-vueltas-completas", title: "Las vueltas que sobran", code: "pasos % 2" },
-      { slug: "siguiente-indice-circular", title: "Después del último, el primero", code: "indice + 0" },
-      { slug: "recorre-en-circulo", title: "Empieza en otra posición", code: "indice = 0" },
+      { slug: "reduce-vueltas-completas", title: "Las vueltas que sobran", code: "pasos % 2", route: "primeros-pasos" },
+      { slug: "siguiente-indice-circular", title: "Después del último, el primero", code: "indice + 0", route: "pensar-en-soluciones" },
+      { slug: "recorre-en-circulo", title: "Empieza en otra posición", code: "indice = 0", route: "pensar-en-soluciones" },
     ];
     for (const lesson of lessons) {
-      await page.goto(exerciseHref(lesson.slug, language, "pensar-en-soluciones"));
+      await page.goto(exerciseHref(lesson.slug, language, lesson.route));
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
       await expect(page.getByRole("region", { name: "Guía de aprendizaje" }).locator("li").first()).toBeVisible();
       await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
       const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
       await expect(editor).toHaveValue(new RegExp(lesson.code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-      await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/pensar-en-soluciones?lenguaje=${language}`);
+      await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/${lesson.route}?lenguaje=${language}`);
     }
   });
 }
@@ -91,20 +91,20 @@ test("Conecta las ideas introduce los conceptos antes de sus retos", async ({ pa
 for (const language of ["python", "javascript"] as const) {
   test(`las actividades de búsqueda presentan while, índices y límites en ${language}`, async ({ page }) => {
     const lessons = [
-      { slug: "repite-con-while", title: "Repite mientras se cumpla", code: "contador + 2" },
-      { slug: "recorre-por-indices", title: "Visita cada posición", code: "data[0]" },
-      { slug: "punto-medio-del-intervalo", title: "Una posición en el centro", code: language === "python" ? "// 1" : "/ 1" },
-      { slug: "descarta-una-mitad", title: "Descarta una mitad", code: "derecha = centro + 1" },
+      { slug: "repite-con-while", title: "Repite mientras se cumpla", code: "contador + 2", route: "primeros-pasos" },
+      { slug: "recorre-por-indices", title: "Visita cada posición", code: "data[0]", route: "primeros-pasos" },
+      { slug: "punto-medio-del-intervalo", title: "Una posición en el centro", code: language === "python" ? "// 1" : "/ 1", route: "pensar-en-soluciones" },
+      { slug: "descarta-una-mitad", title: "Descarta una mitad", code: "derecha = centro + 1", route: "pensar-en-soluciones" },
     ];
     for (const lesson of lessons) {
-      await page.goto(exerciseHref(lesson.slug, language, "pensar-en-soluciones"));
+      await page.goto(exerciseHref(lesson.slug, language, lesson.route));
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.locator("li").first()).toBeVisible();
       await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
       const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
       await expect(editor).toHaveValue(new RegExp(lesson.code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-      await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/pensar-en-soluciones?lenguaje=${language}`);
+      await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/${lesson.route}?lenguaje=${language}`);
     }
   });
 }
@@ -112,12 +112,12 @@ for (const language of ["python", "javascript"] as const) {
 for (const language of ["python", "javascript"] as const) {
   test(`las actividades de máximos muestran su guía y ausencia explícita en ${language}`, async ({ page }) => {
     const lessons = [
-      { slug: "maximo-de-una-lista", title: "Conserva el mayor", code: "numero < mayor" },
-      { slug: "primer-valor-o-ausencia", title: "Cuando no hay un valor", code: "return 0" },
-      { slug: "maximo-bajo-un-limite", title: "El mayor por debajo del límite", code: "numero <= limite" },
+      { slug: "maximo-de-una-lista", title: "Conserva el mayor", code: "numero < mayor", route: "primeros-pasos" },
+      { slug: "primer-valor-o-ausencia", title: "Cuando no hay un valor", code: "return 0", route: "primeros-pasos" },
+      { slug: "maximo-bajo-un-limite", title: "El mayor por debajo del límite", code: "numero <= limite", route: "pensar-en-soluciones" },
     ];
     for (const lesson of lessons) {
-      await page.goto(exerciseHref(lesson.slug, language, "pensar-en-soluciones"));
+      await page.goto(exerciseHref(lesson.slug, language, lesson.route));
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.locator("li").first()).toBeVisible();
@@ -127,7 +127,7 @@ for (const language of ["python", "javascript"] as const) {
       if (lesson.slug === "maximo-bajo-un-limite") {
         await expect(editor).toHaveValue(language === "python" ? /candidato is None/ : /candidato === null/);
       }
-      await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/pensar-en-soluciones?lenguaje=${language}`);
+      await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/${lesson.route}?lenguaje=${language}`);
     }
   });
 }
@@ -157,20 +157,20 @@ for (const language of ["python", "javascript"] as const) {
 for (const language of ["python", "javascript"] as const) {
   test(`las actividades de textos muestran filtros y comparaciones en ${language}`, async ({ page }) => {
     const lessons = [
-      { slug: "quita-los-espacios", title: "Conserva lo que no es espacio", code: language === "python" ? "letra == ' '" : "letra === ' '" },
-      { slug: "filtra-letras-y-digitos", title: "Solo letras y dígitos", code: "abcdefghijklmnopqrstuvwxyz'" },
-      { slug: "compara-dos-textos", title: "¿Son el mismo texto?", code: language === "python" ? "return False" : "return false" },
-      { slug: "compara-contadores", title: "Las mismas cantidades", code: "primero > segundo" },
+      { slug: "quita-los-espacios", title: "Conserva lo que no es espacio", code: language === "python" ? "letra == ' '" : "letra === ' '", route: "primeros-pasos" },
+      { slug: "filtra-letras-y-digitos", title: "Solo letras y dígitos", code: "abcdefghijklmnopqrstuvwxyz'", route: "primeros-pasos" },
+      { slug: "compara-dos-textos", title: "¿Son el mismo texto?", code: language === "python" ? "return False" : "return false", route: "primeros-pasos" },
+      { slug: "compara-contadores", title: "Las mismas cantidades", code: "primero > segundo", route: "pensar-en-soluciones" },
     ];
     for (const lesson of lessons) {
-      await page.goto(exerciseHref(lesson.slug, language, "pensar-en-soluciones"));
+      await page.goto(exerciseHref(lesson.slug, language, lesson.route));
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.locator("li").first()).toBeVisible();
       await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
       const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
       await expect(editor).toHaveValue(new RegExp(lesson.code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-      await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/pensar-en-soluciones?lenguaje=${language}`);
+      await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/${lesson.route}?lenguaje=${language}`);
     }
   });
 }

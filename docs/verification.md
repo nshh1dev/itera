@@ -3,7 +3,7 @@
 ## Cobertura automatizada
 
 - 45 pruebas de dominio, contenido, revisión editorial, metadatos de aprendizaje y herramientas locales.
-- Las 63 referencias de Python y las 63 de JavaScript pasan los mismos 361 casos por lenguaje. Las plantillas guiadas también se ejecutan con todos sus ejemplos en ambos lenguajes. Solo la actividad inicial de observación debe venir completamente resuelta. En las actividades de colecciones, textos, máximos, búsqueda y rotación se comprueba además que el cambio indicado en el enunciado coincide con la referencia. Las enumeraciones adicionales comprueban 2911 entradas de máximos y ausencia, 1718 de búsqueda, 3066 de recorridos circulares y 1668 del lote inicial R1, por lenguaje.
+- Las 120 referencias de Python y las 120 de JavaScript pasan los mismos 648 casos por lenguaje. Las plantillas guiadas también se ejecutan con todos sus ejemplos en ambos lenguajes. Solo la actividad inicial de observación debe venir completamente resuelta. En las actividades de colecciones, textos, máximos, búsqueda y rotación se comprueba además que el cambio indicado en el enunciado coincide con la referencia. Las enumeraciones adicionales comprueban 2911 entradas de máximos y ausencia, 1718 de búsqueda, 3066 de recorridos circulares y 1668 del lote inicial R1, por lenguaje.
 - 67 pruebas de navegador con Chromium: recorridos de catálogo, registro, preferencias, borradores, evaluación, ayudas, responsive, conflictos entre pestañas, recuperación de contraseña, aislamiento entre cuentas, administración, rutas, R1, interfaz y transporte HTTP. Incluyen el orden completo de fundamentos y de Conecta las ideas, conservación de ruta al cambiar lenguaje o iniciar sesión, plantillas guiadas en ambos lenguajes y ausencia de salto al catálogo al terminar Desde cero. La suite ampliada pasa en desarrollo y producción local.
 - La importación editorial se comprueba sin publicar: mantiene intacta la versión anterior, no altera lo que sirve el catálogo público, no llama al ejecutor, no duplica una revisión idéntica y se detiene ante un borrador manual distinto. Las pruebas eliminan solo los borradores que ellas mismas crean.
 - Los metadatos se validan para todo el catálogo; se prueban límites, duplicados, mensajes históricos y escape de HTML. El recorrido administrativo comprueba persistencia, normalización, visualización en ambos lenguajes y que un objetivo en borrador no cambie la versión pública ni la anterior.
@@ -23,6 +23,22 @@ Entrega del 15 de octubre de 2026: doce revisiones de ejercicios existentes, sin
 - El recorrido administrativo comprueba persistencia y normalización de los nuevos campos, enlaces con el lenguaje elegido y conservación del contenido público e histórico. Las doce importaciones R1 se comprueban como borradores privados, idempotentes y protegidos ante borradores manuales.
 - `prisma migrate deploy`: migración aplicada; `prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code`: sin diferencias. Tras E2E, los recuentos y huellas coinciden con los previos en Exercise, ExerciseVersion, ExerciseVariant, TestCase, Draft, Submission, Progress, User, HelpUsage y AuditLog, excluyendo los campos añadidos en la comparación. Permanecen 63 identidades, 63 versiones y 126 variantes en la base local.
 - `npm run test:runner`: una prueba de ejecutor ausente aprobada y cuatro omitidas por Piston desconectado. No se ejecutó `test:e2e:real` por la misma razón. **La ejecución real y la publicación de R1 siguen pendientes**; las doce revisiones están en el repositorio y disponibles para importar desde administración, no publicadas automáticamente. La suite con doble no acredita aislamiento ni ejecuta código.
+
+## Currículo completo: 120 actividades
+
+Entrega del 15 de octubre de 2026: 57 identidades nuevas (8/19/30) y once reclasificaciones de nivel, sin reconstruir la aplicación ni borrar ejercicios. Alcance y procedimiento: [exercise-batches.md](exercise-batches.md#currículo-completo-de-63-a-120-actividades).
+
+- `npm test`: 45 pruebas aprobadas; 648 casos editoriales por lenguaje compartidos por las 120 referencias de Python y JavaScript. Las referencias y plantillas nuevas se ejecutan y comparan por valor; solo la observación `tu-primer-resultado` empieza resuelta. La prueba de progresión de ayuda comprueba que las plantillas nuevas no resuelven por sí solas todos los casos.
+- `npm run typecheck`: aprobado. Ayudante de composición (`prisma/educational-exercise.ts`), control de niveles (`levelOverrides` en `prisma/content.ts`), metadatos fusionados (`prisma/learning-metadata.ts`) y órdenes de las cuatro rutas (`src/lib/learning-paths.ts`) sin errores de tipos.
+- `npm run build`: aprobado. Prisma regenerado y las 19 rutas compiladas y generadas.
+- `npm run lint`: sin errores; los mismos tres avisos previos de plantillas locales sin seguimiento en `.agents/skills/tailwind-v4-shadcn`, no modificadas.
+- `npm run db:seed`: base local con 120 identificadores publicados; se insertaron las 57 identidades nuevas sin tocar versiones, borradores, envíos ni progreso anteriores (el seed omite slugs existentes).
+- `npm run content:paths -- --apply`: las cuatro rutas quedan en 8/37/40/35 pasos. El script exige contenido publicado y no toca datos de estudiantes.
+- El nivel publicado de las once identidades reclasificadas sigue siendo el anterior (37/45/38) en la base local: cambiarlo exige una nueva versión publicada y la publicación valida referencias en Piston. **Queda pendiente reponer Piston, importar y publicar cada identidad afectada, y validar las 57 referencias nuevas en el sandbox real.**
+- `npm run test:e2e`: **no ejecutada en esta entrega**. Requiere iniciar un servidor propio y Chromium; no se arrancó el servidor del usuario. Se actualizaron las expectativas de ruta de las actividades reclasificadas en `tests/e2e/onboarding.spec.ts`, pero no se pudieron comprobar en navegador.
+- `npm run test:runner` y `npm run test:e2e:real`: no ejecutadas por Piston/Docker detenidos (`npm run doctor` confirma Docker no disponible).
+
+**Pendiente y no incluido:** la revisión pedagógica de los 51 ejercicios anteriores que R1 no cubrió. El currículo llega a 120 actividades, pero su revisión editorial por lotes (R2–R6) sigue abierta.
 
 ## Interfaz de aplicación
 
