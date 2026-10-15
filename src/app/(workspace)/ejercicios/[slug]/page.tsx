@@ -5,7 +5,7 @@ import { languageSchema } from "@/lib/validation";
 import { Workspace } from "@/components/practice/workspace";
 import type { Json } from "@/lib/types";
 import { db } from "@/server/db";
-import { exerciseHref, nextExerciseSlug, previousExerciseSlug } from "@/lib/learning-paths";
+import { exerciseHref, exercisePosition, nextExerciseSlug, previousExerciseSlug } from "@/lib/learning-paths";
 import { educationalMetadataSchema } from "@/lib/learning-metadata";
 
 export const dynamic = "force-dynamic";
@@ -25,14 +25,16 @@ export default async function ExercisePage({ params, searchParams }: { params: P
     : null;
   const pathSlugs = path?.items.flatMap(item => { const entry = catalog.find(e => e.id === item.exerciseId); return entry ? [entry.slug] : []; });
   const pathSlug = pathSlugs?.includes(slug) ? path!.slug : undefined;
-  const nextSlug = nextExerciseSlug(slug, pathSlug ? pathSlugs! : catalog.map(e => e.slug));
+  const sequence = pathSlug ? pathSlugs! : catalog.map(e => e.slug);
+  const nextSlug = nextExerciseSlug(slug, sequence);
   const nextHref = nextSlug ? exerciseHref(nextSlug, language, pathSlug) : undefined;
-  const previousSlug = previousExerciseSlug(slug, pathSlug ? pathSlugs! : catalog.map(e => e.slug));
+  const previousSlug = previousExerciseSlug(slug, sequence);
   const previousHref = previousSlug ? exerciseHref(previousSlug, language, pathSlug) : undefined;
+  const { position, total } = exercisePosition(slug, sequence);
   const previousExercises = version.prerequisiteSlugs.flatMap(previousSlug => {
     const entry = catalog.find(item => item.slug === previousSlug);
     return entry ? [{ title: entry.title, href: exerciseHref(entry.slug, language, pathSlugs?.includes(entry.slug) ? pathSlug : undefined) }] : [];
   });
   const activityType = educationalMetadataSchema.shape.activityType.catch("PRACTICE").parse(version.activityType);
-  return <Workspace userId={user?.id} user={user ? { name: user.name, email: user.email, role: user.role } : null} slug={slug} title={version.title} category={exercise.category} level={version.level} minutes={version.minutes} statement={version.statement} objective={version.objective} prerequisites={version.prerequisites} practiceGoals={version.practiceGoals} previousExercises={previousExercises} activityType={activityType} constraints={version.constraints} hints={version.hints} language={language} variantId={variant.id} starter={variant.starter} initialCode={variant.drafts[0]?.code ?? variant.starter} revision={variant.drafts[0]?.revision ?? 0} examples={variant.tests as {input:Json;expected:Json;explanation:string}[]} nextHref={nextHref} previousHref={previousHref} pathSlug={pathSlug} />;
+  return <Workspace userId={user?.id} user={user ? { name: user.name, email: user.email, role: user.role } : null} slug={slug} title={version.title} category={exercise.category} level={version.level} minutes={version.minutes} statement={version.statement} objective={version.objective} prerequisites={version.prerequisites} practiceGoals={version.practiceGoals} previousExercises={previousExercises} activityType={activityType} constraints={version.constraints} hints={version.hints} language={language} variantId={variant.id} starter={variant.starter} initialCode={variant.drafts[0]?.code ?? variant.starter} revision={variant.drafts[0]?.revision ?? 0} examples={variant.tests as {input:Json;expected:Json;explanation:string}[]} nextHref={nextHref} previousHref={previousHref} position={position} total={total} pathSlug={pathSlug} />;
 }

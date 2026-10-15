@@ -69,3 +69,9 @@ export function previousExerciseSlug(slug: string, slugs: string[]): string | un
   const index = slugs.indexOf(slug);
   return index <= 0 ? undefined : slugs[index - 1];
 }
+
+// Posición 1-based dentro de la secuencia (ruta o catálogo). 0 si no pertenece.
+export function exercisePosition(slug: string, slugs: string[]): { position: number; total: number } {
+  const index = slugs.indexOf(slug);
+  return { position: index < 0 ? 0 : index + 1, total: slugs.length };
+}

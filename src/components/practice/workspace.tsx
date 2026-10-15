@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 
 const CodeEditor = dynamic(() => import("./code-editor"), { ssr: false, loading: () => <div className="flex h-full items-center justify-center text-sm text-muted-foreground">Preparando tu editor…</div> });
 const subscribe = () => () => {};
-type Props = { userId?: string; user: ShellUser | null; slug: string; title: string; category: string; level: Level; minutes: number; statement: string; objective: string; prerequisites: string[]; practiceGoals: string[]; previousExercises: PreviousExercise[]; activityType: ActivityType; constraints: string[]; hints: string[]; language: Language; variantId: string; starter: string; initialCode: string; revision: number; examples: PublicExample[]; nextHref?: string; previousHref?: string; pathSlug?: string };
+type Props = { userId?: string; user: ShellUser | null; slug: string; title: string; category: string; level: Level; minutes: number; statement: string; objective: string; prerequisites: string[]; practiceGoals: string[]; previousExercises: PreviousExercise[]; activityType: ActivityType; constraints: string[]; hints: string[]; language: Language; variantId: string; starter: string; initialCode: string; revision: number; examples: PublicExample[]; nextHref?: string; previousHref?: string; position: number; total: number; pathSlug?: string };
 type LocalDraft = { code: string; revision: number };
 
 export function Workspace(props: Props) {
@@ -146,6 +146,7 @@ function WorkspaceReady(props: Props) {
         <Link href={props.pathSlug ? `/rutas/${encodeURIComponent(props.pathSlug)}?lenguaje=${props.language}` : `/ejercicios?lenguaje=${props.language}`} className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground hover:text-foreground" aria-label={props.pathSlug ? "Volver a la ruta" : "Volver a ejercicios"}><ArrowLeft className="size-4" /><span className="hidden sm:inline">{props.pathSlug ? "Mi ruta" : "Ejercicios"}</span></Link>
          <ChevronRight className="hidden size-3 shrink-0 text-muted-foreground sm:block" /><span className="truncate text-[13px] font-medium">{props.title}</span>
          <div className="ml-auto flex shrink-0 items-center gap-1">
+           {props.position > 0 && <span className="px-1 text-xs tabular-nums text-muted-foreground" aria-label={`Ejercicio ${props.position} de ${props.total}`}>{props.position} de {props.total}</span>}
            <nav aria-label="Navegación entre ejercicios" className="flex items-center">
              {props.previousHref ? <Button asChild variant="ghost" size="icon" className="size-8"><Link href={props.previousHref} aria-label="Ejercicio anterior" title="Ejercicio anterior"><ChevronLeft /></Link></Button> : <Button variant="ghost" size="icon" className="size-8" disabled aria-label="No hay ejercicio anterior" title="No hay ejercicio anterior"><ChevronLeft /></Button>}
              {props.nextHref ? <Button asChild variant="ghost" size="icon" className="size-8"><Link href={props.nextHref} aria-label="Ejercicio siguiente" title="Ejercicio siguiente"><ChevronRight /></Link></Button> : <Button variant="ghost" size="icon" className="size-8" disabled aria-label="No hay ejercicio siguiente" title="No hay ejercicio siguiente"><ChevronRight /></Button>}
