@@ -18,13 +18,13 @@ const entries = exercises.map((exercise, order) => ({ slug: exercise.slug, order
 
 test("R1 revisa doce identidades existentes con contenido completo en ambos lenguajes", () => {
   assert.equal(batch.length, 12);
-  assert.equal(exercises.length, 124, "el catálogo completo reúne 124 actividades");
+  assert.equal(exercises.length, 140, "se conservan las 124 actividades y se añaden 16");
   for (const exercise of batch) {
     assert.ok(exercise);
     const version = seedVersionContent(exercise);
-    const [python, javascript] = version.variants;
+    const [python, javascript, typescript] = version.variants;
     assert.equal(publicationMetadataSchema.safeParse(version).success, true, exercise.slug);
-    assert.equal(editorialSchema.safeParse({ ...exercise, ...version, python, javascript, tests: python.tests }).success, true, exercise.slug);
+    assert.equal(editorialSchema.safeParse({ ...exercise, ...version, python, javascript, typescript, tests: python.tests }).success, true, exercise.slug);
     assert.equal(prerequisiteIssue(exercise.slug, version.prerequisiteSlugs, entries), undefined, exercise.slug);
     assert.match(exercise.statement, /Entrada\n/);
     assert.match(exercise.statement, /Resultado esperado\n/);
@@ -34,7 +34,7 @@ test("R1 revisa doce identidades existentes con contenido completo en ambos leng
     assert.ok(version.variants.every(variant => variant.tests.filter(test => test.visible).every(test => test.explanation)));
     for (const variant of version.variants) {
       for (const section of ["Razonamiento\n", "Paso a paso\n", "Coste\n", "Errores comunes\n"]) assert.ok(variant.explanation.includes(section), `${exercise.slug}: ${section}`);
-      assert.ok(variant.explanation.includes(variant.language === "python" ? "En Python\n" : "En JavaScript\n"));
+      assert.ok(variant.explanation.includes(variant.language === "python" ? "En Python\n" : variant.language === "typescript" ? "En TypeScript\n" : "En JavaScript\n"));
     }
     assert.notEqual(python.explanation, javascript.explanation, exercise.slug);
     assert.deepEqual(python.tests, javascript.tests, exercise.slug);

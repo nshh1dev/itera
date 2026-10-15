@@ -7,7 +7,7 @@ try {
   const payload = await response.json();
   if (!Array.isArray(payload)) throw new Error("Piston devolvió una lista de paquetes inválida.");
   const packages = payload.map((pkg) => ({ ...pkg, version: pkg.language_version })).filter((pkg) => typeof pkg.language === "string" && typeof pkg.version === "string");
-  for (const language of ["python", "node"]) {
+  for (const language of ["python", "node", "typescript"]) {
     const available = packages.filter((p) => p.language === language).sort((a, b) => b.version.localeCompare(a.version, undefined, { numeric: true }));
     const selected = available[0];
     if (!selected) throw new Error(`Paquete ${language} no disponible.`);
@@ -17,7 +17,7 @@ try {
       if (!result.ok) throw new Error(`No se pudo instalar ${language}: ${await result.text()}`);
     }
   }
-  console.log("Python y JavaScript listos en el ejecutor local.");
+  console.log("Python, JavaScript y TypeScript listos en el ejecutor local.");
 } catch (error) {
   console.error(`${error.message}\nInicia primero Docker/WSL2 y ejecuta docker compose up -d.`);
   process.exitCode = 1;

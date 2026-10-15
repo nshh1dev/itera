@@ -26,13 +26,13 @@ test.beforeAll(async()=>{
   server=createServer(async(req,res)=>{
     res.setHeader("Content-Type","application/json");
     if(!providerOnline){res.statusCode=503;res.end("{}");return;}
-    if(req.url==="/api/v2/runtimes"){res.end(JSON.stringify([{language:"python",version:"3.12.0",aliases:[]},{language:"javascript",version:"22.0.0",aliases:["node","js"]}]));return;}
+    if(req.url==="/api/v2/runtimes"){res.end(JSON.stringify([{language:"python",version:"3.12.0",aliases:[]},{language:"javascript",version:"22.0.0",aliases:["node","js"]},{language:"typescript",version:"5.0.3",aliases:["ts"]}]));return;}
     if(req.url==="/api/v2/execute"){
       providerRequests++;
       let raw="";for await(const chunk of req)raw+=chunk;
       const payload=JSON.parse(raw);
       const source=(payload.files[1]?.content ?? payload.files[0]?.content ?? "") as string;
-      if(payload.files.length===1){res.end(JSON.stringify({run:{stdout:"",stderr:"",code:0,signal:null,status:null}}));return;}
+      if(payload.files.length===1 && payload.language!=="typescript"){res.end(JSON.stringify({run:{stdout:"",stderr:"",code:0,signal:null,status:null}}));return;}
       const input=JSON.parse(payload.stdin);
       const correct=source.includes("data['a'] + data['b']")||source.includes("data.a + data.b");
       const output=correct ? input.a+input.b : 999;
@@ -66,7 +66,9 @@ test("catálogo público, filtros y navegación móvil sin desbordamientos",asyn
   await page.goto("/ejercicios");
   await page.getByLabel("Nivel",{exact:true}).selectOption("ADVANCED");
   await page.getByRole("button",{name:"Aplicar filtros"}).click();
-  await expect(page.getByText("8 ejercicios",{exact:true})).toBeVisible();
+   const catalogVersions=await db.exercise.findMany({where:{published:true},select:{versions:{where:{published:true},orderBy:{number:"desc"},take:1,select:{level:true}}}});
+   const advancedCount=catalogVersions.filter(exercise=>exercise.versions[0]?.level==="ADVANCED").length;
+   await expect(page.getByText(`${advancedCount} ejercicios`,{exact:true})).toBeVisible();
   await page.setViewportSize({width:390,height:844});
   await page.goto("/inicio");
   await expect(page.getByRole("heading",{name:"Un buen día para aprender."})).toBeVisible();
@@ -266,6 +268,11 @@ test("administración guarda borradores privados y publica tras validar las refe
   await page.getByRole("tab",{name:"JavaScript",exact:true}).click();
   await page.locator("#javascript-solution").fill("function solve(data) { return data.a + data.b; }");
   await page.locator("#javascript-explanation").fill("Accede a ambos valores y devuelve la suma. Tiempo constante.");
+  await page.getByRole("tab",{name:"TypeScript",exact:true}).click();
+  await page.locator("#typescript-starter").fill("function solve(data: {a: number; b: number}): number { return 0; }");
+  await page.locator("#typescript-solution").fill("function solve(data: {a: number; b: number}): number { return data.a + data.b; }");
+  await page.locator("#typescript-explanation").fill("Los tipos describen las propiedades numéricas; la función devuelve su suma.");
+  await page.locator("#typescript-typeContract").fill("const __iteraContract: (data: {a: number; b: number}) => number = solve;");
   await completeAction(()=>page.getByRole("button",{name:"Guardar nueva versión"}).click());
   await expect(page).toHaveURL(new RegExp(`/admin/ejercicios/${editorialSlug}`));
   const firstVersion=await db.exerciseVersion.findFirstOrThrow({where:{exercise:{slug:editorialSlug}},orderBy:{number:"desc"}});

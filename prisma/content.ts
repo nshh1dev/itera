@@ -15,6 +15,8 @@ import { intermediateExpansion } from "./intermediate-expansion";
 import { advancedExpansion } from "./advanced-expansion";
 import type { ActivityType } from "../src/lib/types";
 import type { RuntimeMode } from "../src/lib/types";
+import { curriculumExpansion } from "./curriculum-expansion";
+import { typescriptVariant } from "./typescript-content";
 
 // Reclasificación editorial acordada al completar el currículo. Se aplica sobre el
 // catálogo ya compuesto para no reescribir las fuentes históricas ni los identificadores:
@@ -35,14 +37,15 @@ const levelOverrides: Record<string, Level> = {
 
 export type SeedExercise = {
   slug: string; title: string; description: string; category: string; level: Level; minutes: number;
-  statement: string; constraints: string[]; hints: string[]; python: string; javascript: string; explanation: string;
+  statement: string; constraints: string[]; hints: string[]; python: string; javascript: string; typescript?: string; explanation: string;
   tests: { input: Json; expected: Json; explanation?: string }[];
-  starters?: { python: string; javascript: string };
+  starters?: { python: string; javascript: string; typescript?: string };
   objective?: string; prerequisites?: string[];
   practiceGoals?: string[]; prerequisiteSlugs?: string[]; activityType?: ActivityType;
   runtimeMode?: RuntimeMode;
+  typescriptContract?: string;
   complexity?: string; commonErrors?: string[];
-  explanations?: { python: string; javascript: string };
+  explanations?: { python: string; javascript: string; typescript?: string };
 };
 
 const t = (input: Json, expected: Json) => ({ input, expected });
@@ -212,15 +215,23 @@ export const exercises: SeedExercise[] = [
   ...beginnerExpansion,
   ...intermediateExpansion,
   ...advancedExpansion,
+  ...curriculumExpansion,
 ].map(exercise => ({
   ...exercise,
   ...beginnerRevisions[exercise.slug], ...collectionsRevisions[exercise.slug], ...textRevisions[exercise.slug],
   ...maximaRevisions[exercise.slug], ...searchRevisions[exercise.slug], ...rotationRevisions[exercise.slug],
   ...learningMetadata[exercise.slug], ...initialBatchRevisions[exercise.slug],
   ...(levelOverrides[exercise.slug] ? { level: levelOverrides[exercise.slug] } : {}),
-}));
+})).map(exercise => {
+  const variant = typescriptVariant(exercise);
+  return { ...exercise, typescript: variant.solution, typescriptContract: variant.contract,
+    starters: { python: exercise.starters?.python ?? "def solve(data):\n    return None\n", javascript: exercise.starters?.javascript ?? "function solve(data) {\n  return null;\n}\n", typescript: variant.starter },
+    explanations: { python: exercise.explanations?.python ?? exercise.explanation, javascript: exercise.explanations?.javascript ?? exercise.explanation, typescript: variant.explanation },
+  };
+});
 
 export const starter = {
   python: "def solve(data):\n    # Escribe tu solución aquí\n    pass\n",
   javascript: "function solve(data) {\n  // Escribe tu solución aquí\n  \n}\n",
+  typescript: "function solve(data: number): number {\n  return 0;\n}\n",
 };

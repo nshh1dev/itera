@@ -147,6 +147,8 @@ model ExerciseVariant {
   starter     String
   solution    String
   explanation String
+  statement   String @default("")
+  typeContract String @default("")
   version     ExerciseVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
   tests       TestCase[]
   drafts      Draft[]

@@ -19,7 +19,7 @@ export async function getCatalog(userId?: string, language: Language = "python")
   return exercises.flatMap((e, index) => {
     if (!e.versions[0]) return [];
     const active = e.progress.find(item => item.language === language);
-    const other = e.progress.find(item => item.language !== language);
+    const other = e.progress.find(item => item.language !== language && item.firstPassedAt);
     return [{ id: e.id, slug: e.slug, category: e.category, order: index, ...e.versions[0], solved: !!active?.firstPassedAt, started: (active?.attempts ?? 0) > 0, solvedOther: !!other?.firstPassedAt }];
   });
 }
@@ -32,7 +32,7 @@ export async function getExercise(slug: string, language: Language, userId?: str
         id: true, title: true, statement: true, constraints: true, hints: true, level: true, minutes: true, number: true,
         objective: true, prerequisites: true, practiceGoals: true, prerequisiteSlugs: true, activityType: true,
         runtimeMode: true, complexity: true, commonErrors: true,
-        variants: { where: { language }, select: { id: true, language: true, starter: true,
+        variants: { select: { id: true, language: true, starter: true, statement: true,
           tests: { where: { visible: true }, orderBy: { order: "asc" }, select: { input: true, expected: true, explanation: true } },
           drafts: { where: { userId: userId ?? "__guest__" }, select: { code: true, revision: true } },
         } },

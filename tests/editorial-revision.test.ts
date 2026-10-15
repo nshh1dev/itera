@@ -15,7 +15,7 @@ test("las revisiones solo incluyen ejercicios del catálogo editorial", () => {
   for (const { slug } of exercises) {
     const exercise = catalogRevision(slug)!;
     const content = seedVersionContent(exercise);
-    assert.deepEqual(content.variants.map(v => v.language), ["python", "javascript"]);
+    assert.deepEqual(content.variants.map(v => v.language), ["python", "javascript", "typescript"]);
     for (const variant of content.variants) {
       assert.ok(variant.tests.some(t => t.visible), slug);
       assert.ok(variant.tests.some(t => !t.visible), slug);
@@ -68,11 +68,16 @@ test("una importación no sobrepasa un borrador distinto ni una revisión concur
   assert.equal(catalogRevisionDecision(current, source, "otra-version"), "stale");
 });
 
-test("las dos variantes y los casos ocultos forman parte de la revisión", () => {
+test("las tres variantes, sus contratos y los casos ocultos forman parte de la revisión", () => {
   const { source, current } = fixture();
   current.variants.find(v => v.language === "javascript")!.starter += "\n// Cambio editorial";
   assert.equal(catalogRevisionDecision(current, source, current.id), "create");
   const another = fixture();
   another.current.variants[0].tests.find(t => !t.visible)!.expected = 999;
   assert.equal(catalogRevisionDecision(another.current, another.source, another.current.id), "create");
+  for (const field of ["statement", "typeContract"] as const) {
+    const changed = fixture();
+    changed.current.variants.find(variant => variant.language === "typescript")![field] += "\n// Cambio editorial";
+    assert.equal(catalogRevisionDecision(changed.current, changed.source, changed.current.id), "create", field);
+  }
 });

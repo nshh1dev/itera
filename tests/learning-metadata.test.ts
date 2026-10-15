@@ -5,9 +5,10 @@ import { exercises } from "../prisma/content";
 import { learningMetadata } from "../prisma/learning-metadata";
 import { learningMetadataSchema } from "../src/lib/learning-metadata";
 import { LearningGuide } from "../src/components/practice/learning-guide";
+import { curriculumExpansion } from "../prisma/curriculum-expansion";
 
 test("cada ejercicio del catálogo tiene objetivo y conocimientos previos editoriales válidos", () => {
-  assert.deepEqual(Object.keys(learningMetadata).sort(), exercises.map(e => e.slug).sort());
+  assert.deepEqual([...Object.keys(learningMetadata), ...curriculumExpansion.map(exercise => exercise.slug)].sort(), exercises.map(e => e.slug).sort());
   for (const exercise of exercises) {
     assert.equal(learningMetadataSchema.safeParse(exercise).success, true, exercise.slug);
     if (exercise.level !== "BEGINNER") assert.ok(exercise.prerequisites!.length > 0, exercise.slug);

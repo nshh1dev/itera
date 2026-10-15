@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
-import { levelNames, type Language } from "@/lib/types";
+import { languages, languageNames, levelNames, type Language } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
@@ -11,7 +11,7 @@ export function ExerciseFilters({ query, language, level, category, status, cate
   return <form action="/ejercicios" className="surface-panel mt-6 flex flex-col gap-4 rounded-2xl bg-surface p-4 sm:p-5" aria-label="Filtrar ejercicios">
     <div className="flex flex-wrap items-end gap-3">
       <div className="relative min-w-0 basis-full sm:flex-1"><Search className="absolute bottom-3.5 left-3 size-4 text-muted-foreground md:bottom-3" aria-hidden="true" /><label htmlFor="search" className="sr-only">Buscar ejercicios</label><input id="search" name="q" defaultValue={query} className="field pl-9" placeholder="Buscar ejercicios…" maxLength={100} /></div>
-      <div className="w-full sm:w-40"><label htmlFor="language" className="mb-1.5 block text-xs text-muted-foreground">Lenguaje</label><select id="language" name="lenguaje" defaultValue={language} className="field"><option value="python">Python</option><option value="javascript">JavaScript</option></select></div>
+      <div className="w-full sm:w-40"><label htmlFor="language" className="mb-1.5 block text-xs text-muted-foreground">Lenguaje</label><select id="language" name="lenguaje" defaultValue={language} className="field">{languages.map(language => <option key={language} value={language}>{languageNames[language]}</option>)}</select></div>
       <Button type="button" variant="outline" className="md:hidden" aria-expanded={expanded} aria-controls="exercise-filter-options" onClick={() => setExpanded(!expanded)}><SlidersHorizontal />Filtros{count > 0 && ` (${count})`}</Button>
       <Button variant="outline" type="submit">Aplicar filtros</Button>
     </div>

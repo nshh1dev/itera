@@ -8,7 +8,7 @@ import "dotenv/config";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { availableRuntime, runCode, RunnerUnavailable } from "../src/server/execution/piston";
-import { judge } from "../src/server/execution/judge";
+import { judge, judgeProgram } from "../src/server/execution/judge";
 import { exercises } from "../prisma/content";
 import type { Json } from "../src/lib/types";
 
@@ -44,8 +44,9 @@ test("las soluciones de referencia del catálogo pasan sus casos dentro del sand
     const runtime = await availableRuntime(language);
     for (const exercise of selected) {
       for (const [order, testCase] of exercise.tests.entries()) {
-        const output = await runCode(language, runtime, exercise[language], testCase.input);
-        const result = judge(output, { ...testCase, visible: true, order });
+        const mode = exercise.runtimeMode ?? "FUNCTION";
+        const output = await runCode(language, runtime, exercise[language], testCase.input, mode);
+        const result = (mode === "PROGRAM" ? judgeProgram : judge)(output, { ...testCase, visible: true, order });
         assert.equal(result.passed, true, `${exercise.slug} (${language}) caso ${order + 1} — ${detail(output)}`);
       }
     }
@@ -87,5 +88,33 @@ test("un ejecutor ausente se distingue de una respuesta incorrecta", async () =>
   } finally {
     if (original === undefined) delete process.env.PISTON_URL;
     else process.env.PISTON_URL = original;
+  }
+});
+
+let typescriptReady = false;
+try { await availableRuntime("typescript"); typescriptReady = true; } catch {}
+const typescriptOnly = { skip: typescriptReady ? false : "Falta el runtime TypeScript real de Piston; ejecuta npm run runner:setup" };
+
+test("TypeScript compila estrictamente antes de evaluar funciones y programas", typescriptOnly, async () => {
+  const runtime = await availableRuntime("typescript");
+  const contract = "const __iteraContract: (data: { a: number; b: number }) => number = solve;";
+  const correct = await runCode("typescript", runtime, "function solve(data: {a: number; b: number}): number { return data.a + data.b; }", base.input, "FUNCTION", contract);
+  assert.equal(judge(correct, base).passed, true, detail(correct));
+  const invalid = await runCode("typescript", runtime, 'function solve(data: {a: number; b: number}): number { const texto: number = "incorrecto"; return data.a + data.b; }', base.input, "FUNCTION", contract);
+  assert.equal(judge(invalid, base).status, "runtime");
+  assert.match(invalid.stderr, /TypeScript|TS2322/);
+  const incompatible = await runCode("typescript", runtime, 'function solve(data: {a: number; b: number}): string { return String(data.a + data.b); }', base.input, "FUNCTION", contract);
+  assert.notEqual(incompatible.code, 0, detail(incompatible));
+  const program = await runCode("typescript", runtime, 'const nombre: string = require("fs").readFileSync(0, "utf8").trim(); console.log("Hola, " + nombre);', "Ana\n", "PROGRAM");
+  assert.equal(judgeProgram(program, { input: "Ana\n", expected: "Hola, Ana\n", visible: true, order: 0 }).passed, true, detail(program));
+});
+
+test("las referencias TypeScript pasan en el runtime real", typescriptOnly, async () => {
+  const runtime = await availableRuntime("typescript");
+  const selected = process.env.ITERA_RUNNER_ALL ? exercises : exercises.filter(exercise => ["lee-y-saluda", "valor-o-respaldo", "suma-de-dos-numeros", "presupuesto-de-merienda"].includes(exercise.slug));
+  for (const exercise of selected) for (const [order, fixture] of exercise.tests.entries()) {
+    const mode = exercise.runtimeMode ?? "FUNCTION";
+    const output = await runCode("typescript", runtime, exercise.typescript!, fixture.input, mode, exercise.typescriptContract);
+    assert.equal((mode === "PROGRAM" ? judgeProgram : judge)(output, { ...fixture, visible: true, order }).passed, true, `${exercise.slug}: ${detail(output)}`);
   }
 });

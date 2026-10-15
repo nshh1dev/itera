@@ -15,7 +15,7 @@ export async function evaluateSubmission(id: string) {
     if (!tests.length) throw new RunnerUnavailable("Este ejercicio todavía no tiene pruebas configuradas.");
     const results: TestResult[] = [];
     for (const test of tests) {
-      const output = await runCode(variant.language as Language, runtime, submission.code, test.input as Json, mode);
+      const output = await runCode(variant.language as Language, runtime, submission.code, test.input as Json, mode, variant.typeContract);
       const entry = { ...test, input: test.input as Json, expected: test.expected as Json };
       results.push(mode === "PROGRAM" ? judgeProgram(output, entry) : judge(output, entry));
     }

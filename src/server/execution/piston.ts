@@ -2,6 +2,8 @@ import "server-only";
 import { z } from "zod";
 import type { Json, Language, RuntimeMode } from "@/lib/types";
 import type { RunOutput } from "./judge";
+import { languageNames } from "@/lib/types";
+import { executionFiles, executionInput } from "./harness";
 
 export class RunnerUnavailable extends Error {
   constructor(message = "El ejecutor local no está disponible. Inicia Docker y Piston, y ejecuta npm run runner:setup. Tu código sigue guardado.") { super(message); }
@@ -21,38 +23,24 @@ export async function availableRuntime(language: Language) {
     const response = await fetch(`${baseUrl()}/api/v2/runtimes`, { cache: "no-store", signal: AbortSignal.timeout(2500) });
     if (!response.ok) throw new RunnerUnavailable();
     const runtimes = runtimeSchema.parse(await response.json());
-    const names = language === "javascript" ? ["javascript", "js", "node"] : ["python", "python3"];
+    const names = language === "typescript" ? ["typescript", "ts"] : language === "javascript" ? ["javascript", "js", "node"] : ["python", "python3"];
     const runtime = runtimes.filter(r => names.includes(r.language) || r.aliases.some(alias => names.includes(alias))).sort((a,b) => b.version.localeCompare(a.version, undefined, { numeric:true }))[0];
-    if (!runtime) throw new RunnerUnavailable(`Piston está iniciado, pero falta ${language === "python" ? "Python" : "JavaScript"}. Ejecuta npm run runner:setup.`);
+    if (!runtime) throw new RunnerUnavailable(`Piston está iniciado, pero falta ${languageNames[language]}. Ejecuta npm run runner:setup.`);
     return { language: runtime.language, version: runtime.version };
   } catch (error) { throw error instanceof RunnerUnavailable ? error : new RunnerUnavailable(); }
 }
 
-// Modo FUNCTION: el envoltorio importa solve y escribe el resultado como última
-// línea de la salida. Modo PROGRAM: se ejecuta el archivo tal cual y la entrada
-// del caso llega sin transformar a la entrada estándar.
-function harness(language: Language, code: string, mode: RuntimeMode) {
-  if (mode === "PROGRAM") return [{ name: language === "python" ? "main.py" : "main.js", content: code }];
-  return language === "python" ? [
-    { name: "main.py", content: "import json, sys\nfrom solution import solve\ndata = json.loads(sys.stdin.read())\nprint(json.dumps(solve(data), ensure_ascii=True, allow_nan=False))\n" },
-    { name: "solution.py", content: code },
-  ] : [
-    { name: "main.js", content: "const fs = require('fs');\nconst solve = require('./solution.js');\nconst data = JSON.parse(fs.readFileSync(0, 'utf8'));\nconst result = solve(data);\nif (result === undefined) throw new Error('solve debe devolver un valor con return');\nconsole.log(JSON.stringify(result));\n" },
-    { name: "solution.js", content: `${code}\nmodule.exports = solve;\n` },
-  ];
-}
-
-export async function runCode(language: Language, runtime: {language:string;version:string}, code: string, input: Json, mode: RuntimeMode = "FUNCTION"): Promise<RunOutput> {
-  const files = harness(language, code, mode);
-  const stdin = mode === "PROGRAM" ? (typeof input === "string" ? input : JSON.stringify(input ?? "")) : JSON.stringify(input);
+export async function runCode(language: Language, runtime: {language:string;version:string}, code: string, input: Json, mode: RuntimeMode = "FUNCTION", typeContract = ""): Promise<RunOutput> {
+  const files = executionFiles(language, code, mode, typeContract);
+  const stdin = executionInput(input, mode);
   try {
     const response = await fetch(`${baseUrl()}/api/v2/execute`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, signal: AbortSignal.timeout(12000),
-      body: JSON.stringify({ ...runtime, files, stdin, run_timeout: 3000, run_cpu_time: 3000, compile_timeout: 5000, run_memory_limit: 268435456, compile_memory_limit: 268435456 }),
+      method: "POST", headers: { "Content-Type": "application/json" }, signal: AbortSignal.timeout(language === "typescript" ? 25000 : 12000),
+      body: JSON.stringify({ ...runtime, files, stdin, run_timeout: language === "typescript" ? 12000 : 3000, run_cpu_time: language === "typescript" ? 10000 : 3000, compile_timeout: 8000, run_memory_limit: 268435456, compile_memory_limit: 268435456 }),
     });
     if (!response.ok) throw new RunnerUnavailable("Piston no pudo evaluar el programa. Comprueba los lenguajes instalados y vuelve a intentarlo.");
     const payload = await response.json();
-    const result = outputSchema.parse(payload.run ?? payload.compile);
+    const result = outputSchema.parse(payload.compile && (payload.compile.code !== 0 || payload.compile.signal || payload.compile.status) ? payload.compile : payload.run ?? payload.compile);
     if (result.status === "XX") throw new RunnerUnavailable("El sandbox tuvo un error interno. Este intento no cuenta como incorrecto.");
     return result;
   } catch (error) { throw error instanceof RunnerUnavailable ? error : new RunnerUnavailable("Se perdió la conexión con el ejecutor local. Este intento no cuenta como incorrecto."); }

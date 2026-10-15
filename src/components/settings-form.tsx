@@ -3,7 +3,7 @@ import { useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { Monitor, Sun, Moon, Loader2, Check } from "lucide-react";
 import { savePreferences } from "@/server/actions";
-import { levelNames, type Level, type Language } from "@/lib/types";
+import { languages, languageNames, levelNames, type Level, type Language } from "@/lib/types";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +31,7 @@ export function SettingsForm({ user, welcome }: { user: { name: string; email: s
         <div><label htmlFor="email" className="field-label">Correo electrónico</label><input className="field text-muted-foreground" id="email" value={user.email} readOnly /></div>
       </div></section>
       <section className="settings-section"><h2 className="section-title">Tu punto de partida</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Son preferencias, no límites. Puedes explorar todos los ejercicios.</p><div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <div><label htmlFor="language" className="field-label">Lenguaje preferido</label><select className="field" name="language" id="language" defaultValue={user.language}><option value="python">Python</option><option value="javascript">JavaScript</option></select></div>
+        <div><label htmlFor="language" className="field-label">Lenguaje preferido</label><select className="field" name="language" id="language" defaultValue={user.language}>{languages.map(language => <option key={language} value={language}>{languageNames[language]}</option>)}</select></div>
         <div><label htmlFor="level" className="field-label">Nivel</label><select className="field" name="level" id="level" defaultValue={user.level}>{Object.entries(levelNames).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
       </div></section>
       <div className="flex flex-wrap items-center gap-4"><Button disabled={busy}>{busy && <Loader2 className="animate-spin" />}{welcome ? "Guardar y empezar" : "Guardar cambios"}</Button>{message && <p role="status" className={cn("flex items-center gap-2 text-sm", error ? "text-destructive" : "text-muted-foreground")}>{!error && <Check className="size-4 shrink-0 text-success-text" />}{message}</p>}</div>

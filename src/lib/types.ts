@@ -1,8 +1,9 @@
-export const languages = ["python", "javascript"] as const;
+export const languages = ["python", "javascript", "typescript"] as const;
 export type Language = (typeof languages)[number];
-export const languageNames: Record<Language, string> = { python: "Python", javascript: "JavaScript" };
+export const languageNames: Record<Language, string> = { python: "Python", javascript: "JavaScript", typescript: "TypeScript" };
 export const levels = ["BEGINNER", "INTERMEDIATE", "ADVANCED"] as const;
 export type Level = (typeof levels)[number];
+export const categories = ["Fundamentos", "Cadenas", "Arreglos", "Algoritmos", "Estructuras", "Grafos"] as const;
 export const activityNames = { OBSERVATION: "Observación", GUIDED: "Práctica guiada", PRACTICE: "Resolución", INTEGRATION: "Integración" } as const;
 export type ActivityType = keyof typeof activityNames;
 export const levelNames: Record<Level, string> = { BEGINNER: "Principiante", INTERMEDIATE: "Intermedio", ADVANCED: "Avanzado" };

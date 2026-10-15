@@ -58,7 +58,12 @@ export default function CodeEditor({ code, onChange, language, fontSize, onRun, 
     return () => observer.disconnect();
   }, []);
   return <Editor height="100%" language={language} value={code} theme="itera" loading={<div className="flex h-full items-center justify-center text-sm text-muted-foreground">Preparando tu editor local…</div>}
-    beforeMount={monaco => { monacoRef.current = monaco; applyTheme(monaco, resolvedTheme === "dark"); }}
+    beforeMount={monaco => {
+      monacoRef.current = monaco;
+      applyTheme(monaco, resolvedTheme === "dark");
+      monaco.typescript.typescriptDefaults.setCompilerOptions({ strict: true, target: monaco.typescript.ScriptTarget.ES2022, module: monaco.typescript.ModuleKind.CommonJS, noEmit: true, allowNonTsExtensions: true });
+      monaco.typescript.typescriptDefaults.addExtraLib('declare function require(name: "fs"): { readFileSync(fd: number, encoding: "utf8"): string };', "file:///itera-stdin.d.ts");
+    }}
     onMount={(editor, monaco) => {
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => callbacks.current.onRun());
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => callbacks.current.onSubmit());

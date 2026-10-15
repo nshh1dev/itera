@@ -70,6 +70,7 @@ const programa = {
   hints: ["Una sola instrucción.", "El valor va sin comillas.", "Usa print o console.log."],
   python: { starter: "# escribe\n", solution: "print(1)\n", explanation: "Muestra el número con print." },
   javascript: { starter: "// escribe\n", solution: "console.log(1);\n", explanation: "Muestra el número con console.log." },
+  typescript: { starter: "// escribe\n", solution: "console.log(1);\n", explanation: "Muestra el número con console.log." },
   tests: [
     { input: "", expected: "1\n", visible: true, explanation: "" },
     { input: "", expected: "1\n", visible: true, explanation: "" },

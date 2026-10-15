@@ -2,14 +2,32 @@
 
 ## Cobertura automatizada
 
-- 64 pruebas de dominio, contenido, revisión editorial, metadatos de aprendizaje, comparación de resultados, modo programa, notas del ejercicio y herramientas locales.
-- Las 120 referencias de función de Python y las 120 de JavaScript pasan los mismos 648 casos por lenguaje. Las cuatro actividades de programa se ejecutan como archivo completo y se comparan por su salida estándar. Las plantillas guiadas también se ejecutan con todos sus ejemplos en ambos lenguajes. Solo la actividad inicial de observación debe venir completamente resuelta. En las actividades de colecciones, textos, máximos, búsqueda y rotación se comprueba además que el cambio indicado en el enunciado coincide con la referencia. Las enumeraciones adicionales comprueban 2911 entradas de máximos y ausencia, 1718 de búsqueda, 3066 de recorridos circulares y 1668 del lote inicial R1, por lenguaje.
-- 67 pruebas de navegador con Chromium: recorridos de catálogo, registro, preferencias, borradores, evaluación, ayudas, responsive, conflictos entre pestañas, recuperación de contraseña, aislamiento entre cuentas, administración, rutas, R1, interfaz y transporte HTTP. Incluyen el orden completo de fundamentos y de Conecta las ideas, conservación de ruta al cambiar lenguaje o iniciar sesión, plantillas guiadas en ambos lenguajes y ausencia de salto al catálogo al terminar Desde cero. La suite ampliada pasa en desarrollo y producción local.
+- 73 pruebas de dominio, contenido, revisión editorial, metadatos, comparación, modo programa, currículo, TypeScript y herramientas locales.
+- El catálogo incorpora referencias y plantillas en tres lenguajes. TypeScript se comprueba con compilación estricta, sin ocultar diagnósticos y contra el contrato editorial independiente. Se ejecutan únicamente referencias fijas del repositorio, no programas de usuarios. Solo la actividad de observación debe venir completamente resuelta. Las enumeraciones adicionales conservan 2911 entradas de máximos y ausencia, 1718 de búsqueda, 3066 de recorridos circulares y 1668 del lote R1 por lenguaje original.
+- La última ejecución de navegador anterior a este rediseño aprobó 67 pruebas en desarrollo y producción. Se amplían los recorridos para módulos, autoevaluación y TypeScript, pero esta entrega no los ha ejecutado: necesitan autorización para iniciar la aplicación. Los resultados históricos siguientes no acreditan las modificaciones actuales.
 - La importación editorial se comprueba sin publicar: mantiene intacta la versión anterior, no altera lo que sirve el catálogo público, no llama al ejecutor, no duplica una revisión idéntica y se detiene ante un borrador manual distinto. Las pruebas eliminan solo los borradores que ellas mismas crean.
 - Los metadatos se validan para todo el catálogo; se prueban límites, duplicados, mensajes históricos y escape de HTML. El recorrido administrativo comprueba persistencia, normalización, visualización en ambos lenguajes y que un objetivo en borrador no cambie la versión pública ni la anterior.
 - El editor se sirve sin CDN y cambia de tema junto con el resto de la interfaz.
 - El flujo de evaluación verifica idempotencia, progreso separado por lenguaje y ausencia de entradas, salidas y errores de pruebas ocultas en la respuesta pública.
 - Se comprobó el ciclo de parada y arranque del clúster PostgreSQL del proyecto.
+
+## Rediseño por módulos y TypeScript desde cero
+
+Implementación del 15 de octubre de 2026. El catálogo conserva las 124 identidades previas y añade 16: 140 actividades, 20 módulos y rutas de 22/40/42/36 pasos. Hay 126 funciones y 14 programas, con 720 casos por lenguaje. Diseño y límites: [curriculum.md](curriculum.md).
+
+- `npm test`: 73/73 aprobadas. Incluye referencias fijas de Python y JavaScript, compilación estricta y ejecución de todas las referencias y plantillas TypeScript, contratos de entrada/retorno, prueba negativa de tipos y comprobación de que un diagnóstico detiene el conductor antes de ejecutar. Se verifican cobertura de rutas sin duplicados, integración final y orden de prerrequisitos. Tras ampliar las aserciones de contratos editoriales se repitieron sus siete pruebas, también aprobadas.
+- `npm run typecheck` y `npm run build`: aprobados. Build regeneró Prisma y compiló las rutas. No se inició la aplicación.
+- `npm run lint`: sin errores; solo los tres avisos previos de `.agents/skills/tailwind-v4-shadcn`, preservados sin modificaciones.
+- `npm run db:migrate`: aplicada `20261016000000_variant_statement`, aditiva, con `statement` y `typeContract` en las variantes. El seed incorporó las nuevas identidades; no actualiza versiones existentes.
+- `npm run content:revisions -- --apply`: 124 nuevas versiones en borrador; se conservan las versiones publicadas. Una previsualización posterior reconoce las 140 revisiones como idénticas, sin escrituras ni conflictos. El script no modifica progreso, envíos ni borradores del alumno.
+- `npm run content:paths -- --apply`: rutas locales actualizadas a 22/40/42/36 pasos. La autoevaluación no concede progreso y no impide continuar.
+- `npm run test:runner`: una prueba de ejecutor ausente aprobada y seis omitidas. Piston no responde, por lo que **no se acredita ejecución real, compilación TypeScript dentro de Piston ni publicación de las 124 revisiones**. Siguen en borrador; las variantes antiguas pueden no ofrecer TypeScript hasta publicarlas.
+- `npx playwright test --list`: descubre 72 pruebas, incluidas cinco nuevas de currículo/TypeScript. Solo se comprobó el descubrimiento: **no se ejecutaron E2E ni E2E reales**, porque requieren autorización para iniciar un servidor. También quedan pendientes las comprobaciones visuales, de foco y ambos temas en navegador.
+- No se presenta esto como una reescritura pedagógica individual de todos los enunciados históricos: se han revisado los introductorios y añadido estructura, teoría y ejemplos a las cuatro rutas. La revisión individual restante y la validación de cada referencia en Piston deben completarse antes de dar por cerrado el plan editorial.
+
+## Historial de verificaciones anteriores
+
+Los apartados siguientes corresponden a entregas anteriores y no sustituyen las comprobaciones pendientes del rediseño.
 
 ## Lote R1: contenido educativo inicial
 

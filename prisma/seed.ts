@@ -5,6 +5,8 @@ import { exercises, starter } from "./content";
 import { introductoryExercises } from "./introductory-content";
 import { learningPaths } from "../src/lib/learning-paths";
 import type { Json } from "../src/lib/types";
+import { languages } from "../src/lib/types";
+import { statementForLanguage } from "./lesson-statements";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 const json = (value: Json) => value === null ? Prisma.JsonNull : value;
@@ -21,8 +23,8 @@ async function seed() {
         runtimeMode: exercise.runtimeMode ?? "FUNCTION",
         complexity: exercise.complexity ?? "", commonErrors: exercise.commonErrors ?? [],
         level: exercise.level, minutes: exercise.minutes, constraints: exercise.constraints, hints: exercise.hints,
-        variants: { create: (["python", "javascript"] as const).map((language) => ({
-          language, starter: exercise.starters?.[language] ?? starter[language], solution: exercise[language], explanation: exercise.explanations?.[language] ?? exercise.explanation,
+        variants: { create: languages.map((language) => ({
+          language, statement: statementForLanguage(exercise, language), typeContract: language === "typescript" ? exercise.typescriptContract ?? "" : "", starter: exercise.starters?.[language] ?? starter[language], solution: exercise[language]!, explanation: exercise.explanations?.[language] ?? exercise.explanation,
           tests: { create: exercise.tests.map((test, index) => ({ input: json(test.input), expected: json(test.expected), explanation: test.explanation ?? "", visible: index < 2, order: index })) },
         })) },
       } },
@@ -38,7 +40,7 @@ async function seed() {
     if (path.slugs) items.sort((a, b) => path.slugs!.indexOf(a.slug) - path.slugs!.indexOf(b.slug));
     await db.learningPath.create({ data: { slug: path.slug, title: path.title, description: path.description, order: path.order, items: { create: items.map((e, position) => ({ exerciseId: e.id, position })) } } });
   }
-  console.log(`Catálogo listo: ${await db.exercise.count()} ejercicios, Python y JavaScript, tres niveles y una ruta desde cero.`);
+  console.log(`Catálogo listo: ${await db.exercise.count()} ejercicios. Las identidades existentes no se modifican; usa la importación editorial para actualizarlas.`);
 }
 
 seed().catch((error) => { console.error(error); process.exitCode = 1; }).finally(() => db.$disconnect());

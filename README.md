@@ -8,9 +8,10 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 
 - Landing, espacio personal, catálogo con filtros y cuatro rutas de aprendizaje.
 - Ejercicios originales en español con progresión por niveles: principiante, intermedio y avanzado.
-- Ruta **Desde cero**: actividades guiadas antes de sumar dos números, con plantillas propias por lenguaje.
+- Ruta **Desde cero**: instrucciones, valores, variables, entrada y operaciones antes de introducir funciones, con plantillas propias por lenguaje.
 - Ruta **Construye tus bases**: comparaciones, condiciones, listas, cadenas, rangos y acumuladores antes de combinarlos en retos.
 - Varios lenguajes; casos editoriales por lenguaje, entre visibles y ocultos.
+- Módulos con teoría breve, ejemplos adaptados y retos de integración. Autoevaluación al terminar cada ruta, sin bloqueos.
 - Registro e inicio de sesión con correo y contraseña; recuperación en una bandeja de correo local.
 - Monaco servido localmente, editor sencillo alternativo, tamaño de fuente, paneles ajustables y copia del código; las preferencias se recuerdan en el navegador.
 - Borrador local y guardado en PostgreSQL con detección de conflictos entre pestañas.
@@ -18,7 +19,7 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 - Pistas progresivas, coste orientativo, errores comunes y soluciones explicadas a petición.
 - Historial de intentos de cada ejercicio y búsqueda del catálogo sin distinguir acentos.
 - Administración con nuevas versiones, pruebas, validación de referencias y publicación.
-- Revisiones didácticas de los ocho retos originales, importables como borradores privados desde administración, sin sobrescribir el trabajo existente.
+- Revisiones didácticas importables como borradores privados, sin sobrescribir el trabajo existente.
 - Temas claro/oscuro, fuentes locales Geist, navegación por teclado y adaptación móvil.
 
 ## Requisitos
@@ -76,11 +77,11 @@ npm run runner:setup
 npm run doctor
 ```
 
-La primera preparación descarga la imagen de Piston y los runtimes gratuitos de Python y Node. Después, los ejercicios se ejecutan localmente.
+La primera preparación descarga la imagen de Piston y los runtimes gratuitos de Python, Node y TypeScript. Después, los ejercicios se ejecutan localmente.
 
 - Piston está expuesto únicamente en **127.0.0.1:2000**.
 - Usa Isolate y necesita el contenedor privilegiado definido por su instalación oficial, cgroup v2 y soporte de namespaces. No se monta la carpeta de Itera ni la base de datos dentro del ejecutor.
-- Los programas tienen límite de 3 segundos, 256 MiB, 64 procesos y 64 KiB por salida. La red está deshabilitada explícitamente en el sandbox.
+- Los programas tienen límite de 3 segundos, 256 MiB, 64 procesos y 64 KiB por salida. TypeScript dispone además de una compilación estricta dentro del sandbox (hasta 8 segundos); el conductor tiene un presupuesto de 12 segundos. La red está deshabilitada explícitamente en el sandbox.
 - Las salidas esperadas se comparan en Itera; no forman parte del programa evaluado.
 - Las pruebas ocultas devuelven solo su estado, nunca entradas, salidas ni errores brutos.
 - Se permiten como máximo una evaluación activa por usuario y cuatro globales.
@@ -88,11 +89,16 @@ La primera preparación descarga la imagen de Piston y los runtimes gratuitos de
 
 El repositorio no llama a la API pública de Piston ni necesita una clave de terceros. Para detener el sandbox: `docker compose stop`.
 
-**Verificado contra el sandbox real.** Con Docker Desktop y WSL2 instalados, `npm run test:runner` ejecuta las soluciones de referencia dentro de Piston y `npm run test:e2e:real` recorre la aplicación completa con el ejecutor real. No hay ninguna ejecución simulada en la aplicación normal.
+**Verificación del sandbox.** Con Docker Desktop y WSL2 instalados, `npm run test:runner` ejecuta las soluciones de referencia dentro de Piston y `npm run test:e2e:real` recorre la aplicación completa con el ejecutor real. Las pruebas se omiten cuando el ejecutor no está disponible: eso no acredita su funcionamiento. Consulta el estado de cada entrega en [docs/verification.md](docs/verification.md). No hay ejecución simulada en la aplicación normal.
 
 ## Contrato de los ejercicios
 
-Implementa `solve(data)` y devuelve un valor JSON. La plantilla recibe datos ya deserializados: no necesitas leer `stdin` ni imprimir el resultado. Puedes usar `print`/`console.log` para depurar; la última línea la genera el adaptador con el valor devuelto.
+Hay dos modelos que conviven:
+
+- **Programa:** escribe el archivo completo, lee la entrada estándar preparada en la plantilla y muestra la respuesta. Se compara el texto impreso, normalizando finales de línea y espacios finales.
+- **Función:** implementa `solve(data)` y devuelve un valor JSON. La aplicación proporciona los datos; no necesitas leer la entrada ni imprimir el resultado. Puedes imprimir para depurar: el panel de salida muestra esas líneas solo en ejemplos visibles.
+
+TypeScript puede elegirse sin conocer JavaScript. Aprende inferencia y anotaciones desde las variables, después firmas, objetos, uniones, opcionales y genéricos. La evaluación exige compilar sin errores de tipos antes de ejecutar, y las funciones tienen un contrato editorial independiente de la firma que escriba el alumno.
 
 Los ejemplos no aprueban el ejercicio. **Comprobar solución** ejecuta todos los casos y registra el resultado. La comparación es estructural: ignora el orden de claves de los objetos, pero respeta tipos y orden de arreglos.
 
@@ -106,7 +112,9 @@ Tras registrarte, puedes convertir tu cuenta en administradora:
 npm run admin -- tu@correo.com
 ```
 
-Abre `/admin`. Guardar crea una versión en borrador. **Validar y publicar** ejecuta las soluciones de referencia en Piston y publica solo si ambas superan todas las pruebas. El catálogo inicial se incorpora mediante seed y sus referencias se verifican con las pruebas editoriales del repositorio.
+Abre `/admin`. Guardar crea una versión en borrador. **Validar y publicar** comprueba las referencias y plantillas de todos los lenguajes en Piston; TypeScript debe cumplir también su contrato de tipos. El catálogo inicial se incorpora mediante seed y sus referencias se verifican con las pruebas editoriales del repositorio.
+
+En una instalación existente, el seed no actualiza ejercicios antiguos. `npm run content:revisions` previsualiza las nuevas versiones y `npm run content:revisions -- --apply` prepara sus borradores sin publicar ni reemplazar borradores distintos. Después valídalos desde administración con Piston disponible. Hasta publicarlos, algunos lenguajes pueden no estar disponibles en las versiones antiguas. Procedimiento y currículo: [docs/curriculum.md](docs/curriculum.md).
 
 Los usuarios nuevos no pueden asignarse el rol de administrador. Los permisos se comprueban en cada operación del servidor.
 
@@ -122,6 +130,7 @@ Los usuarios nuevos no pueden asignarse el rol de administrador. Los permisos se
 | `npm run db:studio` | Inspección local mediante Prisma Studio. |
 | `npm run content:paths` | Vista previa del orden de las cuatro rutas con secuencia editorial. Añade `-- --apply` para actualizarlo explícitamente. |
 | `npm run content:metadata` | Vista previa de la guía de aprendizaje (objetivo y conocimientos previos) que falta en versiones publicadas antiguas. Añade `-- --apply` para completarla sin sobrescribir. |
+| `npm run content:revisions` | Previsualizar revisiones del catálogo; `-- --apply` crea borradores nuevos sin publicar ni modificar versiones existentes. |
 | `npm run doctor` | Estado de dependencias locales. |
 | `npm run lint` / `npm run typecheck` | Calidad estática. |
 | `npm test` | Evaluador, validación y referencias editoriales. |
