@@ -1,15 +1,146 @@
 import Link from "next/link";
-import { ArrowRight, ChevronRight, Check, Braces } from "lucide-react";
+import { ArrowDown, ArrowRight, Check, CornerDownRight, Lightbulb, Route, Terminal } from "lucide-react";
 import { currentUser } from "@/server/auth";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { PracticeDemo } from "@/components/landing/practice-demo";
+import { languageNames, levelNames } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
+
 export default async function LandingPage() {
   const user = await currentUser();
-  return <><header className="mx-auto flex h-22 max-w-[1200px] items-center justify-between px-6 sm:px-10"><Logo href="/" /><nav className="flex items-center gap-3 sm:gap-6" aria-label="Navegación"><Link href="/ejercicios" className="hidden text-sm text-muted-foreground hover:text-foreground sm:block">Explorar ejercicios</Link><ThemeToggle />{user ? <Link href="/inicio" className="text-sm">Ir a mi panel</Link> : <Link href="/iniciar-sesion" className="text-sm">Iniciar sesión</Link>}</nav></header>
-    <main id="main-content"><section className="mx-auto max-w-[1040px] px-6 pt-16 pb-16 text-center sm:pt-24"><p className="eyebrow">Un intento más cerca</p><h1 className="mx-auto mt-6 max-w-[800px] text-[44px] leading-[1.08] font-semibold tracking-[-0.055em] sm:text-[72px]">La lógica se aprende<br /><span className="text-muted-foreground">practicando.</span></h1><p className="mx-auto mt-7 max-w-[480px] text-base leading-relaxed text-muted-foreground sm:text-lg">Un espacio para pensar, probar y entender.<br className="hidden sm:block" /> Aprende a resolver problemas, a tu propio ritmo.</p><div className="mt-9 flex flex-wrap items-center justify-center gap-4"><Button asChild size="lg"><Link href="/inicio">Empezar a practicar <ArrowRight /></Link></Button><Button asChild variant="ghost" size="lg"><Link href="/rutas">Encontrar mi camino <ChevronRight /></Link></Button></div><p className="mt-5 text-xs text-muted-foreground">Gratis. Local. Hecho para aprender.</p>
-      <div className="mt-16 overflow-hidden rounded-2xl border text-left sm:mt-20"><div className="flex items-center justify-between border-b bg-surface/60 px-5 py-3"><span className="flex items-center gap-2 text-xs text-muted-foreground"><Braces className="size-4" />Tu espacio de práctica</span><span className="font-mono text-[11px] text-muted-foreground">Python</span></div><div className="grid md:grid-cols-[0.85fr_1fr]"><div className="border-b p-7 md:border-r md:border-b-0 sm:p-9"><span className="text-xs text-muted-foreground">01 / Fundamentos</span><h2 className="mt-4 text-2xl font-semibold tracking-tight">Dos números, una suma.</h2><p className="mt-3 text-sm leading-7 text-muted-foreground">Toda gran solución empieza por algo simple. Recibe dos números y encuentra su suma.</p><div className="mt-7 rounded-lg bg-surface px-4 py-3 font-mono text-xs">Entrada: {"{ a: 3, b: 5 }"}<br /><span className="mt-2 inline-block">Resultado: 8</span></div></div><div className="flex flex-col"><div className="flex flex-1 gap-6 p-7 font-mono text-[13px] leading-8 sm:p-9"><span className="text-right text-muted-foreground/60" aria-hidden="true">1<br />2<br />3<br />4</span><pre className="whitespace-pre-wrap"><span className="text-primary">def</span>{" solve(data):\n"}<span className="text-muted-foreground">{"    # Todo empieza aquí\n"}</span>{"    "}<span className="text-primary">return</span>{" data['a'] + data['b']"}</pre></div><div className="flex items-center gap-2 border-t px-7 py-4 text-xs"><Check className="size-4 text-success" />Ejemplo resuelto<span className="ml-auto text-muted-foreground">Un paso más.</span></div></div></div></div>
-    </section><section className="border-t bg-surface/50"><div className="mx-auto grid max-w-[1040px] gap-10 px-6 py-16 sm:grid-cols-3 sm:gap-12">{[{n:"01",title:"Encuentra tu nivel",text:"Desde los primeros conceptos hasta desafíos avanzados. Siempre hay un buen punto de partida."},{n:"02",title:"Haz espacio al intento",text:"Escribe, ejecuta y mejora. Los errores también son parte de aprender a programar."},{n:"03",title:"Entiende el porqué",text:"Pistas progresivas y soluciones explicadas para que cada ejercicio te deje algo nuevo."}].map(item => <div key={item.n}><span className="font-mono text-xs text-muted-foreground">{item.n}</span><h2 className="mt-4 text-lg font-medium tracking-tight">{item.title}</h2><p className="mt-3 text-sm leading-7 text-muted-foreground">{item.text}</p></div>)}</div></section><section className="mx-auto max-w-[1040px] px-6 py-20 text-center"><p className="eyebrow">Dos lenguajes. Infinitas formas de pensar.</p><div className="mt-6 flex justify-center gap-10 text-2xl font-medium tracking-tight"><span>Python</span><span className="text-border" aria-hidden="true">/</span><span>JavaScript</span></div><Link href="/ejercicios" className="text-link mt-8">Encuentra tu primer ejercicio <ArrowRight className="size-4" /></Link></section></main><footer className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 border-t px-6 py-7 text-xs text-muted-foreground"><span>Itera. Un intento más cerca.</span><span>Tu código. Tu progreso. Tu computadora.</span></footer></>;
+
+  return <div className="landing">
+    <header className="landing-header landing-container">
+      <Logo href="/" />
+      <nav className="flex items-center gap-3 sm:gap-7" aria-label="Navegación">
+        <a href="#como-se-aprende" className="landing-nav-link hidden md:inline-flex">El método</a>
+        <Link href="/ejercicios" className="landing-nav-link hidden sm:inline-flex">Explorar ejercicios</Link>
+        <ThemeToggle />
+        <Link href={user ? "/inicio" : "/iniciar-sesion"} className="landing-nav-link inline-flex">{user ? "Ir a mi panel" : "Iniciar sesión"}</Link>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <section className="landing-hero landing-container" aria-labelledby="landing-title">
+        <div className="landing-hero-copy">
+          <p className="landing-intro"><span aria-hidden="true">&#123; &#125;</span> Un espacio para practicar lógica</p>
+          <h1 id="landing-title">Pensar.<br />Probar.<br />Entender.</h1>
+          <p className="landing-lead">Aprender a programar empieza cuando haces algo con lo que sabes. Una idea, unas líneas, un nuevo intento.</p>
+          <div className="landing-hero-actions">
+            <Button asChild size="lg"><Link href="/inicio">Empezar a practicar <ArrowRight aria-hidden="true" data-icon="inline-end" /></Link></Button>
+            <a href="#como-se-aprende" className="landing-quiet-link">Así se aprende <ArrowDown className="size-3.5" aria-hidden="true" /></a>
+          </div>
+          <p className="landing-hero-note">Lógica más allá del lenguaje. A tu ritmo.<br />En tu computadora, sin suscripciones.</p>
+        </div>
+        <div className="landing-hero-product">
+          <div className="landing-demo-caption"><span>Una pequeña idea, en funcionamiento.</span><CornerDownRight className="size-4" aria-hidden="true" /></div>
+          <PracticeDemo />
+          <div className="landing-demo-footnote"><span>Demostración interactiva · código fijo</span><Link href="/ejercicios/suma-de-dos-numeros?lenguaje=javascript" className="landing-quiet-link">Abrir en Itera <ArrowRight className="size-3.5" aria-hidden="true" /></Link></div>
+        </div>
+      </section>
+
+      <section id="como-se-aprende" className="landing-process landing-container" aria-labelledby="process-title">
+        <div className="landing-section-heading">
+          <h2 id="process-title">De «¿y si…?»<br />a «ahora lo entiendo».</h2>
+          <p>No necesitas acertar a la primera.<br />Necesitas un lugar donde volver a intentarlo.</p>
+        </div>
+        <ol className="landing-steps">
+          <li>
+            <span className="landing-step-number">01</span>
+            <h3>Comprender</h3>
+            <p>Una consigna concreta. Una entrada y un resultado que buscar.</p>
+            <div className="landing-step-sample"><span className="text-muted-foreground">Recibes</span><code>&#123; a: 3, b: 5 &#125;</code></div>
+          </li>
+          <li>
+            <span className="landing-step-number">02</span>
+            <h3>Programar</h3>
+            <p>Traduce tu idea a código. Empieza con lo que ya sabes.</p>
+            <div className="landing-step-sample"><code><span className="text-primary-text">return</span> data.a + data.b;</code></div>
+          </li>
+          <li>
+            <span className="landing-step-number">03</span>
+            <h3>Ejecutar</h3>
+            <p>Prueba los ejemplos. Compara lo que esperabas con lo que pasó.</p>
+            <div className="landing-step-sample"><Check className="size-4 text-success-text" aria-hidden="true" /><code>8</code><span className="text-muted-foreground">Resultado esperado</span></div>
+          </li>
+          <li>
+            <span className="landing-step-number">04</span>
+            <h3>Mejorar</h3>
+            <p>Cambia la entrada. Revisa tu solución. Haz tuya la lógica.</p>
+            <div className="landing-step-sample"><code>a: -2, b: 7</code><ArrowRight className="size-3.5 text-muted-foreground" aria-hidden="true" /><code>5</code></div>
+          </li>
+        </ol>
+      </section>
+
+      <section className="landing-explore" aria-labelledby="explore-title">
+        <div className="landing-container landing-explore-grid">
+          <div className="landing-explore-copy">
+            <Route className="size-6 text-muted-foreground" strokeWidth={1.5} aria-hidden="true" />
+            <h2 id="explore-title">Tu punto de partida.<br />Tu propio recorrido.</h2>
+            <p className="landing-section-copy">¿Tu primera línea o tu próximo reto? Elige un lenguaje y un nivel. Sigue una ruta o explora por tu cuenta.</p>
+            <Link href="/rutas" className="landing-quiet-link">Ver todas las rutas <ArrowRight className="size-4" aria-hidden="true" /></Link>
+          </div>
+          <div className="landing-explore-options">
+            <form action="/ejercicios" className="landing-finder" aria-label="Encuentra tu ejercicio">
+              <fieldset>
+                <legend>Hoy quiero practicar…</legend>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div><label htmlFor="landing-language" className="field-label">Lenguaje</label><select id="landing-language" name="lenguaje" defaultValue="python" className="field">{Object.entries(languageNames).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
+                  <div><label htmlFor="landing-level" className="field-label">Nivel</label><select id="landing-level" name="nivel" defaultValue="BEGINNER" className="field">{Object.entries(levelNames).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
+                </div>
+                <Button type="submit" variant="outline" className="mt-5 w-full">Encontrar ejercicios <ArrowRight aria-hidden="true" data-icon="inline-end" /></Button>
+              </fieldset>
+            </form>
+            <Link href="/rutas/desde-cero" className="landing-route-link">
+              <span className="landing-route-mark" aria-hidden="true"><span /><span /><span /></span>
+              <div><span className="text-xs text-muted-foreground">¿Nunca has programado?</span><h3>Desde cero</h3><p>Tu primer resultado, paso a paso.</p></div>
+              <ArrowRight className="ml-auto size-5 shrink-0" aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="landing-feedback landing-container" aria-labelledby="feedback-title">
+        <div className="landing-review">
+          <div className="landing-review-heading"><Terminal className="size-4" aria-hidden="true" /><span>Leer el resultado también es programar.</span></div>
+          <div className="landing-review-body">
+            <p className="text-xs text-muted-foreground">Ejemplo de un primer intento · a = 3, b = 5</p>
+            <code className="landing-review-code"><span className="text-primary-text">return</span> data.a;</code>
+            <dl className="landing-comparison">
+              <div><dt>Tu resultado</dt><dd>3<span>Solo devolviste a</span></dd></div>
+              <div><dt>Esperado</dt><dd>8<span>La suma de a y b</span></dd></div>
+            </dl>
+            <details className="landing-hint">
+              <summary><Lightbulb className="size-4" aria-hidden="true" /><span>Una pista para seguir</span><span className="landing-details-indicator" aria-hidden="true">+</span></summary>
+              <p>Ya tienes el primer número. ¿Qué operación necesitas para añadir el segundo? Usa <code>+</code> y devuelve la suma con <code>return</code>.</p>
+            </details>
+            <details className="landing-hint">
+              <summary><Terminal className="size-4" aria-hidden="true" /><span>Entender la solución</span><span className="landing-details-indicator" aria-hidden="true">+</span></summary>
+              <div className="landing-explanation"><code>return data.a + data.b;</code><p>Accedemos a ambos valores, los sumamos y entregamos el resultado. Con 3 y 5 obtenemos 8; con −2 y 7, obtenemos 5. Cambia los números en la demo para comprobarlo.</p></div>
+            </details>
+          </div>
+        </div>
+        <div className="landing-feedback-copy">
+          <h2 id="feedback-title">No salió.<br />Ya sabes algo más.</h2>
+          <p className="landing-section-copy">Un resultado inesperado no cierra el ejercicio. Te da una nueva pregunta.</p>
+          <p className="landing-section-copy">Compara resultados, abre una pista cuando la necesites y consulta una solución explicada para entender el porqué.</p>
+          <p className="landing-margin-note">La respuesta importa.<br />Entender cómo llegaste, más.</p>
+        </div>
+      </section>
+
+      <section className="landing-closing landing-container" aria-labelledby="closing-title">
+        <div><p className="text-sm text-muted-foreground">No hace falta tenerlo todo claro.</p><h2 id="closing-title">Empieza con<br />una pequeña idea.</h2></div>
+        <div className="landing-closing-action"><Button asChild size="lg"><Link href="/rutas/desde-cero">Dar el primer paso <ArrowRight aria-hidden="true" data-icon="inline-end" /></Link></Button><p>Sin experiencia previa.<br />Sin prisa por terminar.</p></div>
+      </section>
+    </main>
+
+    <footer className="landing-footer landing-container">
+      <Logo href="/" />
+      <p>Un intento más cerca.</p>
+      <div className="flex flex-wrap gap-5"><Link href="/ejercicios" className="landing-quiet-link">Ejercicios</Link><Link href="/rutas" className="landing-quiet-link">Rutas</Link><span>Hecho para aprender.</span></div>
+    </footer>
+  </div>;
 }
