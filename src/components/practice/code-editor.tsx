@@ -16,15 +16,15 @@ function applyTheme(monaco: Monaco, dark: boolean) {
     rules: [
       { token: "", foreground: token("foreground") },
       { token: "comment", foreground: token("muted-foreground"), fontStyle: "italic" },
-      { token: "keyword", foreground: token("primary") },
+      { token: "keyword", foreground: token("primary-text") },
       { token: "string", foreground: token("foreground") },
       { token: "number", foreground: token("muted-foreground") },
       { token: "delimiter", foreground: token("muted-foreground") },
     ],
     colors: {
-      "editor.background": color("background"), "editor.foreground": color("foreground"),
+      "editor.background": color("editor-background"), "editor.foreground": color("foreground"),
       "editorLineNumber.foreground": color("muted-foreground"), "editorLineNumber.activeForeground": color("foreground"),
-      "editor.lineHighlightBackground": color("surface"), "editorCursor.foreground": color("primary"),
+      "editor.lineHighlightBackground": color("editor-line"), "editorCursor.foreground": color("primary"),
       "editor.selectionBackground": `${color("primary")}30`, "editor.inactiveSelectionBackground": `${color("primary")}20`,
       "editorIndentGuide.background1": color("border"), "editorError.foreground": color("destructive"),
       "editorWarning.foreground": color("warning"), "editorWidget.background": color("surface"),

@@ -3,10 +3,10 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-export const buttonVariants = cva("inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0", {
+export const buttonVariants = cva("inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-[background-color,color,box-shadow,filter] duration-150 active:brightness-95 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0", {
   variants: {
-    variant: { default: "bg-primary text-primary-foreground hover:brightness-95", secondary: "bg-surface text-foreground hover:bg-border", outline: "border border-border bg-background hover:bg-surface", ghost: "hover:bg-surface text-muted-foreground hover:text-foreground", destructive: "bg-destructive text-background" },
-    size: { default: "h-11 px-4", sm: "h-9 px-3 text-xs", lg: "h-12 px-6", icon: "size-11" },
+    variant: { default: "bg-primary text-primary-foreground shadow-control hover:brightness-95", secondary: "secondary-control bg-surface-secondary text-foreground hover:bg-selection", outline: "border border-border bg-control text-foreground hover:bg-surface-secondary", ghost: "text-tonal-foreground hover:bg-selection hover:text-foreground", segment: "text-tonal-foreground hover:text-foreground aria-pressed:bg-control aria-pressed:text-foreground aria-pressed:shadow-control", destructive: "bg-destructive text-background shadow-control" },
+    size: { default: "h-11 px-4 text-[13px] md:h-10", sm: "h-11 px-3 text-xs md:h-9", lg: "h-12 px-6 md:h-11", icon: "size-11 md:size-8" },
   }, defaultVariants: { variant: "default", size: "default" },
 });
 

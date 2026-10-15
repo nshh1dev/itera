@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Code2, Route, Check, Clock3, ChevronRight } from "lucide-react";
+import { ArrowRight, Code2, Clock3, Route } from "lucide-react";
 import { currentUser } from "@/server/auth";
 import { getCatalog } from "@/server/catalog";
 import { db } from "@/server/db";
@@ -7,8 +7,10 @@ import { languageNames, levelNames, type Language } from "@/lib/types";
 import { learningPathLevel } from "@/lib/learning-paths";
 import { Button } from "@/components/ui/button";
 import { ExerciseRow } from "@/components/exercise-row";
+import { ActivityList } from "@/components/activity-list";
+import { Badge } from "@/components/ui/badge";
 
-export const metadata = { title: "Mi espacio" };
+export const metadata = { title: "Inicio" };
 export default async function DashboardPage() {
   const user = await currentUser();
   const language = (user?.preference?.language ?? "python") as Language;
@@ -18,14 +20,38 @@ export default async function DashboardPage() {
   const continueExercise = catalog.find(e => e.slug === lastDraft?.variant.version.exercise.slug && !e.solved);
   const recommendation = continueExercise ?? catalog.find(e => !e.solved && e.level === (user?.preference?.level ?? "BEGINNER")) ?? catalog.find(e => !e.solved) ?? catalog[0];
   const suggestions = catalog.filter(e => !e.solved && e.id !== recommendation?.id).slice(0, 3);
-  const paths = await db.learningPath.findMany({ orderBy: { order: "asc" }, include: { _count: { select: { items: true } } } });
+  const [paths, recent] = await Promise.all([
+    db.learningPath.findMany({ orderBy: { order: "asc" }, include: { _count: { select: { items: true } } } }),
+    user ? db.submission.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 5, select: { id: true, status: true, mode: true, createdAt: true, passedCount: true, totalCount: true, variant: { select: { language: true, version: { select: { title: true, exercise: { select: { slug: true } } } } } } } }) : [],
+  ]);
   return <div className="page-container">
-    <div className="flex flex-wrap items-start justify-between gap-5"><div><p className="eyebrow">Tu espacio, tu ritmo</p><h1 className="page-title mt-3">{user ? `Hola, ${user.name.split(" ")[0]}.` : "Un buen día para aprender."}</h1><p className="mt-3 text-sm leading-7 text-muted-foreground">Cada intento cuenta. ¿Qué vas a descubrir hoy?</p></div><Link href="/configuracion" className="mt-1 flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs"><Code2 className="size-3.5 text-muted-foreground" />{languageNames[language]}<ChevronRight className="size-3 text-muted-foreground" /></Link></div>
-    {recommendation && <section className="relative mt-9 overflow-hidden rounded-2xl bg-surface px-6 py-8 sm:px-9 sm:py-9" aria-labelledby="continue-title"><div className="relative z-10 max-w-[520px]"><p className="flex items-center gap-2 text-xs text-muted-foreground"><span className="size-1.5 rounded-full bg-primary" />{continueExercise ? "Continúa donde lo dejaste" : solved === catalog.length ? "Siempre puedes volver a practicar" : "Tu siguiente paso"}</p><h2 id="continue-title" className="mt-5 text-2xl font-semibold tracking-[-0.035em] sm:text-[30px]">{recommendation.title}</h2><p className="mt-3 max-w-[420px] text-sm leading-7 text-muted-foreground">{recommendation.description}</p><div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-muted-foreground"><span>{levelNames[recommendation.level]}</span><span aria-hidden="true">·</span><span>{recommendation.category}</span><span aria-hidden="true">·</span><span className="flex items-center gap-1"><Clock3 className="size-3" />{recommendation.minutes} min aprox.</span></div><Button asChild className="mt-7"><Link href={`/ejercicios/${recommendation.slug}?lenguaje=${language}`}>{continueExercise ? "Continuar ejercicio" : "Empezar ejercicio"}<ArrowRight /></Link></Button></div><div className="absolute top-1/2 right-8 hidden -translate-y-1/2 font-mono text-[120px] font-light tracking-[-0.15em] text-border xl:block" aria-hidden="true">{"{ }"}</div></section>}
-    <section className="mt-8 flex flex-wrap items-center gap-x-9 gap-y-5 border-b pb-8" aria-label="Resumen de progreso"><div className="flex items-center gap-3"><span className="flex size-9 items-center justify-center rounded-full border"><Check className="size-4 text-muted-foreground" /></span><p className="text-sm"><strong className="font-semibold">{solved}</strong><span className="ml-2 text-muted-foreground">{solved === 1 ? "ejercicio resuelto" : "ejercicios resueltos"}</span></p></div><div className="hidden h-5 border-l sm:block" /><p className="text-sm"><strong className="font-semibold">{catalog.length}</strong><span className="ml-2 text-muted-foreground">oportunidades de aprender</span></p><Link href="/progreso" className="ml-auto flex items-center gap-1 text-xs text-muted-foreground hover:text-primary">Ver mi progreso<ArrowUpRight className="size-3.5" /></Link></section>
-    <section className="mt-10"><div className="flex items-center justify-between gap-4"><div><h2 className="section-title">Un reto para cada paso</h2><p className="mt-1.5 text-sm text-muted-foreground">Pequeños problemas. Nuevas formas de pensar.</p></div><Link href="/ejercicios" className="text-link shrink-0 text-xs">Ver todos <ArrowRight className="size-3.5" /></Link></div><div className="mt-4">{suggestions.length ? suggestions.map(e => <ExerciseRow key={e.id} exercise={e} language={language} />) : <p className="py-8 text-sm text-muted-foreground">Has completado el catálogo en este lenguaje. Prueba el otro o repasa tus soluciones.</p>}</div></section>
-    <section className="mt-11"><div className="flex items-center justify-between"><h2 className="section-title">No necesitas encontrar el camino solo</h2><Route className="hidden size-5 text-muted-foreground sm:block" /></div><p className="mt-2 text-sm text-muted-foreground">¿Nunca has programado? Empieza por Desde cero.</p><div className="mt-6 grid gap-4 lg:grid-cols-2">{paths.map((path, i) => { const level = learningPathLevel(path.slug); return <Link href={`/rutas/${path.slug}?lenguaje=${language}`} key={path.id} className="group rounded-xl border p-5 transition-colors hover:bg-surface"><div className="flex items-center justify-between"><span className="font-mono text-xs text-muted-foreground">0{i + 1}</span><ArrowUpRight className="size-4 text-muted-foreground group-hover:text-primary" /></div><h3 className="mt-6 text-sm font-medium">{path.title}</h3><p className="mt-2 text-xs text-muted-foreground">{path._count.items} ejercicios · {level ? levelNames[level] : "A tu ritmo"}</p><div className="mt-5 h-0.5 bg-border" /></Link>; })}</div></section>
-    {!user && <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t pt-7"><p className="text-sm text-muted-foreground">Dale un lugar a tu progreso. Crea una cuenta en tu computadora.</p><Link href="/registro" className="text-link">Crear cuenta <ArrowRight className="size-4" /></Link></div>}
-    <p className="mt-12 text-center text-xs text-muted-foreground">No se trata de saberlo todo. Se trata de dar el siguiente paso.</p>
+    <div className="mb-7 flex flex-wrap items-start justify-between gap-4">
+      <div><h1 className="page-title">{user ? `Hola, ${user.name.split(" ")[0]}.` : "Un buen día para aprender."}</h1><p className="mt-2 text-sm text-muted-foreground">Retoma tu práctica o descubre tu siguiente ejercicio.</p></div>
+      <Link href="/configuracion" className="flex min-h-10 items-center gap-2 rounded-lg bg-surface px-3 text-xs text-muted-foreground transition-colors hover:bg-selection"><Code2 className="size-3.5" />{languageNames[language]}</Link>
+    </div>
+    <div className="grid gap-7 min-[1100px]:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="min-w-0">
+        {recommendation && <section className="surface-panel surface-feature rounded-2xl bg-surface p-6 shadow-panel sm:p-7" aria-labelledby="continue-title">
+          <p className="text-xs font-medium text-muted-foreground">{continueExercise ? "Continúa donde lo dejaste" : solved === catalog.length ? "Volver a practicar" : "Tu siguiente paso"}</p>
+          <h2 id="continue-title" className="mt-4 text-2xl font-semibold tracking-tight">{recommendation.title}</h2>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{recommendation.description}</p>
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground"><Badge>{levelNames[recommendation.level]}</Badge><span>{recommendation.category}</span><span className="flex items-center gap-1.5"><Clock3 className="size-3.5" />{recommendation.minutes} min aprox.</span></div>
+          <Button asChild className="mt-5"><Link href={`/ejercicios/${recommendation.slug}?lenguaje=${language}`}>{continueExercise ? "Continuar ejercicio" : "Empezar ejercicio"}<ArrowRight /></Link></Button>
+        </section>}
+        <section className="mt-8" aria-labelledby="recommended-title">
+          <div className="section-heading"><h2 id="recommended-title" className="section-title">Ejercicios recomendados</h2><Link href={`/ejercicios?lenguaje=${language}`} className="text-link text-xs">Ver todos<ArrowRight className="size-3.5" /></Link></div>
+          {suggestions.length ? suggestions.map(e => <ExerciseRow key={e.id} exercise={e} language={language} />) : <p className="py-6 text-sm leading-6 text-muted-foreground">Has completado el catálogo en este lenguaje. Prueba el otro o repasa tus soluciones.</p>}
+        </section>
+        <section className="mt-8" aria-labelledby="paths-title">
+          <div className="section-heading justify-start gap-2"><Route className="size-4 text-muted-foreground" /><h2 id="paths-title" className="section-title">Rutas de aprendizaje</h2></div>
+          <ul className="flex flex-col gap-1">{paths.map(path => { const level = learningPathLevel(path.slug); return <li key={path.id}><Link href={`/rutas/${path.slug}?lenguaje=${language}`} className="list-entry items-center justify-between gap-4"><div><h3 className="text-sm font-medium">{path.title}</h3><p className="mt-1 text-xs text-muted-foreground">{path._count.items} ejercicios · {level ? levelNames[level] : "A tu ritmo"}</p></div><ArrowRight className="size-4 shrink-0 text-muted-foreground" /></Link></li>; })}</ul>
+        </section>
+      </div>
+      <div className="flex min-w-0 flex-col gap-7">
+        <section className="soft-section" aria-labelledby="progress-title"><div className="flex items-center justify-between gap-2"><h2 id="progress-title" className="section-title">Tu progreso</h2><Link href="/progreso" className="text-link text-xs">Ver detalle</Link></div><p className="mt-5 text-3xl font-semibold tracking-tight">{solved}<span className="ml-1 text-sm font-normal text-muted-foreground">/ {catalog.length}</span></p><p className="mt-1 text-xs leading-5 text-muted-foreground">Ejercicios resueltos en {languageNames[language]}</p><div role="progressbar" aria-label={`Ejercicios resueltos en ${languageNames[language]}`} aria-valuemin={0} aria-valuemax={catalog.length || 1} aria-valuenow={solved} className="progress-track mt-4"><div className="progress-fill" style={{ width: `${catalog.length ? solved / catalog.length * 100 : 0}%` }} /></div></section>
+        <section aria-labelledby="activity-title"><h2 id="activity-title" className="section-title mb-3 px-3">Actividad reciente</h2><ActivityList entries={recent} compact /></section>
+      </div>
+    </div>
+    {!user && <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-surface px-5 py-4"><p className="text-xs text-muted-foreground">Crea una cuenta local para guardar tu progreso.</p><Link href="/registro" className="text-link text-xs">Crear cuenta<ArrowRight className="size-3.5" /></Link></div>}
   </div>;
 }

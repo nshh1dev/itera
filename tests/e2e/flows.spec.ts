@@ -130,10 +130,20 @@ test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async
   await page.screenshot({path:".local/screenshots/workspace-light.png",fullPage:true});
   await page.getByRole("button",{name:"Cambiar tema claro u oscuro"}).click();
   await expect(page.locator("html")).toHaveClass(/dark/);
-  await expect(page.locator(".monaco-editor-background").first()).toHaveCSS("background-color","rgb(0, 0, 0)");
+  await expect(page.locator(".monaco-editor-background").first()).toHaveCSS("background-color","rgb(28, 28, 30)");
   await page.screenshot({path:".local/screenshots/workspace-dark.png",fullPage:true});
   await page.goto("/progreso");
   await expect(page.getByText("Resuelto",{exact:true}).first()).toBeVisible();
+  await page.screenshot({path:".local/screenshots/ui-progress-dark.png",fullPage:true,animations:"disabled"});
+  await page.getByRole("button",{name:"Cambiar tema claro u oscuro"}).click();
+  await expect(page.locator("html")).not.toHaveClass(/dark/);
+  await page.screenshot({path:".local/screenshots/ui-progress-light.png",fullPage:true,animations:"disabled"});
+  await page.goto("/configuracion");
+  await expect(page.getByLabel("Correo electrónico",{exact:true})).toHaveValue(email);
+  await page.screenshot({path:".local/screenshots/ui-settings-light.png",fullPage:true,animations:"disabled"});
+  await page.getByRole("button",{name:"Oscuro",exact:true}).click();
+  await expect(page.getByRole("button",{name:"Oscuro",exact:true})).toHaveAttribute("aria-pressed","true");
+  await page.screenshot({path:".local/screenshots/ui-settings-dark.png",fullPage:true,animations:"disabled"});
 });
 
 test("ayudas progresivas, solución explícita y autorización administrativa",async({page})=>{
@@ -296,7 +306,9 @@ for(const revisionSlug of revisionSlugs){
 test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borradores editoriales`,async({page})=>{
   const completeAction=await actionStreamMonitor(page);
   await page.context().addCookies(authCookies);
-  const exercise=await db.exercise.findUniqueOrThrow({where:{slug:revisionSlug},include:{versions:{orderBy:{number:"desc"},take:1,include:{variants:{include:{tests:true}}}}}});
+  // PostgreSQL no garantiza el orden de relaciones sin orderBy: comparar el
+  // contenido completo antes/después con el mismo orden, incluidos ids y casos.
+  const exercise=await db.exercise.findUniqueOrThrow({where:{slug:revisionSlug},include:{versions:{orderBy:{number:"desc"},take:1,include:{variants:{orderBy:{language:"asc"},include:{tests:{orderBy:{order:"asc"}}}}}}}});
   const previous=exercise.versions[0];
   const count=await db.exerciseVersion.count({where:{exerciseId:exercise.id}});
   const source=seedVersionContent(catalogRevision(exercise.slug)!);
@@ -316,11 +328,11 @@ test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borrador
   }
   if(decision==="create")await expect(page.getByRole("status")).toContainText("preparada en borrador");
   else await expect(page.getByRole("status")).toContainText("ya contiene esta revisión");
-  const latest=await db.exerciseVersion.findFirstOrThrow({where:{exerciseId:exercise.id},orderBy:{number:"desc"},include:{variants:{include:{tests:true}}}});
+  const latest=await db.exerciseVersion.findFirstOrThrow({where:{exerciseId:exercise.id},orderBy:{number:"desc"},include:{variants:{orderBy:{language:"asc"},include:{tests:{orderBy:{order:"asc"}}}}}});
   expect(catalogRevisionDecision(latest,source,latest.id)).toBe("unchanged");
   expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?1:0));
   if(decision==="create")expect(latest.published).toBe(false);
-  expect(await db.exerciseVersion.findUniqueOrThrow({where:{id:previous.id},include:{variants:{include:{tests:true}}}})).toEqual(previous);
+  expect(await db.exerciseVersion.findUniqueOrThrow({where:{id:previous.id},include:{variants:{orderBy:{language:"asc"},include:{tests:{orderBy:{order:"asc"}}}}}})).toEqual(previous);
   const published=await db.exerciseVersion.findFirstOrThrow({where:{exerciseId:exercise.id,published:true},orderBy:{number:"desc"}});
   await page.goto(`/ejercicios/${exercise.slug}?lenguaje=python`);
   await expect(page.locator('section[aria-label="Enunciado"] > p').first()).toHaveText(published.statement);

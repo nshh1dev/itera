@@ -4,6 +4,7 @@ import { db } from "@/server/db";
 import { currentUser } from "@/server/auth";
 import { levelNames } from "@/lib/types";
 import { learningPathLevel } from "@/lib/learning-paths";
+import { Badge } from "@/components/ui/badge";
 
 export const metadata = { title: "Rutas de aprendizaje" };
 export default async function PathsPage() {
@@ -21,5 +22,15 @@ export default async function PathsPage() {
       },
     },
   });
-  return <div className="page-container"><p className="eyebrow">Una idea lleva a otra</p><h1 className="page-title mt-3">Encuentra tu camino.</h1><p className="mt-3 max-w-xl text-sm leading-7 text-muted-foreground">Si nunca has programado, empieza por Desde cero. Las demás rutas te permiten practicar y combinar lo aprendido, sin bloqueos.</p><div className="mt-10 space-y-5">{paths.map((path,i) => { const done = path.items.filter(item => item.exercise.progress.length > 0).length; const level = learningPathLevel(path.slug); return <Link href={`/rutas/${path.slug}?lenguaje=${language}`} key={path.id} className="group flex flex-col gap-7 rounded-2xl border p-6 transition-colors hover:bg-surface sm:flex-row sm:p-8"><span className="font-mono text-3xl tracking-tight text-muted-foreground/60">0{i + 1}</span><div className="flex-1"><p className="eyebrow">{level ? levelNames[level] : "A tu ritmo"}</p><h2 className="mt-3 text-2xl font-medium tracking-tight">{path.title}</h2><p className="mt-3 max-w-xl text-sm leading-7 text-muted-foreground">{path.description}</p><div className="mt-6 flex items-center gap-4"><div className="h-1 w-32 overflow-hidden rounded-full bg-border"><div className="h-full bg-primary" style={{ width: `${path.items.length ? done / path.items.length * 100 : 0}%` }} /></div><span className="text-xs text-muted-foreground">{done} de {path.items.length} ejercicios</span></div></div><ArrowRight className="size-5 self-end text-muted-foreground group-hover:text-primary sm:self-center" /></Link>; })}</div></div>;
+  return <div className="page-container">
+    <h1 className="page-title">Rutas de aprendizaje</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Empieza por Desde cero si nunca has programado. Las rutas ordenan la práctica, sin bloquear tu exploración.</p>
+    <div className="mt-6 flex flex-col gap-4">{paths.map((path,i) => {
+      const done = path.items.filter(item => item.exercise.progress.length > 0).length;
+      const level = learningPathLevel(path.slug);
+      return <Link href={`/rutas/${path.slug}?lenguaje=${language}`} key={path.id} className="surface-panel surface-interactive group flex flex-col gap-5 rounded-2xl bg-surface p-5 transition-colors hover:bg-surface-secondary sm:flex-row sm:items-center sm:gap-7 sm:p-6">
+        <div className="min-w-0 flex-1"><div className="mb-3 flex items-center gap-3"><span className="text-xs text-muted-foreground">Ruta {i + 1}</span><Badge variant="outline">{level ? levelNames[level] : "A tu ritmo"}</Badge></div><h2 className="text-xl font-semibold tracking-tight">{path.title}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{path.description}</p></div>
+        <div className="flex shrink-0 items-center gap-5 sm:w-56"><div className="flex-1"><p className="mb-3 text-sm font-medium">{done}<span className="ml-1 text-xs font-normal text-muted-foreground">de {path.items.length} ejercicios</span></p><div role="progressbar" aria-label={`Progreso en ${path.title}`} aria-valuemin={0} aria-valuemax={path.items.length || 1} aria-valuenow={done} className="progress-track"><div className="progress-fill" style={{ width: `${path.items.length ? done / path.items.length * 100 : 0}%` }} /></div></div><ArrowRight className="size-4 shrink-0 text-muted-foreground group-hover:text-primary-text" /></div>
+      </Link>;
+    })}</div>
+  </div>;
 }
