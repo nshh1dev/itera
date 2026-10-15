@@ -56,6 +56,25 @@ test("la plantilla guiada también está disponible en JavaScript", async ({ pag
   await expect(page.getByRole("textbox", { name: "Editor sencillo de JavaScript" })).toHaveValue(/return 7/);
 });
 
+for (const language of ["python", "javascript"] as const) {
+  test(`las actividades circulares presentan resto y recorrido desde otro índice en ${language}`, async ({ page }) => {
+    const lessons = [
+      { slug: "reduce-vueltas-completas", title: "Las vueltas que sobran", code: "pasos % 2" },
+      { slug: "siguiente-indice-circular", title: "Después del último, el primero", code: "indice + 0" },
+      { slug: "recorre-en-circulo", title: "Empieza en otra posición", code: "indice = 0" },
+    ];
+    for (const lesson of lessons) {
+      await page.goto(exerciseHref(lesson.slug, language, "pensar-en-soluciones"));
+      await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
+      await expect(page.getByRole("region", { name: "Guía de aprendizaje" }).locator("li").first()).toBeVisible();
+      await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+      const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
+      await expect(editor).toHaveValue(new RegExp(lesson.code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+      await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/pensar-en-soluciones?lenguaje=${language}`);
+    }
+  });
+}
+
 test("Conecta las ideas introduce los conceptos antes de sus retos", async ({ page }) => {
   await page.goto("/rutas/pensar-en-soluciones");
   await expect(page.getByRole("heading", { name: "Conecta las ideas", exact: true })).toBeVisible();

@@ -5,6 +5,9 @@ const m = (objective: string, ...prerequisites: string[]): LearningMetadata => (
 // Describe conocimientos, no bloqueos ni logros del estudiante. Solo se incorpora
 // a versiones nuevas; la migración no atribuye estos datos a versiones históricas.
 export const learningMetadata: Record<string, LearningMetadata> = {
+  "reduce-vueltas-completas": m("Usar el resto respecto al tamaño para eliminar vueltas completas.", "Resto con %", "Acceder a propiedades", "Divisores positivos y pasos no negativos"),
+  "siguiente-indice-circular": m("Avanzar un índice y volver al cero después de la última posición válida.", "Índices desde cero", "Resto respecto al tamaño", "Sumas y paréntesis"),
+  "recorre-en-circulo": m("Construir una lista desde otro índice usando un contador independiente para terminar.", "Recorrer posiciones con while", "Avanzar circularmente con %", "Añadir valores a una lista"),
   "repite-con-while": m("Controlar una repetición con while y avanzar hacia una condición de parada.", "Comparaciones de números", "Actualizar un contador", "Devolver un resultado después de un bucle"),
   "recorre-por-indices": m("Recorrer posiciones válidas con while y distinguir el índice del valor que contiene.", "Bucles while y actualización", "Índices desde cero", "Añadir valores a una lista"),
   "punto-medio-del-intervalo": m("Calcular un índice central entero entre dos límites inclusivos.", "Índices de listas", "Sumas y división", "Acceder a propiedades"),
@@ -55,7 +58,7 @@ export const learningMetadata: Record<string, LearningMetadata> = {
   "segundo-mayor": m("Combinar dos recorridos para hallar el segundo máximo distinto o indicar su ausencia.", "Encontrar el máximo de una lista", "Buscar el mayor bajo un límite estricto", "Comprobar ausencia con None o null", "Tratar listas vacías"),
   "busqueda-binaria": m("Repetir el descarte de mitades hasta encontrar el índice del objetivo o agotar el intervalo.", "Recorrer posiciones con while", "Calcular un punto medio entero", "Descartar una mitad de una lista ordenada", "Límites inclusivos e intervalo vacío"),
   "anagramas": m("Contar y comparar las letras de dos textos ignorando espacios y mayúsculas.", "Convertir a minúsculas y omitir espacios", "Inicializar y actualizar contadores por letra", "Comparar todas las cantidades", "Devolver falso ante una diferencia"),
-  "rotar-arreglo": m("Dividir y recombinar una lista para desplazarla sin perder elementos.", "Índices y segmentos de listas", "Operador de resto %", "Tratar listas vacías"),
+  "rotar-arreglo": m("Reconstruir una lista rotada a la derecha normalizando las vueltas y recorriendo índices circulares.", "Reducir vueltas completas con %", "Leer una vuelta desde un índice elegido", "Contador de parada con while", "Tratar listas vacías antes de calcular restos"),
   "parentesis-equilibrados": m("Usar una pila para comprobar aperturas y cierres en el orden correcto.", "Recorrer cadenas", "Pilas: añadir y retirar el último elemento", "Diccionarios u objetos", "Condiciones y salida anticipada"),
   "ventana-sin-repeticiones": m("Mantener una ventana válida y encontrar la subcadena más larga sin repeticiones.", "Recorridos con índices", "Mapas o diccionarios", "Subcadenas contiguas", "Análisis de recorridos lineales"),
   "unir-intervalos": m("Ordenar intervalos y fusionar los que se solapan manteniendo una salida coherente.", "Listas de pares", "Ordenación por una clave", "Comparaciones de extremos", "Actualizar la salida durante un recorrido"),

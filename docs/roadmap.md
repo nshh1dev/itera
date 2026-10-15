@@ -104,9 +104,17 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 - Seed y rutas aplicados localmente. Las filas previas de las diez tablas comprobadas conservan sus recuentos y huellas; solo se añadieron cuatro ejercicios, cuatro versiones, ocho variantes y 50 casos. Borradores y datos de estudiantes intactos.
 - Lint, tipos, build, 36 pruebas unitarias/editoriales y 32 E2E aprobados en desarrollo y producción local. Las siete importaciones editoriales incluyen búsqueda binaria. No apareció el error de stream registrado en la entrega anterior, pero no se da por corregido sin diagnóstico. Piston real continúa pendiente.
 
+## Undécima entrega: recorridos circulares y rotación
+
+- Tres actividades guiadas: Las vueltas que sobran, Después del último, el primero y Empieza en otra posición. Presentan resto respecto al tamaño, avance circular y contador independiente de parada.
+- Conecta las ideas pasa de 23 a 26 pasos. Un giro a la derecha combina normalización e índices, sin exigir segmentos, slicing ni operaciones para mover elementos. Conserva los cinco casos originales y amplía a diez; la revisión se importa como borrador nuevo.
+- Catálogo de 63 ejercicios y 347 casos por lenguaje. Una prueba adicional comprueba 3066 entradas por lenguaje, con tamaño uno, listas vacías, negativos, cero, repetidos, vueltas completas y k de un millón. Los recorridos leen exactamente una vuelta, generan una lista distinta y no modifican la entrada.
+- Seed y rutas aplicados localmente: las filas previas de las diez tablas comprobadas conservan sus recuentos y huellas. Solo se añadieron tres ejercicios, tres versiones, seis variantes y 32 casos. Se aclaró el enunciado de una de esas actividades nuevas sin tocar contenido anterior.
+- Lint, tipos, build, 39 pruebas unitarias/editoriales y 35 E2E en desarrollo aprobados. Producción local: 26 aprobados, un fallo administrativo y ocho importaciones no ejecutadas. Los recorridos nuevos pasan en ambos modos. El fallo detecta dos peticiones canceladas al publicar y ocultar, aunque el observador del lector confirmó cierre; no se ha determinado la causa y se mantienen ambas comprobaciones. Piston real continúa pendiente.
+
 ## Siguiente entrega
 
-Introducir desplazamiento circular, normalización con resto y reconstrucción por índices antes de Un giro a la derecha. Después continuar con pilas y paréntesis equilibrados.
+Diagnosticar las cancelaciones administrativas observadas en producción, sin quitar comprobaciones ni ocultarlas con reintentos. Después introducir pilas y sus operaciones antes de Todo en su lugar.
 
 ## Fiabilidad y experiencia
 
