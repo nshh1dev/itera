@@ -1,16 +1,16 @@
 # Itera
 
-**Un intento más cerca.** Un espacio local para aprender lógica de programación con Python y JavaScript.
+**Un intento más cerca.** Un espacio local para aprender lógica de programación con ejercicios originales y rutas guiadas.
 
 Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradores y el progreso se guardan en tu computadora. La IA se implementará más adelante.
 
 ## Qué incluye
 
 - Landing, espacio personal, catálogo con filtros y cuatro rutas de aprendizaje.
-- 120 ejercicios originales en español: 45 principiantes, 40 intermedios y 35 avanzados.
-- Ruta **Desde cero**: siete actividades guiadas antes de sumar dos números, con plantillas propias para Python y JavaScript.
-- Ruta **Construye tus bases**: 37 pasos con comparaciones, condiciones, listas, cadenas, rangos y acumuladores antes de combinarlos en retos.
-- Python y JavaScript; 648 casos editoriales por lenguaje, entre visibles y ocultos.
+- Ejercicios originales en español con progresión por niveles: principiante, intermedio y avanzado.
+- Ruta **Desde cero**: actividades guiadas antes de sumar dos números, con plantillas propias por lenguaje.
+- Ruta **Construye tus bases**: comparaciones, condiciones, listas, cadenas, rangos y acumuladores antes de combinarlos en retos.
+- Varios lenguajes; casos editoriales por lenguaje, entre visibles y ocultos.
 - Registro e inicio de sesión con correo y contraseña; recuperación en una bandeja de correo local.
 - Monaco servido localmente, editor sencillo alternativo, tamaño de fuente y paneles ajustables.
 - Borrador local y guardado en PostgreSQL con detección de conflictos entre pestañas.
@@ -177,9 +177,9 @@ Para respaldar tus datos usa `pg_dump` de tu versión de PostgreSQL, o copia `.l
 
 Prioridades y criterios pedagógicos: [docs/roadmap.md](docs/roadmap.md).
 
-Para incorporar **Desde cero** a una instalación existente, inicia PostgreSQL y ejecuta `npm run db:seed`. Se añaden los siete ejercicios y la ruta sin reemplazar los ejercicios, rutas, borradores ni progresos existentes. No hace falta resetear la base.
+Para incorporar **Desde cero** a una instalación existente, inicia PostgreSQL y ejecuta `npm run db:seed`. Se añaden sus actividades y la ruta sin reemplazar los ejercicios, rutas, borradores ni progresos existentes. No hace falta resetear la base.
 
-Para incorporar la ampliación completa del currículo —**Construye tus bases**, **Conecta las ideas** y **Ve un paso más allá**—, ejecuta `npm run db:seed`, revisa `npm run content:paths` y aplica con `npm run content:paths -- --apply`. Esta actualización solo reemplaza el orden y la composición de las cuatro rutas editoriales con secuencia definida; no modifica ejercicios, versiones, borradores, intentos, progreso ni rutas personalizadas. Es atómica y comprueba que todos los ejercicios estén publicados antes de cambiar nada. El currículo queda completo con 120 actividades: 45 principiantes, 40 intermedios y 35 avanzados. Después, `npm run content:metadata -- --apply` completa la guía (objetivo y conocimientos previos) de las versiones publicadas anteriores, sin tocar enunciados, pruebas ni datos de estudiantes.
+Para incorporar la ampliación completa del currículo —**Construye tus bases**, **Conecta las ideas** y **Ve un paso más allá**—, ejecuta `npm run db:seed`, revisa `npm run content:paths` y aplica con `npm run content:paths -- --apply`. Esta actualización solo reemplaza el orden y la composición de las cuatro rutas editoriales con secuencia definida; no modifica ejercicios, versiones, borradores, intentos, progreso ni rutas personalizadas. Es atómica y comprueba que todos los ejercicios estén publicados antes de cambiar nada. El currículo queda completo con la progresión por niveles principiante, intermedio y avanzado. Después, `npm run content:metadata -- --apply` completa la guía (objetivo y conocimientos previos) de las versiones publicadas anteriores, sin tocar enunciados, pruebas ni datos de estudiantes.
 
 Los cambios en las referencias y la plantilla de ejercicios ya existentes **no** se aplican con el seed. Para importar contenido del catálogo (incluidas las revisiones de los ocho retos principiantes, **Una sola vez**, **Cada letra cuenta**, **De ida y vuelta** y **Las mismas letras**), abre `/admin/ejercicios/<slug>` y usa **Preparar revisión didáctica** → **Crear borrador didáctico**. El botón exige permisos de administrador, conserva versiones anteriores y no crea duplicados si la revisión ya está incorporada. Si hay un borrador distinto o una actualización concurrente, se detiene sin reemplazarlo. Guarda o copia los cambios sin guardar del formulario antes de importar.
 
