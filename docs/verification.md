@@ -2,8 +2,8 @@
 
 ## Cobertura automatizada
 
-- 59 pruebas de dominio, contenido, revisión editorial, metadatos de aprendizaje, comparación de resultados, notas del ejercicio y herramientas locales.
-- Las 120 referencias de Python y las 120 de JavaScript pasan los mismos 648 casos por lenguaje. Las plantillas guiadas también se ejecutan con todos sus ejemplos en ambos lenguajes. Solo la actividad inicial de observación debe venir completamente resuelta. En las actividades de colecciones, textos, máximos, búsqueda y rotación se comprueba además que el cambio indicado en el enunciado coincide con la referencia. Las enumeraciones adicionales comprueban 2911 entradas de máximos y ausencia, 1718 de búsqueda, 3066 de recorridos circulares y 1668 del lote inicial R1, por lenguaje.
+- 64 pruebas de dominio, contenido, revisión editorial, metadatos de aprendizaje, comparación de resultados, modo programa, notas del ejercicio y herramientas locales.
+- Las 120 referencias de función de Python y las 120 de JavaScript pasan los mismos 648 casos por lenguaje. Las cuatro actividades de programa se ejecutan como archivo completo y se comparan por su salida estándar. Las plantillas guiadas también se ejecutan con todos sus ejemplos en ambos lenguajes. Solo la actividad inicial de observación debe venir completamente resuelta. En las actividades de colecciones, textos, máximos, búsqueda y rotación se comprueba además que el cambio indicado en el enunciado coincide con la referencia. Las enumeraciones adicionales comprueban 2911 entradas de máximos y ausencia, 1718 de búsqueda, 3066 de recorridos circulares y 1668 del lote inicial R1, por lenguaje.
 - 67 pruebas de navegador con Chromium: recorridos de catálogo, registro, preferencias, borradores, evaluación, ayudas, responsive, conflictos entre pestañas, recuperación de contraseña, aislamiento entre cuentas, administración, rutas, R1, interfaz y transporte HTTP. Incluyen el orden completo de fundamentos y de Conecta las ideas, conservación de ruta al cambiar lenguaje o iniciar sesión, plantillas guiadas en ambos lenguajes y ausencia de salto al catálogo al terminar Desde cero. La suite ampliada pasa en desarrollo y producción local.
 - La importación editorial se comprueba sin publicar: mantiene intacta la versión anterior, no altera lo que sirve el catálogo público, no llama al ejecutor, no duplica una revisión idéntica y se detiene ante un borrador manual distinto. Las pruebas eliminan solo los borradores que ellas mismas crean.
 - Los metadatos se validan para todo el catálogo; se prueban límites, duplicados, mensajes históricos y escape de HTML. El recorrido administrativo comprueba persistencia, normalización, visualización en ambos lenguajes y que un objetivo en borrador no cambie la versión pública ni la anterior.
@@ -67,6 +67,22 @@ Resultados:
 - `prisma migrate dev` aplicó `20261015210055_add_complexity_and_common_errors`, con columnas aditivas y valores por defecto; no requiere reiniciar datos.
 - `npm run content:metadata` previsualizó 57 versiones y las completó con `--apply`, sin tocar enunciados, pruebas, borradores, envíos ni progreso.
 - **No verificado en navegador ni en Piston:** no se ejecutó `npm run test:e2e` ni la ejecución real. Docker y Piston siguen detenidos; esta entrega no acredita aislamiento ni ejecución en el sandbox.
+
+### Modo programa y panel de salida
+
+Entrega del 15 de octubre de 2026: dos capacidades que conviven con el modelo anterior, sin reconstruir la aplicación ni tocar identificadores, versiones publicadas ni progreso.
+
+- **Modo programa** (`runtimeMode` por versión): `FUNCTION` (por defecto) sigue envolviendo `solve(data)` y comparando el valor devuelto; `PROGRAM` ejecuta el archivo como programa completo —sin envoltorio ni `module.exports`—, envía la entrada del caso tal cual a la entrada estándar y compara el texto impreso. `src/server/execution/piston.ts` construye el arnés; `judge.ts` añade `judgeProgram` con normalización de fin de línea y espacios finales; `service.ts`, `catalog.ts`, la validación editorial, el editor de administración y el espacio de práctica ramifican según el modo. La comparación sigue siendo por valor y fuera del sandbox, y las pruebas ocultas no exponen entrada, salida ni stderr.
+- **Panel de salida:** `judge` y `judgeProgram` devuelven `output` (stdout) solo en los casos visibles. En modo programa el panel muestra la salida del programa frente a la salida esperada; en modo función muestra los `print`/`console.log` de depuración que la plantilla imprime antes del valor devuelto. `results.tsx` y `examples.tsx` renderizan texto en vez de JSON cuando el modo es programa.
+- **Contenido:** `prisma/program-content.ts` abre «Desde cero» con cuatro actividades que se resuelven con un programa completo (`imprime-un-saludo`, `imprime-un-resultado`, `imprime-dos-lineas`, `lee-y-saluda`). Se insertan como identidades nuevas, con referencias fijas verificadas en Python y JavaScript; no se reescribe ni se reemplaza ninguna actividad publicada, y la ruta pasa de 8 a 12 pasos.
+
+Resultados:
+
+- `npm test`: 64 pruebas aprobadas. Las nuevas comprueban la comparación de texto del modo programa, la privacidad de las pruebas ocultas, los `print` de depuración visibles y que, en modo programa, la entrada y la salida esperada del contenido editorial sean texto. La verificación de referencias ejecuta las cuatro actividades de programa como archivo completo en Python y JavaScript y confirma que sus plantillas no resuelven los casos.
+- `npm run typecheck`, `npm run lint` (sin errores; los mismos tres avisos previos en plantillas de `.agents/skills`) y `npm run build` aprobados.
+- `prisma migrate dev` aplicó `20261015214458_add_runtime_mode`, con el valor por defecto `FUNCTION`; no requiere reiniciar datos.
+- `npm run db:seed` insertó las cuatro identidades nuevas (124 en total) sin tocar el resto; `npm run content:paths -- --apply` dejó «Desde cero» en 12 pasos. En la base local las cuatro versiones quedan como `PROGRAM` y `tu-primer-resultado` permanece `FUNCTION`.
+- **No verificado en Piston ni en navegador:** Docker y Piston siguen detenidos, así que no se ejecutó la validación real del arnés `PROGRAM` ni `npm run test:e2e`. Las referencias de las actividades de programa se verificaron en el runtime local (Python y Node), cuya salida coincide con lo esperado para estos programas sin dependencias; la publicación administrativa y el aislamiento del sandbox siguen pendientes de comprobar con Piston.
 
 ## Interfaz de aplicación
 

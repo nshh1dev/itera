@@ -1,6 +1,6 @@
 import type { Language, Level } from "./types";
 
-export const introductorySteps = ["tu-primer-resultado", "cambia-un-numero", "devuelve-la-entrada", "suma-uno", "el-doble", "guarda-un-resultado", "lee-un-dato-con-nombre", "suma-de-dos-numeros"];
+export const introductorySteps = ["imprime-un-saludo", "imprime-un-resultado", "imprime-dos-lineas", "lee-y-saluda", "tu-primer-resultado", "cambia-un-numero", "devuelve-la-entrada", "suma-uno", "el-doble", "guarda-un-resultado", "lee-un-dato-con-nombre", "suma-de-dos-numeros"];
 export const foundationSteps = [
   "compara-con-cero", "elige-con-una-condicion", "compara-igualdad", "tres-caminos", "resto-entre-dos", "par-o-impar",
   "convierte-texto-a-numero", "cambio-de-una-compra", "cociente-entero", "reduce-vueltas-completas",
@@ -44,7 +44,7 @@ export const advancedSteps = [
 
 // No deducir el nivel a partir de la posición: puede haber varias rutas del mismo nivel.
 export const learningPaths: { slug: string; title: string; description: string; level: Level; order: number; slugs?: string[] }[] = [
-  { slug: "desde-cero", title: "Desde cero", description: "No necesitas experiencia. Ejecuta, cambia un valor y aprende a usar entradas antes de sumar dos números.", level: "BEGINNER", order: -1, slugs: introductorySteps },
+  { slug: "desde-cero", title: "Desde cero", description: "No necesitas experiencia. Escribe tu primer programa que muestra texto, aprende a leer entradas y, después, a devolver valores antes de sumar dos números.", level: "BEGINNER", order: -1, slugs: introductorySteps },
   { slug: "primeros-pasos", title: "Construye tus bases", description: "Después de Desde cero: aprende comparaciones, condiciones, listas, textos y bucles con actividades guiadas antes de combinar las ideas.", level: "BEGINNER", order: 0, slugs: foundationSteps },
   { slug: "pensar-en-soluciones", title: "Conecta las ideas", description: "Después de Construye tus bases: conecta conjuntos y mapas, agrega y ordena arreglos, recorre matrices y practica búsqueda, recursión, pilas, colas y ventanas.", level: "INTERMEDIATE", order: 1, slugs: intermediateSteps },
   { slug: "un-paso-mas", title: "Ve un paso más allá", description: "Recursión avanzada, programación dinámica, árboles, grafos y estrategias voraces. Problemas que invitan a mirar desde otro ángulo.", level: "ADVANCED", order: 2, slugs: advancedSteps },

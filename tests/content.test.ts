@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import vm from "node:vm";
 import { spawnSync } from "node:child_process";
 import { exercises } from "../prisma/content";
+import { programExercises } from "../prisma/program-content";
 import { introductoryExercises } from "../prisma/introductory-content";
 import { foundationExercises } from "../prisma/foundation-content";
 import { collectionsExercises } from "../prisma/collections-content";
@@ -22,10 +23,12 @@ test("el catálogo cubre tres niveles y no duplica slugs", () => {
   }
 });
 
-test("la ruta desde cero empieza observando y utiliza plantillas propias", () => {
-  assert.equal(exercises[0].slug, "tu-primer-resultado");
+test("la ruta desde cero abre con un programa completo y después observa", () => {
+  assert.equal(exercises[0].slug, "imprime-un-saludo");
+  assert.equal(exercises[0].runtimeMode, "PROGRAM");
   assert.equal(learningPaths[0].slug, "desde-cero");
   assert.equal(learningPaths[0].level, "BEGINNER");
+  for (const exercise of programExercises) assert.equal(exercise.runtimeMode, "PROGRAM", exercise.slug);
   for (const exercise of introductoryExercises) {
     assert.equal(exercise.level, "BEGINNER");
     for (const language of ["python", "javascript"] as const) {
@@ -36,7 +39,7 @@ test("la ruta desde cero empieza observando y utiliza plantillas propias", () =>
 });
 
 test("las rutas editoriales cubren fundamentos sin duplicados ni referencias inexistentes", () => {
-  assert.deepEqual(introductorySteps, [...introductoryExercises.map(e => e.slug), "suma-de-dos-numeros"]);
+  assert.deepEqual(introductorySteps, [...programExercises.map(e => e.slug), ...introductoryExercises.map(e => e.slug), "suma-de-dos-numeros"]);
   for (const path of learningPaths.filter(p => p.slugs)) {
     assert.equal(new Set(path.slugs).size, path.slugs!.length);
     for (const slug of path.slugs!) assert.ok(exercises.some(e => e.slug === slug), slug);
@@ -71,15 +74,16 @@ test("continuar respeta el orden y el final de cada ruta", () => {
   assert.equal(nextExerciseSlug("parentesis-equilibrados", intermediateSteps), undefined);
   assert.equal(nextExerciseSlug("suma-del-arreglo", foundationSteps), "el-mayor-de-tres");
   assert.equal(nextExerciseSlug("suma-de-dos-numeros", introductorySteps), undefined);
+  assert.equal(nextExerciseSlug("imprime-un-saludo", introductorySteps), "imprime-un-resultado");
   assert.equal(nextExerciseSlug("no-existe", introductorySteps), undefined);
   assert.equal(previousExerciseSlug("sin-duplicados", intermediateSteps), "cuenta-valores-distintos");
-  assert.equal(previousExerciseSlug("tu-primer-resultado", introductorySteps), undefined);
+  assert.equal(previousExerciseSlug("tu-primer-resultado", introductorySteps), "lee-y-saluda");
   assert.equal(previousExerciseSlug("suma-de-dos-numeros", introductorySteps), "lee-un-dato-con-nombre");
   assert.equal(previousExerciseSlug("no-existe", introductorySteps), undefined);
-  assert.deepEqual(exercisePosition("tu-primer-resultado", introductorySteps), { position: 1, total: 8 });
-  assert.deepEqual(exercisePosition("suma-de-dos-numeros", introductorySteps), { position: 8, total: 8 });
+  assert.deepEqual(exercisePosition("tu-primer-resultado", introductorySteps), { position: 5, total: 12 });
+  assert.deepEqual(exercisePosition("suma-de-dos-numeros", introductorySteps), { position: 12, total: 12 });
   assert.deepEqual(exercisePosition("sin-duplicados", intermediateSteps), { position: 3, total: 40 });
-  assert.deepEqual(exercisePosition("no-existe", introductorySteps), { position: 0, total: 8 });
+  assert.deepEqual(exercisePosition("no-existe", introductorySteps), { position: 0, total: 12 });
   assert.equal(exerciseHref("suma-del-arreglo", "python", "primeros-pasos"), "/ejercicios/suma-del-arreglo?lenguaje=python&ruta=primeros-pasos");
   assert.equal(exerciseHref("suma-del-arreglo", "javascript"), "/ejercicios/suma-del-arreglo?lenguaje=javascript");
 });
@@ -122,7 +126,7 @@ test("el cambio indicado en cada actividad de colecciones resuelve sus casos en 
 });
 
 test("las soluciones JavaScript superan todos los casos editoriales", () => {
-  for (const exercise of exercises) for (const fixture of exercise.tests) {
+  for (const exercise of exercises.filter(e => e.runtimeMode !== "PROGRAM")) for (const fixture of exercise.tests) {
     const context=vm.createContext({data:structuredClone(fixture.input)});
     const actual=new vm.Script(`${exercise.javascript}\nsolve(data)`).runInContext(context,{timeout:1000});
     assert.deepEqual(JSON.parse(JSON.stringify(actual)),fixture.expected,`${exercise.slug}: ${JSON.stringify(fixture.input)}`);
@@ -130,7 +134,7 @@ test("las soluciones JavaScript superan todos los casos editoriales", () => {
 });
 
 test("las plantillas JavaScript son ejecutables y retiran ayuda de forma progresiva", () => {
-  for (const exercise of exercises.filter(e => e.starters)) {
+  for (const exercise of exercises.filter(e => e.starters && e.runtimeMode !== "PROGRAM")) {
     let allPassed = true;
     for (const fixture of exercise.tests) {
       const context = vm.createContext({ data: structuredClone(fixture.input) });
@@ -162,7 +166,44 @@ for item in items:
   assert json.dumps(actual,sort_keys=True,allow_nan=False) == json.dumps(case['expected'],sort_keys=True), item['slug'] + ': ' + repr(case['input']) + ' -> ' + repr(actual)
 print('Casos Python correctos')
 `;
-  const result=spawnSync(process.env.PYTHON_BIN || "python",["-c",driver],{input:JSON.stringify(exercises),encoding:"utf8",timeout:15000});
+  const result=spawnSync(process.env.PYTHON_BIN || "python",["-c",driver],{input:JSON.stringify(exercises.filter(e => e.runtimeMode !== "PROGRAM")),encoding:"utf8",timeout:15000});
   assert.equal(result.status,0,result.error?.message || result.stderr);
   assert.match(result.stdout,/Casos Python correctos/);
+});
+
+test("las referencias de los programas superan sus casos ejecutando el archivo completo", () => {
+  const programs = exercises.filter(e => e.runtimeMode === "PROGRAM");
+  assert.ok(programs.length > 0, "la ruta desde cero necesita actividades de programa");
+  for (const exercise of programs) {
+    for (const fixture of exercise.tests) {
+      assert.equal(typeof fixture.input, "string", `${exercise.slug}: la entrada de un programa es texto`);
+      assert.equal(typeof fixture.expected, "string", `${exercise.slug}: la salida de un programa es texto`);
+    }
+    for (const fixture of exercise.tests) {
+      const result = spawnSync(process.execPath, ["-e", exercise.javascript], { input: String(fixture.input), encoding: "utf8", timeout: 5000 });
+      assert.equal(result.status, 0, `${exercise.slug}: ${result.stderr}`);
+      assert.equal(result.stdout, fixture.expected, `${exercise.slug}: salida de JavaScript`);
+      const starter = spawnSync(process.execPath, ["-e", exercise.starters!.javascript], { input: String(fixture.input), encoding: "utf8", timeout: 5000 });
+      assert.equal(starter.status, 0, `${exercise.slug}: la plantilla de JavaScript debe ejecutarse`);
+      assert.notEqual(starter.stdout, fixture.expected, `${exercise.slug}: la plantilla ya resuelve el caso`);
+    }
+  }
+  const driver = `import json,sys,io,contextlib
+items=json.load(sys.stdin)
+for item in items:
+ for case in item['tests']:
+  buf=io.StringIO(); saved=sys.stdin; sys.stdin=io.StringIO(case['input'])
+  try:
+   with contextlib.redirect_stdout(buf): exec(item['python'],{})
+  finally: sys.stdin=saved
+  assert buf.getvalue()==case['expected'], item['slug']+': '+repr(buf.getvalue())
+  sbuf=io.StringIO(); sys.stdin=io.StringIO(case['input'])
+  try:
+   with contextlib.redirect_stdout(sbuf): exec(item['starters']['python'],{})
+  finally: sys.stdin=saved
+  assert sbuf.getvalue()!=case['expected'], item['slug']+': plantilla ya resuelta'
+print('Programas Python correctos')`;
+  const result = spawnSync(process.env.PYTHON_BIN || "python", ["-c", driver], { input: JSON.stringify(programs), encoding: "utf8", timeout: 15000 });
+  assert.equal(result.status, 0, result.error?.message || result.stderr);
+  assert.match(result.stdout, /Programas Python correctos/);
 });

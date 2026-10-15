@@ -31,8 +31,9 @@ test.beforeAll(async()=>{
       providerRequests++;
       let raw="";for await(const chunk of req)raw+=chunk;
       const payload=JSON.parse(raw);
+      const source=(payload.files[1]?.content ?? payload.files[0]?.content ?? "") as string;
+      if(payload.files.length===1){res.end(JSON.stringify({run:{stdout:"",stderr:"",code:0,signal:null,status:null}}));return;}
       const input=JSON.parse(payload.stdin);
-      const source=payload.files[1].content as string;
       const correct=source.includes("data['a'] + data['b']")||source.includes("data.a + data.b");
       const output=correct ? input.a+input.b : 999;
       res.end(JSON.stringify({run:{stdout:JSON.stringify(output)+"\n",stderr:"",code:0,signal:null,status:null}}));return;

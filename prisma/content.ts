@@ -1,4 +1,5 @@
 import type { Json, Level } from "../src/lib/types";
+import { programExercises } from "./program-content";
 import { introductoryExercises } from "./introductory-content";
 import { foundationExercises } from "./foundation-content";
 import { beginnerRevisions } from "./beginner-revisions";
@@ -13,6 +14,7 @@ import { beginnerExpansion } from "./beginner-expansion";
 import { intermediateExpansion } from "./intermediate-expansion";
 import { advancedExpansion } from "./advanced-expansion";
 import type { ActivityType } from "../src/lib/types";
+import type { RuntimeMode } from "../src/lib/types";
 
 // Reclasificación editorial acordada al completar el currículo. Se aplica sobre el
 // catálogo ya compuesto para no reescribir las fuentes históricas ni los identificadores:
@@ -38,6 +40,7 @@ export type SeedExercise = {
   starters?: { python: string; javascript: string };
   objective?: string; prerequisites?: string[];
   practiceGoals?: string[]; prerequisiteSlugs?: string[]; activityType?: ActivityType;
+  runtimeMode?: RuntimeMode;
   complexity?: string; commonErrors?: string[];
   explanations?: { python: string; javascript: string };
 };
@@ -50,6 +53,7 @@ const base = (slug: string, title: string, category: string, level: Level, minut
 });
 
 export const exercises: SeedExercise[] = [
+  ...programExercises,
   ...introductoryExercises,
   base("suma-de-dos-numeros", "Dos números, una suma", "Fundamentos", "BEGINNER", 5,
     "Recibe un objeto con dos números enteros, a y b, y devuelve su suma. Un primer paso pequeño para empezar a pensar en entradas, operaciones y resultados.",

@@ -25,6 +25,14 @@ enum SubmissionStatus {
   ERROR
 }
 
+// Cómo se ejecuta y se corrige una versión. FUNCTION envuelve solve(data) y
+// compara el valor devuelto; PROGRAM ejecuta el archivo como programa completo
+// y compara lo que imprime por la salida estándar.
+enum RuntimeMode {
+  FUNCTION
+  PROGRAM
+}
+
 model User {
   id            String   @id
   name          String
@@ -119,6 +127,7 @@ model ExerciseVersion {
   practiceGoals String[] @default([])
   prerequisiteSlugs String[] @default([])
   activityType String @default("PRACTICE")
+  runtimeMode  RuntimeMode @default(FUNCTION)
   complexity   String   @default("")
   commonErrors String[] @default([])
   constraints  String[]

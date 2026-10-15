@@ -7,7 +7,7 @@ export async function getCatalog(userId?: string, language: Language = "python")
   const exercises = await db.exercise.findMany({
     where: { published: true, versions: { some: { published: true } } }, orderBy: { order: "asc" },
     select: { id: true, slug: true, category: true, order: true,
-      versions: { where: { published: true }, orderBy: { number: "desc" }, take: 1, select: { title: true, description: true, level: true, minutes: true } },
+      versions: { where: { published: true }, orderBy: { number: "desc" }, take: 1, select: { title: true, description: true, level: true, minutes: true, runtimeMode: true } },
       progress: { where: { userId: userId ?? "__guest__", language: { in: [...languages] } }, select: { language: true, firstPassedAt: true, attempts: true } },
     },
   });
@@ -31,7 +31,7 @@ export async function getExercise(slug: string, language: Language, userId?: str
       versions: { where: { published: true }, orderBy: { number: "desc" }, take: 1, select: {
         id: true, title: true, statement: true, constraints: true, hints: true, level: true, minutes: true, number: true,
         objective: true, prerequisites: true, practiceGoals: true, prerequisiteSlugs: true, activityType: true,
-        complexity: true, commonErrors: true,
+        runtimeMode: true, complexity: true, commonErrors: true,
         variants: { where: { language }, select: { id: true, language: true, starter: true,
           tests: { where: { visible: true }, orderBy: { order: "asc" }, select: { input: true, expected: true, explanation: true } },
           drafts: { where: { userId: userId ?? "__guest__" }, select: { code: true, revision: true } },

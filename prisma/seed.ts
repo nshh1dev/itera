@@ -18,6 +18,7 @@ async function seed() {
         title: exercise.title, description: exercise.description, statement: exercise.statement, published: true,
         objective: exercise.objective ?? "", prerequisites: exercise.prerequisites ?? [],
         practiceGoals: exercise.practiceGoals ?? [], prerequisiteSlugs: exercise.prerequisiteSlugs ?? [], activityType: exercise.activityType ?? "PRACTICE",
+        runtimeMode: exercise.runtimeMode ?? "FUNCTION",
         complexity: exercise.complexity ?? "", commonErrors: exercise.commonErrors ?? [],
         level: exercise.level, minutes: exercise.minutes, constraints: exercise.constraints, hints: exercise.hints,
         variants: { create: (["python", "javascript"] as const).map((language) => ({

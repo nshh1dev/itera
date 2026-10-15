@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "./auth";
 import { db } from "./db";
 import { Prisma } from "@/generated/prisma/client";
-import type { Json, Language } from "@/lib/types";
+import type { Json, Language, RuntimeMode } from "@/lib/types";
 import { availableRuntime, runCode, RunnerUnavailable } from "./execution/piston";
-import { judge } from "./execution/judge";
+import { judge, judgeProgram } from "./execution/judge";
 import { catalogRevision, catalogRevisionDecision, seedVersionContent } from "../../prisma/editorial-revision";
 import { editorialSchema as schema, publicationMetadataSchema } from "@/lib/editorial";
 import { prerequisiteIssue } from "@/lib/curriculum";
@@ -40,6 +40,7 @@ export async function saveExercise(input: unknown) {
         statement:data.statement, level:data.level, minutes:data.minutes, hints:data.hints, constraints:data.constraints,
         objective:data.objective, prerequisites:data.prerequisites,
         practiceGoals:data.practiceGoals, prerequisiteSlugs:data.prerequisiteSlugs, activityType:data.activityType,
+        runtimeMode:data.runtimeMode,
         complexity:data.complexity, commonErrors:data.commonErrors,
         variants:{create:(["python","javascript"] as const).map(language=>({language,...data[language],tests:{create:data.tests.map((test,order)=>({input:test.input===null?Prisma.JsonNull:test.input,expected:test.expected===null?Prisma.JsonNull:test.expected,visible:test.visible,explanation:test.explanation,order}))}}))},
       } });
@@ -65,12 +66,15 @@ export async function publishExerciseVersion(versionId: string) {
     for (const variant of version.variants) {
       if (!variant.tests.some(t=>t.visible) || !variant.tests.some(t=>!t.visible)) return {error:"Incluye pruebas visibles y ocultas antes de publicar."};
       const runtime = await availableRuntime(variant.language as Language);
+      const mode = version.runtimeMode as RuntimeMode;
+      const evaluate = mode === "PROGRAM" ? judgeProgram : judge;
       let starterSolved = true;
       for (const test of variant.tests) {
-        const output = await runCode(variant.language as Language,runtime,variant.solution,test.input as Json);
-        if (!judge(output,{...test,input:test.input as Json,expected:test.expected as Json}).passed) return {error:`La solución de referencia de ${variant.language} no supera el caso ${test.order+1}. Revisa el contenido y guarda una nueva versión.`};
-        const initial = judge(await runCode(variant.language as Language, runtime, variant.starter, test.input as Json), { ...test, input: test.input as Json, expected: test.expected as Json, visible: true });
-        if (initial.status === "runtime" || initial.status === "timeout" || initial.error) return {error:`La plantilla de ${variant.language} falla en el caso ${test.order+1}. Debe ejecutarse y devolver un valor JSON aunque aún no resuelva el problema.`};
+        const entry = { ...test, input: test.input as Json, expected: test.expected as Json };
+        const output = await runCode(variant.language as Language,runtime,variant.solution,test.input as Json,mode);
+        if (!evaluate(output, entry).passed) return {error:`La solución de referencia de ${variant.language} no supera el caso ${test.order+1}. Revisa el contenido y guarda una nueva versión.`};
+        const initial = evaluate(await runCode(variant.language as Language, runtime, variant.starter, test.input as Json, mode), { ...entry, visible: true });
+        if (initial.status === "runtime" || initial.status === "timeout" || initial.error) return {error:`La plantilla de ${variant.language} falla en el caso ${test.order+1}. Debe ejecutarse ${mode === "PROGRAM" ? "sin errores" : "y devolver un valor JSON aunque aún no resuelva el problema"}.`};
         starterSolved &&= initial.passed;
       }
       if (starterSolved !== (version.activityType === "OBSERVATION")) return {error: version.activityType === "OBSERVATION" ? `La plantilla de observación de ${variant.language} debe estar completa.` : `La plantilla de ${variant.language} ya resuelve todos los casos. Retira parte de la solución.`};

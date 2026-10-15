@@ -1,20 +1,20 @@
 import { test, expect } from "@playwright/test";
 import { exerciseHref, foundationSteps, intermediateSteps } from "../../src/lib/learning-paths";
 
-test("Desde cero ofrece ocho pasos y comienza con un programa completo", async ({ page }) => {
+test("Desde cero ofrece doce pasos y comienza con un programa completo", async ({ page }) => {
   await page.goto("/rutas/desde-cero");
   await expect(page.getByRole("heading", { name: "Desde cero", exact: true })).toBeVisible();
   const steps = page.locator('a[href^="/ejercicios/"]');
-  await expect(steps).toHaveCount(8);
-  await expect(steps.first()).toHaveAttribute("href", /tu-primer-resultado/);
+  await expect(steps).toHaveCount(12);
+  await expect(steps.first()).toHaveAttribute("href", /imprime-un-saludo/);
   await expect(steps.last()).toHaveAttribute("href", /suma-de-dos-numeros/);
   await expect(steps.first()).toHaveAttribute("href", /ruta=desde-cero/);
   await steps.first().click();
-  await expect(page.getByRole("heading", { name: "Tu primer resultado", exact: true })).toBeVisible();
-  await expect(page.getByText(/No necesitas saber programar todavía/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Tu primer programa", exact: true })).toBeVisible();
+  await expect(page.getByText(/Vas a escribir tu primer programa completo/)).toBeVisible();
   await expect(page.locator("details").filter({ has: page.locator("summary", { hasText: "Antes de empezar" }) })).toHaveAttribute("open", "");
   await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
-  await expect(page.getByRole("textbox", { name: "Editor sencillo de Python" })).toHaveValue(/return 7/);
+  await expect(page.getByRole("textbox", { name: "Editor sencillo de Python" })).toHaveValue(/Escribe tu primer programa/);
 });
 
 test("Construye tus bases enseña condiciones y recorridos antes de los retos", async ({ page }) => {

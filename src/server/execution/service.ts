@@ -1,21 +1,23 @@
 import "server-only";
 import { db } from "@/server/db";
-import { judge } from "./judge";
+import { judge, judgeProgram } from "./judge";
 import { availableRuntime, runCode, RunnerUnavailable } from "./piston";
-import type { Json, Language, TestResult } from "@/lib/types";
+import type { Json, Language, RuntimeMode, TestResult } from "@/lib/types";
 
 export async function evaluateSubmission(id: string) {
-  const submission = await db.submission.findUnique({ where: { id }, include: { variant: { include: { tests: { orderBy: { order: "asc" } }, version: { select: { exerciseId: true } } } } } });
+  const submission = await db.submission.findUnique({ where: { id }, include: { variant: { include: { tests: { orderBy: { order: "asc" } }, version: { select: { exerciseId: true, runtimeMode: true } } } } } });
   if (!submission || submission.status !== "RUNNING") return;
   const { variant } = submission;
+  const mode = variant.version.runtimeMode as RuntimeMode;
   try {
     const runtime = await availableRuntime(variant.language as Language);
     const tests = variant.tests.filter(test => submission.mode === "submit" || test.visible);
     if (!tests.length) throw new RunnerUnavailable("Este ejercicio todavía no tiene pruebas configuradas.");
     const results: TestResult[] = [];
     for (const test of tests) {
-      const output = await runCode(variant.language as Language, runtime, submission.code, test.input as Json);
-      results.push(judge(output, { ...test, input: test.input as Json, expected: test.expected as Json }));
+      const output = await runCode(variant.language as Language, runtime, submission.code, test.input as Json, mode);
+      const entry = { ...test, input: test.input as Json, expected: test.expected as Json };
+      results.push(mode === "PROGRAM" ? judgeProgram(output, entry) : judge(output, entry));
     }
     const passedCount = results.filter(r => r.passed).length;
     const passed = passedCount === tests.length;

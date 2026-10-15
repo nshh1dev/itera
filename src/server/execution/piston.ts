@@ -1,6 +1,6 @@
 import "server-only";
 import { z } from "zod";
-import type { Json, Language } from "@/lib/types";
+import type { Json, Language, RuntimeMode } from "@/lib/types";
 import type { RunOutput } from "./judge";
 
 export class RunnerUnavailable extends Error {
@@ -28,18 +28,27 @@ export async function availableRuntime(language: Language) {
   } catch (error) { throw error instanceof RunnerUnavailable ? error : new RunnerUnavailable(); }
 }
 
-export async function runCode(language: Language, runtime: {language:string;version:string}, code: string, input: Json): Promise<RunOutput> {
-  const files = language === "python" ? [
+// Modo FUNCTION: el envoltorio importa solve y escribe el resultado como última
+// línea de la salida. Modo PROGRAM: se ejecuta el archivo tal cual y la entrada
+// del caso llega sin transformar a la entrada estándar.
+function harness(language: Language, code: string, mode: RuntimeMode) {
+  if (mode === "PROGRAM") return [{ name: language === "python" ? "main.py" : "main.js", content: code }];
+  return language === "python" ? [
     { name: "main.py", content: "import json, sys\nfrom solution import solve\ndata = json.loads(sys.stdin.read())\nprint(json.dumps(solve(data), ensure_ascii=True, allow_nan=False))\n" },
     { name: "solution.py", content: code },
   ] : [
     { name: "main.js", content: "const fs = require('fs');\nconst solve = require('./solution.js');\nconst data = JSON.parse(fs.readFileSync(0, 'utf8'));\nconst result = solve(data);\nif (result === undefined) throw new Error('solve debe devolver un valor con return');\nconsole.log(JSON.stringify(result));\n" },
     { name: "solution.js", content: `${code}\nmodule.exports = solve;\n` },
   ];
+}
+
+export async function runCode(language: Language, runtime: {language:string;version:string}, code: string, input: Json, mode: RuntimeMode = "FUNCTION"): Promise<RunOutput> {
+  const files = harness(language, code, mode);
+  const stdin = mode === "PROGRAM" ? (typeof input === "string" ? input : JSON.stringify(input ?? "")) : JSON.stringify(input);
   try {
     const response = await fetch(`${baseUrl()}/api/v2/execute`, {
       method: "POST", headers: { "Content-Type": "application/json" }, signal: AbortSignal.timeout(12000),
-      body: JSON.stringify({ ...runtime, files, stdin: JSON.stringify(input), run_timeout: 3000, run_cpu_time: 3000, compile_timeout: 5000, run_memory_limit: 268435456, compile_memory_limit: 268435456 }),
+      body: JSON.stringify({ ...runtime, files, stdin, run_timeout: 3000, run_cpu_time: 3000, compile_timeout: 5000, run_memory_limit: 268435456, compile_memory_limit: 268435456 }),
     });
     if (!response.ok) throw new RunnerUnavailable("Piston no pudo evaluar el programa. Comprueba los lenguajes instalados y vuelve a intentarlo.");
     const payload = await response.json();
