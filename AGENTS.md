@@ -8,51 +8,67 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-## Local setup and generated files
+## Alcance y mantenimiento de estas instrucciones
 
-- The user starts the app server manually. Do not start, restart, or leave `next dev` / `next start` running unless explicitly requested. Ask before running browser suites that start an app server; never stop the user's server to free a test port without permission.
-- This is a local-only app; GitHub stores the code, not a deployment. Keep fonts and Monaco local; AI is deferred. UI and exercise copy are Spanish.
-- Run commands from the repository root. On Windows PowerShell use `npm.cmd` / `npx.cmd` if the `.ps1` wrappers are blocked.
-- First setup: `npm ci` → `npm run setup`. Setup creates missing secrets, copies Monaco assets, starts the private PostgreSQL cluster, generates Prisma, deploys migrations, then seeds. Installing dependencies alone does not prepare the editor or database.
-- Subsequent starts: `npm run db:start` → `npm run dev`. Use `http://127.0.0.1:3000`; auth and execution origin checks explicitly allow port 3000, so Next's automatic fallback port is not equivalent. Diagnose services with `npm run doctor`.
-- PostgreSQL lives in `.local/postgres` on port **5434**, independently of existing Windows services. `PG_BIN` selects binaries and must match the cluster's major version. `db:stop` targets this private cluster, even with a custom `DATABASE_URL`.
-- The executor is Piston via `compose.yaml` on **2000**. It needs Docker Desktop with WSL2 and **cgroup v2**; `wsl --install --no-distribution` is enough, no Linux distro is required. The first `wsl --install` can leave `VirtualMachinePlatform` disabled, which makes `wsl --status` claim virtualization is off — verify with `Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform` before blaming the firmware.
-- The `docker` CLI is frequently missing from the PATH of a long-lived agent session even when Docker Desktop is installed; use `C:\Program Files\Docker\Docker\resources\bin\docker.exe`. `npm run doctor` already falls back to that path.
-- Prisma 7 reads the URL from `prisma.config.ts` and uses the `pg` adapter. Generate with `npx prisma generate`; imports come from `src/generated/prisma/client`, not `@prisma/client`. `db:migrate` runs **migrate deploy**, not migration creation. Build regenerates Prisma but does not migrate or seed.
-- Do not edit or commit `src/generated/`, `public/monaco/`, `.next/`, `.local/`, or real `.env` files. Rerun setup after updating Monaco to refresh its served assets.
+- Mantener este archivo por debajo de **180 líneas**, incluido el bloque generado por Next.js. No modificar ese bloque; conservar nuestras instrucciones en español.
+- Incluir reglas vigentes y particularidades del proyecto. Guardar explicaciones extensas e historial de verificaciones en `docs/`, sin duplicarlos aquí.
+- Resolver cada tarea con el menor cambio necesario. Acordar antes renombrados, reestructuraciones, cambios de dependencias o arreglos independientes que no sean necesarios para la tarea.
+- Preservar el trabajo ajeno, incluidos archivos sin seguimiento. Investigar cambios desconocidos antes de sobrescribirlos o eliminarlos.
 
-## Verification traps
+## Entorno local y archivos generados
 
-- Checks: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`. No formatter or CI workflow is configured; do not guess a `format` script.
-- Focused unit suite: `npx tsx --test tests/judge.test.ts`. `npm test` also executes fixed repository reference solutions; Python must be installed (`PYTHON_BIN` overrides `python`). This is not permission to execute submitted user code outside the sandbox.
-- E2E: prepare/seed PostgreSQL, run `npx playwright install chromium`, then `npm run test:e2e` with ports **3000 and 2001 free**. Playwright starts its own app and refuses to reuse an existing server.
-- Two E2E suites exist and must not be confused. `npm run test:e2e` (`tests/e2e`) points `PISTON_URL` at the HTTP double on 2001 and never executes code. `npm run test:e2e:real` (`tests/real`, `playwright.real.config.ts`) uses Piston on 2000 for real; it skips itself when the executor is offline. Both create and delete temporary users and editorial content.
-- `npm run test:runner` exercises the real Piston adapter and is skipped when the executor is down. Its file is `tests/real-runner.integration.ts` on purpose: it imports `server-only` through `piston.ts`, so it must run with `tsx --conditions=react-server` and must stay out of the `tests/*.test.ts` glob used by `npm test`.
-- `tests/e2e/flows.spec.ts` is a **stateful serial sequence**: later tests depend on the account and cookies created earlier. Run the whole file, not an arbitrary later test with `-g`. It writes temporary data to the configured database and cleans it up; screenshots go to `.local/screenshots/`.
-- E2E uses an HTTP Piston double on **2001** which never executes code. Passing E2E does not verify real isolation. Normal Piston uses **2000**; start it with `docker compose up -d` then `npm run runner:setup`. See `docs/verification.md` for verification limits.
+- **El usuario inicia el servidor manualmente.** No iniciar, reiniciar ni dejar `next dev` / `next start` ejecutándose salvo petición explícita. Pedir permiso para pruebas que inicien la aplicación; no detener su servidor para liberar puertos sin autorización.
+- Itera es una aplicación local: GitHub guarda el código, no un despliegue. Mantener fuentes y Monaco locales; la IA está aplazada. La interfaz y los ejercicios están en español.
+- Ejecutar comandos desde la raíz. En PowerShell usar `npm.cmd` / `npx.cmd` si los envoltorios `.ps1` están bloqueados.
+- Primera preparación: `npm ci` → `npm run setup`. Setup crea secretos faltantes, copia Monaco, inicia PostgreSQL privado, genera Prisma, aplica migraciones y ejecuta el seed. Instalar dependencias no prepara por sí solo el editor ni la base de datos.
+- Arranque manual posterior: `npm run db:start` → `npm run dev`. Usar `http://127.0.0.1:3000`: autenticación y ejecución permiten explícitamente ese puerto; el puerto alternativo automático de Next no es equivalente. Diagnóstico: `npm run doctor`.
+- PostgreSQL reside en `.local/postgres`, puerto **5434**, separado de los servicios de Windows. `PG_BIN` debe corresponder a la versión mayor del clúster. `db:stop` detiene este clúster privado, incluso con un `DATABASE_URL` personalizado.
+- Piston usa `compose.yaml`, puerto **2000**, Docker Desktop, WSL2 y **cgroup v2**. Basta `wsl --install --no-distribution`, sin distribución Linux. Si WSL informa que falta virtualización, comprobar `VirtualMachinePlatform` con `Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform` antes de atribuirlo al firmware.
+- Si `docker` no está en PATH, usar `C:\Program Files\Docker\Docker\resources\bin\docker.exe`; `npm run doctor` ya contempla esa ruta.
+- Prisma 7 lee la URL desde `prisma.config.ts` y usa el adaptador `pg`. Generar con `npx prisma generate`; importar desde `src/generated/prisma/client`, no desde `@prisma/client`. `db:migrate` ejecuta **migrate deploy**, no crea migraciones. Build regenera Prisma, pero no migra ni ejecuta el seed.
+- No editar manualmente ni subir `src/generated/`, `public/monaco/`, `.next/`, `.local/` ni archivos `.env` reales. Tras actualizar Monaco, repetir setup para renovar sus recursos servidos.
 
-## Domain invariants
+## Verificación y límites de las pruebas
 
-- Execution flow: `POST /api/executions` reserves an idempotent submission under a short PostgreSQL advisory lock, returns 202, and schedules evaluation using Next `after()`. The client polls `/api/executions/[id]`. There is no durable job worker; interrupted attempts expire after two minutes when endpoints reconcile them.
-- All submitted programs go through `src/server/execution/piston.ts`. Exercises implement `solve(data)` returning JSON. `judge.ts` compares the final JSON output outside the sandbox and strips hidden inputs, expected/actual outputs and stderr before results are persisted or returned.
-- Only completed `submit` evaluations update progress, keyed by user + exercise + language. Example runs, solution views and infrastructure errors must not award completion. Preserve atomic finalization to avoid double-counting retries.
-- Public catalog queries select the highest-numbered **published** version of a published exercise. Admin saves create new draft versions; publication validates both reference solutions in Piston. Preserve old variants for historical submissions.
-- `prisma/content.ts` is the initial editorial catalog. The seed **skips existing slugs and paths**: changing this file and reseeding will not update an existing database. Use a new editorial version or an explicit data migration instead of resetting user data.
-- Draft saves use revision-based optimistic concurrency; do not replace them with unconditional upserts. The workspace also keeps browser-local copies and a separate guest-to-account transfer.
-- Better Auth recovery writes links to `.local/mail/`, not SMTP. Promote an existing account with `npm run admin -- email@example.com`; admin actions call `requireAdmin()` and must keep doing so.
+- Comprobaciones disponibles: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`. No hay formateador ni flujo de CI configurado; no inventar un script `format`.
+- Ejecutar las comprobaciones pertinentes. Informar cuáles aprobaron, cuáles fallaron o no se ejecutaron y por qué; separar avisos previos de problemas nuevos. No presentar una prueba omitida como aprobada.
+- Reutilizar resultados recientes si el código comprobado no cambió. Para cambios solo documentales, revisar contenido, enlaces/rutas pertinentes y el diff; no iniciar la aplicación ni repetir toda la suite sin motivo.
+- No ejecutar `typecheck` a la vez que el build regenera Prisma: puede producir errores transitorios de archivos faltantes. No ejecutar lint mientras Playwright crea o elimina resultados: puede provocar errores de lectura de directorios.
+- Suite focalizada: `npx tsx --test tests/judge.test.ts`. `npm test` también ejecuta referencias fijas del repositorio; requiere Python (`PYTHON_BIN` sustituye a `python`). Esto no permite ejecutar código enviado por usuarios fuera del sandbox.
+- E2E requiere PostgreSQL preparado, Chromium (`npx playwright install chromium`) y puertos **3000 y 2001 libres**. `npm run test:e2e` inicia su propio servidor y no reutiliza uno existente: respetar la autorización de arranque indicada arriba.
+- `npm run test:e2e` (`tests/e2e`) usa un doble HTTP de Piston en **2001** que no ejecuta código. Aprobar esta suite no verifica aislamiento ni ejecución real.
+- `npm run test:e2e:real` (`tests/real`, `playwright.real.config.ts`) usa Piston en **2000** y se omite si está desconectado. Ambas suites crean y eliminan usuarios y contenido editorial temporales.
+- `npm run test:runner` comprueba el adaptador real y se omite si Piston está detenido. Su archivo `tests/real-runner.integration.ts` importa `server-only` mediante `piston.ts`: ejecutar con `tsx --conditions=react-server` y mantenerlo fuera de `tests/*.test.ts`.
+- `tests/e2e/flows.spec.ts` es una **secuencia serial con estado**: las pruebas posteriores dependen de la cuenta y cookies iniciales. Ejecutar el archivo completo, no una prueba posterior aislada con `-g`. Limpia sus datos temporales; guarda capturas en `.local/screenshots/`.
+- Preparación del ejecutor real: `docker compose up -d` → `npm run runner:setup`. Consultar `docs/verification.md` para cobertura y limitaciones conocidas.
 
-## Design integration
+## Reglas del dominio que deben conservarse
 
-- `src/app/globals.css` owns the light/dark tokens consumed by Tailwind, shadcn/ui and Monaco. Preserve the monochrome palette, blue primary actions and success-only green.
-- Monaco requires six-digit hex values even when CSS optimization shortens tokens to `#fff`. Keep the normalization and root-class observer in `src/components/practice/code-editor.tsx`: `next-themes` can update the DOM after React effects, otherwise the editor retains the wrong theme.
+- `POST /api/executions` reserva un envío idempotente bajo un bloqueo asesor breve de PostgreSQL, responde 202 y programa la evaluación con Next `after()`. El cliente consulta `/api/executions/[id]`. No hay trabajador persistente; los intentos interrumpidos caducan a los dos minutos al reconciliarse desde los endpoints.
+- Todo programa enviado pasa por `src/server/execution/piston.ts`. Los ejercicios implementan `solve(data)` y devuelven JSON. `judge.ts` compara el JSON final fuera del sandbox y elimina entradas, salidas esperadas/reales y stderr de casos ocultos antes de persistir o devolver resultados.
+- Solo las evaluaciones `submit` completadas actualizan el progreso, por usuario + ejercicio + lenguaje. Los ejemplos, consultas de soluciones y errores de infraestructura no otorgan finalización. Conservar la finalización atómica para no contar reintentos dos veces.
+- El catálogo público selecciona la versión **publicada** de mayor número de un ejercicio publicado. Los guardados administrativos crean nuevas versiones en borrador; publicar valida ambas referencias en Piston. Conservar variantes antiguas para los envíos históricos.
+- `prisma/content.ts` es el catálogo editorial inicial. El seed **omite slugs y rutas existentes**: modificarlo y repetir el seed no actualiza esos registros. Usar una nueva versión editorial o una migración explícita, sin reiniciar los datos del usuario.
+- Los borradores usan concurrencia optimista basada en revisión; no sustituirla por upserts incondicionales. Conservar las copias del navegador y la transferencia independiente de invitado a cuenta.
+- La recuperación de Better Auth escribe enlaces en `.local/mail/`, no usa SMTP. Promover una cuenta existente con `npm run admin -- email@example.com`. Las acciones administrativas deben seguir llamando a `requireAdmin()`.
 
-## Git and GitHub workflow
+## Diseño e integración visual
 
-- Standing user preference: once a feature or change is complete and verified, commit and push the task's changes to GitHub. A later instruction to hold publication takes precedence. Do not publish incomplete work as finished; report blockers or failed checks.
-- Inspect `git status`, the diff, branch/upstream and remote before staging. Fetch before pushing; if the remote diverges, resolve deliberately without discarding local or remote work. Never force-push, rewrite published commits, or rename shared branches without explicit approval of that operation.
-- Stage explicit task-related paths. Preserve unrelated user changes and untracked tooling. Never commit secrets, real environment files, generated assets, local databases, screenshots, test artifacts or dependency directories.
-- Keep commits cohesive and independently understandable. Write commit titles and descriptions, pull request titles/descriptions, and delivery summaries in Spanish so the user can understand them. Keep Conventional Commit prefixes: `feat(ui): refinar el editor y la jerarquía de superficies`, `fix(tests): estabilizar el orden de las comparaciones editoriales`, `docs(workflow): documentar las normas de publicación`. Avoid vague titles such as `actualizar`, `cambios` or `final`.
-- Include a commit body explaining what changed, why, relevant verification and known limitations. Split independent fixes/documentation when useful, but do not split tightly coupled code into broken intermediate commits.
-- Run the checks appropriate to the change and review `git diff --cached --check` and the staged diff before committing. Reuse current successful checks when the tested code has not changed; distinguish HTTP-double E2E coverage from real Piston execution. Respect the manual-server rule above.
-- Use descriptive branch names when a branch is needed (`feat/<topic>`, `fix/<topic>`, `docs/<topic>`). Respect the existing repository workflow and branch protections. When using a pull request, give it a clear title and a description with Summary, Verification and Limitations; do not invent issue references or test results.
-- After pushing, verify the remote branch points to the intended commit. Report commit hashes, the GitHub link, checks and any remaining local changes. A commit alone is not a completed upload.
+- Reutilizar tokens y componentes existentes. `src/app/globals.css` centraliza los colores claro/oscuro de Tailwind, shadcn/ui y Monaco. Conservar la paleta monocromática, azul para acciones principales y verde solo para éxito.
+- No rediseñar pantallas fuera del alcance acordado. Al cambiar un tema, comprobar que el otro no se degrade; revisar los tamaños de pantalla afectados, foco visible y movimiento reducido.
+- Conservar la jerarquía aprobada de superficies, los controles compactos y el espacio útil del editor. No sustituir la separación tonal por divisores repetidos o tarjetas innecesarias.
+- Los desplegables usan `appearance: base-select` dentro de `@supports`; los navegadores sin soporte mantienen el selector nativo. Conservar etiquetas, teclado y envío de formularios; no prometer apariencia idéntica en todos los navegadores.
+- Monaco exige hexadecimales de seis dígitos aunque CSS los abrevie a `#fff`. Mantener normalización y observador de clase raíz en `src/components/practice/code-editor.tsx`: `next-themes` puede actualizar el DOM después de los efectos de React y dejar el editor con el tema incorrecto.
+
+## Flujo de Git y GitHub
+
+- Preferencia permanente: al terminar y verificar un cambio, hacer commit y push a GitHub. Una instrucción posterior de no publicar tiene prioridad. No publicar trabajo incompleto como terminado; informar bloqueos o comprobaciones fallidas.
+- Mantener el flujo sencillo actual en `main` para cambios terminados y acotados. Reservar ramas para cambios grandes o experimentales; respetar las protecciones del repositorio.
+- Antes de preparar un commit, revisar `git status`, diff, rama, seguimiento y remoto. Hacer fetch antes de subir; si hay divergencias, resolverlas sin descartar trabajo local ni remoto.
+- No forzar pushes, reescribir commits publicados ni renombrar ramas compartidas sin aprobación explícita. No reescribir el historial solo para traducir sus mensajes.
+- Añadir al staging rutas explícitas de la tarea. Excluir secretos, entornos reales, recursos generados, bases locales, capturas, resultados de pruebas y dependencias; conservar herramientas locales ajenas a la entrega.
+- Escribir títulos, descripciones de commits y pull requests, y resúmenes de entrega **en español**. Mantener prefijos Conventional Commits: `feat(ui): refinar las superficies`, `fix(tests): estabilizar las comparaciones`, `docs(workflow): aclarar las normas de publicación`.
+- Usar commits coherentes y comprensibles por separado, con título concreto. Explicar en el cuerpo qué cambió, por qué, qué se verificó y qué limitaciones quedan. Evitar títulos como `cambios` o `final` y no dividir código acoplado en commits intermedios rotos.
+- Antes del commit, revisar el diff preparado y `git diff --cached --check`. Aplicar los criterios de verificación anteriores, sin inventar pruebas ni confundir el doble HTTP con Piston real.
+- Cuando haga falta una rama, usar nombres descriptivos como `feat/<tema>`, `fix/<tema>` o `docs/<tema>`. Las pull requests deben incluir título claro y secciones Resumen, Verificación y Limitaciones; no inventar referencias a incidencias.
+- Tras el push, comprobar que la rama remota apunta al commit esperado. Comunicar identificadores, enlace de GitHub, verificaciones y cambios locales restantes. Un commit local por sí solo no completa la subida.
