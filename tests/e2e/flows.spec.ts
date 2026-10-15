@@ -232,10 +232,6 @@ test("recuperación local, rechazo de roles enviados por cliente y privacidad de
 
 test("administración guarda borradores privados y publica tras validar las referencias",async({page})=>{
   const completeAction=await actionStreamMonitor(page);
-  const actionFailures:string[]=[];
-  page.on("requestfailed",request=>{
-    if(request.method()==="POST" && request.headers()["next-action"]!==undefined) actionFailures.push(request.failure()?.errorText??"Acción cancelada");
-  });
   await db.user.update({where:{email},data:{role:"ADMIN"}});
   await page.context().addCookies(authCookies);
   await page.goto("/admin/ejercicios/nuevo");
@@ -293,7 +289,7 @@ test("administración guarda borradores privados y publica tras validar las refe
   await completeAction(()=>page.getByRole("button",{name:"Ocultar del catálogo"}).click());
   await expect(page.getByText("Ejercicio oculto del catálogo.")).toBeVisible();
   expect((await page.request.get(`/ejercicios/${editorialSlug}`)).status()).toBe(404);
-  expect(actionFailures).toEqual([]);
+  await completeAction.assertComplete();
 });
 
 for(const revisionSlug of revisionSlugs){
@@ -315,6 +311,7 @@ test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borrador
   if(decision==="draft"){
     await expect(page.getByRole("status")).toContainText("Ya existe un borrador editorial distinto");
     expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count);
+    await completeAction.assertComplete();
     return; // No modificar un borrador previo del propietario.
   }
   if(decision==="create")await expect(page.getByRole("status")).toContainText("preparada en borrador");
@@ -340,5 +337,6 @@ test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borrador
   await expect(page.getByRole("status")).toContainText("Ya existe un borrador editorial distinto");
   expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?2:1));
   expect(providerRequests).toBe(requests); // Preparar no publica ni ejecuta referencias.
+  await completeAction.assertComplete();
 });
 }

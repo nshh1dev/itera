@@ -112,9 +112,17 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 - Seed y rutas aplicados localmente: las filas previas de las diez tablas comprobadas conservan sus recuentos y huellas. Solo se añadieron tres ejercicios, tres versiones, seis variantes y 32 casos. Se aclaró el enunciado de una de esas actividades nuevas sin tocar contenido anterior.
 - Lint, tipos, build, 39 pruebas unitarias/editoriales y 35 E2E en desarrollo aprobados. Producción local: 26 aprobados, un fallo administrativo y ocho importaciones no ejecutadas. Los recorridos nuevos pasan en ambos modos. El fallo detecta dos peticiones canceladas al publicar y ocultar, aunque el observador del lector confirmó cierre; no se ha determinado la causa y se mantienen ambas comprobaciones. Piston real continúa pendiente.
 
+## Duodécima entrega: distinguir EOF de cancelación
+
+- Reproducida la discrepancia fuera de Next y React con scripts/diagnose-action-stream.mjs: veinte respuestas HTTP locales, con y sin gzip, terminaron en el servidor y llegaron íntegras hasta EOF en el navegador aunque DevTools informó ERR_ABORTED. No se atribuye una causa interna concreta a Chromium/Playwright ni un fallo de la aplicación a partir de ese aviso.
+- El observador exige ahora read().done, no solo reader.closed, y distingue cancelación explícita, error y respuesta pendiente. Conserva lector y promesas nativas sin clonar ni consumir datos adicionales.
+- requestfailed sigue observado por petición concreta: solo se clasifica ERR_ABORTED como discrepancia diagnóstica si esa misma petición tiene HTTP satisfactorio y EOF comprobado sin error ni cancelación. Se adjunta el registro a la prueba. Peticiones no observadas, otros errores y entregas incompletas siguen fallando.
+- Nueve pruebas de observación/transporte cubren fragmentos pendientes, EOF, errores, cancelación del lector/cuerpo, HTTP real sin comprimir/gzip, conexión truncada, cancelación real y HTTP 503. Se mantienen las comprobaciones de interfaz y persistencia de los recorridos administrativos.
+- Lint, tipos, build, 39 pruebas unitarias/editoriales y 42 E2E aprobados en desarrollo y en dos ejecuciones completas consecutivas de producción. Compresión y revalidación conservan su configuración original; no se añadieron reintentos ni se aumentaron timeouts. Catálogo y rutas sin cambios. Piston real continúa pendiente.
+
 ## Siguiente entrega
 
-Diagnosticar las cancelaciones administrativas observadas en producción, sin quitar comprobaciones ni ocultarlas con reintentos. Después introducir pilas y sus operaciones antes de Todo en su lugar.
+Introducir pilas, consulta y retirada del último elemento y correspondencia entre aperturas y cierres antes de Todo en su lugar.
 
 ## Fiabilidad y experiencia
 

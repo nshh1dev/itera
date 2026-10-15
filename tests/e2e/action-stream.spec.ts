@@ -30,7 +30,42 @@ for (const outcome of ["closed", "error"] as const) {
       if (result === "closed") controller.close();
       else controller.error(new Error("Fallo de lectura controlado"));
     }, outcome);
+    if (outcome === "closed") {
+      // Cerrar la fuente no basta: React aún debe observar EOF en su lector.
+      expect(events.map(event => event.state)).toEqual(["pending"]);
+      await page.evaluate(async () => {
+        const entry = await Reflect.get(window, "actionReader").read();
+        if (!entry.done) throw new Error("No se observó EOF");
+      });
+    }
     await expect.poll(() => events.map(event => event.state)).toEqual(["pending", outcome]);
     if (outcome === "error") expect(events[1].error).toContain("Fallo de lectura controlado");
+  });
+}
+
+for (const method of ["reader", "body"] as const) {
+  test(`cancelar ${method === "reader" ? "el lector" : "el cuerpo"} no se confunde con EOF`, async ({ page }) => {
+    const events: { state: string }[] = [];
+    await page.exposeBinding("__iteraReportActionStream", (_source, entry) => { events.push(entry); });
+    await page.goto("/iniciar-sesion");
+    await page.evaluate(() => {
+      window.fetch = async () => new Response(new ReadableStream());
+    });
+    await page.evaluate(observeBrowserActionStreams);
+    await page.evaluate(async target => {
+      const response = await fetch("/test-action", { method: "POST", headers: { "next-action": "cancel" } });
+      if (target === "reader") {
+        const reader = response.body!.getReader();
+        const pendingRead = reader.read();
+        await reader.cancel("Cancelación controlada");
+        await reader.closed;
+        if (!(await pendingRead).done) throw new Error("La cancelación no terminó la lectura");
+      } else {
+        await response.body!.cancel("Cancelación controlada");
+        const reader = response.body!.getReader();
+        if (!(await reader.read()).done) throw new Error("El cuerpo no está cancelado");
+      }
+    }, method);
+    await expect.poll(() => events.map(event => event.state)).toEqual(["pending", "cancelled"]);
   });
 }
