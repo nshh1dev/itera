@@ -10,6 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Local setup and generated files
 
+- The user starts the app server manually. Do not start, restart, or leave `next dev` / `next start` running unless explicitly requested. Ask before running browser suites that start an app server; never stop the user's server to free a test port without permission.
 - This is a local-only app; GitHub stores the code, not a deployment. Keep fonts and Monaco local; AI is deferred. UI and exercise copy are Spanish.
 - Run commands from the repository root. On Windows PowerShell use `npm.cmd` / `npx.cmd` if the `.ps1` wrappers are blocked.
 - First setup: `npm ci` → `npm run setup`. Setup creates missing secrets, copies Monaco assets, starts the private PostgreSQL cluster, generates Prisma, deploys migrations, then seeds. Installing dependencies alone does not prepare the editor or database.
@@ -44,3 +45,14 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - `src/app/globals.css` owns the light/dark tokens consumed by Tailwind, shadcn/ui and Monaco. Preserve the monochrome palette, blue primary actions and success-only green.
 - Monaco requires six-digit hex values even when CSS optimization shortens tokens to `#fff`. Keep the normalization and root-class observer in `src/components/practice/code-editor.tsx`: `next-themes` can update the DOM after React effects, otherwise the editor retains the wrong theme.
+
+## Git and GitHub workflow
+
+- Standing user preference: once a feature or change is complete and verified, commit and push the task's changes to GitHub. A later instruction to hold publication takes precedence. Do not publish incomplete work as finished; report blockers or failed checks.
+- Inspect `git status`, the diff, branch/upstream and remote before staging. Fetch before pushing; if the remote diverges, resolve deliberately without discarding local or remote work. Never force-push, rewrite published commits, or rename shared branches without explicit approval of that operation.
+- Stage explicit task-related paths. Preserve unrelated user changes and untracked tooling. Never commit secrets, real environment files, generated assets, local databases, screenshots, test artifacts or dependency directories.
+- Keep commits cohesive and independently understandable. Use Conventional Commit titles: `feat(ui): refine workspace and surface hierarchy`, `fix(tests): stabilize editorial snapshot ordering`, `docs(workflow): document publishing conventions`. Match the existing English commit style; avoid vague titles such as `update`, `changes` or `final`.
+- Include a commit body explaining what changed, why, relevant verification and known limitations. Split independent fixes/documentation when useful, but do not split tightly coupled code into broken intermediate commits.
+- Run the checks appropriate to the change and review `git diff --cached --check` and the staged diff before committing. Reuse current successful checks when the tested code has not changed; distinguish HTTP-double E2E coverage from real Piston execution. Respect the manual-server rule above.
+- Use descriptive branch names when a branch is needed (`feat/<topic>`, `fix/<topic>`, `docs/<topic>`). Respect the existing repository workflow and branch protections. When using a pull request, give it a clear title and a description with Summary, Verification and Limitations; do not invent issue references or test results.
+- After pushing, verify the remote branch points to the intended commit. Report commit hashes, the GitHub link, checks and any remaining local changes. A commit alone is not a completed upload.
