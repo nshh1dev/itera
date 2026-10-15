@@ -34,6 +34,8 @@ Cada actividad nueva incluye enunciado, objetivos de práctica, prerrequisitos, 
 
 Los metadatos de las nuevas actividades viven junto a su definición y `prisma/learning-metadata.ts` los incorpora, de modo que el mapa sigue cubriendo todo el catálogo. En la base local, `npm run db:seed` inserta las 57 identidades nuevas como versiones publicadas y `npm run content:paths -- --apply` reescribe la pertenencia a las cuatro rutas.
 
+Las versiones publicadas anteriores a la ampliación quedaron con la guía de aprendizaje vacía porque el seed omite los slugs existentes. `npm run content:metadata -- --apply` completa en la versión publicada más reciente **solo** los campos editoriales ausentes —objetivo, conocimientos previos, objetivos de práctica y enlaces a ejercicios previos— tomados del catálogo, sin sobrescribir valores ya presentes. Es idempotente y no toca enunciados, pistas, referencias, pruebas, borradores, envíos ni progreso. En la base local completó 45 versiones.
+
 Las once identidades reclasificadas conservan en la base local su nivel publicado anterior (37/45/38) porque cambiarlo exige una nueva versión publicada, y la publicación valida referencias en Piston. El origen y las rutas ya reflejan 45/40/35. Cuando el sandbox vuelva a estar disponible, cada identidad afectada debe prepararse y publicarse desde administración.
 
 Verificaciones y resultados: [verification.md](verification.md#currículo-completo-120-actividades).

@@ -40,6 +40,16 @@ Entrega del 15 de octubre de 2026: 57 identidades nuevas (8/19/30) y once reclas
 
 **Pendiente y no incluido:** la revisión pedagógica de los 51 ejercicios anteriores que R1 no cubrió. El currículo llega a 120 actividades, pero su revisión editorial por lotes (R2–R6) sigue abierta.
 
+### Guía de aprendizaje completa y navegación entre ejercicios
+
+Ajuste posterior del 15 de octubre de 2026: se detectó en la interfaz que las versiones publicadas antiguas mostraban los textos de reserva «Esta versión todavía no tiene un objetivo editorial descrito» y «Esta versión no especifica conocimientos previos».
+
+- Causa: el seed omite los slugs existentes, así que los campos editoriales añadidos por la migración `20261015000000_educational_content` quedaron vacíos en 45 versiones publicadas.
+- Arreglo de datos: `scripts/content-metadata.ts` (`npm run content:metadata -- --apply`) completa únicamente los campos vacíos desde el catálogo. En la base local completó 45 versiones; `tu-primer-resultado` conserva `prerequisites` vacío a propósito y la guía muestra el mensaje de que no se necesitan conocimientos previos.
+- Navegación: `previousExerciseSlug` en `src/lib/learning-paths.ts` y dos botones con flecha en la cabecera del espacio de práctica permiten ir al ejercicio anterior y al siguiente, respetando el orden de la ruta cuando se llega desde ella y el orden del catálogo en caso contrario. Los extremos quedan deshabilitados. Se mantiene el enlace «Continuar con otro ejercicio» después de resolver.
+- `npm test` (45 pruebas), `typecheck`, `build` y `lint` aprobados. `npm run content:paths` sin `--apply` y `npm run content:metadata` sin `--apply` sirven como vista previa; ninguno toca datos de estudiantes.
+- **No verificado en navegador:** no se ejecutó `npm run test:e2e` (requiere iniciar un servidor propio). La nueva navegación se comprueba solo con pruebas unitarias de la función de orden.
+
 ## Interfaz de aplicación
 
 La dirección visual usa un marco compartido para páginas y práctica: sidebar de 224/64 px con preferencia local, navegación móvil en diálogo, listas compactas sin divisores repetidos y superficies tonales claras/oscuras. Los tokens de `src/app/globals.css` concentran radios de 10–12 px para controles y selecciones, 16 px para paneles y 20 px para superficies destacadas; sombras discretas para controles, superficies destacadas, menús y diálogos. Inicio destaca la continuación, el catálogo agrupa filtros, las rutas destacan nombre y progreso, y configuración agrupa campos sin separadores largos. No se añadió IA, ninguna dependencia ni cambios de esquema, autenticación, rutas o contenido editorial.
