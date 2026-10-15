@@ -64,3 +64,8 @@ export function nextExerciseSlug(slug: string, slugs: string[]): string | undefi
   const index = slugs.indexOf(slug);
   return index < 0 ? undefined : slugs[index + 1];
 }
+
+export function previousExerciseSlug(slug: string, slugs: string[]): string | undefined {
+  const index = slugs.indexOf(slug);
+  return index <= 0 ? undefined : slugs[index - 1];
+}

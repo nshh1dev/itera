@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { ArrowLeft, ArrowRight, Play, Check, Lightbulb, Loader2, Code2, Clock3, ChevronRight, BookOpen, GripVertical, GripHorizontal } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronLeft, Play, Check, Lightbulb, Loader2, Code2, Clock3, ChevronRight, BookOpen, GripVertical, GripHorizontal } from "lucide-react";
 import type { ExecutionResult, Language, Level } from "@/lib/types";
 import { activityNames, type ActivityType } from "@/lib/types";
 import { languageNames, levelNames } from "@/lib/types";
@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 
 const CodeEditor = dynamic(() => import("./code-editor"), { ssr: false, loading: () => <div className="flex h-full items-center justify-center text-sm text-muted-foreground">Preparando tu editor…</div> });
 const subscribe = () => () => {};
-type Props = { userId?: string; user: ShellUser | null; slug: string; title: string; category: string; level: Level; minutes: number; statement: string; objective: string; prerequisites: string[]; practiceGoals: string[]; previousExercises: PreviousExercise[]; activityType: ActivityType; constraints: string[]; hints: string[]; language: Language; variantId: string; starter: string; initialCode: string; revision: number; examples: PublicExample[]; nextHref?: string; pathSlug?: string };
+type Props = { userId?: string; user: ShellUser | null; slug: string; title: string; category: string; level: Level; minutes: number; statement: string; objective: string; prerequisites: string[]; practiceGoals: string[]; previousExercises: PreviousExercise[]; activityType: ActivityType; constraints: string[]; hints: string[]; language: Language; variantId: string; starter: string; initialCode: string; revision: number; examples: PublicExample[]; nextHref?: string; previousHref?: string; pathSlug?: string };
 type LocalDraft = { code: string; revision: number };
 
 export function Workspace(props: Props) {
@@ -145,7 +145,13 @@ function WorkspaceReady(props: Props) {
       <div className="flex min-w-0 items-center gap-2 sm:gap-3">
         <Link href={props.pathSlug ? `/rutas/${encodeURIComponent(props.pathSlug)}?lenguaje=${props.language}` : `/ejercicios?lenguaje=${props.language}`} className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground hover:text-foreground" aria-label={props.pathSlug ? "Volver a la ruta" : "Volver a ejercicios"}><ArrowLeft className="size-4" /><span className="hidden sm:inline">{props.pathSlug ? "Mi ruta" : "Ejercicios"}</span></Link>
          <ChevronRight className="hidden size-3 shrink-0 text-muted-foreground sm:block" /><span className="truncate text-[13px] font-medium">{props.title}</span>
-         {!props.userId && <Button asChild variant="outline" size="sm" className="ml-auto hidden sm:inline-flex"><Link onClick={preserveGuestCode} href={`/registro?volver=${encodeURIComponent(exerciseHref(props.slug, props.language, props.pathSlug))}`}>Guardar mi progreso</Link></Button>}
+         <div className="ml-auto flex shrink-0 items-center gap-1">
+           <nav aria-label="Navegación entre ejercicios" className="flex items-center">
+             {props.previousHref ? <Button asChild variant="ghost" size="icon" className="size-8"><Link href={props.previousHref} aria-label="Ejercicio anterior" title="Ejercicio anterior"><ChevronLeft /></Link></Button> : <Button variant="ghost" size="icon" className="size-8" disabled aria-label="No hay ejercicio anterior" title="No hay ejercicio anterior"><ChevronLeft /></Button>}
+             {props.nextHref ? <Button asChild variant="ghost" size="icon" className="size-8"><Link href={props.nextHref} aria-label="Ejercicio siguiente" title="Ejercicio siguiente"><ChevronRight /></Link></Button> : <Button variant="ghost" size="icon" className="size-8" disabled aria-label="No hay ejercicio siguiente" title="No hay ejercicio siguiente"><ChevronRight /></Button>}
+           </nav>
+           {!props.userId && <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex"><Link onClick={preserveGuestCode} href={`/registro?volver=${encodeURIComponent(exerciseHref(props.slug, props.language, props.pathSlug))}`}>Guardar mi progreso</Link></Button>}
+         </div>
       </div>
     }>
     <main id="main-content" className="workspace-main">

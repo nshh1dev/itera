@@ -6,7 +6,7 @@ import { exercises } from "../prisma/content";
 import { introductoryExercises } from "../prisma/introductory-content";
 import { foundationExercises } from "../prisma/foundation-content";
 import { collectionsExercises } from "../prisma/collections-content";
-import { exerciseHref, foundationSteps, introductorySteps, intermediateSteps, learningPaths, nextExerciseSlug } from "../src/lib/learning-paths";
+import { exerciseHref, foundationSteps, introductorySteps, intermediateSteps, learningPaths, nextExerciseSlug, previousExerciseSlug } from "../src/lib/learning-paths";
 
 // Solo se ejecutan las soluciones de referencia escritas en este repositorio.
 // Este código de verificación editorial no forma parte del servidor ni acepta programas de usuarios.
@@ -72,6 +72,10 @@ test("continuar respeta el orden y el final de cada ruta", () => {
   assert.equal(nextExerciseSlug("suma-del-arreglo", foundationSteps), "el-mayor-de-tres");
   assert.equal(nextExerciseSlug("suma-de-dos-numeros", introductorySteps), undefined);
   assert.equal(nextExerciseSlug("no-existe", introductorySteps), undefined);
+  assert.equal(previousExerciseSlug("sin-duplicados", intermediateSteps), "cuenta-valores-distintos");
+  assert.equal(previousExerciseSlug("tu-primer-resultado", introductorySteps), undefined);
+  assert.equal(previousExerciseSlug("suma-de-dos-numeros", introductorySteps), "lee-un-dato-con-nombre");
+  assert.equal(previousExerciseSlug("no-existe", introductorySteps), undefined);
   assert.equal(exerciseHref("suma-del-arreglo", "python", "primeros-pasos"), "/ejercicios/suma-del-arreglo?lenguaje=python&ruta=primeros-pasos");
   assert.equal(exerciseHref("suma-del-arreglo", "javascript"), "/ejercicios/suma-del-arreglo?lenguaje=javascript");
 });
