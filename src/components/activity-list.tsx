@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Check, Circle, Clock3 } from "lucide-react";
 import { languageNames, type Language } from "@/lib/types";
 
-type Activity = { id: string; status: string; mode: string; createdAt: Date; passedCount: number; totalCount: number; variant: { language: string; version: { title: string; exercise: { slug: string } } } };
+export type Activity = { id: string; status: string; mode: string; createdAt: Date; passedCount: number; totalCount: number; variant: { language: string; version: { title: string; exercise: { slug: string } } } };
 
 export function ActivityList({ entries, compact = false }: { entries: Activity[]; compact?: boolean }) {
   if (!entries.length) return <div className="flex flex-col items-start gap-2 py-5">

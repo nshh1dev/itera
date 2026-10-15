@@ -6,6 +6,7 @@ type VersionContent = {
   title: string; description: string; statement: string; constraints: string[]; hints: string[]; level: Level; minutes: number;
   objective: string; prerequisites: string[];
   practiceGoals: string[]; prerequisiteSlugs: string[]; activityType: string;
+  complexity: string; commonErrors: string[];
   variants: { language: string; starter: string; solution: string; explanation: string;
     tests: { input: unknown; expected: unknown; explanation?: string; visible: boolean; order: number }[] }[];
 };
@@ -19,6 +20,7 @@ export function seedVersionContent(exercise: SeedExercise): VersionContent {
     title: exercise.title, description: exercise.description, statement: exercise.statement,
     objective: exercise.objective ?? "", prerequisites: exercise.prerequisites ?? [],
     practiceGoals: exercise.practiceGoals ?? [], prerequisiteSlugs: exercise.prerequisiteSlugs ?? [], activityType: exercise.activityType ?? "PRACTICE",
+    complexity: exercise.complexity ?? "", commonErrors: exercise.commonErrors ?? [],
     constraints: exercise.constraints, hints: exercise.hints, level: exercise.level, minutes: exercise.minutes,
     variants: (["python", "javascript"] as const).map(language => ({
       language, starter: exercise.starters?.[language] ?? starter[language], solution: exercise[language], explanation: exercise.explanations?.[language] ?? exercise.explanation,
@@ -32,6 +34,7 @@ function normalized(version: VersionContent): VersionContent {
     title: version.title, description: version.description, statement: version.statement,
     objective: version.objective, prerequisites: version.prerequisites,
     practiceGoals: version.practiceGoals, prerequisiteSlugs: version.prerequisiteSlugs, activityType: version.activityType,
+    complexity: version.complexity, commonErrors: version.commonErrors,
     constraints: version.constraints, hints: version.hints, level: version.level, minutes: version.minutes,
     variants: version.variants.map(variant => ({
       language: variant.language, starter: variant.starter, solution: variant.solution, explanation: variant.explanation,

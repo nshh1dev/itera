@@ -12,10 +12,11 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 - Ruta **Construye tus bases**: comparaciones, condiciones, listas, cadenas, rangos y acumuladores antes de combinarlos en retos.
 - Varios lenguajes; casos editoriales por lenguaje, entre visibles y ocultos.
 - Registro e inicio de sesión con correo y contraseña; recuperación en una bandeja de correo local.
-- Monaco servido localmente, editor sencillo alternativo, tamaño de fuente y paneles ajustables.
+- Monaco servido localmente, editor sencillo alternativo, tamaño de fuente, paneles ajustables y copia del código; las preferencias se recuerdan en el navegador.
 - Borrador local y guardado en PostgreSQL con detección de conflictos entre pestañas.
-- Ejecución asíncrona, ejemplos, comprobación completa y progreso por lenguaje.
-- Pistas progresivas y soluciones explicadas a petición.
+- Ejecución asíncrona, ejemplos, comprobación completa, resumen de la primera diferencia y progreso por lenguaje.
+- Pistas progresivas, coste orientativo, errores comunes y soluciones explicadas a petición.
+- Historial de intentos de cada ejercicio y búsqueda del catálogo sin distinguir acentos.
 - Administración con nuevas versiones, pruebas, validación de referencias y publicación.
 - Revisiones didácticas de los ocho retos originales, importables como borradores privados desde administración, sin sobrescribir el trabajo existente.
 - Temas claro/oscuro, fuentes locales Geist, navegación por teclado y adaptación móvil.

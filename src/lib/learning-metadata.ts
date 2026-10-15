@@ -24,6 +24,13 @@ export const educationalMetadataSchema = learningMetadataSchema.extend({
     items => new Set(items).size === items.length, "No repitas ejercicios previos.",
   ),
   activityType: z.enum(["OBSERVATION", "GUIDED", "PRACTICE", "INTEGRATION"]).default("PRACTICE"),
+  // Coste orientativo y errores frecuentes. Opcionales para no invalidar el
+  // contenido publicado antes de que existieran estos apartados.
+  complexity: editorialTextSchema.max(200).default(""),
+  commonErrors: z.array(editorialTextSchema.min(5).max(400)).max(6).default([]).refine(
+    items => new Set(items.map(item => item.toLocaleLowerCase("es"))).size === items.length,
+    "No repitas errores comunes.",
+  ),
 });
 
 export type LearningMetadata = z.infer<typeof learningMetadataSchema>;

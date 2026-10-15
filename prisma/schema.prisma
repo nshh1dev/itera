@@ -119,6 +119,8 @@ model ExerciseVersion {
   practiceGoals String[] @default([])
   prerequisiteSlugs String[] @default([])
   activityType String @default("PRACTICE")
+  complexity   String   @default("")
+  commonErrors String[] @default([])
   constraints  String[]
   hints        String[]
   level        Level

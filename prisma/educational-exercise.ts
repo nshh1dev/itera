@@ -11,11 +11,15 @@ type Definition = {
   tests: [Json, Json, string?][]; constraints: string[];
 };
 
+// Divide un texto breve en frases completas sin perder el punto final.
+const sentences = (text: string) => text.split(/(?<=\.)\s+/).map(item => item.trim()).filter(Boolean);
+
 // Solo composición editorial: las respuestas de los casos se escriben a mano,
 // nunca se calculan ejecutando la referencia que deben verificar.
 export function educationalExercise(d: Definition): SeedExercise {
   const shared = `Razonamiento\n${d.reasoning}\n\nPaso a paso\n${d.steps}\n\nCoste\n${d.cost}\n\nErrores comunes\n${d.mistakes}`;
   return {
+    complexity: d.cost, commonErrors: sentences(d.mistakes),
     slug: d.slug, title: d.title, level: d.level, category: d.category ?? "Algoritmos", minutes: d.minutes,
     description: d.problem, objective: d.goals[0], practiceGoals: d.goals,
     prerequisites: d.knowledge, prerequisiteSlugs: d.previous, activityType: d.level === "BEGINNER" ? "GUIDED" : "PRACTICE",

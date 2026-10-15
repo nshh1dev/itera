@@ -40,6 +40,7 @@ export async function saveExercise(input: unknown) {
         statement:data.statement, level:data.level, minutes:data.minutes, hints:data.hints, constraints:data.constraints,
         objective:data.objective, prerequisites:data.prerequisites,
         practiceGoals:data.practiceGoals, prerequisiteSlugs:data.prerequisiteSlugs, activityType:data.activityType,
+        complexity:data.complexity, commonErrors:data.commonErrors,
         variants:{create:(["python","javascript"] as const).map(language=>({language,...data[language],tests:{create:data.tests.map((test,order)=>({input:test.input===null?Prisma.JsonNull:test.input,expected:test.expected===null?Prisma.JsonNull:test.expected,visible:test.visible,explanation:test.explanation,order}))}}))},
       } });
       // La categoría pertenece a la identidad editorial; el contenido publicado sigue inmutable.
@@ -121,6 +122,7 @@ export async function prepareCatalogRevision(input: unknown) {
         hints: data.hints, level: data.level, minutes: data.minutes,
         objective: data.objective, prerequisites: data.prerequisites,
         practiceGoals: data.practiceGoals, prerequisiteSlugs: data.prerequisiteSlugs, activityType: data.activityType,
+        complexity: data.complexity, commonErrors: data.commonErrors,
         variants: { create: (["python", "javascript"] as const).map(language => ({
           language, ...data[language], tests: { create: data.tests.map((test, order) => ({
             order, visible: test.visible, explanation: test.explanation, input: test.input === null ? Prisma.JsonNull : test.input, expected: test.expected === null ? Prisma.JsonNull : test.expected,

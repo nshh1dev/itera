@@ -2,7 +2,7 @@
 
 ## Cobertura automatizada
 
-- 45 pruebas de dominio, contenido, revisión editorial, metadatos de aprendizaje y herramientas locales.
+- 59 pruebas de dominio, contenido, revisión editorial, metadatos de aprendizaje, comparación de resultados, notas del ejercicio y herramientas locales.
 - Las 120 referencias de Python y las 120 de JavaScript pasan los mismos 648 casos por lenguaje. Las plantillas guiadas también se ejecutan con todos sus ejemplos en ambos lenguajes. Solo la actividad inicial de observación debe venir completamente resuelta. En las actividades de colecciones, textos, máximos, búsqueda y rotación se comprueba además que el cambio indicado en el enunciado coincide con la referencia. Las enumeraciones adicionales comprueban 2911 entradas de máximos y ausencia, 1718 de búsqueda, 3066 de recorridos circulares y 1668 del lote inicial R1, por lenguaje.
 - 67 pruebas de navegador con Chromium: recorridos de catálogo, registro, preferencias, borradores, evaluación, ayudas, responsive, conflictos entre pestañas, recuperación de contraseña, aislamiento entre cuentas, administración, rutas, R1, interfaz y transporte HTTP. Incluyen el orden completo de fundamentos y de Conecta las ideas, conservación de ruta al cambiar lenguaje o iniciar sesión, plantillas guiadas en ambos lenguajes y ausencia de salto al catálogo al terminar Desde cero. La suite ampliada pasa en desarrollo y producción local.
 - La importación editorial se comprueba sin publicar: mantiene intacta la versión anterior, no altera lo que sirve el catálogo público, no llama al ejecutor, no duplica una revisión idéntica y se detiene ante un borrador manual distinto. Las pruebas eliminan solo los borradores que ellas mismas crean.
@@ -49,6 +49,24 @@ Ajuste posterior del 15 de octubre de 2026: se detectó en la interfaz que las v
 - Navegación: `previousExerciseSlug` en `src/lib/learning-paths.ts` y dos botones con flecha en la cabecera del espacio de práctica permiten ir al ejercicio anterior y al siguiente, respetando el orden de la ruta cuando se llega desde ella y el orden del catálogo en caso contrario. Los extremos quedan deshabilitados. `exercisePosition` calcula la posición 1‑based en esa misma secuencia y la cabecera muestra «N de M» junto a las flechas, para que se vea dónde se está dentro de la ruta o del catálogo. Se mantiene el enlace «Continuar con otro ejercicio» después de resolver.
 - `npm test` (45 pruebas), `typecheck`, `build` y `lint` aprobados. `npm run content:paths` sin `--apply` y `npm run content:metadata` sin `--apply` sirven como vista previa; ninguno toca datos de estudiantes.
 - **No verificado en navegador:** no se ejecutó `npm run test:e2e` (requiere iniciar un servidor propio). La nueva navegación se comprueba solo con pruebas unitarias de la función de orden.
+
+### Formato del ejercicio, feedback y experiencia de práctica
+
+Entrega del 15 de octubre de 2026: mejora del formato del ejercicio y de la experiencia de práctica, sin reconstruir la aplicación ni tocar identificadores, versiones publicadas ni progreso. Cinco frentes:
+
+- **Formato:** `ExerciseVersion` incorpora `complexity` (coste orientativo) y `commonErrors` (errores frecuentes), opcionales y vacíos por defecto. La interfaz los muestra solo cuando tienen contenido (`src/components/practice/exercise-notes.tsx`). `prisma/educational-exercise.ts` los deriva de `cost` y `mistakes` del contenido ya existente, y `npm run content:metadata -- --apply` completó 57 versiones publicadas sin alterar otros campos. Los ejercicios anteriores siguen sin estos apartados y la interfaz no muestra una sección vacía.
+- **Feedback:** `src/lib/json-diff.ts` localiza la primera diferencia entre el resultado esperado y el obtenido; `results.tsx` la muestra en cada caso visible fallido. El cálculo ocurre en el navegador, sobre datos que el cliente ya recibe (solo casos visibles); no expone casos ocultos.
+- **Espacio de práctica:** las preferencias del editor (tamaño del código, ancho del enunciado, altura de resultados, editor sencillo) persisten en `localStorage`; se añade «Copiar código» a las opciones; los atajos (Ctrl/⌘+Enter y Ctrl/⌘+Shift+Enter) se anuncian de forma coherente; el `ariaLabel` del editor usa el nombre del lenguaje.
+- **Catálogo y progreso:** la búsqueda ignora mayúsculas y acentos (`searchNormalize`); el catálogo ofrece «Continúa donde lo dejaste»; cada fila indica si el ejercicio también está resuelto en el otro lenguaje (`solvedOther`).
+- **Historial:** el espacio de práctica muestra los últimos intentos de ese ejercicio y el diálogo de restablecer plantilla enlaza a Mi progreso.
+
+Resultados:
+
+- `npm test`: 59 pruebas aprobadas (14 nuevas: 8 de `firstDifference`, 3 de `searchNormalize` y 3 del render de las notas del ejercicio). El resto de suites de contenido siguen en verde.
+- `npm run typecheck`, `npm run lint` (sin errores; los mismos tres avisos previos en plantillas de `.agents/skills`) y `npm run build` aprobados.
+- `prisma migrate dev` aplicó `20261015210055_add_complexity_and_common_errors`, con columnas aditivas y valores por defecto; no requiere reiniciar datos.
+- `npm run content:metadata` previsualizó 57 versiones y las completó con `--apply`, sin tocar enunciados, pruebas, borradores, envíos ni progreso.
+- **No verificado en navegador ni en Piston:** no se ejecutó `npm run test:e2e` ni la ejecución real. Docker y Piston siguen detenidos; esta entrega no acredita aislamiento ni ejecución en el sandbox.
 
 ## Interfaz de aplicación
 

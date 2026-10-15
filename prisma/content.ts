@@ -38,6 +38,7 @@ export type SeedExercise = {
   starters?: { python: string; javascript: string };
   objective?: string; prerequisites?: string[];
   practiceGoals?: string[]; prerequisiteSlugs?: string[]; activityType?: ActivityType;
+  complexity?: string; commonErrors?: string[];
   explanations?: { python: string; javascript: string };
 };
 

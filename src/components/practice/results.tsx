@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { Check, CircleX, Loader2, Terminal, LockKeyhole, ArrowRight, Info, ChevronDown, ChevronUp } from "lucide-react";
 import { useId } from "react";
-import type { ExecutionResult } from "@/lib/types";
+import type { ExecutionResult, Json } from "@/lib/types";
+import { firstDifference } from "@/lib/json-diff";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -23,7 +24,7 @@ export function Results({ result, busy, error, nextHref, collapsed = false, onTo
             {result.status === "PASSED" ? <Check className="mt-0.5 size-5 shrink-0 text-success-text" aria-hidden="true" /> : result.status === "ERROR" ? <Info className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden="true" /> : <CircleX className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden="true" />}
             <div><h3 className="text-sm font-medium">{result.status === "PASSED" ? result.mode === "submit" ? "Un paso más. Ejercicio resuelto." : "Los ejemplos funcionan." : result.status === "ERROR" ? "La evaluación se interrumpió." : "Tu solución todavía puede mejorar."}</h3><p className="mt-1 text-xs leading-6 text-muted-foreground">{result.status === "PASSED" ? result.mode === "submit" ? "Tu progreso está guardado. Quédate con lo que aprendiste." : "Ahora comprueba tu solución con todos los casos de prueba." : result.status === "ERROR" ? result.message : "Revisa el resultado y prueba una nueva idea."}</p></div>
           </div>
-          <div className="mt-4 flex flex-col gap-2">{result.results.filter(r => r.visible).map(test => <details key={test.index} open={!test.passed} className="result-case group rounded-lg bg-control px-3">
+          <div className="mt-4 flex flex-col gap-2">{result.results.filter(r => r.visible).map(test => { const diff = !test.passed && "actual" in test ? firstDifference(test.expected as Json, test.actual as Json) : null; return <details key={test.index} open={!test.passed} className="result-case group rounded-lg bg-control px-3">
             <summary className="flex min-h-11 cursor-pointer items-center gap-2 py-2 text-xs">
               {test.passed ? <Check className="size-3.5 shrink-0 text-success-text" aria-hidden="true" /> : <CircleX className="size-3.5 shrink-0 text-destructive" aria-hidden="true" />}Ejemplo {test.index}
               <span className="ml-auto text-right text-muted-foreground">{test.passed ? "Correcto" : test.status === "timeout" ? "Límite de tiempo" : test.status === "runtime" ? "Error de ejecución" : "Resultado diferente"}</span>
@@ -33,9 +34,10 @@ export function Results({ result, busy, error, nextHref, collapsed = false, onTo
               <div><span className="text-muted-foreground">Entrada</span><pre className="mt-1 overflow-x-auto font-mono">{JSON.stringify(test.input)}</pre></div>
               <div><span className="text-muted-foreground">Esperado</span><pre className="mt-1 overflow-x-auto font-mono">{JSON.stringify(test.expected)}</pre></div>
               {"actual" in test && <div><span className="text-muted-foreground">Tu resultado</span><pre className="mt-1 overflow-x-auto font-mono">{JSON.stringify(test.actual)}</pre></div>}
+              {diff && <div className="flex items-start gap-2 rounded-lg bg-surface p-2.5"><Info className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" /><div><span className="text-muted-foreground">Primera diferencia</span><p className="mt-1 leading-6">{diff.message}</p></div></div>}
               {test.error && <pre className="mt-2 max-h-44 overflow-auto font-mono leading-6 whitespace-pre-wrap text-destructive">{test.error}</pre>}
             </div>
-          </details>)}</div>
+          </details>; })}</div>
           {result.results.some(r => !r.visible) && <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground"><LockKeyhole className="size-3.5 shrink-0" aria-hidden="true" />{result.results.filter(r => !r.visible && r.passed).length} de {result.results.filter(r => !r.visible).length} pruebas ocultas superadas</p>}
           {result.status === "PASSED" && result.mode === "submit" && nextHref && <Link className="text-link mt-4 text-xs" href={nextHref}>Continuar con otro ejercicio<ArrowRight className="size-3.5" /></Link>}
         </>}

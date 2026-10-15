@@ -49,6 +49,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Solo las evaluaciones `submit` completadas actualizan el progreso, por usuario + ejercicio + lenguaje. Los ejemplos, consultas de soluciones y errores de infraestructura no otorgan finalización. Conservar la finalización atómica para no contar reintentos dos veces.
 - El catálogo público selecciona la versión **publicada** de mayor número de un ejercicio publicado. Los guardados administrativos crean nuevas versiones en borrador; publicar valida ambas referencias en Piston. Conservar variantes antiguas para los envíos históricos.
 - `prisma/content.ts` es el catálogo editorial inicial. El seed **omite slugs y rutas existentes**: modificarlo y repetir el seed no actualiza esos registros. Usar una nueva versión editorial o una migración explícita, sin reiniciar los datos del usuario. Para completar la guía de aprendizaje de versiones publicadas antiguas: `npm run content:metadata -- --apply` (sin `--apply` solo previsualiza); completa los campos editoriales vacíos y no toca enunciados, pruebas ni datos de estudiantes.
+- Cada versión puede documentar `complexity` (coste orientativo) y `commonErrors`; son opcionales y la interfaz solo los muestra cuando tienen contenido. `prisma/educational-exercise.ts` los deriva de `cost` y `mistakes`, y `content:metadata -- --apply` rellena los vacíos sin tocar otros campos.
+- El cliente recibe solo los casos visibles y pide la solución aparte. El resumen de la primera diferencia (`src/lib/json-diff.ts`) se calcula en el navegador con datos visibles; no exponer casos ocultos ni mover esa lógica al servidor sin filtrar.
 - Los borradores usan concurrencia optimista basada en revisión; no sustituirla por upserts incondicionales. Conservar las copias del navegador y la transferencia independiente de invitado a cuenta.
 - La recuperación de Better Auth escribe enlaces en `.local/mail/`, no usa SMTP. Promover una cuenta existente con `npm run admin -- email@example.com`. Las acciones administrativas deben seguir llamando a `requireAdmin()`.
 
@@ -59,6 +61,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Conservar la jerarquía aprobada de superficies, los controles compactos y el espacio útil del editor. No sustituir la separación tonal por divisores repetidos o tarjetas innecesarias.
 - Los desplegables usan `appearance: base-select` dentro de `@supports`; los navegadores sin soporte mantienen el selector nativo. Conservar etiquetas, teclado y envío de formularios; no prometer apariencia idéntica en todos los navegadores.
 - Monaco exige hexadecimales de seis dígitos aunque CSS los abrevie a `#fff`. Mantener normalización y observador de clase raíz en `src/components/practice/code-editor.tsx`: `next-themes` puede actualizar el DOM después de los efectos de React y dejar el editor con el tema incorrecto.
+- Las preferencias del espacio de práctica (tamaño del código, ancho del enunciado, altura de resultados, editor sencillo) se guardan en `localStorage` bajo `itera:workspace` y se leen solo tras hidratar, para no romper el render del servidor.
 
 ## Flujo de Git y GitHub
 

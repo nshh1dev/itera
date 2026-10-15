@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import Editor, { loader, type Monaco } from "@monaco-editor/react";
 import { useTheme } from "next-themes";
 import type { Language } from "@/lib/types";
+import { languageNames } from "@/lib/types";
 
 loader.config({ paths: { vs: "/monaco/vs" } });
 
@@ -63,5 +64,5 @@ export default function CodeEditor({ code, onChange, language, fontSize, onRun, 
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => callbacks.current.onSubmit());
     }}
     onChange={value => onChange(value ?? "")}
-    options={{ fontFamily: "Geist Mono, monospace", fontSize, lineHeight: Math.round(fontSize * 1.8), minimap: { enabled: false }, padding: { top: 20, bottom: 20 }, scrollBeyondLastLine: false, automaticLayout: true, tabSize: language === "python" ? 4 : 2, insertSpaces: true, wordWrap: "on", bracketPairColorization: { enabled: false }, renderLineHighlight: "line", overviewRulerLanes: 0, hideCursorInOverviewRuler: true, lineNumbersMinChars: 3, folding: false, glyphMargin: false, contextmenu: false, ariaLabel: `Editor de código ${language}`, accessibilitySupport: "auto", scrollbar: { verticalScrollbarSize: 8, horizontalScrollbarSize: 8 }, quickSuggestions: false }} />;
+    options={{ fontFamily: "Geist Mono, monospace", fontSize, lineHeight: Math.round(fontSize * 1.8), minimap: { enabled: false }, padding: { top: 20, bottom: 20 }, scrollBeyondLastLine: false, automaticLayout: true, tabSize: language === "python" ? 4 : 2, insertSpaces: true, wordWrap: "on", bracketPairColorization: { enabled: false }, renderLineHighlight: "line", overviewRulerLanes: 0, hideCursorInOverviewRuler: true, lineNumbersMinChars: 3, folding: false, glyphMargin: false, contextmenu: false, ariaLabel: `Editor de código ${languageNames[language]}`, accessibilitySupport: "auto", scrollbar: { verticalScrollbarSize: 8, horizontalScrollbarSize: 8 }, quickSuggestions: false }} />;
 }

@@ -2,8 +2,11 @@ import Link from "next/link";
 import { Search, ArrowLeft, ArrowRight, X } from "lucide-react";
 import { currentUser } from "@/server/auth";
 import { getCatalog } from "@/server/catalog";
+import { db } from "@/server/db";
 import { languageSchema } from "@/lib/validation";
 import { levelNames, type Language, type Level } from "@/lib/types";
+import { exerciseHref } from "@/lib/learning-paths";
+import { searchNormalize } from "@/lib/utils";
 import { ExerciseRow } from "@/components/exercise-row";
 import { Button } from "@/components/ui/button";
 import { ExerciseFilters } from "@/components/exercise-filters";
@@ -16,11 +19,13 @@ export default async function ExercisesPage({ searchParams }: { searchParams: Pr
   const str = (key: string) => typeof params[key] === "string" ? params[key] as string : "";
   const language = languageSchema.catch((user?.preference?.language ?? "python") as Language).parse(str("lenguaje"));
   const catalog = await getCatalog(user?.id, language);
+  const lastDraft = user ? await db.draft.findFirst({ where: { userId: user.id, variant: { language, version: { exercise: { published: true } } } }, orderBy: { updatedAt: "desc" }, select: { variant: { select: { version: { select: { exercise: { select: { slug: true } } } } } } } }) : null;
+  const continueExercise = catalog.find(e => e.slug === lastDraft?.variant.version.exercise.slug && !e.solved);
   const query = str("q").trim().slice(0, 100);
   const level = str("nivel");
   const category = str("categoria");
   const status = str("estado");
-  const filtered = catalog.filter(e => (!query || `${e.title} ${e.description}`.toLocaleLowerCase("es").includes(query.toLocaleLowerCase("es"))) && (!level || e.level === level) && (!category || e.category === category) && (!status || (status === "resueltos" ? e.solved : status === "pendientes" ? !e.solved : e.started && !e.solved)));
+  const filtered = catalog.filter(e => (!query || searchNormalize(`${e.title} ${e.description}`).includes(searchNormalize(query))) && (!level || e.level === level) && (!category || e.category === category) && (!status || (status === "resueltos" ? e.solved : status === "pendientes" ? !e.solved : e.started && !e.solved)));
   const pages = Math.max(1, Math.ceil(filtered.length / 12));
   const page = Math.min(pages, Math.max(1, Number.parseInt(str("pagina")) || 1));
   const pageLink = (n: number) => { const p = new URLSearchParams({ lenguaje: language, q: query, nivel: level, categoria: category, estado: status, pagina: String(n) }); return `/ejercicios?${p}`; };
@@ -32,6 +37,7 @@ export default async function ExercisesPage({ searchParams }: { searchParams: Pr
   ].filter(f => f.value);
   function removeFilter(key: string) { const p = new URLSearchParams({ lenguaje: language, q: query, nivel: level, categoria: category, estado: status }); p.delete(key); return `/ejercicios?${p}`; }
   return <div className="page-container"><h1 className="page-title">Ejercicios</h1><p className="mt-2 text-sm text-muted-foreground">Encuentra qué practicar y continúa a tu ritmo.</p>
+    {continueExercise && <Link href={exerciseHref(continueExercise.slug, language)} className="surface-panel mt-6 flex items-center justify-between gap-4 rounded-2xl bg-surface p-4"><div className="min-w-0"><p className="text-xs text-muted-foreground">Continúa donde lo dejaste</p><p className="mt-1 truncate text-sm font-medium">{continueExercise.title}</p></div><ArrowRight className="size-4 shrink-0 text-muted-foreground" /></Link>}
     <ExerciseFilters key={[query, language, level, category, status].join(":")} query={query} language={language} level={level} category={category} status={status} categories={[...new Set(catalog.map(e => e.category))]} />
     {activeFilters.length > 0 && <div className="mt-4 flex flex-wrap items-center gap-2" aria-label="Filtros activos">{activeFilters.map(filter => <Badge key={filter.key} variant="filter" asChild className="min-h-11 md:min-h-8"><Link href={removeFilter(filter.key)} aria-label={`Quitar filtro: ${filter.label}`}><span className="truncate">{filter.label}</span><X data-icon="inline-end" aria-hidden="true" /></Link></Badge>)}<Link className="px-2 py-2 text-xs text-primary-text hover:underline" href={`/ejercicios?lenguaje=${language}`}>Limpiar filtros</Link></div>}
     <div className="mt-6 mb-2 flex items-center justify-between px-3 text-xs text-muted-foreground"><span>{filtered.length} {filtered.length === 1 ? "ejercicio" : "ejercicios"}</span><span>Página {page} de {pages}</span></div>
