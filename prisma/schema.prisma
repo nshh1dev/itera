@@ -116,6 +116,9 @@ model ExerciseVersion {
   statement    String
   objective    String   @default("")
   prerequisites String[] @default([])
+  practiceGoals String[] @default([])
+  prerequisiteSlugs String[] @default([])
+  activityType String @default("PRACTICE")
   constraints  String[]
   hints        String[]
   level        Level
@@ -145,6 +148,7 @@ model TestCase {
   variantId String
   input     Json
   expected  Json
+  explanation String @default("")
   visible   Boolean @default(false)
   order     Int
   variant   ExerciseVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)

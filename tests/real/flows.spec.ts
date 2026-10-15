@@ -107,8 +107,9 @@ test("la administración publica tras ejecutar las referencias y rechaza una ref
   await page.getByLabel("Descripción breve").fill("Suma dos valores con una referencia defectuosa a propósito.");
   await page.getByLabel("Objetivo de aprendizaje",{exact:true}).fill("Practicar la suma de dos valores recibidos en un objeto.");
   await page.getByLabel("Conocimientos previos recomendados",{exact:true}).fill("Usar return\nAcceder a propiedades");
+  await page.getByLabel("Qué vas a practicar",{exact:true}).fill("Sumar las propiedades de una entrada agrupada.");
   await page.getByLabel("Enunciado",{exact:true}).fill("Recibe un objeto con a y b, y devuelve la suma de ambos valores.");
-  await page.getByLabel("Pistas progresivas").fill("Utiliza el operador de suma.");
+  await page.getByLabel("Pistas progresivas").fill("Necesitas combinar dos valores.\nObtén ambos por su nombre.\nUtiliza el operador de suma para combinarlos.");
   await page.getByRole("tab",{name:"Pruebas",exact:true}).click();
   await page.getByLabel("Casos de prueba en JSON").fill(JSON.stringify([{input:{a:3,b:5},expected:8,visible:true},{input:{a:0,b:0},expected:0,visible:true},{input:{a:-2,b:7},expected:5,visible:false}]));
   await page.getByRole("tab",{name:"Python",exact:true}).click();
@@ -129,8 +130,9 @@ test("la administración publica tras ejecutar las referencias y rechaza una ref
   await page.getByLabel("Descripción breve").fill("Suma dos valores y valida sus referencias en el sandbox real.");
   await page.getByLabel("Objetivo de aprendizaje",{exact:true}).fill("Practicar la suma de dos valores recibidos en un objeto.");
   await page.getByLabel("Conocimientos previos recomendados",{exact:true}).fill("Usar return\nAcceder a propiedades");
+  await page.getByLabel("Qué vas a practicar",{exact:true}).fill("Sumar las propiedades de una entrada agrupada.");
   await page.getByLabel("Enunciado",{exact:true}).fill("Recibe un objeto con a y b, y devuelve la suma de ambos valores.");
-  await page.getByLabel("Pistas progresivas").fill("Utiliza el operador de suma.");
+  await page.getByLabel("Pistas progresivas").fill("Necesitas combinar dos valores.\nObtén ambos por su nombre.\nUtiliza el operador de suma para combinarlos.");
   await page.getByRole("tab",{name:"Pruebas",exact:true}).click();
   await page.getByLabel("Casos de prueba en JSON").fill(JSON.stringify([{input:{a:3,b:5},expected:8,visible:true},{input:{a:0,b:0},expected:0,visible:true},{input:{a:-2,b:7},expected:5,visible:false}]));
   await page.getByRole("tab",{name:"Python",exact:true}).click();

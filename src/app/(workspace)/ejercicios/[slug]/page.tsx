@@ -6,6 +6,7 @@ import { Workspace } from "@/components/practice/workspace";
 import type { Json } from "@/lib/types";
 import { db } from "@/server/db";
 import { exerciseHref, nextExerciseSlug } from "@/lib/learning-paths";
+import { educationalMetadataSchema } from "@/lib/learning-metadata";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Espacio de práctica" };
@@ -26,5 +27,10 @@ export default async function ExercisePage({ params, searchParams }: { params: P
   const pathSlug = pathSlugs?.includes(slug) ? path!.slug : undefined;
   const nextSlug = nextExerciseSlug(slug, pathSlug ? pathSlugs! : catalog.map(e => e.slug));
   const nextHref = nextSlug ? exerciseHref(nextSlug, language, pathSlug) : undefined;
-  return <Workspace userId={user?.id} user={user ? { name: user.name, email: user.email, role: user.role } : null} slug={slug} title={version.title} category={exercise.category} level={version.level} minutes={version.minutes} statement={version.statement} objective={version.objective} prerequisites={version.prerequisites} constraints={version.constraints} hints={version.hints} language={language} variantId={variant.id} starter={variant.starter} initialCode={variant.drafts[0]?.code ?? variant.starter} revision={variant.drafts[0]?.revision ?? 0} examples={variant.tests as {input:Json;expected:Json}[]} nextHref={nextHref} pathSlug={pathSlug} />;
+  const previousExercises = version.prerequisiteSlugs.flatMap(previousSlug => {
+    const entry = catalog.find(item => item.slug === previousSlug);
+    return entry ? [{ title: entry.title, href: exerciseHref(entry.slug, language, pathSlugs?.includes(entry.slug) ? pathSlug : undefined) }] : [];
+  });
+  const activityType = educationalMetadataSchema.shape.activityType.catch("PRACTICE").parse(version.activityType);
+  return <Workspace userId={user?.id} user={user ? { name: user.name, email: user.email, role: user.role } : null} slug={slug} title={version.title} category={exercise.category} level={version.level} minutes={version.minutes} statement={version.statement} objective={version.objective} prerequisites={version.prerequisites} practiceGoals={version.practiceGoals} previousExercises={previousExercises} activityType={activityType} constraints={version.constraints} hints={version.hints} language={language} variantId={variant.id} starter={variant.starter} initialCode={variant.drafts[0]?.code ?? variant.starter} revision={variant.drafts[0]?.revision ?? 0} examples={variant.tests as {input:Json;expected:Json;explanation:string}[]} nextHref={nextHref} pathSlug={pathSlug} />;
 }

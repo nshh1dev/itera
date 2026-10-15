@@ -8,13 +8,17 @@ import { textExercises, textRevisions } from "./text-content";
 import { maximaExercises, maximaRevisions } from "./maxima-content";
 import { searchExercises, searchRevisions } from "./search-content";
 import { rotationExercises, rotationRevisions } from "./rotation-content";
+import { initialBatchRevisions } from "./initial-batch";
+import type { ActivityType } from "../src/lib/types";
 
 export type SeedExercise = {
   slug: string; title: string; description: string; category: string; level: Level; minutes: number;
   statement: string; constraints: string[]; hints: string[]; python: string; javascript: string; explanation: string;
-  tests: { input: Json; expected: Json }[];
+  tests: { input: Json; expected: Json; explanation?: string }[];
   starters?: { python: string; javascript: string };
   objective?: string; prerequisites?: string[];
+  practiceGoals?: string[]; prerequisiteSlugs?: string[]; activityType?: ActivityType;
+  explanations?: { python: string; javascript: string };
 };
 
 const t = (input: Json, expected: Json) => ({ input, expected });
@@ -180,7 +184,7 @@ export const exercises: SeedExercise[] = [
     ["Resuelve primero el problema para prefijos más cortos.", "Si las últimas letras coinciden, no necesitas una operación nueva.", "En otro caso toma el mínimo entre insertar, eliminar y sustituir, sumando uno."],
     "La distancia de Levenshtein compara prefijos. Cada celda depende de la izquierda, arriba y diagonal. Tiempo O(nm), espacio O(m) al conservar solo una fila anterior.", ["Cadenas ASCII de hasta 200 caracteres."]),
   ...foundationExercises,
-].map(exercise => ({ ...exercise, ...beginnerRevisions[exercise.slug], ...collectionsRevisions[exercise.slug], ...textRevisions[exercise.slug], ...maximaRevisions[exercise.slug], ...searchRevisions[exercise.slug], ...rotationRevisions[exercise.slug], ...learningMetadata[exercise.slug] }));
+].map(exercise => ({ ...exercise, ...beginnerRevisions[exercise.slug], ...collectionsRevisions[exercise.slug], ...textRevisions[exercise.slug], ...maximaRevisions[exercise.slug], ...searchRevisions[exercise.slug], ...rotationRevisions[exercise.slug], ...learningMetadata[exercise.slug], ...initialBatchRevisions[exercise.slug] }));
 
 export const starter = {
   python: "def solve(data):\n    # Escribe tu solución aquí\n    pass\n",

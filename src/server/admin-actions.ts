@@ -4,24 +4,20 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "./auth";
 import { db } from "./db";
 import { Prisma } from "@/generated/prisma/client";
-import { levels, type Json, type Language } from "@/lib/types";
+import type { Json, Language } from "@/lib/types";
 import { availableRuntime, runCode, RunnerUnavailable } from "./execution/piston";
 import { judge } from "./execution/judge";
 import { catalogRevision, catalogRevisionDecision, seedVersionContent } from "../../prisma/editorial-revision";
-import { learningMetadataSchema } from "@/lib/learning-metadata";
+import { editorialSchema as schema, publicationMetadataSchema } from "@/lib/editorial";
+import { prerequisiteIssue } from "@/lib/curriculum";
 
-const variantSchema = z.object({ starter: z.string().min(1).max(30000), solution: z.string().min(1).max(30000), explanation: z.string().min(10).max(5000) });
-const schema = z.object({
-  ...learningMetadataSchema.shape,
-  slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(100),
-  title: z.string().trim().min(3).max(100), description: z.string().trim().min(10).max(300),
-  statement: z.string().trim().min(20).max(8000), category: z.enum(["Fundamentos", "Cadenas", "Arreglos", "Algoritmos"]),
-  level: z.enum(levels), minutes: z.number().int().min(1).max(180),
-  hints: z.array(z.string().min(5).max(1000)).min(1).max(5),
-  constraints: z.array(z.string().min(1).max(500)).min(1).max(10),
-  python: variantSchema, javascript: variantSchema,
-  tests: z.array(z.object({ input: z.json(), expected: z.json(), visible: z.boolean() })).min(3).max(10),
-}).refine(data => data.tests.some(t=>t.visible) && data.tests.some(t=>!t.visible), "Incluye pruebas visibles y ocultas.");
+async function checkPrerequisites(slug: string, slugs: string[]) {
+  if (!slugs.length) return;
+  const entries = await db.exercise.findMany({
+    where: { published: true, versions: { some: { published: true } } }, select: { slug: true, order: true },
+  });
+  return prerequisiteIssue(slug, slugs, entries);
+}
 
 export async function saveExercise(input: unknown) {
   const user = await requireAdmin();
@@ -30,6 +26,8 @@ export async function saveExercise(input: unknown) {
   if (!parsed.success) return { error: parsed.error.issues.map(issue=>`${issue.path.join(".")}: ${issue.message}`).slice(0,3).join(" · ") };
   const data = parsed.data;
   try {
+    const issue = await checkPrerequisites(data.slug, data.prerequisiteSlugs);
+    if (issue) return { error: issue };
     await db.$transaction(async tx => {
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(742902)`;
       let exercise = await tx.exercise.findUnique({ where: { slug: data.slug }, include: { versions: { orderBy: { number:"desc" }, take:1 } } });
@@ -41,7 +39,8 @@ export async function saveExercise(input: unknown) {
         exerciseId:exercise.id, number:(exercise.versions[0]?.number ?? 0)+1, title:data.title, description:data.description,
         statement:data.statement, level:data.level, minutes:data.minutes, hints:data.hints, constraints:data.constraints,
         objective:data.objective, prerequisites:data.prerequisites,
-        variants:{create:(["python","javascript"] as const).map(language=>({language,...data[language],tests:{create:data.tests.map((test,order)=>({input:test.input===null?Prisma.JsonNull:test.input,expected:test.expected===null?Prisma.JsonNull:test.expected,visible:test.visible,order}))}}))},
+        practiceGoals:data.practiceGoals, prerequisiteSlugs:data.prerequisiteSlugs, activityType:data.activityType,
+        variants:{create:(["python","javascript"] as const).map(language=>({language,...data[language],tests:{create:data.tests.map((test,order)=>({input:test.input===null?Prisma.JsonNull:test.input,expected:test.expected===null?Prisma.JsonNull:test.expected,visible:test.visible,explanation:test.explanation,order}))}}))},
       } });
       // La categoría pertenece a la identidad editorial; el contenido publicado sigue inmutable.
       if (!exercise.published) await tx.exercise.update({where:{id:exercise.id},data:{category:data.category}});
@@ -55,17 +54,25 @@ export async function saveExercise(input: unknown) {
 export async function publishExerciseVersion(versionId: string) {
   const user = await requireAdmin();
   if (!z.string().min(1).max(100).safeParse(versionId).success) return {error:"Versión inválida."};
-  const version = await db.exerciseVersion.findUnique({where:{id:versionId},include:{variants:{include:{tests:{orderBy:{order:"asc"}}}}}});
-  if (!version || version.variants.length !== 2) return {error:"Faltan las variantes de lenguaje."};
-  if (!learningMetadataSchema.safeParse(version).success) return {error:"Completa el objetivo y revisa los conocimientos previos. Guarda una nueva versión antes de publicar."};
+  const version = await db.exerciseVersion.findUnique({where:{id:versionId},include:{exercise:true,variants:{include:{tests:{orderBy:{order:"asc"}}}}}});
+  if (!version || version.variants.length !== 2 || !["python", "javascript"].every(language => version.variants.some(variant => variant.language === language))) return {error:"Faltan las variantes de lenguaje."};
+  const metadata = publicationMetadataSchema.safeParse(version);
+  if (!metadata.success || version.hints.length !== 3) return {error:"Completa el objetivo, los conceptos de práctica y las tres pistas, y revisa los conocimientos previos. Guarda una nueva versión antes de publicar."};
   try {
+    const issue = await checkPrerequisites(version.exercise.slug, version.prerequisiteSlugs);
+    if (issue) return { error: issue };
     for (const variant of version.variants) {
       if (!variant.tests.some(t=>t.visible) || !variant.tests.some(t=>!t.visible)) return {error:"Incluye pruebas visibles y ocultas antes de publicar."};
       const runtime = await availableRuntime(variant.language as Language);
+      let starterSolved = true;
       for (const test of variant.tests) {
         const output = await runCode(variant.language as Language,runtime,variant.solution,test.input as Json);
         if (!judge(output,{...test,input:test.input as Json,expected:test.expected as Json}).passed) return {error:`La solución de referencia de ${variant.language} no supera el caso ${test.order+1}. Revisa el contenido y guarda una nueva versión.`};
+        const initial = judge(await runCode(variant.language as Language, runtime, variant.starter, test.input as Json), { ...test, input: test.input as Json, expected: test.expected as Json, visible: true });
+        if (initial.status === "runtime" || initial.status === "timeout" || initial.error) return {error:`La plantilla de ${variant.language} falla en el caso ${test.order+1}. Debe ejecutarse y devolver un valor JSON aunque aún no resuelva el problema.`};
+        starterSolved &&= initial.passed;
       }
+      if (starterSolved !== (version.activityType === "OBSERVATION")) return {error: version.activityType === "OBSERVATION" ? `La plantilla de observación de ${variant.language} debe estar completa.` : `La plantilla de ${variant.language} ya resuelve todos los casos. Retira parte de la solución.`};
     }
     await db.$transaction([
       db.exerciseVersion.update({where:{id:version.id},data:{published:true}}),
@@ -95,6 +102,8 @@ export async function prepareCatalogRevision(input: unknown) {
   if (!validated.success) return { error: "La revisión del catálogo no supera la validación editorial. No se ha guardado nada." };
   const data = validated.data;
   try {
+    const issue = await checkPrerequisites(data.slug, data.prerequisiteSlugs);
+    if (issue) return { error: issue };
     const result = await db.$transaction(async tx => {
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(742902)`;
       const exercise = await tx.exercise.findUnique({ where: { slug: data.slug }, include: {
@@ -111,9 +120,10 @@ export async function prepareCatalogRevision(input: unknown) {
         title: data.title, description: data.description, statement: data.statement, constraints: data.constraints,
         hints: data.hints, level: data.level, minutes: data.minutes,
         objective: data.objective, prerequisites: data.prerequisites,
+        practiceGoals: data.practiceGoals, prerequisiteSlugs: data.prerequisiteSlugs, activityType: data.activityType,
         variants: { create: (["python", "javascript"] as const).map(language => ({
           language, ...data[language], tests: { create: data.tests.map((test, order) => ({
-            order, visible: test.visible, input: test.input === null ? Prisma.JsonNull : test.input, expected: test.expected === null ? Prisma.JsonNull : test.expected,
+            order, visible: test.visible, explanation: test.explanation, input: test.input === null ? Prisma.JsonNull : test.input, expected: test.expected === null ? Prisma.JsonNull : test.expected,
           })) },
         })) },
       } });

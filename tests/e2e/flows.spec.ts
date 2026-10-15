@@ -6,13 +6,14 @@ import { PrismaClient } from "../../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { catalogRevision, catalogRevisionDecision, seedVersionContent } from "../../prisma/editorial-revision";
 import { actionStreamMonitor } from "./action-stream";
+import { initialBatchSlugs } from "../../prisma/initial-batch";
 
 const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.DATABASE_URL})});
 const email=`itera-e2e-${Date.now()}@example.test`;
 const password="Itera-test-local-12345";
 const otherEmail=`other-${email}`;
 const editorialSlug=`prueba-editorial-${Date.now()}`;
-const revisionSlugs=["suma-de-dos-numeros","sin-duplicados","frecuencia-caracteres","palindromo","anagramas","segundo-mayor","busqueda-binaria","rotar-arreglo"];
+const revisionSlugs=[...new Set([...initialBatchSlugs,"sin-duplicados","frecuencia-caracteres","palindromo","anagramas","segundo-mayor","busqueda-binaria","rotar-arreglo"])];
 let server:Server;
 let providerRequests=0;
 let providerOnline=true;
@@ -60,7 +61,7 @@ test("catálogo público, filtros y navegación móvil sin desbordamientos",asyn
   const external:string[]=[];
   page.on("request",req=>{if(!req.url().startsWith("http://127.0.0.1")&&!req.url().startsWith("data:")&&!req.url().startsWith("blob:"))external.push(req.url());});
   await page.goto("/");
-  await expect(page.getByRole("heading",{name:/La lógica se aprende/})).toBeVisible();
+  await expect(page.getByRole("heading",{level:1,name:/Pensar\.\s*Probar\.\s*Entender\./})).toBeVisible();
   await page.goto("/ejercicios");
   await page.getByLabel("Nivel",{exact:true}).selectOption("ADVANCED");
   await page.getByRole("button",{name:"Aplicar filtros"}).click();
@@ -251,10 +252,13 @@ test("administración guarda borradores privados y publica tras validar las refe
   const objective="Combinar dos propiedades numéricas para practicar una suma con return.";
   await page.getByLabel("Objetivo de aprendizaje",{exact:true}).fill(objective);
   await page.getByLabel("Conocimientos previos recomendados",{exact:true}).fill("  Usar return  \nAcceder a propiedades\n\n");
+  await page.getByLabel("Qué vas a practicar",{exact:true}).fill("  Sumar dos propiedades numéricas.  \nDevolver un resultado con return.\n");
+  await page.getByLabel("Ejercicios previos (slugs)",{exact:true}).fill("suma-de-dos-numeros");
+  await page.getByLabel("Tipo de actividad",{exact:true}).selectOption("INTEGRATION");
   await page.getByLabel("Enunciado",{exact:true}).fill("Recibe un objeto con a y b, y devuelve la suma de ambos valores.");
-  await page.getByLabel("Pistas progresivas").fill("Utiliza el operador de suma.");
+  await page.getByLabel("Pistas progresivas").fill("Necesitas combinar ambos valores.\nObtén cada propiedad por su nombre.\nUtiliza el operador de suma para combinar los valores.");
   await page.getByRole("tab",{name:"Pruebas",exact:true}).click();
-  await page.getByLabel("Casos de prueba en JSON").fill(JSON.stringify([{input:{a:3,b:5},expected:8,visible:true},{input:{a:0,b:0},expected:0,visible:true},{input:{a:-2,b:7},expected:5,visible:false}]));
+  await page.getByLabel("Casos de prueba en JSON").fill(JSON.stringify([{input:{a:3,b:5},expected:8,visible:true,explanation:"Sumamos tres y cinco para obtener ocho."},{input:{a:0,b:0},expected:0,visible:true},{input:{a:-2,b:7},expected:5,visible:false,explanation:"Explicación privada que no debe entregarse al cliente."}]));
   await page.getByRole("tab",{name:"Python",exact:true}).click();
   await page.locator("#python-solution").fill("def solve(data):\n    return data['a'] + data['b']");
   await page.locator("#python-explanation").fill("Accede a ambos valores y devuelve la suma. Tiempo constante.");
@@ -266,6 +270,9 @@ test("administración guarda borradores privados y publica tras validar las refe
   const firstVersion=await db.exerciseVersion.findFirstOrThrow({where:{exercise:{slug:editorialSlug}},orderBy:{number:"desc"}});
   expect(firstVersion.objective).toBe(objective);
   expect(firstVersion.prerequisites).toEqual(["Usar return","Acceder a propiedades"]);
+  expect(firstVersion.practiceGoals).toEqual(["Sumar dos propiedades numéricas.","Devolver un resultado con return."]);
+  expect(firstVersion.prerequisiteSlugs).toEqual(["suma-de-dos-numeros"]);
+  expect(firstVersion.activityType).toBe("INTEGRATION");
   expect((await page.request.get(`/ejercicios/${editorialSlug}`)).status()).toBe(404);
   await completeAction(()=>page.getByRole("button",{name:"Validar y publicar versión guardada"}).click());
   await expect.poll(async()=>(await db.exercise.findUniqueOrThrow({where:{slug:editorialSlug}})).published).toBe(true);
@@ -275,9 +282,14 @@ test("administración guarda borradores privados y publica tras validar las refe
   await expect(guide.getByText(objective,{exact:true})).toBeVisible();
   await expect(guide.getByText("Acceder a propiedades",{exact:true})).toBeVisible();
   await expect(guide.getByText(/no bloqueos/)).toBeVisible();
+  await expect(guide.getByText("Sumar dos propiedades numéricas.",{exact:true})).toBeVisible();
+  await expect(guide.getByRole("link",{name:"Dos números, una suma",exact:true})).toHaveAttribute("href","/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await expect(page.getByText("Sumamos tres y cinco para obtener ocho.",{exact:true})).toBeVisible();
+  await expect(page.getByText("Explicación privada que no debe entregarse al cliente.",{exact:true})).toHaveCount(0);
   await expect(page.getByRole("button",{name:"Comprobar solución",exact:true})).toBeEnabled();
   await page.getByLabel("Lenguaje del ejercicio").selectOption("javascript");
   await expect(guide.getByText(objective,{exact:true})).toBeVisible();
+  await expect(guide.getByRole("link",{name:"Dos números, una suma",exact:true})).toHaveAttribute("href","/ejercicios/suma-de-dos-numeros?lenguaje=javascript");
   // Un objetivo nuevo en borrador no se filtra al catálogo ni reescribe el anterior.
   await page.goto(`/admin/ejercicios/${editorialSlug}`);
   const draftObjective="Practicar una revisión distinta que todavía no debe verse públicamente.";
@@ -288,6 +300,8 @@ test("administración guarda borradores privados y publica tras validar las refe
   const preserved=await db.exerciseVersion.findUniqueOrThrow({where:{id:firstVersion.id}});
   expect(preserved.objective).toBe(objective);
   expect(preserved.prerequisites).toEqual(["Usar return","Acceder a propiedades"]);
+  expect(preserved.practiceGoals).toEqual(firstVersion.practiceGoals);
+  expect(preserved.prerequisiteSlugs).toEqual(firstVersion.prerequisiteSlugs);
   await page.goto(`/ejercicios/${editorialSlug}`);
   await expect(guide.getByText(objective,{exact:true})).toBeVisible();
   await expect(guide.getByText(draftObjective,{exact:true})).toHaveCount(0);
