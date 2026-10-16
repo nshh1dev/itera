@@ -40,7 +40,10 @@ export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "re
       const result = register ? await authClient.signUp.email({ email, password, name: String(data.get("name") || "").trim() }) : await authClient.signIn.email({ email, password });
       if (result.error?.status === 429) throw new Error("Has realizado varios intentos seguidos. Espera un momento antes de volver a intentarlo.");
       if (result.error) throw new Error(register ? "No pudimos crear la cuenta. Comprueba el correo y usa una contraseña de al menos 10 caracteres; si ya tienes cuenta, inicia sesión." : "El correo o la contraseña no coinciden. Revisa los datos e inténtalo de nuevo.");
-      router.push(register && returnTo === "/inicio" ? "/configuracion?bienvenida=1" : returnTo);
+      // La bienvenida es una página, no el panel contextual de preferencias.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- La navegación de documento evita deliberadamente la ruta interceptada.
+      if (register && returnTo === "/inicio") { window.location.assign("/configuracion?bienvenida=1"); return; }
+      router.push(returnTo);
       router.refresh();
     } catch (error) { setError(error instanceof Error ? error.message : "No se pudo conectar con Itera."); }
     finally { setBusy(false); }

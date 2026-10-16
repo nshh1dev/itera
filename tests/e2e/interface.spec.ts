@@ -106,7 +106,7 @@ test("las opciones del editor y la confirmación conservan el código y restaura
   await page.getByRole("button", { name: "Cambiar tema claro u oscuro" }).click();
   await options.click();
   await page.getByRole("button", { name: "Restablecer plantilla", exact: true }).click();
-  await expect(page.getByRole("dialog")).toHaveCSS("background-color", "rgb(36, 36, 38)");
+  await expect(page.getByRole("dialog").locator(".dialog-surface")).toHaveCSS("background-color", "rgb(36, 36, 38)");
   await page.screenshot({ path: ".local/screenshots/ui-confirmation-dark.png", fullPage: true, animations: "disabled" });
   await page.getByRole("button", { name: "Seguir editando", exact: true }).click();
   await expect(editor).toHaveValue(code);

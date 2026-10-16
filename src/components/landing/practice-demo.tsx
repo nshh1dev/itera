@@ -57,7 +57,7 @@ export function PracticeDemo() {
       </fieldset>
       <div id="demo-error" role="alert" className="text-xs text-destructive">{error}</div>
       <div className="landing-demo-result" role="status" aria-live="polite" aria-atomic="true">
-        <div className="flex items-center gap-3"><ArrowRight className="size-4 text-muted-foreground" aria-hidden="true" /><span>Resultado</span><output htmlFor="demo-a demo-b">{result ?? "—"}</output></div>
+        <div className="flex items-center gap-3"><ArrowRight className="size-4 text-muted-foreground" aria-hidden="true" /><span>Resultado</span><output key={result} className="motion-feedback" htmlFor="demo-a demo-b">{result ?? "—"}</output></div>
         <span className={result === null ? "text-muted-foreground" : "text-success-text"}>{result === null ? "Entrada modificada" : <><Check className="size-3.5" aria-hidden="true" /> Suma calculada</>}</span>
       </div>
       <p id="demo-help" className="landing-demo-help">Esta demo calcula la suma en tu navegador. En el editor completo puedes escribir y evaluar tu propio código.</p>

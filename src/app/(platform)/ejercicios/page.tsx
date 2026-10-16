@@ -11,6 +11,7 @@ import { ExerciseRow } from "@/components/exercise-row";
 import { Button } from "@/components/ui/button";
 import { ExerciseFilters } from "@/components/exercise-filters";
 import { Badge } from "@/components/ui/badge";
+import { MotionRegion } from "@/components/motion-region";
 
 export const metadata = { title: "Ejercicios" };
 export default async function ExercisesPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
@@ -41,10 +42,11 @@ export default async function ExercisesPage({ searchParams }: { searchParams: Pr
     <div className="catalog-layout">
     <aside className="catalog-tools" aria-label="Buscar y filtrar"><h2 className="section-title">Encuentra tu práctica</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Un concepto cada vez. Elige qué quieres trabajar hoy.</p><ExerciseFilters key={[query, language, level, category, status].join(":")} query={query} language={language} level={level} category={category} status={status} categories={[...new Set(catalog.map(e => e.category))]} /></aside>
     <section className="catalog-results" aria-label="Resultados de ejercicios">
+    <MotionRegion motionKey={JSON.stringify(params)}>
     {activeFilters.length > 0 && <div className="mt-4 flex flex-wrap items-center gap-2" aria-label="Filtros activos">{activeFilters.map(filter => <Badge key={filter.key} variant="filter" asChild className="min-h-11 md:min-h-8"><Link href={removeFilter(filter.key)} aria-label={`Quitar filtro: ${filter.label}`}><span className="truncate">{filter.label}</span><X data-icon="inline-end" aria-hidden="true" /></Link></Badge>)}<Link className="px-2 py-2 text-xs text-primary-text hover:underline" href={`/ejercicios?lenguaje=${language}`}>Limpiar filtros</Link></div>}
     <div className="mt-6 mb-2 flex items-center justify-between px-3 text-xs text-muted-foreground"><span>{filtered.length} {filtered.length === 1 ? "ejercicio" : "ejercicios"}</span><span>Página {page} de {pages}</span></div>
     {filtered.length ? filtered.slice((page - 1) * 12, page * 12).map(e => <ExerciseRow key={e.id} exercise={e} language={language} />) : <div className="empty-state"><Search className="size-7 text-muted-foreground" /><h2 className="font-medium">Todavía no hay coincidencias.</h2><p className="text-sm text-muted-foreground">Prueba otra búsqueda o cambia los filtros.</p><Link href={`/ejercicios?lenguaje=${language}`} className="text-link">Ver todos los ejercicios</Link></div>}
     {pages > 1 && <nav aria-label="Paginación" className="mt-6 flex items-center justify-between gap-3">{page === 1 ? <Button variant="outline" disabled><ArrowLeft />Anterior</Button> : <Button variant="outline" asChild><Link href={pageLink(page - 1)}><ArrowLeft />Anterior</Link></Button>}<span className="text-xs text-muted-foreground">{page} de {pages}</span>{page === pages ? <Button variant="outline" disabled>Siguiente<ArrowRight /></Button> : <Button variant="outline" asChild><Link href={pageLink(page + 1)}>Siguiente<ArrowRight /></Link></Button>}</nav>}
-    </section></div>
+    </MotionRegion></section></div>
   </div>;
 }

@@ -51,6 +51,11 @@ imitan ventanas nativas ni se eliminan los controles de apariencia del navegador
   acciones protegidas ni la validación editorial.
 - **Errores:** mensajes directos y acciones de recuperación.
 
+El sistema de movimiento que acompaña al rediseño se documenta aparte en
+`docs/motion.md`: tiempos compartidos entre CSS y Web Animations, paneles que se
+abren desde su control de origen, transiciones breves de navegación y respeto de
+`prefers-reduced-motion`.
+
 ## Fundamento de diseño
 
 Referencias consultadas dentro de la skill:

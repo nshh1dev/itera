@@ -8,6 +8,8 @@ import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "./ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { rememberSettingsOrigin } from "@/lib/motion";
+import { MotionRegion } from "./motion-region";
 
 export type ShellUser = { name: string; email: string; role: string };
 const navigation = [
@@ -43,7 +45,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
   function navigationContent(mobile = false) {
     function item({ href, label, icon: Icon }: typeof navigation[number]) {
       const active = pathname.startsWith(href);
-      const link = <Link href={href} className="navigation-link" aria-label={label} aria-current={active ? "page" : undefined}>
+      const link = <Link href={href} scroll={href === "/configuracion" ? false : undefined} onClick={event => { if (href === "/configuracion") rememberSettingsOrigin(event.currentTarget); }} className="navigation-link" aria-label={label} aria-current={active ? "page" : undefined}>
         <Icon aria-hidden="true" /><span className="navigation-label">{label}</span>
       </Link>;
       return <div key={href} className="navigation-item relative">
@@ -82,7 +84,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
       <div className="flex shrink-0 items-center gap-2">
         <ThemeToggle />
         {!workspace && (user ? <>
-          <Link href="/configuracion" aria-label="Mi cuenta" className="ml-1 flex size-8 items-center justify-center rounded-full border bg-surface text-xs font-medium" title={user.name}>{user.name.slice(0, 1).toUpperCase()}</Link>
+          <Link href="/configuracion" scroll={false} onClick={event => rememberSettingsOrigin(event.currentTarget)} aria-label="Mi cuenta" className="ml-1 flex size-8 items-center justify-center rounded-full border bg-surface text-xs font-medium" title={user.name}>{user.name.slice(0, 1).toUpperCase()}</Link>
           <Button variant="ghost" size="icon" disabled={signingOut} aria-label="Cerrar sesión" title="Cerrar sesión" onClick={async () => {
             setSigningOut(true); setLogoutError(false);
             try { const result = await authClient.signOut(); if (result.error) throw new Error(); router.push("/"); router.refresh(); }
@@ -92,6 +94,6 @@ export function AppShell({ children, user, workspace = false, header }: { childr
       </div>
     </header>
     {logoutError && <p role="alert" className="border-b px-5 py-3 text-sm text-destructive">No se pudo cerrar la sesión. Inténtalo de nuevo.</p>}
-    {workspace ? children : <main id="main-content">{children}</main>}
+    {workspace ? children : <main id="main-content"><MotionRegion>{children}</MotionRegion></main>}
   </div>;
 }

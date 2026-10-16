@@ -12,6 +12,7 @@ import { exerciseHref } from "@/lib/learning-paths";
 import { saveDraft, recordHint, revealSolution } from "@/server/actions";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { MotionReveal } from "@/components/motion-reveal";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AppShell, type ShellUser } from "@/components/app-shell";
 import { Results } from "./results";
@@ -199,7 +200,7 @@ function WorkspaceReady(props: Props) {
                   <TabsList><TabsTrigger value="hints">Pistas</TabsTrigger><TabsTrigger value="solution">Solución explicada</TabsTrigger></TabsList>
                   <TabsContent value="hints" className="mt-5">
                     {hintCount === 0 && <p className="py-4 text-base leading-7 text-muted-foreground">Las pistas van de lo general a lo concreto. Descubre solo lo que necesites.</p>}
-                    {props.hints.slice(0,hintCount).map((hint,index)=><div key={index} className="mb-3 rounded-lg bg-surface p-4"><span className="eyebrow">Pista {index+1}</span><p className="mt-2 text-base leading-7">{hint}</p></div>)}
+                    {props.hints.slice(0,hintCount).map((hint,index)=><MotionReveal key={index}><div className="mb-3 rounded-lg bg-surface p-4"><span className="eyebrow">Pista {index+1}</span><p className="mt-2 text-base leading-7">{hint}</p></div></MotionReveal>)}
                     {hintCount < props.hints.length ? <Button variant="secondary" className="mt-3" onClick={()=>{setHintCount(n=>n+1); recordHint(props.variantId,hintCount).catch(()=>setSaveError("No se pudo registrar el uso de la pista."));}}><Lightbulb />{hintCount === 0 ? "Descubrir la primera pista" : "Una pista más"}</Button> : <p className="mt-4 text-sm text-muted-foreground">Ya tienes todas las pistas. Vuelve al código y prueba tu idea.</p>}
                   </TabsContent>
                   <TabsContent value="solution" className="mt-5">

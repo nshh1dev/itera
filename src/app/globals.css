@@ -333,14 +333,66 @@
 }
 :root:not(.dark) .panel-resizer { box-shadow: inset 0 0 0 1px var(--border-soft); }
 
-.dialog-overlay[data-state="open"] { animation: fade-in 160ms ease-out; }
-.dialog-overlay[data-state="closed"] { animation: fade-out 120ms ease-in; }
-.dialog-content[data-state="open"] { animation: dialog-in 160ms ease-out; }
-.dialog-content[data-state="closed"] { animation: fade-out 120ms ease-in; }
-.navigation-drawer[data-state="open"] { animation: fade-in 160ms ease-out; }
+:root {
+  --motion-response: 120ms;
+  --motion-disclosure: 200ms;
+  --motion-navigation: 200ms;
+  --motion-panel-open: 320ms;
+  --motion-panel-close: 220ms;
+  --motion-ease: cubic-bezier(.2, .8, .2, 1);
+}
+.dialog-overlay[data-state="open"] { animation: fade-in var(--motion-disclosure) var(--motion-ease); }
+.dialog-overlay[data-state="closed"] { animation: fade-out var(--motion-panel-close) var(--motion-ease); }
+/* La superficie se transforma, nunca el texto ni los controles. La animación
+   de salida mantiene Presence de Radix hasta que termina Web Animations. */
+.dialog-content { isolation: isolate; background: transparent; border: 0; padding: 0; box-shadow: none; }
+.dialog-surface { position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; background: var(--elevated); box-shadow: var(--elevation-dialog), inset 0 0 0 1px var(--border-soft); }
+.dialog-body { max-height: inherit; overflow-y: auto; overscroll-behavior: contain; padding: 28px; border-radius: inherit; }
+.dialog-content[data-state="open"] .dialog-body, .dialog-content[data-state="open"] .dialog-close { animation: panel-content-in var(--motion-panel-open) var(--motion-ease); }
+.dialog-content[data-state="closed"] { animation: panel-presence var(--motion-panel-close) linear; pointer-events: none; }
+.dialog-content[data-state="closed"] .dialog-body, .dialog-content[data-state="closed"] .dialog-close { animation: fade-out var(--motion-response) ease-out both; }
+.navigation-drawer .dialog-body { display: flex; flex: 1; flex-direction: column; height: 100%; padding: 16px; }
+.navigation-drawer .dialog-surface { background: var(--surface); }
+.settings-dialog { width: min(1080px, calc(100% - 48px)); max-width: none; max-height: min(860px, 90dvh); }
+.settings-dialog .settings-section { background: var(--surface-inset); }
+.settings-dialog .settings-layout { margin-top: 28px; }
+@keyframes panel-presence { from, to { visibility: visible; } }
+@keyframes panel-content-in { 0%, 35% { opacity: 0; } 100% { opacity: 1; } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
-@keyframes dialog-in { from { opacity: 0; scale: .98; } to { opacity: 1; scale: 1; } }
+.app-shell { transition: padding-left var(--motion-disclosure) var(--motion-ease); }
+.app-sidebar { transition: width var(--motion-disclosure) var(--motion-ease); overflow-x: clip; }
+.navigation-link, .segment, [role="tab"] { transition: background-color var(--motion-response), color var(--motion-response), box-shadow var(--motion-response); }
+.progress-fill { transition: width var(--motion-disclosure) var(--motion-ease); }
+.tabs-indicator { position: absolute; left: 0; top: 0; pointer-events: none; border-radius: 6px; background: var(--control); box-shadow: var(--elevation-control); transition: transform var(--motion-disclosure) var(--motion-ease), width var(--motion-disclosure) var(--motion-ease), height var(--motion-disclosure) var(--motion-ease); }
+.tabs-tray [role="tab"] { position: relative; }
+.tabs-tray[data-indicator="ready"] [role="tab"][data-state="active"] { background: transparent; box-shadow: none; }
+.filter-disclosure { display: grid; grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows var(--motion-disclosure) var(--motion-ease), visibility var(--motion-disclosure); }
+.filter-disclosure[data-expanded="true"] { grid-template-rows: 1fr; visibility: visible; }
+.filter-disclosure-content { min-height: 0; overflow: hidden; }
+.motion-reveal { display: grid; grid-template-rows: 1fr; animation: reveal-content var(--motion-disclosure) var(--motion-ease); }
+.motion-reveal-clip { min-height: 0; overflow: hidden; }
+@keyframes reveal-content { from { grid-template-rows: 0fr; opacity: 0; } to { grid-template-rows: 1fr; opacity: 1; } }
+@media (min-width: 768px) { .filter-disclosure { grid-template-rows: 1fr; visibility: visible; } }
+.floating-menu { transform-origin: top right; animation: menu-in var(--motion-disclosure) var(--motion-ease); }
+.workspace-statement:not(.hidden), .workspace-code:not(.hidden), .workspace-results:not(.hidden) { animation: state-in var(--motion-navigation) var(--motion-ease); }
+.workspace-grid:has(.panel-resizer:active) .workspace-results { transition: none; }
+[role="tabpanel"][data-state="active"], [role="status"], [role="alert"], .motion-feedback { animation: state-in var(--motion-disclosure) var(--motion-ease); }
+@keyframes menu-in { from { opacity: 0; transform: translateY(-4px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes state-in { from { opacity: .6; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+  button:not(:disabled):active, a.navigation-link:active { scale: .98; }
+  button { transition: scale var(--motion-response) var(--motion-ease), background-color var(--motion-response), color var(--motion-response); }
+  .theme-changing body, .theme-changing .app-sidebar, .theme-changing .app-header, .theme-changing .dialog-surface, .theme-changing .settings-section, .theme-changing .workspace-toolbar { transition: background-color var(--motion-disclosure), color var(--motion-disclosure), border-color var(--motion-disclosure); }
+  @supports (interpolate-size: allow-keywords) {
+    .workspace-results { interpolate-size: allow-keywords; transition: height var(--motion-disclosure) var(--motion-ease); }
+  }
+}
+@media (max-width: 767px) {
+  .settings-dialog { top: auto; bottom: 0; left: 0; width: 100%; max-height: 94dvh; translate: 0 0; border-radius: 20px 20px 0 0; }
+  .settings-dialog .dialog-body { padding: 28px 20px max(24px, env(safe-area-inset-bottom)); }
+}
 @media (min-width: 768px) {
   .app-shell { padding-left: 64px; }
   .app-sidebar { position: fixed; inset: 0 auto 0 0; z-index: 30; display: flex; width: 64px; flex-direction: column; border-right: 1px solid var(--border-soft); background: var(--surface); padding: 12px 8px; }
@@ -439,7 +491,7 @@
   .catalog-layout { grid-template-columns: 260px minmax(0, 1fr); gap: 28px; }
   .catalog-tools { padding-top: 12px; }
   .catalog-tools form { padding: 20px 0 0; margin-top: 8px; background: transparent; box-shadow: none; }
-  .catalog-tools form > div, .catalog-tools #exercise-filter-options { flex-direction: column; align-items: stretch; }
+  .catalog-tools form > div, .catalog-tools .filter-disclosure-content { flex-direction: column; align-items: stretch; }
   .catalog-tools form > div > div { width: 100%; flex-basis: auto; }
   .catalog-tools form button[type="submit"] { order: 1; }
   .catalog-results { padding-inline: 20px; }

@@ -1,0 +1,151 @@
+import "dotenv/config";
+import { mkdir } from "node:fs/promises";
+import { test, expect, type BrowserContext } from "@playwright/test";
+import { PrismaClient } from "../../src/generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
+const email = `motion-${Date.now()}@example.test`;
+let cookies: Awaited<ReturnType<BrowserContext["cookies"]>> = [];
+
+test.beforeAll(async ({ request }) => {
+  const signup = await request.post("/api/auth/sign-up/email", {
+    headers: { origin: "http://127.0.0.1:3000" },
+    data: { email, password: "Itera-motion-12345", name: "Prueba de movimiento" },
+  });
+  expect(signup.ok(), await signup.text()).toBeTruthy();
+  cookies = (await request.storageState()).cookies;
+});
+
+test.afterAll(async () => {
+  await db.user.deleteMany({ where: { email } });
+  await db.$disconnect();
+});
+
+for (const theme of ["light", "dark"] as const) {
+  for (const width of [390, 1440]) {
+    test(`Configuración conserva origen, borrador, historial y página directa: ${theme}, ${width}`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.emulateMedia({ colorScheme: theme, reducedMotion: "no-preference" });
+      await db.user.update({ where: { email }, data: { name: "Prueba de movimiento" } });
+      await page.context().addCookies(cookies);
+      await page.goto("/inicio");
+      const origin = page.getByRole("link", { name: "Mi cuenta", exact: true });
+      await origin.click();
+      await expect(page).toHaveURL(/\/configuracion$/);
+      const dialog = page.getByRole("dialog", { name: "Configuración", exact: true });
+      await expect(dialog).toBeVisible();
+      await expect.poll(() => dialog.evaluate(node => {
+        const rect = node.getBoundingClientRect();
+        const surface = node.querySelector(".dialog-surface")!.getBoundingClientRect();
+        return Math.abs(rect.x - surface.x) < 1 && Math.abs(rect.width - surface.width) < 1;
+      })).toBeTruthy();
+      await expect(dialog.getByLabel("Nombre", { exact: true })).toHaveValue("Prueba de movimiento");
+      const frames = await dialog.locator(".dialog-surface").evaluate(node => node.getAnimations().flatMap(animation => (animation.effect as KeyframeEffect).getKeyframes()));
+      expect(frames.some(frame => String(frame.transform).includes("translate("))).toBeTruthy();
+      await dialog.getByLabel("Nombre", { exact: true }).fill("Edición sin guardar");
+      await page.keyboard.press("Escape");
+      await expect(page).toHaveURL(/\/inicio$/);
+      await expect(dialog).toHaveCount(0);
+      await expect(origin).toBeFocused();
+      await page.goForward();
+      await expect(dialog).toBeVisible();
+      await expect(dialog.getByLabel("Nombre", { exact: true })).toHaveValue("Edición sin guardar");
+      await dialog.getByRole("button", { name: "Guardar cambios", exact: true }).click();
+      await expect(dialog.getByRole("status")).toHaveText("Tus preferencias están guardadas.");
+      await dialog.evaluate(async node => { await Promise.all(node.getAnimations({ subtree: true }).map(animation => animation.finished.catch(() => {}))); });
+      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+      await mkdir(".local/screenshots", { recursive: true });
+      await page.screenshot({ path: `.local/screenshots/motion-settings-${theme}-${width}.png` });
+      await page.reload();
+      await expect(page.getByRole("dialog")).toHaveCount(0);
+      await expect(page.getByRole("heading", { level: 1, name: "Configuración", exact: true })).toBeVisible();
+      await expect(page.getByLabel("Nombre", { exact: true })).toHaveValue("Edición sin guardar");
+    });
+  }
+}
+
+test("pistas y detalles permiten invertir la apertura sin perder el editor", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await expect(page.locator(".monaco-editor")).toBeVisible();
+  const trigger = page.getByRole("button", { name: "Ver pistas" });
+  await trigger.click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await trigger.click();
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Cerrar", exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  const summary = page.getByText("Antes de empezar", { exact: true });
+  await summary.click({ clickCount: 2, delay: 20 });
+  await expect(summary.locator("..")).toHaveAttribute("open", "");
+  await expect(page.locator(".monaco-editor")).toBeVisible();
+});
+
+test("Configuración superpuesta conserva Monaco y el código del taller", async ({ page }) => {
+  await page.context().addCookies(cookies);
+  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  const editor = page.locator(".monaco-editor");
+  await expect(editor).toBeVisible();
+  await editor.evaluate(node => node.setAttribute("data-motion-preserved", "true"));
+  const settings = page.getByRole("link", { name: "Configuración", exact: true });
+  await settings.click();
+  const dialog = page.getByRole("dialog", { name: "Configuración", exact: true });
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press("Tab");
+  expect(await dialog.evaluate(node => node.contains(document.activeElement))).toBeTruthy();
+  await page.keyboard.press("Escape");
+  await expect(page).toHaveURL(/\/ejercicios\/suma-de-dos-numeros\?lenguaje=python$/);
+  await expect(editor).toHaveAttribute("data-motion-preserved", "true");
+  await expect(settings).toBeFocused();
+});
+
+test("cambiar a movimiento reducido durante una apertura la termina sin bloqueo", async ({ page }) => {
+  await page.context().addCookies(cookies);
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/inicio");
+  await page.getByRole("link", { name: "Mi cuenta", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Configuración", exact: true });
+  await expect(dialog).toBeVisible();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect.poll(() => dialog.locator(".dialog-surface").evaluate(node => node.getAnimations().every(animation => animation.playState === "finished"))).toBeTruthy();
+  await page.keyboard.press("Escape");
+  await expect(page).toHaveURL(/\/inicio$/);
+  await expect(dialog).toHaveCount(0);
+});
+
+test("movimiento reducido permite abrir y cerrar sin transformaciones espaciales", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await page.getByRole("button", { name: "Ver pistas" }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator(".dialog-surface")).toHaveCSS("transform", "none");
+  expect(await dialog.locator(".dialog-surface").evaluate(node => node.getAnimations().length)).toBe(0);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Ver pistas" })).toBeFocused();
+});
+
+test("Configuración desde el menú móvil restaura un control visible aunque desaparezca su origen", async ({ page }) => {
+  await page.context().addCookies(cookies);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/inicio");
+  const menu = page.getByRole("button", { name: "Abrir navegación", exact: true });
+  await menu.click();
+  await page.getByRole("dialog", { name: "Navegación de Itera" }).getByRole("link", { name: "Configuración", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Configuración", exact: true });
+  await expect(dialog).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Navegación de Itera" })).toHaveCount(0);
+  await dialog.getByRole("button", { name: "Cerrar", exact: true }).click();
+  await expect(page).toHaveURL(/\/inicio$/);
+  await expect(dialog).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => {
+    const focused = document.activeElement;
+    return focused instanceof HTMLElement && ["Mi cuenta", "Abrir navegación", "Configuración"].includes(focused.getAttribute("aria-label") ?? "") && focused.getClientRects().length > 0;
+  })).toBeTruthy();
+});
