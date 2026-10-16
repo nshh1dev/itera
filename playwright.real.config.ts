@@ -2,7 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 
 // Recorridos contra el Piston real (puerto 2000). A diferencia de playwright.config.ts,
 // aquí no hay doble HTTP: el código del usuario se ejecuta dentro del sandbox de verdad.
-// Requiere `docker compose up -d` y `npm run runner:setup`, y los puertos 3000 y 2000 libres.
+// Requiere `docker compose up -d` y `npm run runner:setup`, el puerto 3000 libre
+// y Piston disponible en 2000 (no un puerto 2000 libre).
 export default defineConfig({
   testDir:"tests/real", fullyParallel:false, workers:1, timeout:120000,
   expect:{timeout:20000}, reporter:"list",

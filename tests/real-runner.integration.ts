@@ -28,13 +28,32 @@ const ready = await executorReady();
 const only = { skip: ready ? false : "Piston no responde; ejecuta docker compose up -d y npm run runner:setup" };
 const base = { input: { a: 1, b: 2 } as Json, expected: 3 as Json, visible: true, order: 0 };
 const detail = (output: { stdout: string; stderr: string }) => `stdout=${JSON.stringify(output.stdout)} stderr=${output.stderr.slice(0, 400)}`;
+let typescriptReady = false;
+try { await availableRuntime("typescript"); typescriptReady = true; } catch {}
+const typescriptOnly = { skip: typescriptReady ? false : "Falta el runtime TypeScript real de Piston; ejecuta npm run runner:setup" };
 
-test("el sandbox real expone los dos runtimes que usa la aplicación", only, async () => {
+test("el sandbox real expone los runtimes originales de Python y JavaScript", only, async () => {
   const python = await availableRuntime("python");
   const javascript = await availableRuntime("javascript");
   assert.equal(python.language, "python");
   assert.match(python.version, /^\d+\.\d+/);
   assert.match(javascript.language, /javascript|^js$|^node$/);
+});
+
+test("TypeScript conserva los veredictos y no expone diagnósticos de casos ocultos", typescriptOnly, async () => {
+  const runtime = await availableRuntime("typescript");
+  const contract = "const __iteraContract: (data: number) => number = solve;";
+  const visible = { input: 2, expected: 3, visible: true, order: 0 };
+  const incorrect = await runCode("typescript", runtime, "function solve(data: number): number { return 99; }", 2, "FUNCTION", contract);
+  assert.equal(judge(incorrect, visible).status, "wrong");
+  const crashed = await runCode("typescript", runtime, 'function solve(data: number): number { throw new Error("diagnóstico privado"); }', 2, "FUNCTION", contract);
+  assert.equal(judge(crashed, visible).status, "runtime");
+  assert.match(judge(crashed, visible).error ?? "", /diagnóstico privado/);
+  assert.deepEqual(judge(crashed, { ...visible, visible: false }), { index: 1, visible: false, passed: false, status: "runtime" });
+  const looped = await runCode("typescript", runtime, "function solve(data: number): number { while (true) {} }", 2, "FUNCTION", contract);
+  assert.equal(judge(looped, visible).status, "timeout", detail(looped));
+  const printedThenLooped = await runCode("typescript", runtime, 'console.log("3"); while (true) {}', "", "PROGRAM");
+  assert.equal(judgeProgram(printedThenLooped, { ...visible, expected: "3\n" }).status, "timeout", detail(printedThenLooped));
 });
 
 test("las soluciones de referencia del catálogo pasan sus casos dentro del sandbox", only, async () => {
@@ -90,10 +109,6 @@ test("un ejecutor ausente se distingue de una respuesta incorrecta", async () =>
     else process.env.PISTON_URL = original;
   }
 });
-
-let typescriptReady = false;
-try { await availableRuntime("typescript"); typescriptReady = true; } catch {}
-const typescriptOnly = { skip: typescriptReady ? false : "Falta el runtime TypeScript real de Piston; ejecuta npm run runner:setup" };
 
 test("TypeScript compila estrictamente antes de evaluar funciones y programas", typescriptOnly, async () => {
   const runtime = await availableRuntime("typescript");

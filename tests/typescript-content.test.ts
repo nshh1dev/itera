@@ -1,9 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import vm from "node:vm";
+import { readFileSync } from "node:fs";
 import ts from "typescript";
 import { exercises } from "../prisma/content";
-import { executionFiles, executionInput } from "../src/server/execution/harness";
+import { executionFiles, executionInput, executionOutput, typescriptTimeoutExitCode } from "../src/server/execution/harness";
+import { judge, judgeProgram } from "../src/server/execution/judge";
 
 // Solo referencias fijas del repositorio. Esta compilación NO se importa desde
 // el servidor y nunca acepta código enviado por alumnos.
@@ -63,6 +65,11 @@ test("el conductor TypeScript compila estrictamente dentro del sandbox antes de 
   assert.equal(files[0].name, "main"); // Piston añade .ts al compilar.
   assert.ok(files[0].content.includes(JSON.stringify(injected).slice(1, -1)));
   assert.match(files[0].content, /'--strict', '--noEmitOnError'/);
+  assert.match(files[0].content, /timeout: 8000/);
+  assert.match(files[0].content, /timeout: 3000/);
+  const compose = readFileSync(new URL("../compose.yaml", import.meta.url), "utf8");
+  assert.match(compose, /PISTON_RUN_TIMEOUT: "12000"/);
+  assert.match(compose, /PISTON_RUN_CPU_TIME: "10000"/);
   assert.ok(files[0].content.indexOf("compiled.status !== 0") < files[0].content.indexOf("const executed"));
   assert.equal(executionInput("Ana\n", "PROGRAM"), "Ana\n");
   assert.equal(executionInput({ a: 2 }, "FUNCTION"), '{"a":2}');
@@ -80,4 +87,31 @@ test("un diagnóstico del compilador detiene el conductor aunque pudiera imprimi
   assert.equal(calls[0][0], "tsc");
   assert.equal(stdout, "");
   assert.match(stderr, /TS2322/);
+});
+
+test("el plazo del hijo TypeScript conserva el veredicto timeout y filtra los casos ocultos", () => {
+  const output = executionOutput("typescript", { stdout: "3\n", stderr: "secreto", code: typescriptTimeoutExitCode });
+  for (const evaluate of [judge, judgeProgram]) {
+    const result = evaluate(output, { input: "secreto", expected: 3, visible: false, order: 2 });
+    assert.deepEqual(result, { index: 3, visible: false, passed: false, status: "timeout" });
+  }
+  assert.equal(executionOutput("javascript", output).status, "TO");
+  assert.equal(executionOutput("javascript", { stdout: "", stderr: "", code: typescriptTimeoutExitCode }).status, undefined);
+  assert.equal(executionOutput("typescript", { stdout: "", stderr: "", code: typescriptTimeoutExitCode, signal: null, status: "RE" }).status, "TO");
+  const failed = { stdout: "", stderr: "", code: typescriptTimeoutExitCode, status: "XX" };
+  assert.equal(executionOutput("typescript", failed), failed);
+  for (const stage of ["compile", "run"]) {
+    const driver = executionFiles("typescript", 'console.log("3");', "PROGRAM")[0].content;
+    const javascript = ts.transpileModule(driver, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText;
+    const exit = new Error("plazo agotado");
+    let calls = 0;
+    const context = vm.createContext({ require: (name: string) => name === "fs" ? { writeFileSync: () => {}, readFileSync: () => "" } : { spawnSync: () => {
+      calls++;
+      return stage === "compile" || calls === 2
+        ? { error: { code: "ETIMEDOUT" }, status: null, signal: "SIGTERM", stdout: "", stderr: "" }
+        : { status: 0, stdout: "", stderr: "" };
+    } }, process: { execPath: "node", stdout: { write: () => {} }, stderr: { write: () => {} }, exit: (code: number) => { assert.equal(code, typescriptTimeoutExitCode); throw exit; } } });
+    assert.throws(() => new vm.Script(javascript).runInContext(context), error => error === exit);
+    assert.equal(calls, stage === "compile" ? 1 : 2);
+  }
 });

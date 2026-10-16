@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openSimpleEditor } from "../workspace";
 
 test("la sidebar se contrae, conserva la preferencia y mantiene navegación accesible", async ({ page }) => {
   await page.goto("/inicio");
@@ -84,7 +85,7 @@ test("el IDE permite ajustar paneles por teclado y colapsar los resultados", asy
 
 test("las opciones del editor y la confirmación conservan el código y restauran el foco", async ({ page }) => {
   await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
-  await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+  await openSimpleEditor(page);
   const editor = page.getByRole("textbox", { name: "Editor sencillo de Python" });
   const code = "def solve(data):\n    # Mi borrador\n    return 42\n";
   await editor.fill(code);
@@ -110,8 +111,9 @@ test("las opciones del editor y la confirmación conservan el código y restaura
   await page.getByRole("button", { name: "Seguir editando", exact: true }).click();
   await expect(editor).toHaveValue(code);
   await page.reload();
-  await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Usar editor avanzado", exact: true })).toBeVisible();
   await expect(editor).toHaveValue(code);
+  await expect(editor).toHaveCSS("font-size", "15px");
 });
 
 test("las pantallas se adaptan sin desbordamientos y conservan el editor entre paneles", async ({ page }) => {
@@ -122,7 +124,7 @@ test("las pantallas se adaptan sin desbordamientos y conservan el editor entre p
     await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=javascript");
     await expect(page.getByRole("heading", { name: "Dos números, una suma", exact: true })).toBeVisible();
     if (width < 1200) await page.getByRole("button", { name: "Código", exact: true }).click();
-    await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+    await openSimpleEditor(page);
     const editor = page.getByRole("textbox", { name: "Editor sencillo de JavaScript" });
     await editor.fill("function solve(data) { return data.a + data.b; }");
     if (width < 1200) {

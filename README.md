@@ -79,6 +79,8 @@ npm run doctor
 
 La primera preparación descarga la imagen de Piston y los runtimes gratuitos de Python, Node y TypeScript. Después, los ejercicios se ejecutan localmente.
 
+Si ya tenías Piston instalado antes de incorporar TypeScript, repite `docker compose up -d piston` y `npm run runner:setup`: se actualiza el presupuesto de compilación y se conserva el volumen de runtimes. El programa del alumno sigue limitado a 3 segundos.
+
 - Piston está expuesto únicamente en **127.0.0.1:2000**.
 - Usa Isolate y necesita el contenedor privilegiado definido por su instalación oficial, cgroup v2 y soporte de namespaces. No se monta la carpeta de Itera ni la base de datos dentro del ejecutor.
 - Los programas tienen límite de 3 segundos, 256 MiB, 64 procesos y 64 KiB por salida. TypeScript dispone además de una compilación estricta dentro del sandbox (hasta 8 segundos); el conductor tiene un presupuesto de 12 segundos. La red está deshabilitada explícitamente en el sandbox.

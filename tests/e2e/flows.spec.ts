@@ -7,6 +7,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { catalogRevision, catalogRevisionDecision, seedVersionContent } from "../../prisma/editorial-revision";
 import { actionStreamMonitor } from "./action-stream";
 import { initialBatchSlugs } from "../../prisma/initial-batch";
+import { openSimpleEditor } from "../workspace";
 
 const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.DATABASE_URL})});
 const email=`itera-e2e-${Date.now()}@example.test`;
@@ -89,7 +90,7 @@ test("registro, preferencias y borrador persistente entre sesiones",async({page}
   await expect(page.getByText("Tus preferencias están guardadas.")).toBeVisible();
   await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
   await expect(page.locator(".monaco-editor")).toBeVisible();
-  await page.getByRole("button",{name:"Editor sencillo",exact:true}).click();
+  await openSimpleEditor(page);
   await page.getByRole("textbox",{name:"Editor sencillo de Python"}).fill("def solve(data):\n    return data['a'] + data['b']\n");
   await expect(page.getByText("Guardado",{exact:true})).toBeVisible();
   await page.goto("/inicio");
@@ -102,7 +103,7 @@ test("registro, preferencias y borrador persistente entre sesiones",async({page}
   await page.getByRole("button",{name:"Iniciar sesión",exact:true}).click();
   await expect(page).toHaveURL(/\/inicio/);
   await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
-  await page.getByRole("button",{name:"Editor sencillo",exact:true}).click();
+  await expect(page.getByRole("button",{name:"Usar editor avanzado",exact:true})).toBeVisible();
   await expect(page.getByRole("textbox",{name:"Editor sencillo de Python"})).toHaveValue("def solve(data):\n    return data['a'] + data['b']\n");
   authCookies=await page.context().cookies();
 });
@@ -117,8 +118,8 @@ test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async
   await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
   await expect(page.getByText("Un paso más. Ejercicio resuelto.")).toBeVisible();
   await expect(page.getByText("3 de 3 pruebas ocultas superadas")).toBeVisible();
-  // La suma cierra Desde cero: no saltar al siguiente ejercicio del catálogo global.
-  await expect(page.getByRole("link",{name:"Continuar con otro ejercicio"})).toHaveCount(0);
+  // La suma continúa con el cierre de la misma ruta, no con el catálogo global.
+  await expect(page.getByRole("link",{name:"Continuar con otro ejercicio"})).toHaveAttribute("href","/ejercicios/presupuesto-de-merienda?lenguaje=python&ruta=desde-cero");
   await expect(page.getByRole("link",{name:"Volver a la ruta"})).toHaveAttribute("href","/rutas/desde-cero?lenguaje=python");
   const submission=await db.submission.findFirstOrThrow({where:{userId:user.id,mode:"submit"},orderBy:{createdAt:"desc"}});
   const result=await page.request.get(`/api/executions/${submission.id}`);
@@ -170,7 +171,7 @@ test("workspace móvil conserva el código al cambiar de panel",async({page})=>{
   await page.setViewportSize({width:390,height:844});
   await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=javascript");
   await page.getByRole("button",{name:"Código",exact:true}).click();
-  await page.getByRole("button",{name:"Editor sencillo",exact:true}).click();
+  await openSimpleEditor(page);
   await page.getByRole("textbox",{name:"Editor sencillo de JavaScript"}).fill("function solve(data) { return data.a + data.b; }");
   await page.getByRole("button",{name:"Enunciado",exact:true}).click();
   await page.getByRole("button",{name:"Código",exact:true}).click();
@@ -182,13 +183,13 @@ test("workspace móvil conserva el código al cambiar de panel",async({page})=>{
 test("el borrador detecta cambios de otra pestaña sin sobrescribirlos",async({page,context})=>{
   await page.context().addCookies(authCookies);
   await page.goto("/ejercicios/par-o-impar?lenguaje=python");
-  await page.getByRole("button",{name:"Editor sencillo",exact:true}).click();
+  await openSimpleEditor(page);
   const input=page.getByRole("textbox",{name:"Editor sencillo de Python"});
   await input.fill("def solve(data):\n    return data % 2 == 0\n");
   await expect(page.getByText("Guardado",{exact:true})).toBeVisible();
   const second=await context.newPage();
   await second.goto("/ejercicios/par-o-impar?lenguaje=python");
-  await second.getByRole("button",{name:"Editor sencillo",exact:true}).click();
+  await openSimpleEditor(second);
   await input.fill("def solve(data):\n    # Primera pestaña\n    return data % 2 == 0\n");
   await expect(page.getByText("Guardado",{exact:true})).toBeVisible();
   await second.getByRole("textbox",{name:"Editor sencillo de Python"}).fill("def solve(data):\n    # Segunda pestaña\n    return False\n");
@@ -201,7 +202,7 @@ test("el borrador detecta cambios de otra pestaña sin sobrescribirlos",async({p
 test("fallos del proveedor no crean aprobados y los lenguajes tienen progreso independiente",async({page})=>{
   await page.context().addCookies(authCookies);
   await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=javascript");
-  await page.getByRole("button",{name:"Editor sencillo",exact:true}).click();
+  await openSimpleEditor(page);
   await page.getByRole("textbox",{name:"Editor sencillo de JavaScript"}).fill("function solve(data) { return 999; }");
   const user=await db.user.findUniqueOrThrow({where:{email}});
   const before=await db.submission.count({where:{userId:user.id}});

@@ -3,6 +3,8 @@ import { test,expect, type BrowserContext } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import { PrismaClient } from "../../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { languageNames, type Language } from "../../src/lib/types";
+import { openSimpleEditor } from "../workspace";
 
 // Ejercicios reales de principio a fin: lo que escribe una persona se ejecuta en el sandbox
 // local y de ahí sale el veredicto, el progreso y la validación editorial. Sin dobles ni stubs.
@@ -30,10 +32,10 @@ test.afterAll(async()=>{
 });
 test.beforeEach(()=>{ test.skip(!executor,`requiere Piston en ${piston}`); });
 
-async function solve(page:import("@playwright/test").Page, slug:string, language:"python"|"javascript", code:string){
+async function solve(page:import("@playwright/test").Page, slug:string, language:Language, code:string){
   await page.goto(`/ejercicios/${slug}?lenguaje=${language}`);
-  await page.getByRole("button",{name:"Editor sencillo",exact:true}).click();
-  const label=language==="python"?"Editor sencillo de Python":"Editor sencillo de JavaScript";
+  await openSimpleEditor(page);
+  const label=`Editor sencillo de ${languageNames[language]}`;
   await page.getByRole("textbox",{name:label}).fill(code);
 }
 
@@ -45,6 +47,7 @@ test("registro y preferencias con el ejecutor real disponible",async({page})=>{
   await page.getByRole("button",{name:"Crear mi cuenta"}).click();
   await expect(page.getByRole("heading",{name:"Bienvenido, Prueba."})).toBeVisible();
   await page.getByLabel("Nivel",{exact:true}).selectOption("BEGINNER");
+  await page.getByLabel("Lenguaje preferido",{exact:true}).selectOption("typescript");
   await page.getByRole("button",{name:"Guardar y empezar"}).click();
   await expect(page.getByText("Tus preferencias están guardadas.")).toBeVisible();
   authCookies=await page.context().cookies();
@@ -89,10 +92,39 @@ test("JavaScript registra un progreso independiente del de Python",async({page})
   expect(progress.map((p:{language:string})=>p.language).sort()).toEqual(["javascript","python"]);
 });
 
+test("TypeScript rechaza errores de tipos sin conceder progreso y luego aprueba una función",async({page})=>{
+  await page.context().addCookies(authCookies);
+  await solve(page,"lee-un-opcional","typescript",'function solve(data: {cantidad?: number}): number { const incorrecto: number = "error"; return data.cantidad ?? 1; }');
+  await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
+  await expect(page.getByText("Error de ejecución").first()).toBeVisible({timeout:60000});
+  await expect(page.getByText(/TS2322/).first()).toBeVisible();
+  const user=await db.user.findUniqueOrThrow({where:{email}});
+  expect(await db.progress.count({where:{userId:user.id,language:"typescript",firstPassedAt:{not:null}}})).toBe(0);
+  const submission=await db.submission.findFirstOrThrow({where:{userId:user.id,variant:{language:"typescript"}},orderBy:{createdAt:"desc"}});
+  const response=await page.request.get(`/api/executions/${submission.id}`);
+  for(const hidden of (await response.json()).results.filter((result:{visible:boolean})=>!result.visible)) {
+    expect(hidden).not.toHaveProperty("input"); expect(hidden).not.toHaveProperty("expected");
+    expect(hidden).not.toHaveProperty("error"); expect(hidden).not.toHaveProperty("output");
+  }
+  await page.getByRole("textbox",{name:"Editor sencillo de TypeScript",exact:true}).fill('function solve(data: {cantidad?: number}): number { return data.cantidad ?? 1; }');
+  await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
+  await expect(page.getByText("Un paso más. Ejercicio resuelto.")).toBeVisible({timeout:60000});
+  expect(await db.progress.count({where:{userId:user.id,language:"typescript",exercise:{slug:"lee-un-opcional"},firstPassedAt:{not:null}}})).toBe(1);
+});
+
+test("TypeScript ejecuta un programa completo con entrada y salida",async({page})=>{
+  await page.context().addCookies(authCookies);
+  await solve(page,"lee-y-suma","typescript","const numero: number = Number(require('fs').readFileSync(0, 'utf8').trim());\nconsole.log(numero + 5);");
+  await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
+  await expect(page.getByText("Un paso más. Ejercicio resuelto.")).toBeVisible({timeout:60000});
+  const user=await db.user.findUniqueOrThrow({where:{email}});
+  expect(await db.progress.count({where:{userId:user.id,language:"typescript",exercise:{slug:"lee-y-suma"},firstPassedAt:{not:null}}})).toBe(1);
+});
+
 test("el progreso publica el ejercicio como resuelto en el catálogo",async({page})=>{
   await page.context().addCookies(authCookies);
-  await page.goto("/ejercicios?lenguaje=python");
-  await expect(page.getByText("2 / 24").first()).toBeVisible().catch(()=>{});
+  await page.goto("/ejercicios?lenguaje=python&estado=resueltos");
+  await expect(page.locator('a[href="/ejercicios/par-o-impar?lenguaje=python"]').getByLabel("Resuelto",{exact:true})).toBeVisible();
   await page.goto("/progreso");
   await expect(page.getByText("Resuelto",{exact:true}).first()).toBeVisible();
 });
@@ -118,6 +150,11 @@ test("la administración publica tras ejecutar las referencias y rechaza una ref
   await page.getByRole("tab",{name:"JavaScript",exact:true}).click();
   await page.locator("#javascript-solution").fill("function solve(data) { return data.a + data.b; }");
   await page.locator("#javascript-explanation").fill("Referencia defectuosa a propósito para comprobar la validación.");
+  await page.getByRole("tab",{name:"TypeScript",exact:true}).click();
+  await page.locator("#typescript-starter").fill("function solve(data: {a: number; b: number}): number { return 0; }");
+  await page.locator("#typescript-solution").fill("function solve(data: {a: number; b: number}): number { return data.a + data.b; }");
+  await page.locator("#typescript-explanation").fill("El contrato describe una entrada con dos propiedades numéricas y un retorno numérico.");
+  await page.locator("#typescript-typeContract").fill("const __iteraContract: (data: {a: number; b: number}) => number = solve;");
   await page.getByRole("button",{name:"Guardar nueva versión"}).click();
   await expect(page).toHaveURL(new RegExp(`/admin/ejercicios/${badSlug}`));
   await page.getByRole("button",{name:"Validar y publicar versión guardada"}).click();
@@ -141,6 +178,11 @@ test("la administración publica tras ejecutar las referencias y rechaza una ref
   await page.getByRole("tab",{name:"JavaScript",exact:true}).click();
   await page.locator("#javascript-solution").fill("function solve(data) { return data.a + data.b; }");
   await page.locator("#javascript-explanation").fill("Accede a ambos valores y devuelve la suma. Tiempo constante.");
+  await page.getByRole("tab",{name:"TypeScript",exact:true}).click();
+  await page.locator("#typescript-starter").fill("function solve(data: {a: number; b: number}): number { return 0; }");
+  await page.locator("#typescript-solution").fill("function solve(data: {a: number; b: number}): number { return data.a + data.b; }");
+  await page.locator("#typescript-explanation").fill("El contrato describe una entrada con dos propiedades numéricas y un retorno numérico.");
+  await page.locator("#typescript-typeContract").fill("const __iteraContract: (data: {a: number; b: number}) => number = solve;");
   await page.getByRole("button",{name:"Guardar nueva versión"}).click();
   await expect(page).toHaveURL(new RegExp(`/admin/ejercicios/${goodSlug}`));
   expect((await page.request.get(`/ejercicios/${goodSlug}`)).status()).toBe(404);

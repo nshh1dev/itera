@@ -1,4 +1,7 @@
 import type { Json, Language, RuntimeMode } from "@/lib/types";
+import type { RunOutput } from "./judge";
+
+export const typescriptTimeoutExitCode = 124;
 
 // Construye archivos; nunca compila ni ejecuta código enviado en el servidor web.
 export function executionFiles(language: Language, code: string, mode: RuntimeMode, typeContract = "") {
@@ -16,6 +19,7 @@ const fs = require('fs');
 const child = require('child_process');
 fs.writeFileSync('submission.ts', ${JSON.stringify(`declare function require(name: "fs"): { readFileSync(fd: number, encoding: "utf8"): string };\n${program}`)});
 const compiled = child.spawnSync('tsc', ['submission.ts', '--strict', '--noEmitOnError', '--target', 'ES2022', '--module', 'commonjs'], { encoding: 'utf8', timeout: 8000 });
+if (compiled.error && compiled.error.code === 'ETIMEDOUT') process.exit(${typescriptTimeoutExitCode});
 if (compiled.error || compiled.status !== 0) {
   process.stderr.write('TypeScript: corrige los errores de tipos antes de ejecutar.\\n' + (compiled.stdout || '') + (compiled.stderr || '') + (compiled.error ? String(compiled.error) : ''));
   process.exit(1);
@@ -23,6 +27,7 @@ if (compiled.error || compiled.status !== 0) {
 const executed = child.spawnSync(process.execPath, ['submission.js'], { input: fs.readFileSync(0, 'utf8'), encoding: 'utf8', timeout: 3000, maxBuffer: 65536 });
 process.stdout.write(executed.stdout || '');
 process.stderr.write(executed.stderr || '');
+if (executed.error && executed.error.code === 'ETIMEDOUT') process.exit(${typescriptTimeoutExitCode});
 if (executed.error || executed.signal) { process.stderr.write('Se alcanzó el límite de ejecución o de salida.'); process.exit(1); }
 process.exit(executed.status === null ? 1 : executed.status);
 ` }];
@@ -39,4 +44,13 @@ process.exit(executed.status === null ? 1 : executed.status);
 
 export function executionInput(input: Json, mode: RuntimeMode) {
   return mode === "PROGRAM" ? (typeof input === "string" ? input : JSON.stringify(input ?? "")) : JSON.stringify(input);
+}
+
+// El proceso exterior terminó normalmente, pero su hijo agotó el plazo.
+// Conserva el mismo veredicto que el límite nativo de Piston, sin depender del
+// texto impreso por el programa (que nunca puede convertir un fallo en aprobado).
+export function executionOutput(language: Language, output: RunOutput): RunOutput {
+  return language === "typescript" && output.code === typescriptTimeoutExitCode && !output.signal && (!output.status || output.status === "RE")
+    ? { ...output, status: "TO" }
+    : output;
 }

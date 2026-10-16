@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { Json, Language, RuntimeMode } from "@/lib/types";
 import type { RunOutput } from "./judge";
 import { languageNames } from "@/lib/types";
-import { executionFiles, executionInput } from "./harness";
+import { executionFiles, executionInput, executionOutput } from "./harness";
 
 export class RunnerUnavailable extends Error {
   constructor(message = "El ejecutor local no está disponible. Inicia Docker y Piston, y ejecuta npm run runner:setup. Tu código sigue guardado.") { super(message); }
@@ -42,6 +42,6 @@ export async function runCode(language: Language, runtime: {language:string;vers
     const payload = await response.json();
     const result = outputSchema.parse(payload.compile && (payload.compile.code !== 0 || payload.compile.signal || payload.compile.status) ? payload.compile : payload.run ?? payload.compile);
     if (result.status === "XX") throw new RunnerUnavailable("El sandbox tuvo un error interno. Este intento no cuenta como incorrecto.");
-    return result;
+    return executionOutput(language, result);
   } catch (error) { throw error instanceof RunnerUnavailable ? error : new RunnerUnavailable("Se perdió la conexión con el ejecutor local. Este intento no cuenta como incorrecto."); }
 }

@@ -5,8 +5,11 @@ services:
     privileged: true
     environment:
       PISTON_DISABLE_NETWORKING: "true"
-      PISTON_RUN_TIMEOUT: "3000"
-      PISTON_RUN_CPU_TIME: "3000"
+      # Presupuesto del conductor TypeScript (compilación + ejecución).
+      # El adaptador sigue pidiendo 3000 ms para Python/JavaScript y el
+      # conductor limita a 3000 ms el programa del alumno en TypeScript.
+      PISTON_RUN_TIMEOUT: "12000"
+      PISTON_RUN_CPU_TIME: "10000"
       PISTON_RUN_MEMORY_LIMIT: "268435456"
       PISTON_COMPILE_MEMORY_LIMIT: "268435456"
       PISTON_OUTPUT_MAX_SIZE: "65536"

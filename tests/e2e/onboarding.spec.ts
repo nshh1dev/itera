@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { exerciseHref, foundationSteps, intermediateSteps, introductorySteps } from "../../src/lib/learning-paths";
+import { openSimpleEditor } from "../workspace";
 
 test("Desde cero ofrece módulos progresivos y comienza con un programa completo", async ({ page }) => {
   await page.goto("/rutas/desde-cero");
@@ -14,7 +15,7 @@ test("Desde cero ofrece módulos progresivos y comienza con un programa completo
   await expect(page.getByRole("heading", { name: "Tu reto", exact: true })).toBeVisible();
   await expect(page.getByText(/Entiende la idea/)).toBeVisible();
   await expect(page.locator("details").filter({ has: page.locator("summary", { hasText: "Antes de empezar" }) })).toHaveAttribute("open", "");
-  await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+  await openSimpleEditor(page);
   await expect(page.getByRole("textbox", { name: "Editor sencillo de Python" })).toHaveValue(/Escribe tu primer programa/);
 });
 
@@ -41,7 +42,7 @@ for (const language of ["python", "javascript"] as const) {
     await page.goto(exerciseHref("numeros-del-uno-al-n", language, "primeros-pasos"));
     await expect(page.getByRole("heading", { name: "Del uno al número recibido", exact: true })).toBeVisible();
     await expect(page.getByText(/el límite final de range se excluye/)).toBeVisible();
-    await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+    await openSimpleEditor(page);
     const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
     await expect(editor).toHaveValue(language === "python" ? /range\(1, data \+ 1\)/ : /numero <= data/);
     await expect(editor).toHaveValue(language === "python" ? /resultado.append\(0\)/ : /resultado.push\(0\)/);
@@ -52,7 +53,7 @@ for (const language of ["python", "javascript"] as const) {
 test("la plantilla guiada también está disponible en JavaScript", async ({ page }) => {
   await page.goto("/ejercicios/cambia-un-numero?lenguaje=javascript");
   await expect(page.getByRole("heading", { name: "Cambia un número", exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+  await openSimpleEditor(page);
   await expect(page.getByRole("textbox", { name: "Editor sencillo de JavaScript" })).toHaveValue(/Cambia solo el 7 por un 10/);
   await expect(page.getByRole("textbox", { name: "Editor sencillo de JavaScript" })).toHaveValue(/return 7/);
 });
@@ -68,7 +69,7 @@ for (const language of ["python", "javascript"] as const) {
       await page.goto(exerciseHref(lesson.slug, language, lesson.route));
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
       await expect(page.getByRole("region", { name: "Guía de aprendizaje" }).locator("li").first()).toBeVisible();
-      await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+      await openSimpleEditor(page);
       const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
       await expect(editor).toHaveValue(new RegExp(lesson.code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
       await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/${lesson.route}?lenguaje=${language}`);
@@ -102,7 +103,7 @@ for (const language of ["python", "javascript"] as const) {
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.locator("li").first()).toBeVisible();
-      await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+      await openSimpleEditor(page);
       const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
       await expect(editor).toHaveValue(new RegExp(lesson.code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
       await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/${lesson.route}?lenguaje=${language}`);
@@ -122,7 +123,7 @@ for (const language of ["python", "javascript"] as const) {
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.locator("li").first()).toBeVisible();
-      await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+      await openSimpleEditor(page);
       const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
       await expect(editor).toHaveValue(new RegExp(lesson.code));
       if (lesson.slug === "maximo-bajo-un-limite") {
@@ -147,7 +148,7 @@ for (const language of ["python", "javascript"] as const) {
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.getByRole("heading", { name: "Qué vas a practicar" })).toBeVisible();
       await expect(guide.locator("li").first()).toBeVisible();
-      await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+      await openSimpleEditor(page);
       const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
       await expect(editor).toHaveValue(new RegExp(lesson.code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
       await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/pensar-en-soluciones?lenguaje=${language}`);
@@ -168,7 +169,7 @@ for (const language of ["python", "javascript"] as const) {
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.locator("li").first()).toBeVisible();
-      await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+      await openSimpleEditor(page);
       const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
       await expect(editor).toHaveValue(new RegExp(lesson.code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
       await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/${lesson.route}?lenguaje=${language}`);

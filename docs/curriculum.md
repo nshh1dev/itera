@@ -41,6 +41,10 @@ La ruta inicial presenta inferencia y anotaciones simples; las funciones introdu
 4. En modo función añade el `typeContract` de la variante. Si falla la compilación, devuelve los diagnósticos y no ejecuta el archivo emitido.
 5. Solo después se ejecuta el JavaScript resultante con Node dentro del mismo sandbox y se aplica el juez correspondiente.
 
+El presupuesto exterior del conductor es de 12 segundos (10 de CPU); la compilación estricta tiene un plazo de 8 segundos y el programa del alumno conserva un plazo de 3 segundos. `compose.yaml` debe permitir el presupuesto exterior: después de actualizar la configuración, ejecutar `docker compose up -d piston` para recrear solo el ejecutor y conservar su volumen de paquetes. Un contenedor anterior con máximo de 3 segundos rechaza la solicitud antes de compilar.
+
+Si el hijo alcanza su plazo, el conductor termina con el código reservado 124. El adaptador convierte ese resultado (`RE` en Piston) en `TO`, igual que un timeout nativo. Una salida correcta seguida de un bucle infinito no aprueba. Los demás errores, señales y fallos internos conservan su clasificación.
+
 No se ejecuta ni compila código enviado en Next.js. La suite editorial sí compila y ejecuta referencias fijas del repositorio para comprobar su contenido; no forma parte del servidor. Los diagnósticos y salidas de casos ocultos siguen filtrados por el juez.
 
 Monaco usa diagnósticos estrictos locales. La declaración de `require('fs').readFileSync` describe exclusivamente la lectura preparada en las plantillas, no es una dependencia del navegador ni una promesa de acceso al sistema de archivos de la aplicación.

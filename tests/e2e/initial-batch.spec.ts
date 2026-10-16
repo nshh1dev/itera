@@ -7,6 +7,7 @@ import { exercises } from "../../prisma/content";
 import { initialBatchSlugs } from "../../prisma/initial-batch";
 import { seedVersionContent } from "../../prisma/editorial-revision";
 import { activityNames } from "../../src/lib/types";
+import { openSimpleEditor } from "../workspace";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 const prefix = `r1-e2e-${Date.now()}`;
@@ -53,7 +54,7 @@ for (const language of ["python", "javascript"] as const) {
         await expect(previous.getByRole("link")).toHaveCount(exercise.prerequisiteSlugs!.length);
         for (const slug of exercise.prerequisiteSlugs!) await expect(previous.locator(`a[href="/ejercicios/${slug}?lenguaje=${language}"]`)).toBeVisible();
       } else await expect(previous).toHaveCount(0);
-      await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
+      await openSimpleEditor(page);
       const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
       await expect(editor).toHaveValue(exercise.starters![language]);
       // Comprueba también el payload del servidor, no solo elementos visibles.
