@@ -46,7 +46,7 @@ test("los filtros móviles muestran la selección y se pueden quitar sin cambiar
   await expect(page.getByLabel("Nivel", { exact: true })).not.toBeVisible();
   await page.getByRole("button", { name: "Filtros", exact: true }).click();
   await page.getByLabel("Nivel", { exact: true }).selectOption("ADVANCED");
-  await page.getByRole("button", { name: "Aplicar filtros" }).click();
+  await page.getByRole("button", { name: "Buscar ejercicios" }).click();
   await expect(page.getByRole("link", { name: "Quitar filtro: Avanzado", exact: true })).toBeVisible();
   await expect(page.getByLabel("Lenguaje", { exact: true })).toHaveValue("javascript");
   await page.getByRole("link", { name: "Quitar filtro: Avanzado", exact: true }).click();
@@ -144,7 +144,7 @@ test("las pantallas se adaptan sin desbordamientos y conservan el editor entre p
 
 test("las superficies y listas mantienen su jerarquía en ambos temas y tamaños", async ({ page }) => {
   const screens = [
-    { path: "/inicio", title: "Un buen día para aprender.", name: "home" },
+    { path: "/inicio", title: "Tu primer paso en programación.", name: "home" },
     { path: "/ejercicios", title: "Ejercicios", name: "catalog" },
     { path: "/rutas", title: "Rutas de aprendizaje", name: "paths" },
     { path: "/rutas/desde-cero", title: "Desde cero", name: "path" },

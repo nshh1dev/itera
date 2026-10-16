@@ -5,13 +5,15 @@ import { openSimpleEditor } from "../workspace";
 test("Desde cero ofrece módulos progresivos y comienza con un programa completo", async ({ page }) => {
   await page.goto("/rutas/desde-cero");
   await expect(page.getByRole("heading", { name: "Desde cero", exact: true })).toBeVisible();
-  const steps = page.locator('a[href^="/ejercicios/"]');
+  const steps = page.locator('.route-module').getByRole('link');
+  await expect(page.getByRole("region", { name: "Siguiente ejercicio de la ruta" }).getByRole("link", { name: "Abrir ejercicio" })).toHaveAttribute("href", exerciseHref(introductorySteps[0], "python", "desde-cero"));
   await expect(steps).toHaveCount(introductorySteps.length);
   await expect(steps.first()).toHaveAttribute("href", /imprime-un-saludo/);
   await expect(steps.last()).toHaveAttribute("href", /presupuesto-de-merienda/);
   await expect(steps.first()).toHaveAttribute("href", /ruta=desde-cero/);
   await steps.first().click();
-  await expect(page.getByRole("heading", { name: "Tu primer programa", exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/ejercicios\/imprime-un-saludo/);
+  await expect(page.getByRole("heading", { name: "Tu primer programa", level: 1, exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Tu reto", exact: true })).toBeVisible();
   await expect(page.getByText(/Entiende la idea/)).toBeVisible();
   await expect(page.locator("details").filter({ has: page.locator("summary", { hasText: "Antes de empezar" }) })).toHaveAttribute("open", "");
@@ -21,7 +23,7 @@ test("Desde cero ofrece módulos progresivos y comienza con un programa completo
 
 test("Construye tus bases enseña condiciones y recorridos antes de los retos", async ({ page }) => {
   await page.goto("/rutas/primeros-pasos");
-  const steps = page.locator('a[href^="/ejercicios/"]');
+  const steps = page.locator('.route-module').getByRole('link');
   await expect(steps).toHaveCount(foundationSteps.length);
   expect(await steps.evaluateAll(links => links.map(link => link.getAttribute("href"))))
     .toEqual(foundationSteps.map(slug => exerciseHref(slug, "python", "primeros-pasos")));
@@ -80,7 +82,7 @@ for (const language of ["python", "javascript"] as const) {
 test("Conecta las ideas introduce los conceptos antes de sus retos", async ({ page }) => {
   await page.goto("/rutas/pensar-en-soluciones");
   await expect(page.getByRole("heading", { name: "Conecta las ideas", exact: true })).toBeVisible();
-  const steps = page.locator('a[href^="/ejercicios/"]');
+  const steps = page.locator('.route-module').getByRole('link');
   await expect(steps).toHaveCount(intermediateSteps.length);
   expect(await steps.evaluateAll(links => links.map(link => link.getAttribute("href"))))
     .toEqual(intermediateSteps.map(slug => exerciseHref(slug, "python", "pensar-en-soluciones")));

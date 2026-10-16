@@ -26,17 +26,17 @@ export default async function LandingPage() {
     <main id="main-content">
       <section className="landing-hero landing-container" aria-labelledby="landing-title">
         <div className="landing-hero-copy">
-          <p className="landing-intro"><span aria-hidden="true">&#123; &#125;</span> Un espacio para practicar lógica</p>
-          <h1 id="landing-title">Pensar.<br />Probar.<br />Entender.</h1>
-          <p className="landing-lead">Aprender a programar empieza cuando haces algo con lo que sabes. Una idea, unas líneas, un nuevo intento.</p>
+          <p className="landing-intro">Tu taller de programación</p>
+          <h1 id="landing-title">Una idea se entiende<br />cuando la pones a prueba.</h1>
+          <p className="landing-lead">Aprende lógica escribiendo código. Prueba una idea, compara el resultado y entiende qué cambiar en el siguiente intento.</p>
           <div className="landing-hero-actions">
             <Button asChild size="lg"><Link href="/inicio">Empezar a practicar <ArrowRight aria-hidden="true" data-icon="inline-end" /></Link></Button>
             <a href="#como-se-aprende" className="landing-quiet-link">Así se aprende <ArrowDown className="size-3.5" aria-hidden="true" /></a>
           </div>
-          <p className="landing-hero-note">Lógica más allá del lenguaje. A tu ritmo.<br />En tu computadora, sin suscripciones.</p>
+          <p className="landing-hero-note">Python, JavaScript y TypeScript. En tu computadora, a tu ritmo.</p>
         </div>
         <div className="landing-hero-product">
-          <div className="landing-demo-caption"><span>Una pequeña idea, en funcionamiento.</span><CornerDownRight className="size-4" aria-hidden="true" /></div>
+          <div className="landing-demo-caption"><span>Una entrada. Tu idea en código. Un resultado que puedes explicar.</span><CornerDownRight className="size-4" aria-hidden="true" /></div>
           <PracticeDemo />
           <div className="landing-demo-footnote"><span>Demostración interactiva · código fijo</span><Link href="/ejercicios/suma-de-dos-numeros?lenguaje=javascript" className="landing-quiet-link">Abrir en Itera <ArrowRight className="size-3.5" aria-hidden="true" /></Link></div>
         </div>
@@ -45,7 +45,7 @@ export default async function LandingPage() {
       <section id="como-se-aprende" className="landing-process landing-container" aria-labelledby="process-title">
         <div className="landing-section-heading">
           <h2 id="process-title">De «¿y si…?»<br />a «ahora lo entiendo».</h2>
-          <p>No necesitas acertar a la primera.<br />Necesitas un lugar donde volver a intentarlo.</p>
+          <p>Cuatro pasos para pasar de una idea a una solución que puedes explicar.</p>
         </div>
         <ol className="landing-steps">
           <li>
@@ -125,9 +125,7 @@ export default async function LandingPage() {
         </div>
         <div className="landing-feedback-copy">
           <h2 id="feedback-title">No salió.<br />Ya sabes algo más.</h2>
-          <p className="landing-section-copy">Un resultado inesperado no cierra el ejercicio. Te da una nueva pregunta.</p>
-          <p className="landing-section-copy">Compara resultados, abre una pista cuando la necesites y consulta una solución explicada para entender el porqué.</p>
-          <p className="landing-margin-note">La respuesta importa.<br />Entender cómo llegaste, más.</p>
+          <p className="landing-section-copy">Compara lo esperado con tu resultado. Si necesitas ayuda, descubre una pista cada vez o consulta la solución explicada. Después, vuelve al código y prueba lo que entendiste.</p>
         </div>
       </section>
 

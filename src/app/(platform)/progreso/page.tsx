@@ -20,13 +20,14 @@ export default async function ProgressPage() {
   ]);
   const solved = catalog.filter(e => e.solved).length;
   return <div className="page-container">
-    <h1 className="page-title">Mi progreso</h1><p className="mt-2 text-sm text-muted-foreground">Tu práctica, por categoría y por lenguaje.</p>
-    <dl className="surface-panel mt-6 grid gap-6 rounded-2xl bg-surface p-6 sm:grid-cols-3">
+    <h1 className="page-title">Mi progreso</h1><p className="page-description">Observa lo que has practicado y elige dónde seguir. Los ejercicios resueltos no son una medida de dominio.</p>
+    <Link href={`/ejercicios?lenguaje=${language}&estado=pendientes`} className="text-link mt-4">Elegir el siguiente ejercicio<ArrowRight aria-hidden="true" className="size-4" /></Link>
+    <dl className="progress-summary">
       <div><dt className="text-xs text-muted-foreground">Resueltos en {languageNames[language]}</dt><dd className="mt-3 text-3xl font-semibold tracking-tight">{solved}<span className="ml-1 text-sm font-normal text-muted-foreground">/ {catalog.length}</span></dd></div>
       <div><dt className="text-xs text-muted-foreground">Comprobaciones evaluadas · todos los lenguajes</dt><dd className="mt-3 text-3xl font-semibold tracking-tight">{attempts}</dd></div>
       <div><dt className="text-xs text-muted-foreground">Resueltos con ayuda · {languageNames[language]}</dt><dd className="mt-3 text-3xl font-semibold tracking-tight">{catalog.filter(e => e.solved && help.some(h => h.exerciseId === e.id)).length}</dd></div>
     </dl>
-    <section className="mt-8"><h2 className="section-title">Progreso por categorías</h2><p className="mt-2 text-xs leading-5 text-muted-foreground">Ejercicios completados en {languageNames[language]}; no equivale a una medida de dominio.</p><div className="mt-5 grid gap-x-10 gap-y-6 sm:grid-cols-2">{[...new Set(catalog.map(e => e.category))].map(category => { const items = catalog.filter(e => e.category === category); const done = items.filter(e => e.solved).length; return <div key={category}><div className="mb-3 flex items-center justify-between gap-3 text-sm"><span>{category}</span><span className="text-xs text-muted-foreground">{done} / {items.length}</span></div><div className="progress-track" role="progressbar" aria-label={category} aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={done}><div className="progress-fill" style={{ width: `${done / items.length * 100}%` }} /></div></div>; })}</div></section>
-    <section className="mt-9"><h2 className="section-title mb-4">Tus últimos intentos</h2><ActivityList entries={recent} /></section>
+    <div className="progress-layout"><section><h2 className="section-title">Progreso por categorías</h2><p className="mt-2 text-xs leading-5 text-muted-foreground">Ejercicios completados en {languageNames[language]}; no equivale a una medida de dominio.</p><div className="mt-6 grid gap-7">{[...new Set(catalog.map(e => e.category))].map(category => { const items = catalog.filter(e => e.category === category); const done = items.filter(e => e.solved).length; return <div key={category}><div className="mb-3 flex items-center justify-between gap-3 text-sm"><span>{category}</span><span className="text-xs text-muted-foreground">{done} / {items.length}</span></div><div className="progress-track" role="progressbar" aria-label={category} aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={done}><div className="progress-fill" style={{ width: `${done / items.length * 100}%` }} /></div></div>; })}</div></section>
+    <section className="activity-journal"><h2 className="section-title mb-4">Tus últimos intentos</h2><ActivityList entries={recent} /></section></div>
   </div>;
 }

@@ -63,16 +63,16 @@ test("catálogo público, filtros y navegación móvil sin desbordamientos",asyn
   const external:string[]=[];
   page.on("request",req=>{if(!req.url().startsWith("http://127.0.0.1")&&!req.url().startsWith("data:")&&!req.url().startsWith("blob:"))external.push(req.url());});
   await page.goto("/");
-  await expect(page.getByRole("heading",{level:1,name:/Pensar\.\s*Probar\.\s*Entender\./})).toBeVisible();
+  await expect(page.getByRole("heading",{level:1,name:/Una idea se entiende\s*cuando la pones a prueba\./})).toBeVisible();
   await page.goto("/ejercicios");
   await page.getByLabel("Nivel",{exact:true}).selectOption("ADVANCED");
-  await page.getByRole("button",{name:"Aplicar filtros"}).click();
+  await page.getByRole("button",{name:"Buscar ejercicios"}).click();
    const catalogVersions=await db.exercise.findMany({where:{published:true},select:{versions:{where:{published:true},orderBy:{number:"desc"},take:1,select:{level:true}}}});
    const advancedCount=catalogVersions.filter(exercise=>exercise.versions[0]?.level==="ADVANCED").length;
    await expect(page.getByText(`${advancedCount} ejercicios`,{exact:true})).toBeVisible();
   await page.setViewportSize({width:390,height:844});
   await page.goto("/inicio");
-  await expect(page.getByRole("heading",{name:"Un buen día para aprender."})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"Tu primer paso en programación."})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
   await page.screenshot({path:".local/screenshots/mobile-home.png",fullPage:true});
   expect(external).toEqual([]);
@@ -160,7 +160,7 @@ test("ayudas progresivas, solución explícita y autorización administrativa",a
   const firstHint=version.hints[0];
   expect(firstHint.length).toBeGreaterThan(0);
   await page.goto("/ejercicios/par-o-impar");
-  await page.getByRole("button",{name:"Un pequeño empujón"}).click();
+  await page.getByRole("button",{name:"Ver pistas",exact:true}).click();
   await expect(page.getByText(firstHint,{exact:true})).toHaveCount(0);
   await page.getByRole("button",{name:"Descubrir la primera pista"}).click();
   await expect(page.getByText(firstHint,{exact:true})).toBeVisible();
@@ -364,7 +364,7 @@ test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borrador
   expect(await db.exerciseVersion.findUniqueOrThrow({where:{id:previous.id},include:{variants:{orderBy:{language:"asc"},include:{tests:{orderBy:{order:"asc"}}}}}})).toEqual(previous);
   const published=await db.exerciseVersion.findFirstOrThrow({where:{exerciseId:exercise.id,published:true},orderBy:{number:"desc"},include:{variants:{where:{language:"python"}}}});
   await page.goto(`/ejercicios/${exercise.slug}?lenguaje=python`);
-  await expect(page.locator('section[aria-label="Enunciado"] > p').first()).toHaveText(published.variants[0]?.statement || published.statement);
+  await expect(page.locator('#exercise-statement')).toHaveText(published.variants[0]?.statement || published.statement);
   await page.goto(`/admin/ejercicios/${exercise.slug}`);
   await prepare();
   await expect(page.getByRole("status")).toContainText("ya contiene esta revisión");

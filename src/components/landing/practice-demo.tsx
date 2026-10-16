@@ -29,14 +29,15 @@ export function PracticeDemo() {
   }
 
   return <div className="landing-demo" aria-label="Demostración de Dos números, una suma">
-    <div className="landing-demo-toolbar"><span className="flex items-center gap-2"><Code2 className="size-4" aria-hidden="true" /> Espacio de práctica</span><span className="text-muted-foreground">JavaScript</span></div>
+    <div className="landing-demo-toolbar"><span className="flex items-center gap-2"><Code2 className="size-4" aria-hidden="true" /> Prueba la idea</span><span className="text-muted-foreground">JavaScript · código fijo</span></div>
     <div className="landing-demo-problem">
-      <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground"><span>Fundamentos</span><span>Principiante</span></div>
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground"><span>Fundamentos</span><span>Principiante</span></div>
       <h2>Dos números, una suma.</h2>
       <p>Recibe dos números, <code>a</code> y <code>b</code>.<br className="sm:hidden" /> Devuelve su suma.</p>
     </div>
+    <div className="landing-demo-workbench">
     <div className="landing-demo-editor">
-      <div className="landing-file-label"><span>solucion.js</span><span>Solo lectura</span></div>
+      <div className="landing-file-label"><span>Código</span><span>solucion.js · Solo lectura</span></div>
       <pre className="landing-code" aria-label="Solución en JavaScript"><code>
         <span className="landing-code-line"><span className="landing-line-number" aria-hidden="true">1</span><span><span className="text-primary-text">function</span> solve(data) &#123;</span>{"\n"}</span>
         <span className="landing-code-line"><span className="landing-line-number" aria-hidden="true">2</span><span className="text-muted-foreground">{"  // Una idea: sumar ambos valores."}</span>{"\n"}</span>
@@ -46,7 +47,7 @@ export function PracticeDemo() {
     </div>
     <form onSubmit={calculate} className="landing-demo-console" noValidate>
       <fieldset>
-        <legend>Cambia los números. Prueba tu idea.</legend>
+        <legend>Entrada · Cambia los números</legend>
         <div className="landing-demo-inputs">
           <label htmlFor="demo-a"><span>a</span><input id="demo-a" name="a" type="number" step="1" min="-1000000" max="1000000" required value={a} aria-describedby="demo-help demo-error" aria-invalid={!!error} onChange={event => { setA(event.target.value); setResult(null); setError(""); }} /></label>
           <span className="text-muted-foreground" aria-hidden="true">+</span>
@@ -61,5 +62,6 @@ export function PracticeDemo() {
       </div>
       <p id="demo-help" className="landing-demo-help">Esta demo calcula la suma en tu navegador. En el editor completo puedes escribir y evaluar tu propio código.</p>
     </form>
+    </div>
   </div>;
 }

@@ -11,13 +11,13 @@ export function ActivityList({ entries, compact = false }: { entries: Activity[]
     <p className="text-xs leading-6 text-muted-foreground">Tus ejecuciones y comprobaciones aparecerán aquí.</p>
     <Link href="/ejercicios" className="text-link mt-1 text-xs">Elegir un ejercicio</Link>
   </div>;
-  return <ul className="flex flex-col gap-1">{entries.map(item => {
+  return <ul className={compact ? "flex flex-col gap-1" : "flex max-w-4xl flex-col gap-2"}>{entries.map(item => {
     const solved = item.status === "PASSED" && item.mode === "submit";
     const status = item.status === "PASSED" ? solved ? "Resuelto" : "Ejemplos correctos" : item.status === "FAILED" ? `${item.passedCount}/${item.totalCount} pruebas` : item.status === "RUNNING" ? "En proceso" : "Sin evaluar";
     return <li key={item.id}><Link href={`/ejercicios/${item.variant.version.exercise.slug}?lenguaje=${item.variant.language}`} className="list-entry items-start gap-3">
       {solved ? <Check className="mt-0.5 size-4 shrink-0 text-success-text" aria-hidden="true" /> : <Circle className="mt-1 size-3 shrink-0 text-muted-foreground" aria-hidden="true" />}
-      <div className="min-w-0 flex-1"><p className="text-[13px] font-medium">{item.variant.version.title}</p><p className="mt-1 text-xs text-muted-foreground">{languageNames[item.variant.language as Language]} · {item.mode === "submit" ? "Comprobación" : "Ejemplos"}</p>{compact && <p className="mt-1.5 text-xs text-muted-foreground">{status}</p>}</div>
-      <div className="shrink-0 text-right">{!compact && <p className="text-xs">{status}</p>}<time dateTime={item.createdAt.toISOString()} className="mt-1 block text-xs text-muted-foreground">{new Intl.DateTimeFormat("es", { day: "numeric", month: "short", timeZone: "UTC" }).format(item.createdAt)}</time></div>
+      <div className="min-w-0 flex-1"><p className="text-sm font-medium">{item.variant.version.title}</p><p className="mt-1 text-xs text-muted-foreground">{languageNames[item.variant.language as Language]} · {item.mode === "submit" ? "Comprobación" : "Ejemplos"}</p><p className="mt-1.5 text-xs text-muted-foreground">{status}</p></div>
+      <div className="shrink-0 text-right"><time dateTime={item.createdAt.toISOString()} className="mt-1 block text-xs text-muted-foreground">{new Intl.DateTimeFormat("es", { day: "numeric", month: "short", timeZone: "UTC" }).format(item.createdAt)}</time></div>
     </Link></li>;
   })}</ul>;
 }

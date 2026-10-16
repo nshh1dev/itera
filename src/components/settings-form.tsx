@@ -24,7 +24,7 @@ export function SettingsForm({ user, welcome }: { user: { name: string; email: s
     } catch { setError(true); setMessage("No se pudieron guardar los cambios. Inténtalo de nuevo."); }
     finally { setBusy(false); }
   }
-  return <>
+  return <div className="settings-layout">
     <form onSubmit={submit} className="mt-7 flex max-w-3xl flex-col gap-5">
       <section className="settings-section"><h2 className="section-title">Tu perfil</h2><div className="mt-4 grid gap-4 sm:grid-cols-2">
         <div><label htmlFor="name" className="field-label">Nombre</label><input className="field" id="name" name="name" defaultValue={user.name} minLength={2} maxLength={60} required /></div>
@@ -36,7 +36,8 @@ export function SettingsForm({ user, welcome }: { user: { name: string; email: s
       </div></section>
       <div className="flex flex-wrap items-center gap-4"><Button disabled={busy}>{busy && <Loader2 className="animate-spin" />}{welcome ? "Guardar y empezar" : "Guardar cambios"}</Button>{message && <p role="status" className={cn("flex items-center gap-2 text-sm", error ? "text-destructive" : "text-muted-foreground")}>{!error && <Check className="size-4 shrink-0 text-success-text" />}{message}</p>}</div>
     </form>
-    <section className="mt-8 max-w-3xl"><h2 className="section-title">Apariencia</h2><p className="mt-2 text-sm text-muted-foreground">Se guarda en este navegador.</p><div className="segmented-control mt-4" role="group" aria-label="Apariencia">{[{ value: "light", label: "Claro", icon: Sun }, { value: "dark", label: "Oscuro", icon: Moon }, { value: "system", label: "Sistema", icon: Monitor }].map(({ value, label, icon: Icon }) => <Button variant="segment" aria-pressed={appearance === value} key={value} onClick={() => setTheme(value)}><Icon />{label}</Button>)}</div></section>
+    <div className="settings-local"><section className="settings-section mt-8 max-w-3xl"><h2 className="section-title">Apariencia</h2><p className="mt-2 text-sm text-muted-foreground">Se aplica al instante y se guarda en este navegador. Sistema sigue la apariencia de tu computadora.</p><div className="segmented-control mt-4" role="group" aria-label="Apariencia">{[{ value: "light", label: "Claro", icon: Sun }, { value: "dark", label: "Oscuro", icon: Moon }, { value: "system", label: "Sistema", icon: Monitor }].map(({ value, label, icon: Icon }) => <Button variant="segment" aria-pressed={appearance === value} key={value} onClick={() => setTheme(value)}><Icon aria-hidden="true" />{label}</Button>)}</div></section>
     <section className="mt-8 max-w-3xl"><h2 className="section-title">Tus datos se quedan aquí</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Las cuentas, los borradores y el progreso se guardan en el PostgreSQL de tu computadora. No hay analítica externa, suscripciones ni conexiones con IA.</p><p className="mt-3 text-xs leading-6 text-muted-foreground">Para recuperar tu contraseña, usa “¿La olvidaste?” al iniciar sesión. El enlace llegará a .local/mail.</p></section>
-  </>;
+    </div>
+  </div>;
 }

@@ -93,7 +93,7 @@ test("la solución explica cada lenguaje sin conceder progreso por consultarla",
   expect(signup.ok()).toBe(true);
   for (const language of ["python", "javascript"] as const) {
     await page.goto(`/ejercicios/${prefix}-suma-de-dos-numeros?lenguaje=${language}`);
-    await page.getByRole("button", { name: "Un pequeño empujón", exact: true }).click();
+    await page.getByRole("button", { name: "Ver pistas", exact: true }).click();
     await page.getByRole("tab", { name: "Solución explicada", exact: true }).click();
     await page.getByRole("button", { name: "Ver solución explicada", exact: true }).click();
     const dialog = page.getByRole("dialog");

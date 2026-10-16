@@ -53,7 +53,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
     }
     return <>
       <div className="flex h-11 items-center px-1 md:h-9"><Logo className="navigation-brand" href="/" /></div>
-      <nav aria-label={mobile ? "Navegación móvil" : "Navegación principal"} className="mt-7 space-y-1">{navigation.map(entry => item(entry))}</nav>
+      <nav aria-label={mobile ? "Navegación móvil" : "Navegación principal"} className="mt-7 space-y-1"><p className="navigation-caption">Tu práctica</p>{navigation.map(entry => item(entry))}</nav>
       <div className="mt-auto space-y-1 pt-8">
         {user?.role === "ADMIN" && item({ href: "/admin", label: "Administración", icon: Shield })}
         {item({ href: "/configuracion", label: "Configuración", icon: Settings2 })}
@@ -66,7 +66,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
 
   return <div className="app-shell" data-collapsed={collapsed}>
     <aside id="navigation-sidebar" className="app-sidebar" aria-label="Barra lateral">{navigationContent()}</aside>
-    <header className="app-header flex h-14 min-w-0 items-center gap-3 px-3 sm:px-5">
+      <header className="app-header flex min-w-0 items-center gap-2 px-3 sm:gap-3 sm:px-5">
       <Dialog>
         <DialogTrigger asChild><Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir navegación"><Menu /></Button></DialogTrigger>
         <DialogContent className="navigation-drawer inset-y-0 left-0 top-0 flex h-dvh max-h-none w-[min(288px,calc(100%-3rem))] translate-x-0 translate-y-0 flex-col rounded-none border-0 border-r bg-surface p-4">
@@ -78,7 +78,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
       <Button variant="ghost" size="icon" className="hidden min-[1200px]:inline-flex" aria-label={collapsed ? "Expandir navegación" : "Contraer navegación"} aria-expanded={!collapsed} aria-controls="navigation-sidebar" title={collapsed ? "Expandir navegación" : "Contraer navegación"} onClick={toggleNavigation}>
         {collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
       </Button>
-      <div className="min-w-0 flex-1">{header ?? <p className="truncate text-[13px] font-medium">{title}</p>}</div>
+      <div className="min-w-0 flex-1">{header ?? <p className="text-sm font-medium">{title}</p>}</div>
       <div className="flex shrink-0 items-center gap-2">
         <ThemeToggle />
         {!workspace && (user ? <>

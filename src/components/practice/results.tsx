@@ -30,15 +30,19 @@ export function Results({ result, busy, error, nextHref, collapsed = false, onTo
               <span className="ml-auto text-right text-muted-foreground">{test.passed ? "Correcto" : test.status === "timeout" ? "Límite de tiempo" : test.status === "runtime" ? "Error de ejecución" : asText ? "La salida no coincide" : "Resultado diferente"}</span>
               <ChevronDown className="size-3 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden="true" />
             </summary>
-            <div className="mb-3 flex flex-col gap-3 rounded-lg bg-surface-inset p-3 text-xs">
+            <div className="mb-3 flex min-w-0 flex-col gap-3 rounded-lg bg-surface-inset p-3 text-xs">
               {asText ? <>
                 <div><span className="text-muted-foreground">Entrada</span><pre className="mt-1 overflow-x-auto font-mono">{plain(test.input).length ? plain(test.input) : "(sin entrada)"}</pre></div>
-                <div><span className="text-muted-foreground">Salida esperada</span><pre className="mt-1 overflow-x-auto font-mono">{plain(test.expected)}</pre></div>
-                {"actual" in test && <div><span className="text-muted-foreground">Salida del programa</span><pre className="mt-1 overflow-x-auto font-mono">{test.output ?? plain(test.actual)}</pre></div>}
+                <div className="result-comparison">
+                  <div className="result-value"><span className="text-muted-foreground">Salida esperada</span><pre>{plain(test.expected)}</pre></div>
+                  {"actual" in test && <div className="result-value"><span className="text-muted-foreground">Salida del programa</span><pre>{test.output ?? plain(test.actual)}</pre></div>}
+                </div>
               </> : <>
                 <div><span className="text-muted-foreground">Entrada</span><pre className="mt-1 overflow-x-auto font-mono">{JSON.stringify(test.input)}</pre></div>
-                <div><span className="text-muted-foreground">Esperado</span><pre className="mt-1 overflow-x-auto font-mono">{JSON.stringify(test.expected)}</pre></div>
-                {"actual" in test && <div><span className="text-muted-foreground">Tu resultado</span><pre className="mt-1 overflow-x-auto font-mono">{JSON.stringify(test.actual)}</pre></div>}
+                <div className="result-comparison">
+                  <div className="result-value"><span className="text-muted-foreground">Esperado</span><pre>{JSON.stringify(test.expected)}</pre></div>
+                  {"actual" in test && <div className="result-value"><span className="text-muted-foreground">Tu resultado</span><pre>{JSON.stringify(test.actual)}</pre></div>}
+                </div>
                 {test.output !== undefined && <div><span className="text-muted-foreground">Salida del programa</span><pre className="mt-1 overflow-x-auto font-mono">{test.output.length ? test.output : "(sin salida)"}</pre></div>}
               </>}
               {diff && <div className="flex items-start gap-2 rounded-lg bg-surface p-2.5"><Info className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" /><div><span className="text-muted-foreground">Primera diferencia</span><p className="mt-1 leading-6">{diff.message}</p></div></div>}
