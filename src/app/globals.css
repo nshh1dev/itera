@@ -342,7 +342,9 @@
   --motion-ease: cubic-bezier(.2, .8, .2, 1);
 }
 .dialog-overlay[data-state="open"] { animation: fade-in var(--motion-disclosure) var(--motion-ease); }
-.dialog-overlay[data-state="closed"] { animation: fade-out var(--motion-panel-close) var(--motion-ease); }
+/* Sin `forwards`, al terminar la animación el fondo recuperaría su opacidad
+   base durante un fotograma, justo cuando el panel llega a su origen. */
+.dialog-overlay[data-state="closed"] { animation: fade-out var(--motion-panel-close) var(--motion-ease) forwards; }
 /* La superficie se transforma, nunca el texto ni los controles. La animación
    de salida mantiene Presence de Radix hasta que termina Web Animations. */
 .dialog-content { isolation: isolate; background: transparent; border: 0; padding: 0; box-shadow: none; }

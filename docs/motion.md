@@ -30,8 +30,10 @@ constantes y geometría en `src/lib/motion.ts`.
   conserva el contexto anterior, también desde el taller. Avatar y enlace lateral
   registran su origen. La superficie crece hacia un panel centrado en escritorio
   o una hoja de ancho completo en móvil; su contenido aparece sin escalar letras.
-  Escape, cierre y exterior vuelven al historial anterior. El foco retorna al origen.
-  Recargar o abrir `/configuracion` directamente muestra la página completa.
+  Al cerrarse aterriza sobre el control con el tamaño de este, y el fondo mantiene
+  su opacidad final hasta desmontarse. Escape, cierre y exterior vuelven al
+  historial anterior. El foco retorna al origen. Recargar o abrir
+  `/configuracion` directamente muestra la página completa.
 - **Bienvenida:** el registro usa deliberadamente navegación de documento hacia
   `/configuracion?bienvenida=1`, evitando interceptar el primer recorrido de cuenta.
 - **Ediciones pendientes:** el formulario del panel guarda nombre, lenguaje y nivel
@@ -40,8 +42,10 @@ constantes y geometría en `src/lib/motion.ts`.
   almacenan contraseñas ni se cambian las reglas de borradores de código.
 - **Navegación:** `MotionRegion` anima brevemente el contenido principal del shell
   y los formularios de acceso, registro y recuperación, sin usar claves para
-  remontar sus hijos. La barra lateral cambia de ancho suavemente. El menú móvil
-  usa una entrada lateral en lugar de expandirse desde un punto.
+  remontar sus hijos. Su clave son los segmentos que el layout renderiza de verdad,
+  no la URL: abrir o cerrar un panel interceptado no repite la entrada. La barra
+  lateral cambia de ancho suavemente. El menú móvil usa una entrada lateral en
+  lugar de expandirse desde un punto.
 - **Catálogo:** `next/form` mantiene navegación cliente y los filtros en la URL,
   con estado de búsqueda pendiente. Se actualiza la región de resultados;
   los filtros móviles expanden y contraen su espacio, sin desmontar los campos.

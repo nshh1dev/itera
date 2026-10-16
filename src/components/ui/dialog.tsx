@@ -23,6 +23,12 @@ export const DialogTitle = DialogPrimitive.Title;
 export const DialogDescription = DialogPrimitive.Description;
 export const DialogClose = DialogPrimitive.Close;
 
+// Escala que ajusta la superficie al tamaño real de su origen, para que el panel
+// nazca y vuelva al control en lugar de detenerse en un rectángulo mayor que él.
+function fit(source: number, target: number) {
+  return Math.max(.01, Math.min(1, source / target));
+}
+
 function DialogSurface({ origin, onExitComplete }: { origin?: MotionOrigin; onExitComplete?: () => void }) {
   const context = useContext(DialogMotion);
   const surface = useRef<HTMLSpanElement>(null);
@@ -41,7 +47,7 @@ function DialogSurface({ origin, onExitComplete }: { origin?: MotionOrigin; onEx
     const usable = source?.element.isConnected && source.element.getClientRects().length;
     const sourceRect = usable ? source!.element.getBoundingClientRect() : null;
     const from = drawer ? "translateX(-100%)" : sourceRect
-      ? `translate(${sourceRect.left + sourceRect.width / 2 - rect.left - rect.width / 2}px, ${sourceRect.top + sourceRect.height / 2 - rect.top - rect.height / 2}px) scale(${Math.max(.08, Math.min(1, sourceRect.width / rect.width))}, ${Math.max(.08, Math.min(1, sourceRect.height / rect.height))})`
+      ? `translate(${sourceRect.left + sourceRect.width / 2 - rect.left - rect.width / 2}px, ${sourceRect.top + sourceRect.height / 2 - rect.top - rect.height / 2}px) scale(${fit(sourceRect.width, rect.width)}, ${fit(sourceRect.height, rect.height)})`
       : "scale(.97)";
     const currentStyle = getComputedStyle(layer);
     const current = animation.current ? currentStyle.transform : open ? from : "none";

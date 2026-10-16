@@ -8,6 +8,9 @@ const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.
 const email = `motion-${Date.now()}@example.test`;
 let cookies: Awaited<ReturnType<BrowserContext["cookies"]>> = [];
 
+// Fotograma muestreado en el navegador durante el cierre del panel.
+type Frame = { overlay: number | null; region: number; surface: number[] | null };
+
 test.beforeAll(async ({ request }) => {
   const signup = await request.post("/api/auth/sign-up/email", {
     headers: { origin: "http://127.0.0.1:3000" },
@@ -64,6 +67,46 @@ for (const theme of ["light", "dark"] as const) {
     });
   }
 }
+
+test("el cierre no devuelve el fondo, no repite la entrada del contenido y aterriza en el origen", async ({ page }) => {
+  await page.context().addCookies(cookies);
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/inicio");
+  const origin = page.getByRole("link", { name: "Mi cuenta", exact: true });
+  const avatar = (await origin.boundingBox())!;
+  await origin.click();
+  const dialog = page.getByRole("dialog", { name: "Configuración", exact: true });
+  await expect(dialog).toBeVisible();
+  await dialog.evaluate(async node => { await Promise.all(node.getAnimations({ subtree: true }).map(animation => animation.finished.catch(() => {}))); });
+  await page.evaluate(() => {
+    const collected: Frame[] = [];
+    (window as unknown as { __close: Frame[] }).__close = collected;
+    const sample = () => {
+      const overlay = document.querySelector(".dialog-overlay");
+      const region = document.querySelector("main > div");
+      const rect = document.querySelector(".dialog-surface")?.getBoundingClientRect();
+      collected.push({ overlay: overlay ? Number(getComputedStyle(overlay).opacity) : null, region: region ? Number(getComputedStyle(region).opacity) : 1, surface: rect ? [rect.x, rect.y, rect.width, rect.height] : null });
+      requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  });
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  const frames = await page.evaluate(() => (window as unknown as { __close: Frame[] }).__close);
+  // El fondo se desvanece sin recuperar opacidad antes de desmontarse.
+  const overlays = frames.flatMap(frame => frame.overlay === null ? [] : [frame.overlay]);
+  expect(overlays.length).toBeGreaterThan(4);
+  for (let index = 1; index < overlays.length; index++) expect(overlays[index], `fotograma ${index}`).toBeLessThanOrEqual(overlays[index - 1] + 0.01);
+  expect(overlays.at(-1)!).toBeLessThan(0.02);
+  // Abrir y cerrar un panel interceptado no vuelve a presentar el contenido del shell.
+  expect(frames.every(frame => frame.region === 1)).toBe(true);
+  // La superficie termina sobre el control que la abrió, con su tamaño.
+  const last = frames.flatMap(frame => frame.surface === null ? [] : [frame.surface]).at(-1)!;
+  expect(Math.abs(last[0] + last[2] / 2 - (avatar.x + avatar.width / 2))).toBeLessThan(1.5);
+  expect(Math.abs(last[1] + last[3] / 2 - (avatar.y + avatar.height / 2))).toBeLessThan(1.5);
+  expect(Math.abs(last[2] - avatar.width)).toBeLessThan(1.5);
+  expect(Math.abs(last[3] - avatar.height)).toBeLessThan(1.5);
+});
 
 test("pistas y detalles permiten invertir la apertura sin perder el editor", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
