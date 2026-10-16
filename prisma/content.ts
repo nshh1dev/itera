@@ -3,7 +3,7 @@ import { programExercises } from "./program-content";
 import { introductoryExercises } from "./introductory-content";
 import { foundationExercises } from "./foundation-content";
 import { beginnerRevisions } from "./beginner-revisions";
-import { learningMetadata } from "./learning-metadata";
+import { learningMetadata, historicalPracticeGoals } from "./learning-metadata";
 import { collectionsExercises, collectionsRevisions } from "./collections-content";
 import { textExercises, textRevisions } from "./text-content";
 import { maximaExercises, maximaRevisions } from "./maxima-content";
@@ -220,7 +220,9 @@ export const exercises: SeedExercise[] = [
   ...exercise,
   ...beginnerRevisions[exercise.slug], ...collectionsRevisions[exercise.slug], ...textRevisions[exercise.slug],
   ...maximaRevisions[exercise.slug], ...searchRevisions[exercise.slug], ...rotationRevisions[exercise.slug],
-  ...learningMetadata[exercise.slug], ...initialBatchRevisions[exercise.slug],
+  ...learningMetadata[exercise.slug],
+  ...(historicalPracticeGoals[exercise.slug] ? { practiceGoals: historicalPracticeGoals[exercise.slug] } : {}),
+  ...initialBatchRevisions[exercise.slug],
   ...(levelOverrides[exercise.slug] ? { level: levelOverrides[exercise.slug] } : {}),
 })).map(exercise => {
   const variant = typescriptVariant(exercise);

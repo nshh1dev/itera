@@ -6,7 +6,7 @@ import { seedVersionContent } from "../prisma/editorial-revision";
 import { learningModules, modulesForPath } from "../src/lib/learning-modules";
 import { learningPaths, introductorySteps } from "../src/lib/learning-paths";
 import { languages } from "../src/lib/types";
-import { editorialSchema } from "../src/lib/editorial";
+import { editorialSchema, publicationMetadataSchema } from "../src/lib/editorial";
 import { prerequisiteIssue } from "../src/lib/curriculum";
 import { ModuleLesson } from "../src/components/practice/module-lesson";
 
@@ -35,13 +35,15 @@ test("los nuevos pasos enseñan variables antes de leer y separan imprimir de de
   before("suma-de-dos-numeros", "presupuesto-de-merienda");
 });
 
-test("todo el catálogo supera la validación editorial y tiene prerrequisitos anteriores", () => {
+test("todo el catálogo supera la validación editorial y de publicación y tiene prerrequisitos anteriores", () => {
   const entries = exercises.map((exercise, order) => ({ slug: exercise.slug, order }));
   for (const exercise of exercises) {
     const version = seedVersionContent(exercise);
     const variants = Object.fromEntries(version.variants.map(variant => [variant.language, variant]));
     const result = editorialSchema.safeParse({ ...exercise, ...version, ...variants, tests: version.variants[0].tests });
     assert.equal(result.success, true, `${exercise.slug}: ${result.success ? "" : JSON.stringify(result.error.issues)}`);
+    const publication = publicationMetadataSchema.safeParse(version);
+    assert.equal(publication.success, true, `${exercise.slug}: ${publication.success ? "" : JSON.stringify(publication.error.issues)}`);
     assert.equal(prerequisiteIssue(exercise.slug, version.prerequisiteSlugs, entries), undefined, exercise.slug);
   }
 });

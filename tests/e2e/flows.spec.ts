@@ -117,13 +117,16 @@ test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async
   expect(await db.progress.count({where:{userId:user.id,firstPassedAt:{not:null}}})).toBe(0);
   await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
   await expect(page.getByText("Un paso más. Ejercicio resuelto.")).toBeVisible();
-  await expect(page.getByText("3 de 3 pruebas ocultas superadas")).toBeVisible();
+  const submission=await db.submission.findFirstOrThrow({where:{userId:user.id,mode:"submit"},orderBy:{createdAt:"desc"}});
+  const hiddenCount=await db.testCase.count({where:{variantId:submission.variantId,visible:false}});
+  expect(hiddenCount).toBeGreaterThan(0);
+  await expect(page.getByText(`${hiddenCount} de ${hiddenCount} pruebas ocultas superadas`)).toBeVisible();
   // La suma continúa con el cierre de la misma ruta, no con el catálogo global.
   await expect(page.getByRole("link",{name:"Continuar con otro ejercicio"})).toHaveAttribute("href","/ejercicios/presupuesto-de-merienda?lenguaje=python&ruta=desde-cero");
   await expect(page.getByRole("link",{name:"Volver a la ruta"})).toHaveAttribute("href","/rutas/desde-cero?lenguaje=python");
-  const submission=await db.submission.findFirstOrThrow({where:{userId:user.id,mode:"submit"},orderBy:{createdAt:"desc"}});
   const result=await page.request.get(`/api/executions/${submission.id}`);
   const payload=await result.json();
+  expect(payload.results.filter((r:{visible:boolean})=>!r.visible)).toHaveLength(hiddenCount);
   for(const hidden of payload.results.filter((r:{visible:boolean})=>!r.visible)){
     expect(hidden).not.toHaveProperty("input");expect(hidden).not.toHaveProperty("expected");expect(hidden).not.toHaveProperty("actual");
   }
@@ -153,11 +156,14 @@ test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async
 
 test("ayudas progresivas, solución explícita y autorización administrativa",async({page})=>{
   await page.context().addCookies(authCookies);
+  const version=await db.exerciseVersion.findFirstOrThrow({where:{exercise:{slug:"par-o-impar"},published:true},orderBy:{number:"desc"}});
+  const firstHint=version.hints[0];
+  expect(firstHint.length).toBeGreaterThan(0);
   await page.goto("/ejercicios/par-o-impar");
   await page.getByRole("button",{name:"Un pequeño empujón"}).click();
-  await expect(page.getByText("Un número par puede dividirse entre dos sin resto.")).toHaveCount(0);
+  await expect(page.getByText(firstHint,{exact:true})).toHaveCount(0);
   await page.getByRole("button",{name:"Descubrir la primera pista"}).click();
-  await expect(page.getByText("Un número par puede dividirse entre dos sin resto.")).toBeVisible();
+  await expect(page.getByText(firstHint,{exact:true})).toBeVisible();
   await page.getByRole("tab",{name:"Solución explicada"}).click();
   await page.getByRole("button",{name:"Ver solución explicada"}).click();
   await expect(page.getByText("return data % 2 == 0",{exact:false})).toBeVisible();
@@ -356,9 +362,9 @@ test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borrador
   expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?1:0));
   if(decision==="create")expect(latest.published).toBe(false);
   expect(await db.exerciseVersion.findUniqueOrThrow({where:{id:previous.id},include:{variants:{orderBy:{language:"asc"},include:{tests:{orderBy:{order:"asc"}}}}}})).toEqual(previous);
-  const published=await db.exerciseVersion.findFirstOrThrow({where:{exerciseId:exercise.id,published:true},orderBy:{number:"desc"}});
+  const published=await db.exerciseVersion.findFirstOrThrow({where:{exerciseId:exercise.id,published:true},orderBy:{number:"desc"},include:{variants:{where:{language:"python"}}}});
   await page.goto(`/ejercicios/${exercise.slug}?lenguaje=python`);
-  await expect(page.locator('section[aria-label="Enunciado"] > p').first()).toHaveText(published.statement);
+  await expect(page.locator('section[aria-label="Enunciado"] > p').first()).toHaveText(published.variants[0]?.statement || published.statement);
   await page.goto(`/admin/ejercicios/${exercise.slug}`);
   await prepare();
   await expect(page.getByRole("status")).toContainText("ya contiene esta revisión");
