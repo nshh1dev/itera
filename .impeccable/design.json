@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-17T00:00:00.000Z",
+  "title": "Design System: Itera",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Azul de instrumento",
+        "canonical": "#0071E3",
+        "tonalRamp": ["#001F3D", "#003366", "#00478F", "#005DBA", "#0071E3", "#4D9CEB", "#99C6F4", "#D9EAFB"]
+      },
+      "primary-text": {
+        "role": "primary",
+        "displayName": "Azul de instrumento, texto",
+        "canonical": "#0066CC",
+        "tonalRamp": ["#001C38", "#002E5C", "#004080", "#0053A6", "#0066CC", "#4D93D9", "#99BFEA", "#D9E7F7"]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Grafito",
+        "canonical": "#1D1D1F",
+        "tonalRamp": ["#1D1D1F", "#3A3A3C", "#58585A", "#76767A", "#94949A", "#B4B4BA", "#D4D4DA", "#F5F5F7"]
+      },
+      "muted-foreground": {
+        "role": "neutral",
+        "displayName": "Grafito medio",
+        "canonical": "#68686D",
+        "tonalRamp": ["#1D1D1F", "#363638", "#4F4F52", "#68686D", "#8E8E93", "#B0B0B6", "#D1D1D7", "#F5F5F7"]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Lienzo neutro",
+        "canonical": "#F0F0F3",
+        "tonalRamp": ["#1D1D1F", "#3A3A3C", "#58585A", "#8A8A90", "#BEBEC4", "#D8D8DE", "#F0F0F3", "#FAFAFC"]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Papel neutro",
+        "canonical": "#FFFFFF",
+        "tonalRamp": ["#1D1D1F", "#3A3A3C", "#58585A", "#76767A", "#B4B4BA", "#D4D4DA", "#F5F5F7", "#FFFFFF"]
+      },
+      "surface-tertiary": {
+        "role": "neutral",
+        "displayName": "Bandeja terciaria",
+        "canonical": "#EBEBEF",
+        "tonalRamp": ["#1D1D1F", "#3A3A3C", "#58585A", "#76767A", "#A0A0A6", "#C4C4CA", "#EBEBEF", "#F7F7F9"]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Filo",
+        "canonical": "#E5E5EA",
+        "tonalRamp": ["#1D1D1F", "#3A3A3C", "#58585A", "#8A8A90", "#BEBEC4", "#D8D8DE", "#E5E5EA", "#F5F5F7"]
+      },
+      "success": {
+        "role": "secondary",
+        "displayName": "Verde de confirmación",
+        "canonical": "#34C759",
+        "tonalRamp": ["#0E3518", "#175A28", "#217D38", "#2BA349", "#34C759", "#71D688", "#ADE9BC", "#E1F8E7"]
+      },
+      "destructive": {
+        "role": "tertiary",
+        "displayName": "Rojo de error",
+        "canonical": "#B42318",
+        "tonalRamp": ["#310906", "#51100B", "#71160F", "#941D14", "#B42318", "#C95A54", "#E0918C", "#F2D0CD"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Titular de la portada; centrado solo en escritorio." },
+      "headline": { "displayName": "Headline", "purpose": "Títulos de sección de la portada y cierre." },
+      "title": { "displayName": "Title", "purpose": "Título de página y de bloque interno." },
+      "body": { "displayName": "Body", "purpose": "Prosa de lectura: enunciados, teoría y explicaciones." },
+      "compact": { "displayName": "Compact", "purpose": "Texto de interfaz y controles." },
+      "label": { "displayName": "Label", "purpose": "Etiquetas de campo, insignias y navegación." },
+      "mono": { "displayName": "Mono", "purpose": "Código, cifras comparadas y numeración." }
+    },
+    "shadows": [
+      { "name": "control", "value": "0 1px 2px #0000000A, inset 0 1px 0 #FFFFFF26", "purpose": "Botón principal y segmento activo." },
+      { "name": "panel", "value": "inset 0 0 0 1px #DADAE1, 0 1px 2px #1D1D1F06, 0 4px 16px #1D1D1F05", "purpose": "Superficies de trabajo separadas del lienzo." },
+      { "name": "floating", "value": "0 8px 28px #00000014, 0 1px 4px #00000008", "purpose": "Menús y tooltips." },
+      { "name": "dialog", "value": "0 24px 80px #00000029, 0 2px 8px #00000008", "purpose": "Panel de configuración y cajón de navegación." },
+      { "name": "landing-demo", "value": "0 16px 48px #0000000C", "purpose": "Única sombra ambiental: el objeto apoyado de la portada." }
+    ],
+    "motion": [
+      { "name": "response", "value": "120ms", "purpose": "Cambio de color y respuesta al pulsar." },
+      { "name": "disclosure", "value": "200ms", "purpose": "Desplegables, pestañas, progreso y cambio de tema." },
+      { "name": "navigation", "value": "200ms", "purpose": "Entrada de estado al cambiar de zona." },
+      { "name": "panel-open", "value": "320ms", "purpose": "Apertura de un panel desde su control de origen." },
+      { "name": "panel-close", "value": "220ms", "purpose": "Cierre de panel y fundido del fondo." },
+      { "name": "ease", "value": "cubic-bezier(.2, .8, .2, 1)", "purpose": "Curva compartida entre CSS y Web Animations." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1200px" },
+      { "name": "2xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón primario",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "La acción que ejecuta el envío o confirma un cambio.",
+      "html": "<button class=\"ds-btn-primary\">Ejecutar</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 8px 16px; border: 0; border-radius: 12px; background: var(--primary, #0071E3); color: var(--primary-foreground, #fff); font-family: inherit; font-size: 14px; font-weight: 500; line-height: 1.6; box-shadow: 0 1px 2px #0000000A, inset 0 1px 0 #FFFFFF26; transition: filter 150ms, scale 120ms; cursor: pointer; } .ds-btn-primary:hover { filter: brightness(0.95); } .ds-btn-primary:active { scale: 0.98; filter: brightness(0.9); } .ds-btn-primary:focus-visible { outline: 2px solid var(--ring, #0071E3); outline-offset: 3px; }"
+    },
+    {
+      "name": "Botón fantasma",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Acción secundaria que no compite con la principal.",
+      "html": "<button class=\"ds-btn-ghost\">Guardar borrador</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 8px 16px; border: 0; border-radius: 12px; background: transparent; color: var(--muted-foreground, #68686D); font-family: inherit; font-size: 14px; font-weight: 500; transition: background-color 120ms, color 120ms; cursor: pointer; } .ds-btn-ghost:hover { background: var(--selection, #EAEAED); color: var(--foreground, #1D1D1F); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--ring, #0071E3); outline-offset: 3px; }"
+    },
+    {
+      "name": "Campo de formulario",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Entrada de texto de una línea, con etiqueta y ayuda.",
+      "html": "<label class=\"ds-field-label\" for=\"ds-field\">Correo electrónico</label><input id=\"ds-field\" class=\"ds-field\" type=\"email\" placeholder=\"tu@correo.com\" />",
+      "css": ".ds-field-label { display: block; margin-bottom: 8px; color: var(--foreground, #1D1D1F); font-family: inherit; font-size: 14px; font-weight: 500; } .ds-field { box-sizing: border-box; width: 100%; min-height: 40px; padding: 8px 12px; border: 1px solid var(--input, #86868B); border-radius: 8px; background: var(--control, #fff); color: var(--foreground, #1D1D1F); font-family: inherit; font-size: 14px; transition: border-color 120ms; } .ds-field::placeholder { color: var(--muted-foreground, #68686D); } .ds-field:hover { border-color: var(--muted-foreground, #68686D); } .ds-field:focus-visible { border-color: var(--primary, #0071E3); outline: 2px solid var(--ring, #0071E3); outline-offset: 3px; }"
+    },
+    {
+      "name": "Enlace de navegación",
+      "kind": "nav",
+      "refersTo": "navigation-link",
+      "description": "Entrada de la barra lateral; el estado activo se marca con fondo y texto.",
+      "html": "<a class=\"ds-nav-link\" href=\"#\" aria-current=\"page\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 19.5V5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2z\"/><path d=\"M8 7h7M8 11h7\"/></svg><span>Ejercicios</span></a>",
+      "css": ".ds-nav-link { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 8px 12px; border-radius: 10px; background: transparent; color: var(--muted-foreground, #68686D); font-family: inherit; font-size: 14px; text-decoration: none; transition: background-color 160ms, color 160ms; } .ds-nav-link svg { width: 17px; height: 17px; flex-shrink: 0; } .ds-nav-link:hover { background: var(--selection, #EAEAED); color: var(--foreground, #1D1D1F); } .ds-nav-link[aria-current=\"page\"] { background: var(--selection, #EAEAED); color: var(--foreground, #1D1D1F); font-weight: 600; } .ds-nav-link[aria-current=\"page\"] svg { color: var(--primary, #0071E3); } .ds-nav-link:focus-visible { outline: 2px solid var(--ring, #0071E3); outline-offset: 3px; }"
+    },
+    {
+      "name": "Insignia",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Metadato breve: lenguaje, nivel, estado o versión.",
+      "html": "<span class=\"ds-badge\">Intermedio</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 4px 10px; border-radius: 9999px; background: var(--surface-secondary, #EBEBEF); color: var(--tonal-foreground, #68686D); font-family: inherit; font-size: 13px; font-weight: 500; line-height: 1; }"
+    },
+    {
+      "name": "Entrada de lista",
+      "kind": "card",
+      "refersTo": "list-entry",
+      "description": "Fila de catálogo o de historial; toda el área es el objetivo.",
+      "html": "<a class=\"ds-list-entry\" href=\"#\"><span class=\"ds-list-title\">Suma de dos números</span><span class=\"ds-list-meta\">Python · Principiante</span></a>",
+      "css": ".ds-list-entry { display: flex; flex-direction: column; gap: 6px; padding: 16px 12px; border-radius: 8px; color: var(--foreground, #1D1D1F); font-family: inherit; text-decoration: none; transition: background-color 120ms; overflow-wrap: anywhere; } .ds-list-entry:hover, .ds-list-entry:focus-visible { background: var(--surface-primary, #fff); } .ds-list-title { font-size: 16px; font-weight: 500; } .ds-list-meta { color: var(--muted-foreground, #68686D); font-size: 13px; } .ds-list-entry:focus-visible { outline: 2px solid var(--ring, #0071E3); outline-offset: -2px; }"
+    },
+    {
+      "name": "Control segmentado",
+      "kind": "chip",
+      "refersTo": "segment",
+      "description": "Alterna entre vistas equivalentes sin recargar la página.",
+      "html": "<div class=\"ds-segmented\" role=\"group\" aria-label=\"Vista\"><button class=\"ds-segment\" aria-pressed=\"true\">Enunciado</button><button class=\"ds-segment\" aria-pressed=\"false\">Resultados</button></div>",
+      "css": ".ds-segmented { display: inline-flex; gap: 4px; padding: 4px; border-radius: 12px; background: var(--surface-inset, #F0F0F2); box-shadow: inset 0 0 0 1px var(--panel-outline, #DADAE1); } .ds-segment { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 4px 12px; border: 0; border-radius: 10px; background: transparent; color: var(--tonal-foreground, #68686D); font-family: inherit; font-size: 13px; transition: background-color 120ms, color 120ms; cursor: pointer; } .ds-segment:hover { color: var(--foreground, #1D1D1F); } .ds-segment[aria-pressed=\"true\"] { background: var(--control, #fff); color: var(--foreground, #1D1D1F); font-weight: 500; box-shadow: 0 1px 2px #0000000A, inset 0 1px 0 #FFFFFF26; } .ds-segment:focus-visible { outline: 2px solid var(--ring, #0071E3); outline-offset: -2px; }"
+    },
+    {
+      "name": "Diálogo",
+      "kind": "custom",
+      "refersTo": "dialog",
+      "description": "Panel flotante de configuración y cajón de navegación móvil.",
+      "html": "<div class=\"ds-dialog\"><div class=\"ds-dialog-header\"><h2 class=\"ds-dialog-title\">Configuración</h2><button class=\"ds-dialog-close\" aria-label=\"Cerrar\">×</button></div><p class=\"ds-dialog-copy\">Perfil, práctica y apariencia se ajustan aquí.</p></div>",
+      "css": ".ds-dialog { width: min(420px, 100%); padding: 28px; border-radius: 20px; background: var(--elevated, #fff); color: var(--foreground, #1D1D1F); font-family: inherit; box-shadow: 0 24px 80px #00000029, 0 2px 8px #00000008, inset 0 0 0 1px var(--border-soft, #DEDEE5); } .ds-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; } .ds-dialog-title { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.02em; } .ds-dialog-copy { margin: 8px 0 0; color: var(--muted-foreground, #68686D); font-size: 14px; line-height: 1.7; } .ds-dialog-close { display: grid; place-content: center; width: 36px; height: 36px; border: 0; border-radius: 10px; background: transparent; color: var(--muted-foreground, #68686D); font-size: 20px; cursor: pointer; } .ds-dialog-close:hover { background: var(--selection, #EAEAED); color: var(--foreground, #1D1D1F); } .ds-dialog-close:focus-visible { outline: 2px solid var(--ring, #0071E3); outline-offset: 2px; }"
+    },
+    {
+      "name": "Marca",
+      "kind": "custom",
+      "description": "Cuadrado grafito con dos ángulos y el nombre con punto azul.",
+      "html": "<a class=\"ds-brand\" href=\"#\" aria-label=\"Itera, inicio\"><span class=\"ds-brand-mark\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 6-5 6 5 6m6-12 5 6-5 6\"/></svg></span><span class=\"ds-brand-name\">itera<span class=\"ds-brand-dot\">.</span></span></a>",
+      "css": ".ds-brand { display: inline-flex; align-items: center; gap: 10px; color: var(--foreground, #1D1D1F); font-family: inherit; text-decoration: none; } .ds-brand-mark { display: grid; place-content: center; width: 32px; height: 32px; border-radius: 10px; background: var(--foreground, #1D1D1F); color: var(--background, #fff); } .ds-brand-mark svg { width: 21px; height: 21px; } .ds-brand-name { font-size: 25px; font-weight: 600; line-height: 1; letter-spacing: -0.07em; } .ds-brand-dot { color: var(--primary, #0071E3); } .ds-brand:focus-visible { outline: 2px solid var(--ring, #0071E3); outline-offset: 4px; border-radius: 8px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "El taller de escritorio",
+    "overview": "Itera se ve como un escritorio de trabajo bien ordenado, no como un producto que quiere llamar la atención. Hay una superficie de fondo, encima paneles, y encima las herramientas: el enunciado, el editor, los resultados. Cada capa se distingue por tono antes que por línea, y lo que flota —un menú, un diálogo— es lo único que proyecta sombra. La interfaz es precisa y callada: ordena, orienta y se aparta para que el código y el resultado ocupen el centro.\n\nEl sistema es monocromático y frío. El azul de instrumento aparece solo cuando hay una acción que ejecutar, un enlace que seguir o un foco que mostrar; el verde solo confirma un éxito comprobado. Nada decora con color. La tipografía hace el trabajo de jerarquía: Geist para leer y para la interfaz, Geist Mono para el código, las cifras comparadas y el orden de los pasos.\n\nLa densidad es la de una herramienta, no la de una revista ni la de un panel de métricas: bloques amplios, texto de lectura a 16 px, controles compactos y una columna de trabajo que nunca se encoge por debajo de lo usable. El movimiento es breve y funcional: responde, revela y se retira; nunca celebra.",
+    "keyCharacteristics": [
+      "Superficies tonales apiladas con contorno interior de 1 px; sombra solo para lo que flota.",
+      "Azul escaso y funcional; verde reservado a la confirmación de éxito.",
+      "Monoespaciada con propósito: código, cifras, números de paso y de ruta.",
+      "Controles compactos en escritorio, objetivos de 44 px en punteros gruesos.",
+      "Sin degradados, sin tarjetas de métricas, sin celebraciones."
+    ],
+    "rules": [
+      {
+        "name": "La regla del azul escaso",
+        "body": "El azul solo señala acción, enlace o foco. Nunca es fondo de sección, borde decorativo ni acento tipográfico.",
+        "section": "colors"
+      },
+      {
+        "name": "La regla del verde único",
+        "body": "El verde significa éxito comprobado. No marca novedad, marca personal ni progreso genérico.",
+        "section": "colors"
+      },
+      {
+        "name": "La regla de la capa antes que la línea",
+        "body": "Si dos superficies se distinguen por tono, no se les añade un divisor.",
+        "section": "colors"
+      },
+      {
+        "name": "La regla del texto que no encoge",
+        "body": "El cuerpo educativo no baja de 1rem y la interfaz no baja de 0.8125rem. Al estrechar la ventana se reorganiza; no se reduce el texto.",
+        "section": "typography"
+      },
+      {
+        "name": "La regla de la mono con propósito",
+        "body": "Geist Mono se usa para código, cifras y orden. Una etiqueta que no es ninguna de las tres va en Geist.",
+        "section": "typography"
+      },
+      {
+        "name": "La regla de la sombra que se gana",
+        "body": "Una superficie plana no lleva sombra. Si no flota ni se eleva sobre el lienzo, se separa con tono y contorno.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do resolver la separación con tono y, si hace falta, un contorno interior de 1 px que no cambie medidas.",
+      "Do usar el azul solo en acción, enlace y foco; comprobar ambos temas.",
+      "Do mantener el cuerpo de lectura a 1rem y la interfaz a 0.8125rem como mínimo.",
+      "Do conservar objetivos de 44 px en punteros gruesos y foco visible con anillo.",
+      "Do dejar que Geist Mono aparezca solo en código, cifras y numeración.",
+      "Do respetar prefers-reduced-motion: sin desplazamiento ni escala, con cambios instantáneos."
+    ],
+    "donts": [
+      "Don't introducir degradados, cristal, ruido, ilustraciones ni color decorativo.",
+      "Don't convertir secciones en rejillas de tarjetas de métricas.",
+      "Don't añadir insignias, rachas, confeti ni celebraciones de progreso.",
+      "Don't repetir divisores cuando el tono ya separa dos superficies.",
+      "Don't reducir el tamaño del texto para que quepa más contenido.",
+      "Don't sustituir el foco del navegador por un cambio de color de fondo."
+    ]
+  }
+}
