@@ -28,22 +28,25 @@ export function PracticeDemo() {
     setResult(solve({ a: first, b: second }));
   }
 
-  return <div className="landing-demo" aria-label="Demostración de Dos números, una suma">
+  return <section className="landing-demo" aria-labelledby="demo-title">
     <div className="landing-demo-toolbar"><span className="flex items-center gap-2"><Code2 className="size-4" aria-hidden="true" /> Prueba la idea</span><span className="text-muted-foreground">JavaScript · código fijo</span></div>
     <div className="landing-demo-problem">
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground"><span>Fundamentos</span><span>Principiante</span></div>
-      <h2>Dos números, una suma.</h2>
+      <h2 id="demo-title">Dos números, una suma.</h2>
       <p>Recibe dos números, <code>a</code> y <code>b</code>.<br className="sm:hidden" /> Devuelve su suma.</p>
     </div>
     <div className="landing-demo-workbench">
     <div className="landing-demo-editor">
       <div className="landing-file-label"><span>Código</span><span>solucion.js · Solo lectura</span></div>
-      <pre className="landing-code" aria-label="Solución en JavaScript"><code>
-        <span className="landing-code-line"><span className="landing-line-number" aria-hidden="true">1</span><span><span className="text-primary-text">function</span> solve(data) &#123;</span>{"\n"}</span>
-        <span className="landing-code-line"><span className="landing-line-number" aria-hidden="true">2</span><span className="text-muted-foreground">{"  // Una idea: sumar ambos valores."}</span>{"\n"}</span>
-        <span className="landing-code-line landing-code-active"><span className="landing-line-number" aria-hidden="true">3</span><span>{"  "}<span className="text-primary-text">return</span> data.a + data.b;</span>{"\n"}</span>
-        <span className="landing-code-line"><span className="landing-line-number" aria-hidden="true">4</span><span>&#125;</span></span>
-      </code></pre>
+      <figure aria-labelledby="demo-code-label">
+        <figcaption id="demo-code-label" className="sr-only">Código de la solución en JavaScript</figcaption>
+        <pre className="landing-code"><code>
+          <span className="landing-code-line"><span className="landing-line-number" aria-hidden="true">1</span><span><span className="text-primary-text">function</span> solve(data) &#123;</span>{"\n"}</span>
+          <span className="landing-code-line"><span className="landing-line-number" aria-hidden="true">2</span><span className="text-muted-foreground">{"  // Una idea: sumar ambos valores."}</span>{"\n"}</span>
+          <span className="landing-code-line landing-code-active"><span className="landing-line-number" aria-hidden="true">3</span><span>{"  "}<span className="text-primary-text">return</span> data.a + data.b;</span>{"\n"}</span>
+          <span className="landing-code-line"><span className="landing-line-number" aria-hidden="true">4</span><span>&#125;</span></span>
+        </code></pre>
+      </figure>
     </div>
     <form onSubmit={calculate} className="landing-demo-console" noValidate>
       <fieldset>
@@ -58,10 +61,10 @@ export function PracticeDemo() {
       <div id="demo-error" role="alert" className="text-xs text-destructive">{error}</div>
       <div className="landing-demo-result" role="status" aria-live="polite" aria-atomic="true">
         <div className="flex items-center gap-3"><ArrowRight className="size-4 text-muted-foreground" aria-hidden="true" /><span>Resultado</span><output key={result} className="motion-feedback" htmlFor="demo-a demo-b">{result ?? "—"}</output></div>
-        <span className={result === null ? "text-muted-foreground" : "text-success-text"}>{result === null ? "Entrada modificada" : <><Check className="size-3.5" aria-hidden="true" /> Suma calculada</>}</span>
+        <span className="text-muted-foreground">{result === null ? "Entrada modificada" : <><Check className="size-3.5" aria-hidden="true" /> Suma calculada</>}</span>
       </div>
       <p id="demo-help" className="landing-demo-help">Esta demo calcula la suma en tu navegador. En el editor completo puedes escribir y evaluar tu propio código.</p>
     </form>
     </div>
-  </div>;
+  </section>;
 }

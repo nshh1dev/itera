@@ -314,8 +314,7 @@ paso son círculos o píldoras completas. La marca es un cuadrado de 10 px de ra
 con el glifo de dos ángulos.
 
 No hay recortes diagonales, ni marcos dobles, ni esquinas asimétricas. Los bordes
-son de 1 px y siempre suaves; el único borde de 2 px es la nota al margen de la
-portada, que funciona como marca de lectura.
+son de 1 px y siempre suaves; ningún borde lateral grueso marca tarjetas ni avisos.
 
 ## Components
 

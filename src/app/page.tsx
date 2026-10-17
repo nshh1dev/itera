@@ -26,11 +26,10 @@ export default async function LandingPage() {
     <main id="main-content">
       <section className="landing-hero landing-container" aria-labelledby="landing-title">
         <div className="landing-hero-copy">
-          <p className="landing-intro">Tu taller de programación</p>
           <h1 id="landing-title">Una idea se entiende<br />cuando la pones a prueba.</h1>
           <p className="landing-lead">Aprende lógica escribiendo código. Prueba una idea, compara el resultado y entiende qué cambiar en el siguiente intento.</p>
           <div className="landing-hero-actions">
-            <Button asChild size="lg"><Link href="/inicio">Empezar a practicar <ArrowRight aria-hidden="true" data-icon="inline-end" /></Link></Button>
+            <Button asChild size="lg"><Link href={user ? "/inicio" : "/ejercicios/suma-de-dos-numeros?lenguaje=javascript"}>{user ? "Seguir practicando" : "Empezar a practicar"} <ArrowRight aria-hidden="true" data-icon="inline-end" /></Link></Button>
             <a href="#como-se-aprende" className="landing-quiet-link">Así se aprende <ArrowDown className="size-3.5" aria-hidden="true" /></a>
           </div>
           <p className="landing-hero-note">Python, JavaScript y TypeScript. En tu computadora, a tu ritmo.</p>

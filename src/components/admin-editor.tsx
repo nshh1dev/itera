@@ -5,6 +5,7 @@ import { Save, Upload, Loader2, EyeOff } from "lucide-react";
 import { saveExercise, publishExerciseVersion, hideExercise } from "@/server/admin-actions";
 import { Button } from "./ui/button";
 import { Tabs,TabsList,TabsTrigger,TabsContent } from "./ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
 import { categories, languages, languageNames, levelNames, type Level } from "@/lib/types";
 import { activityNames, type ActivityType, runtimeModeNames, type RuntimeMode } from "@/lib/types";
 
@@ -21,7 +22,8 @@ export function AdminEditor({initial}: {initial:EditorialData}) {
   const [data,setData]=useState(initial);
   const [busy,setBusy]=useState("");
   const [message,setMessage]=useState("");
-  const [pending,startTransition]=useTransition();
+  const [confirm,setConfirm]=useState<"publish"|"hide"|null>(null);
+  const [pending]=useTransition();
   function field(key:keyof EditorialData,value:unknown){setData(old=>({...old,[key]:value}));}
   async function save() {
     setBusy("save"); setMessage("");
@@ -41,9 +43,23 @@ export function AdminEditor({initial}: {initial:EditorialData}) {
     } catch { setMessage("No se pudieron guardar los cambios."); }
     finally { setBusy(""); }
   }
+  async function publish() {
+    setBusy("publish"); setMessage("");
+    try {
+      const result = await publishExerciseVersion(initial.versionId!);
+      setMessage(result.error ?? "Versión validada y publicada.");
+    } catch { setMessage("No se pudo publicar."); }
+    finally { setBusy(""); setConfirm(null); }
+  }
+  async function hide() {
+    setBusy("hide"); setMessage("");
+    try { await hideExercise(initial.id!); setMessage("Ejercicio oculto del catálogo."); }
+    catch { setMessage("No se pudo ocultar."); }
+    finally { setBusy(""); setConfirm(null); }
+  }
   // No aceptar cambios antes de que los controles tengan sus manejadores React.
   return <fieldset disabled={!hydrated || pending} className="min-w-0"><form action={save} className="mt-8">
-    <div className="surface-panel mb-7 rounded-xl bg-surface p-5" aria-label="Proceso de publicación">
+    <div role="group" className="surface-panel mb-7 rounded-xl bg-surface p-5" aria-label="Proceso de publicación">
       <h2 className="section-title">{initial.versionId ? initial.published ? "Versión publicada" : "Versión guardada en borrador" : "Nuevo ejercicio"}</h2>
       <p className="mt-2 max-w-[70ch] text-sm leading-7 text-muted-foreground">Completa el contenido y guarda una nueva versión. Después, valida la versión guardada en los tres lenguajes para publicarla. Guardar no cambia lo que ven los estudiantes.</p>
     </div>
@@ -73,7 +89,14 @@ export function AdminEditor({initial}: {initial:EditorialData}) {
         {(["statement", "starter", "solution", "explanation", "typeContract"] as const).filter(key => key !== "typeContract" || language === "typescript").map(key => <div key={key}><label className="field-label" htmlFor={`${language}-${key}`}>{key === "statement" ? "Enunciado adaptado (vacío usa el común)" : key === "starter" ? "Plantilla inicial" : key === "solution" ? "Solución de referencia" : key === "typeContract" ? "Contrato de tipos (obligatorio en funciones TypeScript)" : "Explicación y complejidad"}</label><textarea id={`${language}-${key}`} className="field min-h-40 font-mono text-xs leading-6" value={data[language][key] ?? ""} onChange={event=>field(language,{...data[language],[key]:event.target.value})} spellCheck={false}/></div>)}
       </TabsContent>)}
     </Tabs></div><div className="editorial-save"><p className="text-sm text-muted-foreground">Guarda primero. La publicación es un paso independiente.</p><Button disabled={!!busy} type="submit">{busy==="save"?<Loader2 className="animate-spin"/>:<Save/>}Guardar nueva versión</Button></div></form>
-    {initial.versionId && <div className="mt-8 flex flex-wrap items-center gap-3 border-t pt-6"><Button variant="secondary" disabled={!!busy} onClick={()=>startTransition(async()=>{setBusy("publish");setMessage("");try{const result=await publishExerciseVersion(initial.versionId!);setMessage(result.error??"Versión validada y publicada.");}catch{setMessage("No se pudo publicar.");}finally{setBusy("");}})}>{busy==="publish"?<Loader2 className="animate-spin"/>:<Upload/>}Validar y publicar versión guardada</Button>{initial.published && <Button variant="ghost" disabled={!!busy} onClick={()=>startTransition(async()=>{setBusy("hide");try{await hideExercise(initial.id!);setMessage("Ejercicio oculto del catálogo.");}catch{setMessage("No se pudo ocultar.");}finally{setBusy("");}})}><EyeOff/>Ocultar del catálogo</Button>}<p className="w-full text-xs text-muted-foreground">La publicación ejecuta las tres soluciones de referencia en Piston. TypeScript debe compilar sin errores. Guarda tus cambios antes de publicar.</p></div>}
+    {initial.versionId && <div className="mt-8 flex flex-wrap items-center gap-3 border-t pt-6"><Button variant="secondary" disabled={!!busy} onClick={()=>setConfirm("publish")}>{busy==="publish"?<Loader2 className="animate-spin"/>:<Upload/>}Validar y publicar versión guardada</Button>{initial.published && <Button variant="ghost" disabled={!!busy} onClick={()=>setConfirm("hide")}><EyeOff/>Ocultar del catálogo</Button>}<p className="w-full text-xs text-muted-foreground">La publicación ejecuta las tres soluciones de referencia en Piston. TypeScript debe compilar sin errores. Guarda tus cambios antes de publicar.</p></div>}
+    <Dialog open={confirm !== null} onOpenChange={open => { if (!open && !busy) setConfirm(null); }}>
+      <DialogContent className="max-w-md">
+        <DialogTitle className="pr-6 text-xl font-semibold tracking-tight">{confirm === "hide" ? "Ocultar del catálogo" : "Validar y publicar"}</DialogTitle>
+        <DialogDescription className="mt-2 text-base leading-7 text-muted-foreground">{confirm === "hide" ? "El ejercicio dejará de aparecer en el catálogo y en las rutas. Los intentos y borradores de las personas se conservan." : "Se ejecutarán las tres soluciones de referencia y esta versión pasará a ser la que ve el catálogo. Las versiones anteriores se conservan para los envíos históricos."}</DialogDescription>
+        <div className="mt-6 flex flex-wrap justify-end gap-2"><Button variant="ghost" disabled={!!busy} onClick={()=>setConfirm(null)}>Cancelar</Button><Button variant={confirm === "hide" ? "destructive" : "default"} disabled={!!busy} onClick={()=>confirm === "hide" ? hide() : publish()}>{busy ? <Loader2 className="animate-spin"/> : confirm === "hide" ? <EyeOff/> : <Upload/>}{confirm === "hide" ? "Ocultar ejercicio" : "Validar y publicar"}</Button></div>
+      </DialogContent>
+    </Dialog>
     {message&&<p role="status" className="mt-5 rounded-lg bg-surface p-4 text-sm leading-7">{message}</p>}
   </fieldset>;
 }

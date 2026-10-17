@@ -13,13 +13,14 @@ export function Results({ result, busy, error, nextHref, collapsed = false, onTo
   return <section aria-label="Resultados de ejecución">
     <div className="results-toolbar flex h-[42px] items-center gap-2 px-4 text-xs font-medium">
       <Terminal className="size-3.5 text-muted-foreground" aria-hidden="true" />Resultados
-      <span className="ml-auto font-normal text-muted-foreground">{busy ? "Evaluando…" : result ? `${result.passedCount} / ${result.totalCount} pruebas` : "Sin ejecuciones"}</span>
+      <span className="ml-auto font-normal text-muted-foreground">{busy ? "Evaluando…" : error ? "No se pudo ejecutar" : result ? `${result.passedCount} / ${result.totalCount} pruebas` : "Sin ejecuciones"}</span>
       {onToggle && <Button variant="ghost" size="icon" className="hidden min-[1200px]:inline-flex" aria-label={collapsed ? "Expandir resultados" : "Contraer resultados"} aria-expanded={!collapsed} aria-controls={contentId} title={collapsed ? "Expandir resultados" : "Contraer resultados"} onClick={onToggle}>{collapsed ? <ChevronUp /> : <ChevronDown />}</Button>}
     </div>
-    <div id={contentId} className={cn("p-4", collapsed && "min-[1200px]:hidden")} aria-live="polite" aria-busy={busy}>
+    <div id={contentId} className={cn("p-4", collapsed && "min-[1200px]:hidden")} aria-busy={busy}>
+      <p role="status" className="sr-only">{busy ? "Evaluando tu solución." : error ? "No se pudo ejecutar el programa." : result ? `${result.passedCount} de ${result.totalCount} pruebas superadas.` : ""}</p>
       <MotionRegion motionKey={busy ? "busy" : error || (result ? `${result.status}:${result.mode}:${result.passedCount}` : "empty")}>
-      {busy ? <div className="flex items-center gap-3 py-4"><Loader2 className="size-5 shrink-0 animate-spin text-primary" aria-hidden="true" /><div><p className="text-sm font-medium">Probando tu idea…</p><p className="mt-1 text-xs text-muted-foreground">Ejecutando en el sandbox de tu computadora.</p></div></div>
-        : error ? <div className="border-l-2 border-destructive py-1 pl-3"><div className="flex items-center gap-2 text-sm font-medium"><Info className="size-4 text-destructive" aria-hidden="true" />No pudimos ejecutar el programa</div><p className="mt-2 text-sm leading-6 text-muted-foreground">{error}</p><p className="mt-3 text-xs text-muted-foreground">Puedes seguir escribiendo, explorar pistas o consultar la solución.</p></div>
+      {busy ? <div className="flex items-center gap-3 py-4"><Loader2 className="size-5 shrink-0 animate-spin text-primary" aria-hidden="true" /><div><p className="text-sm font-medium">Probando tu idea…</p><p className="mt-1 text-xs text-muted-foreground">Ejecutando en un entorno aislado de esta computadora.</p></div></div>
+        : error ? <div className="rounded-lg bg-surface p-3"><div className="flex items-center gap-2 text-sm font-medium"><Info className="size-4 text-destructive" aria-hidden="true" />No pudimos ejecutar el programa</div><p className="mt-2 text-sm leading-6 text-muted-foreground">{error}</p><p className="mt-3 text-xs text-muted-foreground">Puedes seguir escribiendo, explorar pistas o consultar la solución.</p></div>
         : !result ? <div className="py-4 text-center"><span className="mx-auto mb-3 flex size-9 items-center justify-center rounded-lg bg-control"><Terminal className="size-4 text-muted-foreground" aria-hidden="true" /></span><p className="text-sm">Todo empieza con un intento.</p><p className="mt-2 text-xs leading-6 text-muted-foreground">Ejecuta los ejemplos para ver cómo se comporta tu código.</p></div>
         : <>
           <div className="flex items-start gap-2.5">

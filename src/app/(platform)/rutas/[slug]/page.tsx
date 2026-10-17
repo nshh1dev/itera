@@ -24,7 +24,7 @@ export default async function PathPage({ params, searchParams }: { params: Promi
   const next = definition ? learningPaths.find(path => path.order > definition.order) : undefined;
   const nextExercise = exercises.find(exercise => !exercise.solved);
   return <div className="page-container">
-    <Link href="/rutas" className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-primary"><ArrowLeft className="size-3.5" />Todas las rutas</Link>
+    <Link href="/rutas" className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-primary-text"><ArrowLeft className="size-3.5" />Todas las rutas</Link>
     <h1 className="page-title mt-5">{path.title}</h1>
     {definition && <p className="mt-3 text-xs font-medium text-muted-foreground">{levelNames[definition.level]} · Fundamentos de programación y algoritmos</p>}
     <p className="page-description">{path.description}</p>
