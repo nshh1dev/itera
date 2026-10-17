@@ -59,9 +59,10 @@ Si ya tienes una base propia, copia `.env.example` a `.env`, establece `DATABASE
 ### Inicios siguientes
 
 ```sh
-npm run db:start
 npm run dev
 ```
+
+`npm run dev` inicia primero el PostgreSQL privado mediante `predev` y después Next.js. Si la base ya está encendida, la reutiliza; si no puede arrancar, no inicia Next.js. No aplica migraciones ni ejecuta el seed: la primera preparación sigue siendo `npm run setup`. Con una `DATABASE_URL` personalizada debes iniciar tu servidor PostgreSQL por separado.
 
 Para parar la aplicación: `Ctrl+C`. Para parar **solo el clúster del proyecto**: `npm run db:stop`.
 
@@ -125,7 +126,7 @@ Los usuarios nuevos no pueden asignarse el rol de administrador. Los permisos se
 | Comando | Función |
 | --- | --- |
 | `npm run setup` | Preparación local completa e idempotente. |
-| `npm run dev` | Desarrollo en `127.0.0.1:3000`. |
+| `npm run dev` | Iniciar PostgreSQL privado y desarrollo en `127.0.0.1:3000`. |
 | `npm run build` / `npm start` | Build y ejecución de producción local. |
 | `npm run db:start` / `npm run db:stop` | Controlar el clúster privado. |
 | `npm run db:migrate` / `npm run db:seed` | Migraciones y catálogo. |
