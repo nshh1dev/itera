@@ -4,7 +4,7 @@
 motor 0.1.15). Aporta un flujo de contexto —`PRODUCT.md` y `DESIGN.md`—, 24
 comandos de diseño y un detector determinista de 59 reglas sobre la interfaz.
 Este documento registra qué se instaló, qué se midió y en qué orden se piensa
-usar. No describe cambios de interfaz ya acordados.
+usar. Los cambios concretos de interfaz llegan en la implementación.
 
 ## Instalación
 
@@ -13,17 +13,22 @@ usar. No describe cambios de interfaz ya acordados.
 | Skill | `.opencode/skills/impeccable/` | `npx impeccable install --providers=opencode --scope=project` |
 | Motor | `.opencode/skills/impeccable/scripts/bin/windows-x64/impeccable.exe` | Local al proyecto; `~/.impeccable` no existe |
 | Comando | `.opencode/commands/impeccable.md` | Invoca `/impeccable` |
+| Configuración | `.impeccable/config.json` | `"telemetry": false` |
 | Ignorados | `.gitignore`, bloque `impeccable-ignore` | Salida efímera de `.impeccable/` |
 
 - OpenCode descubre `.opencode/skills` con la precedencia más alta y conserva
   `.agents/skills` intacto; los identificadores no chocan.
-- Nada de esto se versiona: `.opencode/` y `.agents/` siguen sin seguimiento, como
-  ya estaban.
+- La skill y su motor no se versionan: `.opencode/` y `.agents/` siguen sin
+  seguimiento, como ya estaban.
 - Dos ajustes al comando instalado: `subtask: true` pasaba la conversación a una
   sesión hija, que no puede entrevistar al usuario en `init` —ahora es
   `subagent: false`—; y `skill({ name: … })` pasa a `skill({ id: … })`, la forma
   que lee OpenCode V2. `npx impeccable update` reescribe el archivo, así que hay
   que reaplicar los dos cambios tras cada actualización.
+- La telemetría queda desactivada por proyecto, no por máquina: `impeccable
+  telemetry status` confirma «off (`telemetry: false` in `.impeccable/config.json`)».
+  El sorteo de direcciones sigue funcionando; solo se le pide a la API que no lo
+  registre.
 
 ## Diagnóstico inicial
 
@@ -42,6 +47,9 @@ expresión regular: **un hallazgo**.
 El motor avisa de que las reglas que necesitan una página renderizada —contraste,
 tamaño de texto, objetivos táctiles— no corren sobre archivos. El recuento real
 sale de escanear la URL con el servidor en marcha.
+
+`impeccable doctor` no encuentra desajustes entre los artefactos del proyecto y lo
+que lee esta versión.
 
 ## Cómo se usa
 
@@ -81,7 +89,8 @@ refinaciones acotadas, no.
 
 ### Fase 3. Superficie por superficie
 
-Orden propuesto de mayor a menor valor, con los comandos que mejor encajan:
+Una sola pasada por las diez superficies, en este orden de mayor a menor valor,
+con los comandos que mejor encajan en cada una:
 
 | Superficie | Modo | Comandos |
 | --- | --- | --- |
@@ -95,6 +104,9 @@ Orden propuesto de mayor a menor valor, con los comandos que mejor encajan:
 | `/progreso` | Operate | `onboard`, `distill` |
 | `/admin`, `/admin/ejercicios/[slug]` | Operate | `polish` acotado |
 | `not-found`, `error` | Read | `clarify`, `harden` |
+
+Al ser una pasada completa, conviene cerrar cada superficie con sus pruebas antes
+de pasar a la siguiente: así una regresión se atribuye sin ambigüedad.
 
 ### Fase 4. Movimiento y detalle
 
@@ -123,12 +135,11 @@ Orden propuesto de mayor a menor valor, con los comandos que mejor encajan:
 - El detector es evidencia mecánica, no prueba de calidad: no sustituye mirar la
   experiencia en los tamaños reales.
 
-## Decisiones pendientes
+## Decisiones acordadas
 
-1. Telemetría. Por defecto, `impeccable` envía un registro anónimo al elegir
-   dirección visual; nunca envía código ni `PRODUCT.md`. Propuesta: desactivarla
-   con `"telemetry": false` en `.impeccable/config.json`.
-2. `live` y `generate`: ¿se habilitan para iterar en el navegador?
-3. ¿Se versionan `PRODUCT.md`, `DESIGN.md` y `.impeccable/critique/*.md`?
-4. Alcance de la fase 3: todas las superficies o empezar por portada y taller.
-5. Hallazgo `side-tab`: ¿retirar, sustituir o exceptuar?
+1. Telemetría desactivada por proyecto (`.impeccable/config.json`).
+2. Fase 3 en una sola pasada por las diez superficies.
+3. Se versionan `PRODUCT.md`, `DESIGN.md`, `.impeccable/config.json` y
+   `.impeccable/critique/*.md`; el resto de `.impeccable/` es salida efímera.
+4. `live` y `generate` se habilitan cuando lleguemos a una superficie concreta.
+5. El hallazgo `side-tab` se resuelve en la fase 2, al medir la portada.
