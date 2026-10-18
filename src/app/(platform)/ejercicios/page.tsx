@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Search, ArrowLeft, ArrowRight, X } from "lucide-react";
 import { currentUser } from "@/server/auth";
 import { getCatalog } from "@/server/catalog";
-import { db } from "@/server/db";
+import { getLastDraft } from "@/server/activity";
 import { languageSchema } from "@/lib/validation";
 import { levelNames, type Language, type Level } from "@/lib/types";
 import { exerciseHref } from "@/lib/learning-paths";
@@ -19,8 +19,10 @@ export default async function ExercisesPage({ searchParams }: { searchParams: Pr
   const user = await currentUser();
   const str = (key: string) => typeof params[key] === "string" ? params[key] as string : "";
   const language = languageSchema.catch((user?.preference?.language ?? "python") as Language).parse(str("lenguaje"));
-  const catalog = await getCatalog(user?.id, language);
-  const lastDraft = user ? await db.draft.findFirst({ where: { userId: user.id, variant: { language, version: { exercise: { published: true } } } }, orderBy: { updatedAt: "desc" }, select: { variant: { select: { version: { select: { exercise: { select: { slug: true } } } } } } } }) : null;
+  const [catalog, lastDraft] = await Promise.all([
+    getCatalog(user?.id, language),
+    user ? getLastDraft(user.id, language) : null,
+  ]);
   const continueExercise = catalog.find(e => e.slug === lastDraft?.variant.version.exercise.slug && !e.solved);
   const query = str("q").trim().slice(0, 100);
   const level = str("nivel");

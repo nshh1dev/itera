@@ -1,14 +1,14 @@
 "use client";
 import Link from "next/link";
 import { Check, CircleX, Loader2, Terminal, LockKeyhole, ArrowRight, Info, ChevronDown, ChevronUp } from "lucide-react";
-import { useId } from "react";
+import { memo, useId } from "react";
 import type { ExecutionResult, Json, RuntimeMode } from "@/lib/types";
 import { firstDifference } from "@/lib/json-diff";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { MotionRegion } from "@/components/motion-region";
 
-export function Results({ result, busy, error, nextHref, collapsed = false, onToggle, runtimeMode = "FUNCTION" }: { result: ExecutionResult | null; busy: boolean; error: string; nextHref?: string; collapsed?: boolean; onToggle?: () => void; runtimeMode?: RuntimeMode }) {
+export const Results = memo(function Results({ result, busy, error, nextHref, collapsed = false, onToggle, runtimeMode = "FUNCTION" }: { result: ExecutionResult | null; busy: boolean; error: string; nextHref?: string; collapsed?: boolean; onToggle?: () => void; runtimeMode?: RuntimeMode }) {
   const contentId = useId();
   return <section aria-label="Resultados de ejecución">
     <div className="results-toolbar flex h-[42px] items-center gap-2 px-4 text-xs font-medium">
@@ -58,4 +58,4 @@ export function Results({ result, busy, error, nextHref, collapsed = false, onTo
       </MotionRegion>
     </div>
   </section>;
-}
+});

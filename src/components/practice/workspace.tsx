@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { memo, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowLeft, ArrowRight, ChevronLeft, Play, Check, Lightbulb, Loader2, Code2, Clock3, ChevronRight, BookOpen, GripVertical, GripHorizontal } from "lucide-react";
 import type { ExecutionResult, Language, Level, RuntimeMode } from "@/lib/types";
 import { activityNames, type ActivityType } from "@/lib/types";
@@ -23,6 +23,7 @@ import { ExerciseNotes } from "./exercise-notes";
 import { ActivityList, type Activity } from "@/components/activity-list";
 import { Badge } from "@/components/ui/badge";
 import { ModuleLesson, type Lesson } from "./module-lesson";
+import { usePanelSize } from "./use-panel-size";
 
 const CodeEditor = dynamic(() => import("./code-editor"), { ssr: false, loading: () => <div className="flex h-full items-center justify-center text-sm text-muted-foreground">Preparando tu editor…</div> });
 const subscribe = () => () => {};
@@ -42,7 +43,17 @@ type LocalDraft = { code: string; revision: number };
 
 export function Workspace(props: Props) {
   const hydrated = useSyncExternalStore(subscribe, () => true, () => false);
-  if (!hydrated) return <main id="main-content" className="flex min-h-dvh items-center justify-center text-sm text-muted-foreground">Preparando tu espacio…</main>;
+  if (!hydrated) return <AppShell user={props.user} workspace header={<p className="text-sm font-medium">{props.title}</p>}>
+    <main id="main-content" className="workspace-main">
+      <h1 className="sr-only">{props.title}</h1>
+      <div className="workspace-mobile-tabs" aria-hidden="true"><span className="flex min-h-11 flex-1 items-center justify-center text-sm">Enunciado</span><span className="flex min-h-11 flex-1 items-center justify-center text-sm">Código</span><span className="flex min-h-11 flex-1 items-center justify-center text-sm">Resultados</span></div>
+      <div className="workspace-grid" style={{ "--statement-width": "35%" } as React.CSSProperties}>
+        <section className="workspace-statement px-5 py-6 sm:px-7" aria-label="Enunciado"><Challenge exercise={props} /></section>
+        <div className="hidden min-[1200px]:block" />
+        <div className="workspace-editor-column"><p role="status" className="p-5 text-sm text-muted-foreground">Preparando tu editor…</p></div>
+      </div>
+    </main>
+  </AppShell>;
   return <WorkspaceReady key={props.variantId} {...props} />;
 }
 
@@ -71,9 +82,16 @@ function WorkspaceReady(props: Props) {
   const [layout] = useState(readLayout);
   const [simple, setSimple] = useState(layout.simple);
   const [fontSize, setFontSize] = useState(layout.fontSize);
-  const [width, setWidth] = useState(layout.width);
-  const [resultsHeight, setResultsHeight] = useState(layout.resultsHeight);
+  const statementSize = usePanelSize(layout.width, 28, 55);
+  const resultSize = usePanelSize(layout.resultsHeight, 140, 400);
+  const width = statementSize.value;
+  const resultsHeight = resultSize.value;
+  const savedWidth = statementSize.committed;
+  const savedResultsHeight = resultSize.committed;
   const [resultsCollapsed, setResultsCollapsed] = useState(false);
+  const toggleResults = useCallback(() => setResultsCollapsed(value => !value), []);
+  const codePanel = useRef<HTMLDivElement>(null);
+  const [focusCodeRequest, setFocusCodeRequest] = useState(0);
   const grid = useRef<HTMLDivElement>(null);
   const editorColumn = useRef<HTMLDivElement>(null);
   const [posting, setPosting] = useState(false);
@@ -88,7 +106,14 @@ function WorkspaceReady(props: Props) {
   const busy = posting || !!activeId;
 
   useEffect(() => { if (props.userId) { try { sessionStorage.removeItem(transferKey); } catch {} } }, [props.userId, transferKey]);
-  useEffect(() => { try { localStorage.setItem(settingsKey, JSON.stringify({ simple, fontSize, width, resultsHeight })); } catch {} }, [simple, fontSize, width, resultsHeight]);
+  useEffect(() => { try { localStorage.setItem(settingsKey, JSON.stringify({ simple, fontSize, width: savedWidth, resultsHeight: savedResultsHeight })); } catch {} }, [simple, fontSize, savedWidth, savedResultsHeight]);
+  useEffect(() => {
+    if (focusCodeRequest && mobileTab === "code") {
+      // El panel es un destino estable incluso mientras Monaco se descarga.
+      const target = codePanel.current?.querySelector<HTMLTextAreaElement>("textarea");
+      (target ?? codePanel.current)?.focus();
+    }
+  }, [focusCodeRequest, mobileTab]);
 
   function preserveGuestCode() {
     if (!props.userId) { try { sessionStorage.setItem(transferKey, codeRef.current); } catch {} }
@@ -178,14 +203,8 @@ function WorkspaceReady(props: Props) {
       <div className="workspace-mobile-tabs" role="group" aria-label="Secciones del ejercicio">{[{id:"statement",name:"Enunciado"},{id:"code",name:"Código"},{id:"results",name:"Resultados"}].map(tab=><button key={tab.id} onClick={()=>setMobileTab(tab.id)} aria-pressed={mobileTab === tab.id} aria-controls={`workspace-${tab.id}`}>{tab.name}</button>)}</div>
       <div ref={grid} className="workspace-grid" style={{"--statement-width":`${width}%`} as React.CSSProperties}>
         <section id="workspace-statement" className={cn("workspace-statement px-5 py-6 sm:px-7 min-[1200px]:block", mobileTab !== "statement" && "hidden")} aria-label="Enunciado">
-          <div className="challenge-sheet">
-          <p className="workspace-section-label">Entiende el problema</p>
-          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><Badge>{levelNames[props.level]}</Badge><span>{props.category}</span><span className="flex items-center gap-1.5"><Clock3 className="size-3.5" />{props.minutes} min orientativos</span></div><p className="mt-5 text-2xl leading-tight font-semibold tracking-[-0.035em]">{props.title}</p>
-          <h2 className="mt-6 text-base font-semibold">Tu reto</h2><p id="exercise-statement" className="learning-copy mt-3 whitespace-pre-line">{props.statement}</p>
-          {props.practiceGoals.length > 0 && <p className="mt-4 text-xs font-medium text-muted-foreground">{activityNames[props.activityType]}</p>}
-          <Examples examples={props.examples} runtimeMode={props.runtimeMode} />
-          </div>
-          <Button variant="outline" className="mt-6 w-full min-[1200px]:hidden" onClick={()=>setMobileTab("code")}>Ir al código<ArrowRight /></Button>
+          <Challenge exercise={props} />
+          <Button variant="outline" className="mt-6 w-full min-[1200px]:hidden" onClick={()=>{setMobileTab("code");setFocusCodeRequest(value=>value+1);}}>Ir al código<ArrowRight /></Button>
           <details className="workspace-reference">
           <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold">Contexto y ayuda</summary>
           <h2 className="section-title">Aprende mientras practicas</h2>
@@ -217,12 +236,12 @@ function WorkspaceReady(props: Props) {
           {props.recentSubmissions.length > 0 && <section id="workspace-history" className="mt-6" aria-label="Tus intentos en este ejercicio"><h2 className="mb-2 text-sm font-semibold">Tus intentos en este ejercicio</h2><ActivityList entries={props.recentSubmissions} compact /></section>}
           {!props.userId && <Link onClick={preserveGuestCode} href={`/registro?volver=${encodeURIComponent(exerciseHref(props.slug, props.language, props.pathSlug))}`} className="text-link mt-5 text-xs sm:hidden">Guardar mi progreso<ArrowRight className="size-3.5" /></Link>}
         </section>
-        <div role="separator" aria-label="Ajustar ancho de los paneles" aria-orientation="vertical" aria-valuenow={width} aria-valuemin={28} aria-valuemax={55} aria-valuetext={`${Math.round(width)} % del ancho`} tabIndex={0} className="panel-resizer hidden cursor-col-resize items-center justify-center min-[1200px]:flex" onKeyDown={event=>{if(event.key==="ArrowLeft"||event.key==="ArrowRight"){event.preventDefault();setWidth(w=>Math.min(55,Math.max(28,w+(event.key==="ArrowRight"?1:-1))));}}} onPointerDown={event=>event.currentTarget.setPointerCapture(event.pointerId)} onPointerMove={event=>{if(event.currentTarget.hasPointerCapture(event.pointerId)&&grid.current){const rect=grid.current.getBoundingClientRect();setWidth(Math.min(55,Math.max(28,(event.clientX-rect.left)/rect.width*100)));}}} onPointerUp={event=>event.currentTarget.releasePointerCapture(event.pointerId)}><GripVertical className="size-3 shrink-0 text-muted-foreground" /></div>
+        <div role="separator" aria-label="Ajustar ancho de los paneles" aria-orientation="vertical" aria-valuenow={width} aria-valuemin={28} aria-valuemax={55} aria-valuetext={`${Math.round(width)} % del ancho`} tabIndex={0} className="panel-resizer hidden cursor-col-resize items-center justify-center min-[1200px]:flex" onKeyDown={event=>{if(event.key==="ArrowLeft"||event.key==="ArrowRight"){event.preventDefault();statementSize.step(event.key==="ArrowRight"?1:-1);}}} onPointerDown={event=>event.currentTarget.setPointerCapture(event.pointerId)} onPointerMove={event=>{if(event.currentTarget.hasPointerCapture(event.pointerId)&&grid.current){const rect=grid.current.getBoundingClientRect();statementSize.move((event.clientX-rect.left)/rect.width*100);}}} onPointerUp={event=>{statementSize.finish();event.currentTarget.releasePointerCapture(event.pointerId);}} onLostPointerCapture={statementSize.finish} onPointerCancel={statementSize.finish}><GripVertical className="size-3 shrink-0 text-muted-foreground" /></div>
         <div ref={editorColumn} className="workspace-editor-column min-w-0" style={{"--results-height":`${resultsHeight}px`} as React.CSSProperties}>
-          <div id="workspace-code" className={cn("workspace-code",mobileTab !== "code" && "hidden")}>
+          <div ref={codePanel} id="workspace-code" tabIndex={-1} aria-label="Tu código" className={cn("workspace-code",mobileTab !== "code" && "hidden")}>
             <div className="workspace-toolbar flex min-h-12 shrink-0 flex-wrap items-center gap-2 px-4 py-1"><Code2 className="size-4 text-muted-foreground" /><span className="mr-2 hidden text-sm font-medium sm:inline">Tu solución</span><label className="sr-only" htmlFor="workspace-language">Lenguaje del ejercicio</label><select id="workspace-language" value={props.language} onChange={event=>router.push(exerciseHref(props.slug, event.target.value as Language, props.pathSlug))} className="min-h-11 rounded-md bg-surface-secondary px-2 text-xs font-medium md:min-h-8" disabled={busy}>{props.availableLanguages.map(language => <option key={language} value={language}>{languageNames[language]}</option>)}</select><span className="ml-auto flex items-center gap-1.5 text-xs text-muted-foreground">{saveState === "Guardado" && <Check className="size-3" />}{saveState}</span><EditorOptions fontSize={fontSize} onFontSize={setFontSize} code={code} onReset={()=>updateCode(props.starter)} /></div>
             {saveError && <p role="alert" className="border-b bg-surface px-4 py-3 text-xs leading-6">{saveError}</p>}
-            <div className="editor-region">{simple ? <textarea aria-label={`Editor sencillo de ${languageNames[props.language]}`} className="h-full w-full resize-none bg-editor-background px-5 py-5 font-mono leading-7 focus-visible:-outline-offset-2" style={{fontSize}} value={code} onChange={event=>updateCode(event.target.value)} spellCheck={false} autoCapitalize="off" autoCorrect="off" /> : <CodeEditor code={code} language={props.language} onChange={updateCode} fontSize={fontSize} onRun={()=>execute("examples")} onSubmit={()=>execute("submit")} />}</div>
+            <div className="editor-region">{simple ? <textarea aria-label={`Editor sencillo de ${languageNames[props.language]}`} className="h-full w-full resize-none bg-editor-background px-5 py-5 font-mono leading-7 focus-visible:-outline-offset-2" style={{fontSize}} value={code} onChange={event=>updateCode(event.target.value)} onKeyDown={event=>{if(event.key === "Enter" && (event.ctrlKey || event.metaKey) && !event.nativeEvent.isComposing){event.preventDefault();if(!event.repeat && code.trim()) void execute(event.shiftKey ? "submit" : "examples");}}} spellCheck={false} autoCapitalize="off" autoCorrect="off" /> : <CodeEditor code={code} language={props.language} onChange={updateCode} fontSize={fontSize} onRun={()=>execute("examples")} onSubmit={()=>execute("submit")} />}</div>
             <div className="workspace-editor-footer flex shrink-0 flex-wrap items-center gap-2 px-4 py-1"><button className="min-h-11 text-xs text-muted-foreground hover:text-primary-text md:min-h-8" aria-pressed={simple} onClick={()=>setSimple(!simple)}>{simple ? "Usar editor avanzado" : "Editor sencillo"}</button><details className="ml-auto text-xs text-muted-foreground"><summary className="flex min-h-8 cursor-pointer items-center">Atajos de teclado</summary><p className="max-w-sm pb-3 leading-6">Ctrl / ⌘ + Enter: ejecutar ejemplos.<br />Ctrl / ⌘ + Shift + Enter: comprobar solución.{!simple && <><br />Ctrl + M: permitir que Tab salga del editor.</>}</p></details></div>
           </div>
           <div className={cn("workspace-actions flex shrink-0 flex-wrap items-center justify-end gap-2 px-4 py-3 min-[1200px]:flex",mobileTab === "statement" && "hidden")}>
@@ -230,10 +249,20 @@ function WorkspaceReady(props: Props) {
             <Button aria-describedby="execution-help" className="min-w-0 flex-1 whitespace-normal px-2 text-xs [&_svg]:hidden min-[380px]:[&_svg]:block sm:flex-none sm:px-3" variant="outline" disabled={busy || !code.trim()} onClick={()=>execute("examples")}><Play data-icon="inline-start" />Ejecutar ejemplos</Button>
             <Button aria-describedby="execution-help" className="min-w-0 flex-1 whitespace-normal px-2 text-xs [&_svg]:hidden min-[380px]:[&_svg]:block sm:flex-none sm:px-3" disabled={busy || !code.trim()} onClick={()=>execute("submit")}>{busy ? <Loader2 className="animate-spin" data-icon="inline-start" /> : <Check data-icon="inline-start" />}Comprobar solución</Button>
           </div>
-          {!resultsCollapsed && <div role="separator" aria-label="Ajustar altura de resultados" aria-orientation="horizontal" aria-valuenow={resultsHeight} aria-valuemin={140} aria-valuemax={400} aria-valuetext={`${resultsHeight} píxeles`} tabIndex={0} className="panel-resizer hidden h-[7px] shrink-0 cursor-row-resize items-center justify-center min-[1200px]:flex" onKeyDown={event=>{if(event.key==="ArrowUp"||event.key==="ArrowDown"){event.preventDefault();setResultsHeight(h=>Math.min(400,Math.max(140,h+(event.key==="ArrowUp"?20:-20))));}}} onPointerDown={event=>event.currentTarget.setPointerCapture(event.pointerId)} onPointerMove={event=>{if(event.currentTarget.hasPointerCapture(event.pointerId)&&editorColumn.current){const rect=editorColumn.current.getBoundingClientRect();setResultsHeight(Math.min(400,Math.max(140,rect.bottom-event.clientY)));}}} onPointerUp={event=>event.currentTarget.releasePointerCapture(event.pointerId)}><GripHorizontal className="size-3 text-muted-foreground" /></div>}
-          <div id="workspace-results" data-collapsed={resultsCollapsed} className={cn("workspace-results min-[1200px]:block",mobileTab !== "results" && "hidden")}><Results result={result} busy={busy} error={error} nextHref={props.nextHref} collapsed={resultsCollapsed} onToggle={()=>setResultsCollapsed(v=>!v)} runtimeMode={props.runtimeMode} />{executedCode !== null && executedCode !== code && (result || error) && <p className={cn("px-5 pb-4 text-xs text-muted-foreground", resultsCollapsed && "min-[1200px]:hidden")}>Has editado el código desde la última ejecución. Vuelve a comprobarlo.</p>}</div>
+          {!resultsCollapsed && <div role="separator" aria-label="Ajustar altura de resultados" aria-orientation="horizontal" aria-valuenow={resultsHeight} aria-valuemin={140} aria-valuemax={400} aria-valuetext={`${resultsHeight} píxeles`} tabIndex={0} className="panel-resizer hidden h-[7px] shrink-0 cursor-row-resize items-center justify-center min-[1200px]:flex" onKeyDown={event=>{if(event.key==="ArrowUp"||event.key==="ArrowDown"){event.preventDefault();resultSize.step(event.key==="ArrowUp"?20:-20);}}} onPointerDown={event=>event.currentTarget.setPointerCapture(event.pointerId)} onPointerMove={event=>{if(event.currentTarget.hasPointerCapture(event.pointerId)&&editorColumn.current){const rect=editorColumn.current.getBoundingClientRect();resultSize.move(rect.bottom-event.clientY);}}} onPointerUp={event=>{resultSize.finish();event.currentTarget.releasePointerCapture(event.pointerId);}} onLostPointerCapture={resultSize.finish} onPointerCancel={resultSize.finish}><GripHorizontal className="size-3 text-muted-foreground" /></div>}
+          <div id="workspace-results" data-collapsed={resultsCollapsed} className={cn("workspace-results min-[1200px]:block",mobileTab !== "results" && "hidden")}><Results result={result} busy={busy} error={error} nextHref={props.nextHref} collapsed={resultsCollapsed} onToggle={toggleResults} runtimeMode={props.runtimeMode} />{executedCode !== null && executedCode !== code && (result || error) && <p className={cn("px-5 pb-4 text-xs text-muted-foreground", resultsCollapsed && "min-[1200px]:hidden")}>Has editado el código desde la última ejecución. Vuelve a comprobarlo.</p>}</div>
         </div>
       </div>
     </main>
   </AppShell>;
 }
+
+const Challenge = memo(function Challenge({ exercise: props }: { exercise: Props }) {
+  return <div className="challenge-sheet">
+    <p className="workspace-section-label">Entiende el problema</p>
+    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><Badge>{levelNames[props.level]}</Badge><span>{props.category}</span><span className="flex items-center gap-1.5"><Clock3 className="size-3.5" />{props.minutes} min orientativos</span></div><p className="mt-5 text-2xl leading-tight font-semibold tracking-[-0.035em]">{props.title}</p>
+    <h2 className="mt-6 text-base font-semibold">Tu reto</h2><p id="exercise-statement" className="learning-copy mt-3 whitespace-pre-line">{props.statement}</p>
+    {props.practiceGoals.length > 0 && <p className="mt-4 text-xs font-medium text-muted-foreground">{activityNames[props.activityType]}</p>}
+    <Examples examples={props.examples} runtimeMode={props.runtimeMode} />
+  </div>;
+});

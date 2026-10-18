@@ -15,9 +15,11 @@ export default async function PathPage({ params, searchParams }: { params: Promi
   const {slug} = await params;
   const user = await currentUser();
   const language = languageSchema.catch("python").parse((await searchParams).lenguaje ?? user?.preference?.language);
-  const path = await db.learningPath.findUnique({ where: { slug }, include: { items: { orderBy: { position: "asc" } } } });
+  const [path, catalog] = await Promise.all([
+    db.learningPath.findUnique({ where: { slug }, include: { items: { orderBy: { position: "asc" } } } }),
+    getCatalog(user?.id, language),
+  ]);
   if (!path) notFound();
-  const catalog = await getCatalog(user?.id, language);
   const exercises = path.items.flatMap(item => { const exercise = catalog.find(e => e.id === item.exerciseId); return exercise ? [exercise] : []; });
   const modules = modulesForPath(slug);
   const definition = learningPaths.find(path => path.slug === slug);

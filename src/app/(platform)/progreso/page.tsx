@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, ChartNoAxesCombined } from "lucide-react";
 import { currentUser } from "@/server/auth";
 import { db } from "@/server/db";
+import { getRecentSubmissions } from "@/server/activity";
 import { getCatalog } from "@/server/catalog";
 import { languageNames, type Language } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,7 @@ export default async function ProgressPage() {
   const [catalog, attempts, recent, help] = await Promise.all([
     getCatalog(user.id, language),
     db.submission.count({ where: { userId: user.id, mode: "submit", status: { in: ["PASSED", "FAILED"] } } }),
-    db.submission.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 10, select: { id: true, status: true, mode: true, createdAt: true, passedCount: true, totalCount: true, variant: { select: { language: true, version: { select: { title: true, exercise: { select: { slug: true } } } } } } } }),
+    getRecentSubmissions(user.id, 10),
     db.helpUsage.findMany({ where: { userId: user.id, language }, select: { exerciseId: true, kind: true } }),
   ]);
   const solved = catalog.filter(e => e.solved).length;

@@ -3,6 +3,7 @@ import { ArrowRight, Code2, Clock3, Route } from "lucide-react";
 import { currentUser } from "@/server/auth";
 import { getCatalog } from "@/server/catalog";
 import { db } from "@/server/db";
+import { getLastDraft, getRecentSubmissions } from "@/server/activity";
 import { languageNames, levelNames, type Language } from "@/lib/types";
 import { learningPathLevel } from "@/lib/learning-paths";
 import { Button } from "@/components/ui/button";
@@ -14,16 +15,16 @@ export const metadata = { title: "Inicio" };
 export default async function DashboardPage() {
   const user = await currentUser();
   const language = (user?.preference?.language ?? "python") as Language;
-  const catalog = await getCatalog(user?.id, language);
+  const [catalog, lastDraft, paths, recent] = await Promise.all([
+    getCatalog(user?.id, language),
+    user ? getLastDraft(user.id, language) : null,
+    db.learningPath.findMany({ orderBy: { order: "asc" }, include: { _count: { select: { items: true } } } }),
+    user ? getRecentSubmissions(user.id, 5) : [],
+  ]);
   const solved = catalog.filter(e => e.solved).length;
-  const lastDraft = user ? await db.draft.findFirst({ where: { userId: user.id, variant: { language, version: { exercise: { published: true } } } }, orderBy: { updatedAt: "desc" }, select: { variant: { select: { version: { select: { exercise: { select: { slug: true } } } } } } } }) : null;
   const continueExercise = catalog.find(e => e.slug === lastDraft?.variant.version.exercise.slug && !e.solved);
   const recommendation = continueExercise ?? catalog.find(e => !e.solved && e.level === (user?.preference?.level ?? "BEGINNER")) ?? catalog.find(e => !e.solved) ?? catalog[0];
   const suggestions = catalog.filter(e => !e.solved && e.id !== recommendation?.id).slice(0, 3);
-  const [paths, recent] = await Promise.all([
-    db.learningPath.findMany({ orderBy: { order: "asc" }, include: { _count: { select: { items: true } } } }),
-    user ? db.submission.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 5, select: { id: true, status: true, mode: true, createdAt: true, passedCount: true, totalCount: true, variant: { select: { language: true, version: { select: { title: true, exercise: { select: { slug: true } } } } } } } }) : [],
-  ]);
   return <div className="page-container">
     <div className="page-intro">
       <div><h1 className="page-title">{user ? `Hola, ${user.name.split(" ")[0]}.` : "Tu primer paso en programación."}</h1><p className="page-description">{user ? "Retoma tu práctica o descubre tu siguiente ejercicio." : "Empieza con un ejercicio guiado. Puedes explorar sin crear una cuenta."}</p></div>
