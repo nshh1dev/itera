@@ -143,3 +143,35 @@ de pasar a la siguiente: así una regresión se atribuye sin ambigüedad.
    `.impeccable/critique/*.md`; el resto de `.impeccable/` es salida efímera.
 4. `live` y `generate` se habilitan cuando lleguemos a una superficie concreta.
 5. El hallazgo `side-tab` se resuelve en la fase 2, al medir la portada.
+
+## Cierre de esta entrega · 18 de octubre de 2026
+
+- Contexto de producto y sistema visual documentados en `PRODUCT.md`, `DESIGN.md`
+  y `.impeccable/design.json`. Crítica archivada en `.impeccable/critique/`.
+- Aplicados ajustes acotados de portada, sesión, taller, catálogo, inicio, rutas,
+  administración y página de error. No se ha rediseñado configuración ni progreso.
+  El taller conserva la guía visible, con teoría cerrada y acceso al código antes
+  de la referencia; no se agrupó toda la ayuda en un único desplegable.
+- Publicar y ocultar requieren confirmación. Los tests del doble HTTP y de Piston
+  real incluyen ese paso; la suite real no se ejecutó en este cierre.
+- Revisado el movimiento existente, sin añadir efectos ni dependencias. La demo
+  conserva su feedback localizado; no se añadió otro momento de celebración.
+  Corregida la referencia de animación cancelada durante el remontaje del diálogo.
+- Detector estático final: 37 avisos informativos (29 de tamaño, 8 de radio), sin
+  `side-tab`. No equivalen a 37 defectos visuales confirmados ni a un escaneo del DOM.
+- Verificación: lint sin errores (97 avisos en herramientas locales), typecheck,
+  81 pruebas unitarias y build correctos. La suite E2E completa pasó 95/95 en
+  desarrollo y la comprobación final sobre el build de producción pasó 95/95
+  (`ITERA_E2E_PRODUCTION=1`). Hubo también intentos fallidos en desarrollo
+  (arranque, navegación y registro), además de una ejecución interrumpida por
+  el reinicio del entorno; no se contabilizan como aprobados. La pasada final
+  incluye la corrección del diálogo y las confirmaciones administrativas.
+- Capturas de Chromium revisadas en claro/oscuro y escritorio/móvil; la suite
+  recorre reflujo en cinco anchos, ampliación del texto y navegación por teclado.
+  No se ejecutó el detector sobre la URL de producción, ni una auditoría formal
+  con lector de pantalla, dispositivos físicos o navegadores distintos de Chromium.
+
+Esta entrega no cierra todos los hallazgos de la crítica: quedan, entre otros,
+la reorganización completa de la ayuda, el historial del cajón de navegación y
+la revisión del orden de encabezados de sesión. No se retiran filtros funcionales
+ni se añade cancelación de evaluaciones como parte del pulido visual.

@@ -289,7 +289,8 @@ test("administración guarda borradores privados y publica tras validar las refe
   expect(firstVersion.prerequisiteSlugs).toEqual(["suma-de-dos-numeros"]);
   expect(firstVersion.activityType).toBe("INTEGRATION");
   expect((await page.request.get(`/ejercicios/${editorialSlug}`)).status()).toBe(404);
-  await completeAction(()=>page.getByRole("button",{name:"Validar y publicar versión guardada"}).click());
+  await page.getByRole("button",{name:"Validar y publicar versión guardada"}).click();
+  await completeAction(()=>page.getByRole("dialog",{name:"Validar y publicar",exact:true}).getByRole("button",{name:"Validar y publicar",exact:true}).click());
   await expect.poll(async()=>(await db.exercise.findUniqueOrThrow({where:{slug:editorialSlug}})).published).toBe(true);
   expect((await page.request.get(`/ejercicios/${editorialSlug}`)).status()).toBe(200);
   await page.goto(`/ejercicios/${editorialSlug}?lenguaje=python`);
@@ -325,7 +326,8 @@ test("administración guarda borradores privados y publica tras validar las refe
   await page.getByLabel("Objetivo de aprendizaje",{exact:true}).fill(`${draftObjective} Tercer guardado.`);
   await completeAction(()=>page.getByRole("button",{name:"Guardar nueva versión",exact:true}).click());
   expect(await db.exerciseVersion.count({where:{exercise:{slug:editorialSlug}}})).toBe(3);
-  await completeAction(()=>page.getByRole("button",{name:"Ocultar del catálogo"}).click());
+  await page.getByRole("button",{name:"Ocultar del catálogo"}).click();
+  await completeAction(()=>page.getByRole("dialog",{name:"Ocultar del catálogo",exact:true}).getByRole("button",{name:"Ocultar ejercicio",exact:true}).click());
   await expect(page.getByText("Ejercicio oculto del catálogo.")).toBeVisible();
   expect((await page.request.get(`/ejercicios/${editorialSlug}`)).status()).toBe(404);
   await completeAction.assertComplete();

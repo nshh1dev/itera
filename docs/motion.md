@@ -98,6 +98,10 @@ ambos temas en 390/1440 px, cerrar/reabrir, historial, copia temporal, guardado,
 recarga como página completa, foco atrapado y restaurado, conservación del nodo de
 Monaco, doble pulsación en detalles y movimiento reducido inicial y sobrevenido.
 Las capturas locales `motion-settings-*` esperan el fin de las animaciones.
+La limpieza del diálogo cancela y libera su referencia de animación: al repetir
+el montaje en Strict Mode, la apertura vuelve a partir del control de origen y
+no de una transformación cancelada. La suite comprueba los fotogramas de entrada
+además del cierre y la restauración de foco.
 
 La suite E2E usa el doble HTTP de Piston: no demuestra ejecución ni aislamiento
 reales. Otros navegadores, lectores de pantalla y la fluidez en dispositivos físicos

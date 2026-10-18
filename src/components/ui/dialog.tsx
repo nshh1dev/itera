@@ -64,7 +64,12 @@ function DialogSurface({ origin, onExitComplete }: { origin?: MotionOrigin; onEx
     // La siguiente transición recoge la posición actual antes de cancelar; no salta al pulsar rápido.
   }, [open, origin, context?.origin]);
 
-  useLayoutEffect(() => () => { animation.current?.cancel(); }, []);
+  useLayoutEffect(() => () => {
+    animation.current?.cancel();
+    // Strict Mode repite el montaje: una animación cancelada no es un
+    // fotograma de partida válido para la siguiente apertura.
+    animation.current = null;
+  }, []);
 
   return <span ref={surface} className="dialog-surface" aria-hidden="true" />;
 }

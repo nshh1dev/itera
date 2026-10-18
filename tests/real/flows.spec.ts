@@ -158,6 +158,7 @@ test("la administración publica tras ejecutar las referencias y rechaza una ref
   await page.getByRole("button",{name:"Guardar nueva versión"}).click();
   await expect(page).toHaveURL(new RegExp(`/admin/ejercicios/${badSlug}`));
   await page.getByRole("button",{name:"Validar y publicar versión guardada"}).click();
+  await page.getByRole("button",{name:"Validar y publicar",exact:true}).click();
   await expect(page.getByText(/no supera el caso/)).toBeVisible({timeout:60000});
   expect((await db.exercise.findUniqueOrThrow({where:{slug:badSlug}})).published).toBe(false);
 
@@ -187,6 +188,7 @@ test("la administración publica tras ejecutar las referencias y rechaza una ref
   await expect(page).toHaveURL(new RegExp(`/admin/ejercicios/${goodSlug}`));
   expect((await page.request.get(`/ejercicios/${goodSlug}`)).status()).toBe(404);
   await page.getByRole("button",{name:"Validar y publicar versión guardada"}).click();
+  await page.getByRole("button",{name:"Validar y publicar",exact:true}).click();
   await expect.poll(async()=>(await db.exercise.findUniqueOrThrow({where:{slug:goodSlug}})).published,{timeout:60000}).toBe(true);
   expect((await page.request.get(`/ejercicios/${goodSlug}`)).status()).toBe(200);
 });
