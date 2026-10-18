@@ -6,11 +6,10 @@
   El catálogo y el detalle de ruta también solapan sus lecturas independientes.
 - La ficha de práctica solapa ejercicio, catálogo y ruta. El historial comienza
   cuando se conoce el ejercicio, sin esperar al catálogo ni a la ruta.
-- `getExercise` obtiene las lenguas disponibles como metadatos y el detalle de
-  una sola variante, vinculada a la versión publicada seleccionada. Conserva los
-  filtros de casos visibles y borradores del usuario. Esto reduce datos leídos
-  pero añade una consulta por clave única: falta medir la latencia neta con
-  PostgreSQL real antes de atribuirle una mejora de tiempo.
+- Inicialmente se separó el detalle de una variante de sus metadatos. La medición
+  posterior mostró más latencia por la consulta adicional, por lo que se recuperó
+  la lectura original de variantes. Se conservan versión publicada, filtros de
+  casos visibles, borradores por usuario y paralelismo entre lecturas independientes.
 - `src/server/activity.ts` comparte las consultas del último borrador y del
   historial, manteniendo filtros, límites y selección de campos anteriores.
 - El HTML inicial de práctica incluye el marco, el enunciado y los ejemplos.
@@ -47,11 +46,75 @@ coste, no a suponer que constituye un cuello de botella.
   atajos y persistencia del arrastre.
   `playwright test ... --list` descubre los siete; no los ejecuta ni inicia servidores.
 
-**Pendiente:** ejecutar esos recorridos y la suite E2E existente. El usuario no
-autorizó iniciar servidores y no había uno disponible en el puerto 3000.
-Tampoco se ejecutaron las suites reales de Piston. No se han medido TTFB, LCP,
-tiempo hasta editor listo, duración de commits React ni latencia SQL, y no se
-afirma una reducción porcentual o absoluta de tiempos.
+Las comprobaciones anteriores corresponden a la implementación inicial. La
+verificación sobre el servidor iniciado manualmente se recoge a continuación.
+
+## Verificación sobre el servidor del usuario
+
+El usuario inició Next en desarrollo y PostgreSQL. No se inició, reinició ni
+detuvo ningún servidor. Una configuración temporal de Playwright, sin
+`webServer`, ejecutó únicamente los recorridos públicos que no necesitan Piston,
+sin cuentas ni escrituras en PostgreSQL:
+
+- **14/14 aprobados:** los siete de `interface.spec.ts` y los siete de
+  `workspace-optimization.spec.ts`. Incluyen 320/768/1024/1200/1440 px, temas,
+  movimiento reducido, teclado, foco y persistencia local.
+- Revisadas las capturas actuales de práctica clara/oscura, práctica a 320 px y
+  catálogo oscuro a 390 px. El encabezado de práctica a 320 px queda muy estrecho
+  y algunas etiquetas del catálogo se parten; son aspectos a revisar de forma
+  focalizada, no una certificación completa de accesibilidad.
+- Tras recuperar la lectura original, **7/7 recorridos de optimización** vuelven
+  a pasar, además de `typecheck` y lint focalizado sin avisos.
+- No se repitió build mientras se utiliza el servidor del usuario. El build y
+  las 81 pruebas de la sección anterior corresponden al cambio inicial, no a
+  esta corrección posterior de consulta. Las pruebas relevantes de esta
+  corrección son tipos, lint y los siete recorridos contra PostgreSQL real.
+
+### Comparación de lecturas
+
+Sobre `suma-de-dos-numeros`, como invitado, se alternaron 30 lecturas de cada
+implementación por lenguaje después de cinco pares de calentamiento. Se
+comprobó igualdad de contenido seleccionado, versión y lenguajes disponibles.
+Los tiempos miden la función completa vía Prisma, no una sentencia SQL aislada.
+
+| Lenguaje | Original mediana / p95 | Separada mediana / p95 |
+| --- | --- | --- |
+| Python | 1,86 / 2,64 ms | 2,21 / 2,66 ms |
+| JavaScript | 1,51 / 2,60 ms | 2,06 / 2,65 ms |
+| TypeScript | 1,50 / 1,86 ms | 1,80 / 2,32 ms |
+
+La representación JSON del objeto leído pasó de 4324 bytes a 2566–2615 bytes.
+No son bytes medidos en PostgreSQL ni ahorro del payload RSC: el cliente ya
+recibía solo la variante elegida. Por este pequeño ahorro no compensa mantener
+la consulta adicional. Se recupera la lectura original sin alterar el resto de
+las mejoras. La muestra no representa historiales grandes ni cuentas activas.
+
+### Referencia de navegador en desarrollo
+
+Chromium, invitado, 1440×1000, movimiento reducido, cinco cargas completas por
+URL tras una de calentamiento, en el commit `efebc0b` antes de la corrección de
+consulta. Caché del navegador reutilizada; sin limitación artificial de CPU/red.
+
+| Pantalla | TTFB mediana / p95 | Tiempo observado hasta contenido/editor visible, mediana / p95 |
+| --- | --- | --- |
+| Inicio | 192 / 215 ms | 302 / 339 ms |
+| Catálogo | 263 / 274 ms | 377 / 411 ms |
+| Práctica Python | 118 / 138 ms | 1097 / 1103 ms |
+| Práctica JavaScript | 149 / 157 ms | 1143 / 1159 ms |
+| Práctica TypeScript | 141 / 157 ms | 1126 / 1183 ms |
+
+El tiempo visible incluye la espera del localizador Playwright, no certifica que
+todos los servicios de Monaco estén listos. Con cinco muestras, p95 equivale al
+máximo observado. Se observó LCP provisional de 164–308 ms (medianas), sin cerrar
+su ventana de observación: no se presenta como Web Vital definitivo.
+Una muestra de escritura de 82 caracteres con intervalos de 16 ms en el editor
+sencillo no registró tareas largas (más de 50 ms); no había resultados de ejecución
+cargados. No hubo errores JavaScript de página en estos recorridos de medición.
+
+**Pendiente:** comparación antes/después en producción, perfil de React con
+resultados visibles, sesiones autenticadas, zoom, lector de pantalla y la suite
+E2E completa. Piston estaba detenido; no se probó ejecución real. Estos 14
+recorridos públicos no sustituyen la suite con doble HTTP ni las suites reales.
 
 ## Comparación pendiente en entorno local
 
@@ -61,8 +124,8 @@ Con autorización para servidores temporales y PostgreSQL preparado:
    separando `next dev` de producción local. Registrar versión, escenario,
    repeticiones, mediana y percentil 95; distinguir primera carga y navegación.
 2. Medir Inicio, catálogo y práctica en Python/JavaScript/TypeScript como invitado
-   y con cuenta: respuesta, número/duración de consultas y bytes leídos. Confirmar
-   especialmente que la consulta adicional de variante compensa la menor carga.
+   y con cuenta: respuesta, número/duración de consultas y bytes leídos. La
+   separación de variante queda descartada para el volumen medido.
 3. Registrar con Performance/React Profiler escritura con resultados visibles y
    arrastres largos. Comparar commits, tareas largas y tiempo hasta editor listo.
    El límite de memoización no garantiza por sí solo una mejora perceptible.

@@ -30,7 +30,7 @@ export default async function ExercisePage({ params, searchParams }: { params: P
   ]);
   const version = exercise?.versions[0];
   if (!exercise || !version) notFound();
-  const variant = exercise.variant;
+  const variant = version.variants.find(variant => variant.language === language);
   const availableLanguages = languages.filter(language => version.variants.some(variant => variant.language === language));
   if (!variant) return <main id="main-content" className="page-container"><h1 className="page-title">Esta versión todavía no está disponible en {languageNames[language]}</h1><p className="mt-4 text-sm leading-7 text-muted-foreground">La revisión de este lenguaje debe validarse y publicarse. No hemos cambiado tus ejercicios ni tu progreso.</p><nav aria-label="Lenguajes disponibles" className="mt-5 flex flex-wrap gap-4">{availableLanguages.map(language => <Link key={language} className="text-link" href={exerciseHref(slug, language, query.ruta)}>{languageNames[language]}</Link>)}<Link className="text-link" href="/rutas">Volver a las rutas</Link></nav></main>;
   const lessonModule = moduleForExercise(slug);

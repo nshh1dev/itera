@@ -25,25 +25,18 @@ export async function getCatalog(userId?: string, language: Language = "python")
 }
 
 export async function getExercise(slug: string, language: Language, userId?: string) {
-  const exercise = await db.exercise.findUnique({
+  return db.exercise.findUnique({
     where: { slug, published: true },
     select: { id: true, slug: true, category: true,
       versions: { where: { published: true }, orderBy: { number: "desc" }, take: 1, select: {
         id: true, title: true, statement: true, constraints: true, hints: true, level: true, minutes: true, number: true,
         objective: true, prerequisites: true, practiceGoals: true, prerequisiteSlugs: true, activityType: true,
         runtimeMode: true, complexity: true, commonErrors: true,
-        variants: { select: { language: true } },
+        variants: { select: { id: true, language: true, starter: true, statement: true,
+          tests: { where: { visible: true }, orderBy: { order: "asc" }, select: { input: true, expected: true, explanation: true } },
+          drafts: { where: { userId: userId ?? "__guest__" }, select: { code: true, revision: true } },
+        } },
       } },
     },
   });
-  if (!exercise) return null;
-  const version = exercise.versions[0];
-  const variant = version ? await db.exerciseVariant.findUnique({
-    where: { versionId_language: { versionId: version.id, language } },
-    select: { id: true, language: true, starter: true, statement: true,
-      tests: { where: { visible: true }, orderBy: { order: "asc" }, select: { input: true, expected: true, explanation: true } },
-      drafts: { where: { userId: userId ?? "__guest__" }, select: { code: true, revision: true } },
-    },
-  }) : null;
-  return { ...exercise, variant };
 }
