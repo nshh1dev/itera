@@ -112,9 +112,38 @@ sencillo no registró tareas largas (más de 50 ms); no había resultados de eje
 cargados. No hubo errores JavaScript de página en estos recorridos de medición.
 
 **Pendiente:** comparación antes/después en producción, perfil de React con
-resultados visibles, sesiones autenticadas, zoom, lector de pantalla y la suite
-E2E completa. Piston estaba detenido; no se probó ejecución real. Estos 14
-recorridos públicos no sustituyen la suite con doble HTTP ni las suites reales.
+resultados visibles, zoom y lector de pantalla. Piston estaba detenido; no se
+probó ejecución real. Estos 14 recorridos públicos no sustituyen la suite con
+doble HTTP ni las suites reales; la primera se ejecutó después y se registra a
+continuación.
+
+## Suite E2E completa con doble HTTP
+
+Con autorización explícita, el usuario detuvo su servidor y `npm run test:e2e`
+inició y cerró su propio servidor temporal en el puerto 3000 y el doble HTTP de
+Piston en el 2001. No se reutilizó ni se detuvo ningún servidor del usuario.
+
+- **108/108 aprobados** en 6,5 minutos, con un solo trabajador. Cubren
+  autenticación, transferencia de invitado, borradores, progreso, evaluación
+  asíncrona, idempotencia, administración y los 14 recorridos públicos ya
+  citados.
+- La suite usó el doble HTTP: no ejecuta código de usuarios ni verifica
+  aislamiento del sandbox. No sustituye `test:e2e:real` ni `test:runner`.
+- Dos intentos previos se interrumpieron por el límite de tiempo de la
+  herramienta (63 pruebas sin fallos en el primero). No fueron fallos de la
+  suite: se repitió completa y no se relajó ningún límite de prueba.
+- Reapareció el aviso de hidratación de Configuración ya documentado
+  (`style={{ caret-color: "transparent" }}`) y un aviso de lentitud del sistema
+  de archivos. Son avisos previos; no se corrigen ni se presentan como resueltos.
+- Tras el apagado abrupto de PostgreSQL que provocó el cierre de Windows durante
+  el segundo intento (`0xC0000142`), el clúster se detuvo y arrancó de nuevo con
+  `db:stop` y `db:start`: recuperación automática correcta, sin pérdida. `doctor`
+  confirmó PostgreSQL disponible y el intento posterior pasó completo.
+- Limpieza: el recuento final no dejó ejercicios editoriales de prueba ni
+  borradores, envíos, progreso o uso de ayuda asociados a cuentas temporales. Se
+  eliminaron 4 cuentas `@example.test` sin actividad que habían quedado de
+  suites anteriores (`motion-*` e `itera-editorial-*`), con el mismo alcance que
+  usa la propia suite. Quedan 0 cuentas temporales.
 
 ## Comparación pendiente en entorno local
 
@@ -131,8 +160,9 @@ Con autorización para servidores temporales y PostgreSQL preparado:
    El límite de memoización no garantiza por sí solo una mejora perceptible.
 4. Verificar claro/oscuro, 320–1440 px, zoom, movimiento reducido, teclado,
    recuperación local, conflicto entre pestañas y transferencia de invitado.
-5. Ejecutar `npm run test:e2e` (doble HTTP) y, cuando corresponda, las suites de
-   Piston real. Mantener el archivo serial `flows.spec.ts` completo.
+5. `npm run test:e2e` (doble HTTP) ya se ejecutó completa: 108/108. Falta
+   `npm run test:e2e:real` y `npm run test:runner`, que requieren Piston y
+   Docker reales. Mantener el archivo serial `flows.spec.ts` completo.
 6. Solo si aparece un coste relevante, optimizar la reconciliación del GET de
    ejecuciones. Preservar caducidad a dos minutos, reserva global, idempotencia y
    actualización atómica del progreso. No introducir índices o cachés sin datos.
