@@ -424,7 +424,10 @@
   .workspace-results[data-collapsed="true"] { height: 42px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  :root { --motion-response: 0ms; --motion-disclosure: 0ms; --motion-navigation: 0ms; --motion-panel-open: 0ms; --motion-panel-close: 0ms; }
+  *, *::before, *::after { scroll-behavior: auto !important; }
+  .animate-spin, .animate-pulse { animation: none; }
+  .panel-resizer, .workspace-mobile-tabs button { transition: none; }
 }
 
 /* El taller: contenido dominante, herramientas secundarias y ritmo de lectura. */
@@ -535,6 +538,9 @@
 .landing-demo-problem p { margin-top: 8px; color: var(--muted-foreground); font-size: 13px; line-height: 1.8; }
 .landing-demo-problem code { color: var(--foreground); font-size: .8125rem; }
 .landing-demo-editor { min-width: 0; background: var(--editor-background); }
+.landing-demo-trace { min-height: 4.5rem; padding: 0 18px 18px; }
+.landing-demo-trace p { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; font-size: .8125rem; color: var(--muted-foreground); animation: fade-in var(--motion-response) ease-out; }
+.landing-demo-trace code { color: var(--foreground); }
 .landing-demo-workbench { display: grid; min-width: 0; }
 .landing-file-label { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; padding: 12px 18px; background: var(--surface-inset); font-size: .8125rem; color: var(--muted-foreground); }
 .landing-file-label > span:first-child { color: var(--foreground); font-family: var(--font-mono); }

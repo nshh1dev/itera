@@ -2,12 +2,12 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Home, Code2, Route, ChartNoAxesCombined, Settings2, LogOut, Shield, PanelLeftClose, PanelLeftOpen, Menu } from "lucide-react";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "./ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { rememberSettingsOrigin } from "@/lib/motion";
 import { MotionRegion } from "./motion-region";
 
@@ -34,6 +34,36 @@ export function AppShell({ children, user, workspace = false, header }: { childr
   const collapsed = (fallback ?? preference ?? (workspace ? "collapsed" : "expanded")) === "collapsed";
   const [signingOut, setSigningOut] = useState(false);
   const [logoutError, setLogoutError] = useState(false);
+  const [navigationOpen, setNavigationOpen] = useState(false);
+  const navigationDestination = useRef<string | null>(null);
+  useEffect(() => {
+    function restoreNavigation() {
+      const open = window.history.state?.iteraNavigation === true;
+      setNavigationOpen(open);
+      if (!open && navigationDestination.current) {
+        const href = navigationDestination.current;
+        navigationDestination.current = null;
+        // Next restaura primero la entrada anterior durante este mismo popstate.
+        // Navegar en el siguiente turno evita que esa restauración pise el destino.
+        window.setTimeout(() => router.push(href, { scroll: href !== "/configuracion" }), 0);
+      }
+    }
+    window.addEventListener("popstate", restoreNavigation);
+    return () => window.removeEventListener("popstate", restoreNavigation);
+  }, [router]);
+
+  function changeNavigation(open: boolean) {
+    if (open) {
+      if (!window.history.state?.iteraNavigation) {
+        window.history.pushState({ ...window.history.state, iteraNavigation: true }, "");
+      }
+      setNavigationOpen(true);
+    } else if (window.history.state?.iteraNavigation) {
+      window.history.back();
+    } else {
+      setNavigationOpen(false);
+    }
+  }
   const title = navigation.find(n => pathname.startsWith(n.href))?.label ?? (pathname.startsWith("/admin") ? "Administración" : "Configuración");
 
   function toggleNavigation() {
@@ -49,7 +79,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
         <Icon aria-hidden="true" /><span className="navigation-label">{label}</span>
       </Link>;
       return <div key={href} className="navigation-item relative">
-        {mobile ? <DialogClose asChild>{link}</DialogClose> : link}
+        {link}
         {!mobile && <span className="navigation-tooltip" aria-hidden="true">{label}</span>}
       </div>;
     }
@@ -69,9 +99,16 @@ export function AppShell({ children, user, workspace = false, header }: { childr
   return <div className="app-shell" data-collapsed={collapsed}>
     <aside id="navigation-sidebar" className="app-sidebar" aria-label="Barra lateral">{navigationContent()}</aside>
       <header className="app-header flex min-w-0 items-center gap-2 px-3 sm:gap-3 sm:px-5">
-      <Dialog>
+      <Dialog open={navigationOpen} onOpenChange={changeNavigation}>
         <DialogTrigger asChild><Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir navegación"><Menu /></Button></DialogTrigger>
-        <DialogContent className="navigation-drawer inset-y-0 left-0 top-0 flex h-dvh max-h-none w-[min(288px,calc(100%-3rem))] translate-x-0 translate-y-0 flex-col rounded-none border-0 border-r bg-surface p-4">
+        <DialogContent className="navigation-drawer inset-y-0 left-0 top-0 flex h-dvh max-h-none w-[min(288px,calc(100%-3rem))] translate-x-0 translate-y-0 flex-col rounded-none border-0 border-r bg-surface p-4" onClickCapture={event => {
+          const link = event.target instanceof Element ? event.target.closest("a") : null;
+          if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          event.preventDefault();
+          if (link.pathname === "/configuracion") rememberSettingsOrigin(link);
+          navigationDestination.current = link.pathname + link.search + link.hash;
+          changeNavigation(false);
+        }}>
           <DialogTitle className="sr-only">Navegación de Itera</DialogTitle>
           <DialogDescription className="sr-only">Accede a tus ejercicios, rutas y progreso.</DialogDescription>
           {navigationContent(true)}

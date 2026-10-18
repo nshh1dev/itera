@@ -7,7 +7,7 @@ import { exercises } from "../../prisma/content";
 import { initialBatchSlugs } from "../../prisma/initial-batch";
 import { seedVersionContent } from "../../prisma/editorial-revision";
 import { activityNames } from "../../src/lib/types";
-import { openSimpleEditor } from "../workspace";
+import { openLearningHelp, openSimpleEditor } from "../workspace";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 const prefix = `r1-e2e-${Date.now()}`;
@@ -42,6 +42,7 @@ for (const language of ["python", "javascript"] as const) {
     for (const exercise of batch) {
       const href = `/ejercicios/${prefix}-${exercise.slug}?lenguaje=${language}`;
       await page.goto(href);
+      await openLearningHelp(page);
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.getByText(exercise.objective!, { exact: true })).toBeVisible();
       for (const goal of exercise.practiceGoals!) await expect(guide.getByText(goal, { exact: true })).toBeVisible();
@@ -74,9 +75,11 @@ for (const theme of ["light", "dark"] as const) {
       await expect(page.locator("html")).toHaveClass(theme === "dark" ? /dark/ : /light/);
       if (width >= 1200) await expect(page.locator(".monaco-editor")).toBeVisible();
       else await expect(page.locator(".monaco-editor")).toBeAttached();
+      await openLearningHelp(page);
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.getByRole("heading", { name: "Qué vas a practicar", exact: true })).toBeVisible();
       const link = guide.getByRole("link").first();
+      await page.keyboard.press("Tab");
       await link.focus();
       await expect(link).toBeFocused();
       expect(await link.evaluate(element => getComputedStyle(element).outlineStyle)).not.toBe("none");

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus,ArrowRight,Shield } from "lucide-react";
+import { Plus,ArrowRight } from "lucide-react";
 import { requireAdmin } from "@/server/auth";
 import { db } from "@/server/db";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ export default async function AdminPage(){
   const exercises=await db.exercise.findMany({orderBy:{order:"asc"},include:{versions:{orderBy:{number:"desc"},take:1}}});
   return <div className="page-container">
     <div className="page-intro">
-      <div><p className="eyebrow flex items-center gap-2"><Shield className="size-4" aria-hidden="true" />Administración local</p><h1 className="page-title mt-3">Contenido que enseña.</h1><p className="page-description">Crea, revisa y publica ejercicios con versiones independientes.</p></div>
+      <div><h1 className="page-title">Contenido que enseña.</h1><p className="page-description">Administración local: crea, revisa y publica ejercicios con versiones independientes.</p></div>
       <Button asChild><Link href="/admin/ejercicios/nuevo"><Plus aria-hidden="true" />Nuevo ejercicio</Link></Button>
     </div>
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground"><p>{exercises.length} ejercicios editoriales</p><p>Los borradores no son visibles para estudiantes.</p></div>

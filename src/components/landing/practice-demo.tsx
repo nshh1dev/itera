@@ -14,6 +14,7 @@ export function PracticeDemo() {
   const [b, setB] = useState("5");
   const [result, setResult] = useState<number | null>(() => solve({ a: 3, b: 5 }));
   const [error, setError] = useState("");
+  const [attempt, setAttempt] = useState(0);
 
   function calculate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -26,6 +27,7 @@ export function PracticeDemo() {
     }
     setError("");
     setResult(solve({ a: first, b: second }));
+    setAttempt(value => value + 1);
   }
 
   return <section className="landing-demo" aria-labelledby="demo-title">
@@ -47,6 +49,9 @@ export function PracticeDemo() {
           <span className="landing-code-line"><span className="landing-line-number" aria-hidden="true">4</span><span>&#125;</span></span>
         </code></pre>
       </figure>
+      <div className="landing-demo-trace" aria-hidden="true">
+        {attempt > 0 && result !== null && <p key={attempt}><span>La misma idea, con tus números</span><code>{Number(a)} + {Number(b) < 0 ? `(${Number(b)})` : Number(b)} → {result}</code></p>}
+      </div>
     </div>
     <form onSubmit={calculate} className="landing-demo-console" noValidate>
       <fieldset>

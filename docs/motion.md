@@ -45,7 +45,8 @@ constantes y geometría en `src/lib/motion.ts`.
   remontar sus hijos. Su clave son los segmentos que el layout renderiza de verdad,
   no la URL: abrir o cerrar un panel interceptado no repite la entrada. La barra
   lateral cambia de ancho suavemente. El menú móvil usa una entrada lateral en
-  lugar de expandirse desde un punto.
+   lugar de expandirse desde un punto. Abrir añade una entrada temporal de historial:
+   Atrás lo cierra y Adelante lo reabre; navegar consume esa entrada antes del destino.
 - **Catálogo:** `next/form` mantiene navegación cliente y los filtros en la URL,
   con estado de búsqueda pendiente. Se actualiza la región de resultados;
   los filtros móviles expanden y contraen su espacio, sin desmontar los campos.
@@ -66,7 +67,9 @@ constantes y geometría en `src/lib/motion.ts`.
   el navegador lo admite; al arrastrar el separador no hay interpolación atrasada.
 - **Ejecución:** transición localizada entre espera, error y resultado, sin retrasar
   peticiones ni revelar casos ocultos. Autoguardado conserva sus mensajes legibles;
-  no tiene un bucle animado en cada pulsación. La demo anima solo el nuevo resultado.
+   no tiene un bucle animado en cada pulsación. La demo muestra una sustitución
+   numérica tras probar la entrada, con un fundido breve junto al resultado; no
+   añade celebraciones ni repite entradas de secciones.
 - **Preferencias y administración:** tema con transición breve de superficies,
   indicador deslizante en las pestañas administrativas, cambio de contenido y
   feedback localizado de guardado, validación, publicación y errores.
@@ -74,7 +77,8 @@ constantes y geometría en `src/lib/motion.ts`.
 ## Accesibilidad y compatibilidad
 
 - `prefers-reduced-motion` elimina los desplazamientos y transformaciones JS y
-  acorta las transiciones CSS. Cambiarlo durante una apertura termina las
+   pone a cero los tokens CSS de movimiento y desactiva los indicadores giratorios,
+   sin una anulación global de toda animación. Cambiarlo durante una apertura termina las
   animaciones finitas sin intentar terminar indicadores infinitos de carga.
 - Radix conserva modalidad, foco atrapado, Escape y semántica de título/descripción.
   El fondo continúa inerte; el botón de cierre no depende del scroll del formulario.

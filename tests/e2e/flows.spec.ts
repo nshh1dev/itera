@@ -7,7 +7,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { catalogRevision, catalogRevisionDecision, seedVersionContent } from "../../prisma/editorial-revision";
 import { actionStreamMonitor } from "./action-stream";
 import { initialBatchSlugs } from "../../prisma/initial-batch";
-import { openSimpleEditor } from "../workspace";
+import { openLearningHelp, openSimpleEditor } from "../workspace";
 
 const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.DATABASE_URL})});
 const email=`itera-e2e-${Date.now()}@example.test`;
@@ -199,7 +199,7 @@ test("el borrador detecta cambios de otra pestaña sin sobrescribirlos",async({p
   await input.fill("def solve(data):\n    # Primera pestaña\n    return data % 2 == 0\n");
   await expect(page.getByText("Guardado",{exact:true})).toBeVisible();
   await second.getByRole("textbox",{name:"Editor sencillo de Python"}).fill("def solve(data):\n    # Segunda pestaña\n    return False\n");
-  await expect(second.getByText(/Este borrador cambió en otra pestaña/)).toBeVisible();
+  await expect(second.getByRole("alert").filter({ hasText: "Este borrador cambió en otra pestaña" })).toBeVisible();
   const draft=await db.draft.findFirstOrThrow({where:{user:{email},variant:{version:{exercise:{slug:"par-o-impar"}}}}});
   expect(draft.code).toContain("Primera pestaña");
   await second.close();
@@ -294,6 +294,7 @@ test("administración guarda borradores privados y publica tras validar las refe
   await expect.poll(async()=>(await db.exercise.findUniqueOrThrow({where:{slug:editorialSlug}})).published).toBe(true);
   expect((await page.request.get(`/ejercicios/${editorialSlug}`)).status()).toBe(200);
   await page.goto(`/ejercicios/${editorialSlug}?lenguaje=python`);
+  await openLearningHelp(page);
   const guide=page.getByRole("region",{name:"Guía de aprendizaje"});
   await expect(guide.getByText(objective,{exact:true})).toBeVisible();
   await expect(guide.getByText("Acceder a propiedades",{exact:true})).toBeVisible();
@@ -304,6 +305,8 @@ test("administración guarda borradores privados y publica tras validar las refe
   await expect(page.getByText("Explicación privada que no debe entregarse al cliente.",{exact:true})).toHaveCount(0);
   await expect(page.getByRole("button",{name:"Comprobar solución",exact:true})).toBeEnabled();
   await page.getByLabel("Lenguaje del ejercicio").selectOption("javascript");
+  await expect(page).toHaveURL(/lenguaje=javascript/);
+  await openLearningHelp(page);
   await expect(guide.getByText(objective,{exact:true})).toBeVisible();
   await expect(guide.getByRole("link",{name:"Dos números, una suma",exact:true})).toHaveAttribute("href","/ejercicios/suma-de-dos-numeros?lenguaje=javascript");
   // Un objetivo nuevo en borrador no se filtra al catálogo ni reescribe el anterior.
@@ -319,6 +322,7 @@ test("administración guarda borradores privados y publica tras validar las refe
   expect(preserved.practiceGoals).toEqual(firstVersion.practiceGoals);
   expect(preserved.prerequisiteSlugs).toEqual(firstVersion.prerequisiteSlugs);
   await page.goto(`/ejercicios/${editorialSlug}`);
+  await openLearningHelp(page);
   await expect(guide.getByText(objective,{exact:true})).toBeVisible();
   await expect(guide.getByText(draftObjective,{exact:true})).toHaveCount(0);
   await page.goto(`/admin/ejercicios/${editorialSlug}`);

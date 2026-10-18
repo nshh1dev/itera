@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { learningPaths } from "../../src/lib/learning-paths";
 import { modulesForPath } from "../../src/lib/learning-modules";
+import { openLearningHelp } from "../workspace";
 
 for (const path of learningPaths) {
   test(`${path.title} presenta módulos y permite continuar sin bloqueos`, async ({ page }) => {
@@ -20,6 +21,7 @@ test("TypeScript empieza con variables sin exigir JavaScript y conserva su espac
   await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
   await page.goto("/ejercicios/guarda-y-muestra?lenguaje=typescript&ruta=desde-cero");
   await expect(page.getByRole("heading", { name: "Un nombre para un valor", exact: true })).toBeVisible();
+  await openLearningHelp(page);
   await expect(page.getByText(/Entiende la idea/)).toBeVisible();
   await page.getByRole("button", { name: "Código", exact: true }).click();
   await expect(page.getByLabel("Lenguaje del ejercicio")).toHaveValue("typescript");

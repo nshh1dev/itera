@@ -30,6 +30,12 @@ test("la navegación móvil se cierra al navegar y devuelve el foco con Escape",
   await trigger.click();
   const drawer = page.getByRole("dialog", { name: "Navegación de Itera" });
   await expect(drawer).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL(/\/inicio$/);
+  await expect(drawer).not.toBeVisible();
+  await expect(trigger).toBeFocused();
+  await page.goForward();
+  await expect(drawer).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(drawer).not.toBeVisible();
   await expect(trigger).toBeFocused();
@@ -38,6 +44,9 @@ test("la navegación móvil se cierra al navegar y devuelve el foco con Escape",
   await expect(page).toHaveURL(/\/ejercicios$/);
   await expect(drawer).not.toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+  await page.goBack();
+  await expect(page).toHaveURL(/\/inicio$/);
+  await expect(drawer).not.toBeVisible();
 });
 
 test("los filtros móviles muestran la selección y se pueden quitar sin cambiar de lenguaje", async ({ page }) => {

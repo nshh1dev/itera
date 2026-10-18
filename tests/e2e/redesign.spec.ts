@@ -1,5 +1,6 @@
 import { mkdir } from "node:fs/promises";
 import { test, expect } from "@playwright/test";
+import { openLearningHelp } from "../workspace";
 
 const screens = ["/", "/inicio", "/ejercicios", "/rutas", "/rutas/desde-cero", "/progreso", "/iniciar-sesion", "/registro", "/recuperar-cuenta"];
 
@@ -63,6 +64,7 @@ for (const theme of ["light", "dark"] as const) {
     await page.setViewportSize({ width: 1440, height: 650 });
     await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await openLearningHelp(page);
     await expect(page.getByRole("heading", { name: "Aprende mientras practicas" })).toBeVisible();
     await expect(page.locator(".editor-region")).toBeVisible();
     await expect(page.getByRole("button", { name: "Comprobar solución", exact: true })).toBeInViewport();

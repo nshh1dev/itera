@@ -144,7 +144,7 @@ de pasar a la siguiente: así una regresión se atribuye sin ambigüedad.
 4. `live` y `generate` se habilitan cuando lleguemos a una superficie concreta.
 5. El hallazgo `side-tab` se resuelve en la fase 2, al medir la portada.
 
-## Cierre de esta entrega · 18 de octubre de 2026
+## Primera entrega integrada · 18 de octubre de 2026
 
 - Contexto de producto y sistema visual documentados en `PRODUCT.md`, `DESIGN.md`
   y `.impeccable/design.json`. Crítica archivada en `.impeccable/critique/`.
@@ -175,3 +175,37 @@ Esta entrega no cierra todos los hallazgos de la crítica: quedan, entre otros,
 la reorganización completa de la ayuda, el historial del cajón de navegación y
 la revisión del orden de encabezados de sesión. No se retiran filtros funcionales
 ni se añade cancelación de evaluaciones como parte del pulido visual.
+
+## Cierre del plan · continuación del 18 de octubre de 2026
+
+Las cinco fases quedan implementadas dentro del alcance acordado. El registro
+anterior describe la primera entrega, no el estado actual. Evidencia y decisiones
+de cierre en [la auditoría final](impeccable-cierre.md).
+
+- Ayuda reunida en «Contexto y ayuda», cerrada inicialmente, sin eliminar teoría,
+  objetivos, referencias, restricciones ni errores comunes. Reto y ejemplos siguen
+  visibles; pistas y código mantienen acceso independiente.
+- Atrás cierra el menú móvil; Adelante lo reabre. Escape restaura el foco. Elegir
+  un destino retira primero la entrada temporal para no reabrir el menú al volver.
+- Los cuatro formularios de sesión presentan el h1 antes del contenido secundario
+  en el DOM y visualmente. Configuración distingue cambios pendientes del guardado;
+  progreso explica el primer intento y el lenguaje de los contadores.
+- La demo de portada muestra una única sustitución numérica al probar una entrada.
+  Se conserva la dirección visual y no se añaden dependencias ni nuevos efectos
+  en las superficies operativas. Movimiento reducido usa tokens de duración cero
+  y desactiva indicadores giratorios, no una anulación global de toda animación.
+- Detector sobre producción en 390/1440 px: 10/9 avisos de tipografía Geist,
+  conservada por marca. Detector estático: 37 avisos informativos (29 de tamaño,
+  8 de radio), sin `side-tab`. No se silencian ni se presentan como fallos corregidos.
+- Build, typecheck y 81/81 unitarias correctos; lint sin errores y con los 97 avisos
+  previos de herramientas locales. E2E final completo sobre producción: **101/101**.
+  Antes hubo pasadas fallidas por la carrera del router y selectores de pruebas;
+  están corregidas y no se cuentan como aprobadas.
+- Revisión visual de las diez superficies en claro/oscuro y 390/1440 px, más
+  cobertura E2E de cinco anchos y ampliación de texto. Cuenta temporal eliminada.
+
+No quedan implementaciones pendientes de este plan visual. Permanecen límites de
+verificación: Piston real, lectores de pantalla, dispositivos físicos y otros
+navegadores no se verificaron en esta continuación. No se declara conformidad WCAG
+formal. Cancelar evaluaciones no forma parte del plan; conservar filtros útiles y
+tipografía de marca son decisiones explícitas, no tareas pendientes ocultas.

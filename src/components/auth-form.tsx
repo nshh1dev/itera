@@ -50,8 +50,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "re
   }
 
   return <div className="w-full min-w-0 max-w-[420px]">
-    <p className="eyebrow">{register ? "Tu siguiente paso" : forgot || reset ? "Volvamos a conectar" : "Un intento más cerca"}</p>
-    <h1 className="mt-4 text-[2rem] leading-tight font-semibold tracking-[-0.04em]">{register ? "Crear cuenta" : forgot ? "Recuperar cuenta" : reset ? "Cambiar contraseña" : "Iniciar sesión"}</h1>
+    <h1 className="text-[2rem] leading-tight font-semibold tracking-[-0.04em]">{register ? "Crear cuenta" : forgot ? "Recuperar cuenta" : reset ? "Cambiar contraseña" : "Iniciar sesión"}</h1>
     <p className="mt-4 text-base leading-7 text-muted-foreground">{register ? "Guarda tus borradores, intentos y progreso en esta computadora." : forgot ? "El enlace se guardará en la bandeja local de tu computadora." : reset ? "Elige una contraseña de al menos 10 caracteres." : "Continúa con tus ejercicios y borradores guardados."}</p>
     {success ? <div className="mt-8 rounded-xl bg-surface p-5" role="status"><p className="text-sm font-medium">{reset ? "Tu contraseña fue actualizada." : "Solicitud recibida."}</p><p className="mt-2 text-base leading-7 text-muted-foreground">{reset ? "Ya puedes iniciar sesión con tu nueva contraseña." : <>Si el correo está registrado, encontrarás el enlace en <code className="font-mono">.local/mail</code> dentro del proyecto.</>}</p><Link href="/iniciar-sesion" className="text-link mt-4">Volver a iniciar sesión <ArrowRight className="size-4" /></Link></div> : <form onSubmit={submit} className="mt-8 space-y-5" aria-describedby={error ? "auth-error" : undefined}>
       {register && <div><label htmlFor="name" className="field-label">Tu nombre</label><input id="name" name="name" autoComplete="name" className="field" placeholder="¿Cómo te llamas?" required minLength={2} maxLength={60} /></div>}

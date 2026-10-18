@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { exerciseHref, foundationSteps, intermediateSteps, introductorySteps } from "../../src/lib/learning-paths";
-import { openSimpleEditor } from "../workspace";
+import { openLearningHelp, openSimpleEditor } from "../workspace";
 
 test("Desde cero ofrece módulos progresivos y comienza con un programa completo", async ({ page }) => {
   await page.goto("/rutas/desde-cero");
@@ -15,8 +15,9 @@ test("Desde cero ofrece módulos progresivos y comienza con un programa completo
   await expect(page).toHaveURL(/\/ejercicios\/imprime-un-saludo/);
   await expect(page.getByRole("heading", { name: "Tu primer programa", level: 1, exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Tu reto", exact: true })).toBeVisible();
+  await openLearningHelp(page);
   await expect(page.getByText(/Entiende la idea/)).toBeVisible();
-  await expect(page.locator("details").filter({ has: page.locator("summary", { hasText: "Antes de empezar" }) })).toHaveAttribute("open", "");
+  await expect(page.getByText("Antes de empezar", { exact: true }).locator("..")).toHaveAttribute("open", "");
   await openSimpleEditor(page);
   await expect(page.getByRole("textbox", { name: "Editor sencillo de Python" })).toHaveValue(/Escribe tu primer programa/);
 });
@@ -70,6 +71,7 @@ for (const language of ["python", "javascript"] as const) {
     for (const lesson of lessons) {
       await page.goto(exerciseHref(lesson.slug, language, lesson.route));
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
+      await openLearningHelp(page);
       await expect(page.getByRole("region", { name: "Guía de aprendizaje" }).locator("li").first()).toBeVisible();
       await openSimpleEditor(page);
       const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });
@@ -103,6 +105,7 @@ for (const language of ["python", "javascript"] as const) {
     for (const lesson of lessons) {
       await page.goto(exerciseHref(lesson.slug, language, lesson.route));
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
+      await openLearningHelp(page);
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.locator("li").first()).toBeVisible();
       await openSimpleEditor(page);
@@ -123,6 +126,7 @@ for (const language of ["python", "javascript"] as const) {
     for (const lesson of lessons) {
       await page.goto(exerciseHref(lesson.slug, language, lesson.route));
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
+      await openLearningHelp(page);
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.locator("li").first()).toBeVisible();
       await openSimpleEditor(page);
@@ -147,6 +151,7 @@ for (const language of ["python", "javascript"] as const) {
     for (const lesson of lessons) {
       await page.goto(exerciseHref(lesson.slug, language, "pensar-en-soluciones"));
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
+      await openLearningHelp(page);
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.getByRole("heading", { name: "Qué vas a practicar" })).toBeVisible();
       await expect(guide.locator("li").first()).toBeVisible();
@@ -169,6 +174,7 @@ for (const language of ["python", "javascript"] as const) {
     for (const lesson of lessons) {
       await page.goto(exerciseHref(lesson.slug, language, lesson.route));
       await expect(page.getByRole("heading", { name: lesson.title, exact: true })).toBeVisible();
+      await openLearningHelp(page);
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       await expect(guide.locator("li").first()).toBeVisible();
       await openSimpleEditor(page);

@@ -5,11 +5,13 @@ import { currentUser } from "@/server/auth";
 import { levelNames } from "@/lib/types";
 import { learningPathLevel } from "@/lib/learning-paths";
 import { Badge } from "@/components/ui/badge";
+import { languageSchema } from "@/lib/validation";
 
 export const metadata = { title: "Rutas de aprendizaje" };
-export default async function PathsPage() {
+export default async function PathsPage({ searchParams }: { searchParams: Promise<{ lenguaje?: string }> }) {
   const user = await currentUser();
-  const language = user?.preference?.language ?? "python";
+  const preferredLanguage = languageSchema.catch("python").parse(user?.preference?.language);
+  const language = languageSchema.catch(preferredLanguage).parse((await searchParams).lenguaje);
   const paths = await db.learningPath.findMany({
     orderBy: { order: "asc" },
     include: {

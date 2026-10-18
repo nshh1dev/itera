@@ -3,6 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { test, expect, type BrowserContext } from "@playwright/test";
 import { PrismaClient } from "../../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { openLearningHelp } from "../workspace";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 const email = `motion-${Date.now()}@example.test`;
@@ -123,6 +124,7 @@ test("pistas y detalles permiten invertir la apertura sin perder el editor", asy
   await expect(dialog).toBeVisible();
   await dialog.getByRole("button", { name: "Cerrar", exact: true }).click();
   await expect(dialog).toHaveCount(0);
+  await openLearningHelp(page);
   const summary = page.getByText("Antes de empezar", { exact: true });
   await summary.click({ clickCount: 2, delay: 20 });
   await expect(summary.locator("..")).toHaveAttribute("open", "");
