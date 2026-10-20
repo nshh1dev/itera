@@ -35,11 +35,12 @@ test("el historial anterior conserva el código propio sin sumar progreso nuevo 
   const login = await page.request.post("/api/auth/sign-in/email", { headers: { origin: "http://127.0.0.1:3000" }, data: { email: emails[0], password } });
   expect(login.ok()).toBeTruthy();
   await page.goto("/progreso");
-  const archive = page.getByRole("region", { name: "Tu catálogo anterior" });
+  await page.getByRole("button", { name: "Tu catálogo anterior", exact: true }).click();
+  const archive = page.getByRole("region", { name: "Tu catálogo anterior", exact: true });
   await expect(archive.getByText(/Resueltos en el catálogo anterior: 1 en Python/)).toBeVisible();
   await archive.getByRole("button", { name: /Borrador · Reto archivado/ }).click();
   await expect(archive.getByLabel("Código guardado de Reto archivado de prueba")).toContainText("mi-codigo-archivado");
   expect(await page.content()).not.toContain("MARCADOR_PRIVADO_OTRA_PERSONA");
-  await expect(page.locator('.progress-summary dd').first()).toHaveText(/0\s*\/\s*\d+/);
+  await expect(page.locator('dl dd').first()).toHaveText(/0\s*\/\s*\d+/);
   expect((await page.request.get(`/ejercicios/${prefix}`)).status()).toBe(404);
 });

@@ -8,8 +8,9 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { MotionRegion } from "@/components/motion-region";
 import { Disclosure } from "@/components/arc/disclosure";
+import { executionFeedback } from "@/lib/execution-feedback";
 
-export const Results = memo(function Results({ result, busy, error, nextHref, collapsed = false, onToggle, runtimeMode = "FUNCTION" }: { result: ExecutionResult | null; busy: boolean; error: string; nextHref?: string; collapsed?: boolean; onToggle?: () => void; runtimeMode?: RuntimeMode }) {
+export const Results = memo(function Results({ result, busy, error, nextHref, nextLabel = "Practicar un ejercicio relacionado", collapsed = false, onToggle, runtimeMode = "FUNCTION" }: { result: ExecutionResult | null; busy: boolean; error: string; nextHref?: string; nextLabel?: string; collapsed?: boolean; onToggle?: () => void; runtimeMode?: RuntimeMode }) {
   const contentId = useId();
   return <section aria-label="Resultados de ejecución">
     <div className="results-toolbar flex h-[42px] items-center gap-2 px-4 text-xs font-medium">
@@ -48,11 +49,12 @@ export const Results = memo(function Results({ result, busy, error, nextHref, co
                 {test.output !== undefined && <div><span className="text-muted-foreground">Salida del programa</span><pre className="mt-1 overflow-x-auto font-mono">{test.output.length ? test.output : "(sin salida)"}</pre></div>}
               </>}
               {diff && <div className="flex items-start gap-2 rounded-lg bg-surface p-2.5"><Info className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" /><div><span className="text-muted-foreground">Primera diferencia</span><p className="mt-1 leading-6">{diff.message}</p></div></div>}
-              {test.error && <pre className="mt-2 max-h-44 overflow-auto font-mono leading-6 whitespace-pre-wrap text-destructive">{test.error}</pre>}
+              {!test.passed && <p className="text-sm leading-6 text-muted-foreground">{executionFeedback(test.status, test.error)}</p>}
+              {test.error && <Disclosure title="Detalle del error"><pre className="max-h-44 overflow-auto font-mono leading-6 whitespace-pre-wrap text-destructive">{test.error}</pre></Disclosure>}
             </div>
           </Disclosure>; })}</div>
           {result.results.some(r => !r.visible) && <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground"><LockKeyhole className="size-3.5 shrink-0" aria-hidden="true" />{result.results.filter(r => !r.visible && r.passed).length} de {result.results.filter(r => !r.visible).length} pruebas ocultas superadas</p>}
-          {result.status === "PASSED" && result.mode === "submit" && nextHref && <Link className="text-link mt-4 text-xs" href={nextHref}>Continuar con otro ejercicio<ArrowRight className="size-3.5" /></Link>}
+          {result.status === "PASSED" && result.mode === "submit" && nextHref && <Link className="text-link mt-4 text-xs" href={nextHref}>{nextLabel}<ArrowRight className="size-3.5" /></Link>}
         </>}
       </MotionRegion>
     </div>

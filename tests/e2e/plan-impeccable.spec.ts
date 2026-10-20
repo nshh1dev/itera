@@ -14,10 +14,10 @@ test.afterAll(async () => {
 
 test("la ayuda llega cerrada y se descubre con teclado sin perder código", async ({ page }) => {
   await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
-  const summary = page.getByRole("button", { name: "Contexto y ayuda", exact: true });
+  const summary = page.getByRole("button", { name: "Qué vas a practicar", exact: true });
   await expect(summary).toHaveAttribute("aria-expanded", "false");
   await expect(page.getByRole("heading", { name: "Tu reto", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Ver pistas", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Pistas progresivas", exact: true })).toBeVisible();
   await openSimpleEditor(page);
   const editor = page.getByRole("textbox", { name: "Editor sencillo de Python", exact: true });
   await editor.fill("def solve(data):\n    return data['a'] + data['b']");
@@ -75,8 +75,8 @@ test("una cuenta nueva entiende el progreso y distingue cambios pendientes de pr
   });
   expect(signup.ok(), await signup.text()).toBe(true);
   await page.goto("/progreso");
-  await expect(page.getByRole("heading", { name: "Aún no hay comprobaciones" })).toBeVisible();
-  await page.getByRole("link", { name: "Cambiar", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Aún no hay intentos en Python" })).toBeVisible();
+  await page.getByRole("link", { name: "Configuración", exact: true }).click();
   const panel = page.getByRole("dialog", { name: "Configuración", exact: true });
   await expect(panel).toBeVisible();
   await panel.getByLabel("Nombre", { exact: true }).fill("Prueba editada");

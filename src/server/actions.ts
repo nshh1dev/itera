@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { currentUser, requireUser } from "./auth";
 import { db } from "./db";
-import { draftSchema, preferenceSchema } from "@/lib/validation";
+import { draftSchema, preferenceSchema, languageSchema } from "@/lib/validation";
 import { z } from "zod";
 
 export async function savePreferences(input: unknown) {
@@ -59,4 +59,32 @@ export async function revealSolution(variantId: string) {
   const key = { userId: user.id, exerciseId: variant.version.exerciseId, language: variant.language, kind: "solution" };
   await db.helpUsage.upsert({ where: { userId_exerciseId_language_kind: key }, create: key, update: {} });
   return { code: variant.solution, explanation: variant.explanation };
+}
+
+export async function rememberPractice(input: unknown) {
+  const user = await currentUser();
+  if (!user) return;
+  const parsed = z.object({ variantId: z.string().min(1).max(100), language: languageSchema, pathSlug: z.string().regex(/^[a-z0-9-]+$/).max(100).optional() }).safeParse(input);
+  if (!parsed.success) return;
+  const { variantId, language, pathSlug } = parsed.data;
+  const variant = await db.exerciseVariant.findFirst({ where: { id: variantId, language, version: { published: true, exercise: { published: true } } }, select: { version: { select: { exerciseId: true } } } });
+  if (!variant) return;
+  const exerciseId = variant.version.exerciseId;
+  const path = pathSlug ? await db.learningPath.findFirst({ where: { slug: pathSlug, items: { some: { exerciseId } } }, select: { slug: true } }) : null;
+  const key = { userId: user.id, exerciseId, language };
+  await db.practiceContext.upsert({ where: { userId_exerciseId_language: key }, create: { ...key, pathSlug: path?.slug }, update: { pathSlug: path?.slug ?? null, visitedAt: new Date() } });
+}
+
+export async function getExerciseAttempts(input: unknown) {
+  const user = await requireUser();
+  const parsed = z.object({ exerciseId: z.string().min(1).max(100), language: languageSchema, page: z.number().int().min(0).max(100000) }).safeParse(input);
+  if (!parsed.success) return { error: "No pudimos identificar el historial.", entries: [], more: false };
+  const { exerciseId, language, page } = parsed.data;
+  const entries = await db.submission.findMany({
+    where: { userId: user.id, variant: { language, version: { exerciseId, exercise: { published: true } } } },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }], skip: page * 10, take: 11,
+    select: { id: true, code: true, status: true, mode: true, passedCount: true, totalCount: true, createdAt: true, variant: { select: { version: { select: { number: true } } } } },
+  });
+  // El historial solo necesita el resultado global; nunca envía casos ocultos.
+  return { entries: entries.slice(0, 10).map(entry => ({ ...entry, createdAt: entry.createdAt.toISOString() })), more: entries.length > 10 };
 }
