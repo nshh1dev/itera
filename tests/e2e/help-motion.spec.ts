@@ -28,7 +28,7 @@ for (const { width, height, theme } of [
   { width: 390, height: 480, theme: "light" },
   { width: 1440, height: 480, theme: "dark" },
 ] as const) {
-  test(`pistas y solución conservan marco y pestañas: ${width}x${height}, ${theme}`, async ({ page }) => {
+  test(`ayuda compacta sin animar altura ni mover pestañas: ${width}x${height}, ${theme}`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.emulateMedia({ reducedMotion: "no-preference", colorScheme: theme });
     await page.context().addCookies(cookies);
@@ -39,6 +39,10 @@ for (const { width, height, theme } of [
     const title = dialog.getByRole("heading", { name: "Pistas y solución" });
     const initialTop = (await title.boundingBox())!.y;
     const initialFrame = (await dialog.boundingBox())!;
+    if (height === 900) {
+      const unused = await dialog.evaluate(node => node.getBoundingClientRect().bottom - node.querySelector('[role="tabpanel"][data-state="active"]')!.lastElementChild!.getBoundingClientRect().bottom);
+      expect(unused, "sin espacio vacío bajo el contenido").toBeLessThanOrEqual(30);
+    }
     await dialog.evaluate(node => {
       node.setAttribute("data-preserved", "true");
       const samples: { top: number; opacity: number; transform: string; frame: { x: number; y: number; width: number; height: number } }[] = [];
@@ -54,6 +58,7 @@ for (const { width, height, theme } of [
     await dialog.getByRole("button", { name: "Descubrir la primera pista" }).click();
     const firstHint = dialog.getByRole("heading", { name: "Pista 1", exact: true });
     await expect(firstHint).toBeVisible();
+    expect(await firstHint.evaluate(node => (node.parentElement!.parentElement as HTMLElement).style.height)).toBe("");
     await firstHint.evaluate(node => node.setAttribute("data-preserved-hint", "true"));
     await dialog.getByRole("button", { name: "Una pista más", exact: true }).click();
     await expect(dialog.getByRole("heading", { name: "Pista 2", exact: true })).toBeVisible();
@@ -77,9 +82,25 @@ for (const { width, height, theme } of [
     });
     expect(samples.length).toBeGreaterThan(0);
     expect(Math.max(...samples.map(sample => Math.abs(sample.top - initialTop)))).toBeLessThan(1);
-    for (const dimension of ["x", "y", "width", "height"] as const) {
+    for (const dimension of ["x", "y", "width"] as const) {
       expect(Math.max(...samples.map(sample => Math.abs(sample.frame[dimension] - initialFrame[dimension]))), `marco estable: ${dimension}`).toBeLessThan(1);
     }
     expect(samples.every(sample => sample.opacity === 1 && sample.transform === "none")).toBeTruthy();
   });
 }
+
+test("la solución corta del programa no deja una ventana artificialmente alta", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.context().addCookies(cookies);
+  await page.goto("/ejercicios/ordena-las-instrucciones?lenguaje=python");
+  await page.getByRole("button", { name: "Ver pistas", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Pistas y solución" });
+  await dialog.getByRole("tab", { name: "Solución explicada", exact: true }).click();
+  await dialog.getByRole("button", { name: "Ver solución explicada", exact: true }).click();
+  await expect(dialog.locator("pre")).toBeVisible();
+  const unused = await dialog.evaluate(node => node.getBoundingClientRect().bottom - node.querySelector('[role="tabpanel"][data-state="active"]')!.lastElementChild!.getBoundingClientRect().bottom);
+  expect(unused).toBeLessThanOrEqual(30);
+  await mkdir(".local/screenshots", { recursive: true });
+  await page.screenshot({ path: ".local/screenshots/help-compact-program-dark.png" });
+});

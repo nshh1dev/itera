@@ -2,7 +2,16 @@
 
 ## Revisión de UIArc y rendimiento (20 de octubre de 2026)
 
-**Ajuste final del marco de ayudas:** fijar solo la posición superior no impedía
+**Comportamiento compacto acordado:** se retiró la altura fija de 640 px porque
+dejaba espacio vacío. La altura ahora se adapta al contenido sin animar el tamaño;
+el encabezado y las pestañas no se desplazan. Nueve pruebas de ayudas/controles
+aprobaron, incluyendo el programa corto de la captura del usuario, dos pistas,
+solución larga y pantallas bajas. La regresión comprueba ausencia de hueco inferior
+artificial y de altura animada, conservando posición superior y ancho. Se revisaron
+capturas de móvil/escritorio. Build con tipos y lint focalizado aprobaron. No se
+repitieron todas las pruebas unitarias/E2E ni Piston real.
+
+**Intento anterior con altura fija (sustituido):** fijar solo la posición superior no impedía
 que cambiara la altura del recuadro. Ahora tiene altura estable adaptada al viewport,
 con scroll limitado al panel activo y título/pestañas siempre visibles. La regresión
 comprueba `x`, `y`, ancho y alto en cada fotograma al descubrir dos pistas, cargar la

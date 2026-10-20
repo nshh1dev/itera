@@ -3,8 +3,8 @@ import { motion } from "motion/react";
 import { motionTokens } from "./arc/motion-tokens";
 import { useReducedMotion } from "./arc/use-reduced-motion";
 
-// Revelado de contenido de Arc Accordion, sin volver a montar pistas anteriores.
+// Solo fundido: animar altura haría crecer el marco de ayudas por fotograma.
 export function MotionReveal({ children }: { children: React.ReactNode }) {
   const reduced = useReducedMotion();
-  return <motion.div initial={reduced ? false : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} transition={reduced ? { duration: 0 } : motionTokens.spring.smooth} className="overflow-hidden">{children}</motion.div>;
+  return <motion.div initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : motionTokens.duration.instant, ease: motionTokens.ease.enter }}>{children}</motion.div>;
 }

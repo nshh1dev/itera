@@ -99,9 +99,11 @@ sin barra visible ni scroll vertical durante el movimiento del indicador. Los
 selectores del catálogo desactivan los fallbacks hacia arriba y la selección
 automática del área más grande; conservan el ajuste lateral de `base-select`.
 
-El diálogo de pistas mantiene una altura estable, limitada a 640 px y al espacio
-disponible de pantalla. Título, pestañas y marco permanecen fijos; solo el panel
-activo desplaza su contenido. Se reserva el espacio de scrollbar para no variar
+El diálogo de pistas usa la altura natural del contenido, sin altura mínima ni
+animación de tamaño. La parte superior y las pestañas permanecen en su sitio;
+el borde inferior cambia de una vez. Solo el contenido largo necesita scroll
+interno al alcanzar el límite de pantalla. Las nuevas pistas usan un fundido
+breve, no una interpolación de altura. Se reserva espacio de scrollbar para no variar
 la anchura al cargar la solución. Sus dos paneles permanecen montados mientras está abierto:
 volver a Pistas no repite la aparición de pistas ya descubiertas. Solo el panel
 activo es visible y accesible; cerrar y reabrir conserva la animación del diálogo.
