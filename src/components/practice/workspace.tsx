@@ -221,7 +221,7 @@ function WorkspaceReady(props: Props) {
               <DialogContent className="learning-help-dialog max-w-xl">
                 <DialogTitle className="pr-6 text-xl font-semibold tracking-tight">Pistas y solución</DialogTitle>
                 <DialogDescription className="sr-only">Descubre pistas progresivas o consulta la solución explicada.</DialogDescription>
-                <Tabs defaultValue="hints" className="mt-6">
+                <Tabs defaultValue="hints" className="learning-help-tabs mt-6">
                   <TabsList><TabsTrigger value="hints">Pistas</TabsTrigger><TabsTrigger value="solution">Solución explicada</TabsTrigger></TabsList>
                   <TabsContent value="hints" forceMount className="mt-5 data-[state=inactive]:hidden">
                     {hintCount === 0 && <p className="py-4 text-base leading-7 text-muted-foreground">Las pistas van de lo general a lo concreto. Descubre solo lo que necesites.</p>}

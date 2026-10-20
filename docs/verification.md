@@ -2,6 +2,14 @@
 
 ## Revisión de UIArc y rendimiento (20 de octubre de 2026)
 
+**Ajuste final del marco de ayudas:** fijar solo la posición superior no impedía
+que cambiara la altura del recuadro. Ahora tiene altura estable adaptada al viewport,
+con scroll limitado al panel activo y título/pestañas siempre visibles. La regresión
+comprueba `x`, `y`, ancho y alto en cada fotograma al descubrir dos pistas, cargar la
+solución, desplazarla y volver a Pistas. Ocho escenarios de ayudas/controles aprobaron
+en móvil y escritorio, temas claro/oscuro y ventanas de 900/480 px de altura. Build
+(incluye tipos) y lint focalizado aprobaron. No se repitió toda la suite ni Piston real.
+
 Corrección posterior del salto en ayudas: `help-motion.spec.ts` reprodujo un
 desplazamiento del encabezado de más de 220 px al revelar pistas/solución. Tras
 anclar el diálogo por arriba y conservar sus paneles, los 16 escenarios de

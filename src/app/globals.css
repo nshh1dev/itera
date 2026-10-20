@@ -341,8 +341,13 @@
 
 .dialog-content { isolation: isolate; background: var(--elevated); border: 0; padding: 0; box-shadow: var(--elevation-dialog), inset 0 0 0 1px var(--border-soft); }
 .dialog-body { max-height: inherit; overflow-y: auto; overscroll-behavior: contain; padding: 28px; border-radius: inherit; }
-/* Las ayudas crecen hacia abajo: revelar contenido no recentra todo el diálogo. */
-.learning-help-dialog { top: max(24px, 8dvh); translate: -50% 0; max-height: min(84dvh, calc(100dvh - 48px)); }
+/* El marco y las pestañas no cambian al revelar ayudas: solo el panel hace scroll. */
+.learning-help-dialog { top: max(24px, 8dvh); translate: -50% 0; height: min(640px, 84dvh, calc(100dvh - 48px)); max-height: min(84dvh, calc(100dvh - 48px)); }
+.learning-help-dialog .dialog-body { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+.learning-help-dialog .dialog-body > h2 { flex-shrink: 0; }
+.learning-help-tabs { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+.learning-help-tabs > [role="tablist"] { flex-shrink: 0; align-self: flex-start; }
+.learning-help-tabs > [role="tabpanel"] { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--border) transparent; scrollbar-gutter: stable; }
 .navigation-drawer .dialog-body { display: flex; flex: 1; flex-direction: column; height: 100%; padding: 16px; }
 .navigation-drawer { background: var(--surface); }
 .settings-dialog { width: min(1080px, calc(100% - 48px)); max-width: none; max-height: min(860px, 90dvh); }
