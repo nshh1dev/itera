@@ -65,7 +65,7 @@ for (const theme of ["light", "dark"] as const) {
     await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await openLearningHelp(page);
-    await expect(page.getByRole("button", { name: "Qué vas a practicar", exact: true })).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByRole("button", { name: "Comprender la idea", exact: true })).toHaveAttribute("aria-expanded", "true");
     await expect(page.locator(".editor-region")).toBeVisible();
     await expect(page.getByRole("button", { name: "Comprobar solución", exact: true })).toBeInViewport();
     const editor = await page.locator(".editor-region").boundingBox();

@@ -111,7 +111,7 @@ test("pistas y detalles permiten invertir la apertura sin perder el editor", asy
   await trigger.press("Enter");
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
   await openLearningHelp(page);
-  const summary = page.getByRole("button", { name: "Condiciones del ejercicio", exact: true });
+  const summary = page.getByRole("button", { name: "Comprender la idea", exact: true });
   const initial = await summary.getAttribute("aria-expanded");
   await summary.focus();
   // El contenido que se contrae puede desplazar el botón bajo el puntero.

@@ -29,8 +29,8 @@ test("Desde cero es Iniciación y comienza con un programa completo", async ({ p
   await page.locator(".route-module").getByRole("link").first().click();
   await expect(page.getByRole("heading", { level: 1, name: "Muestra un saludo", exact: true })).toBeVisible();
   await openLearningHelp(page);
-  await expect(page.getByText(/Entiende la idea/)).toBeVisible();
-  await expect(page.getByRole("button", { name: "Condiciones del ejercicio", exact: true })).toHaveAttribute("aria-expanded", "false");
+  await expect(page.getByRole("region", { name: "Teoría y ejemplo" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Condiciones del ejercicio", exact: true })).toBeVisible();
   await openSimpleEditor(page);
   await expect(page.getByRole("textbox", { name: "Editor sencillo de Python" })).toHaveValue(logicExercises[0].starters!.python);
 });

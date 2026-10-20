@@ -31,10 +31,7 @@ test("la validación recorta espacios y rechaza objetivos vacíos y requisitos r
 
 test("la guía no atribuye conocimientos ni objetivos a una versión histórica vacía", () => {
   const html = renderToStaticMarkup(LearningGuide({ objective: "", prerequisites: [] }));
-  assert.match(html, /todavía no tiene un objetivo editorial/);
-  assert.match(html, /no especifica conocimientos previos/);
-  assert.doesNotMatch(html, /No necesitas conocimientos de programación/);
-  assert.match(html, /no bloqueos/);
+  assert.equal(html, "");
 });
 
 test("la guía muestra una versión documentada y no interpreta su contenido como HTML", () => {
@@ -43,5 +40,6 @@ test("la guía muestra una versión documentada y no interpreta su contenido com
   assert.match(html, /Variables/);
   assert.doesNotMatch(html, /<script>/);
   const first = renderToStaticMarkup(LearningGuide({ objective: "Observar tu primer programa.", prerequisites: [] }));
-  assert.match(first, /No necesitas conocimientos de programación previos/);
+  assert.doesNotMatch(first, /No necesitas conocimientos de programación previos/);
+  assert.match(first, /Observar tu primer programa/);
 });
