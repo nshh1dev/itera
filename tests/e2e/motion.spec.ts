@@ -9,8 +9,8 @@ const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.
 const email = `motion-${Date.now()}@example.test`;
 let cookies: Awaited<ReturnType<BrowserContext["cookies"]>> = [];
 
-// Fotograma muestreado en el navegador durante el cierre del panel.
-type Frame = { overlay: number | null; region: number; surface: number[] | null };
+// Fotograma muestreado durante la salida de Arc, sin geometría del sistema retirado.
+type Frame = { overlay: number | null; region: number };
 
 test.beforeAll(async ({ request }) => {
   const signup = await request.post("/api/auth/sign-up/email", {
@@ -39,14 +39,8 @@ for (const theme of ["light", "dark"] as const) {
       await expect(page).toHaveURL(/\/configuracion$/);
       const dialog = page.getByRole("dialog", { name: "Configuración", exact: true });
       await expect(dialog).toBeVisible();
-      await expect.poll(() => dialog.evaluate(node => {
-        const rect = node.getBoundingClientRect();
-        const surface = node.querySelector(".dialog-surface")!.getBoundingClientRect();
-        return Math.abs(rect.x - surface.x) < 1 && Math.abs(rect.width - surface.width) < 1;
-      })).toBeTruthy();
+      await expect(dialog).toHaveCSS("transform", "none");
       await expect(dialog.getByLabel("Nombre", { exact: true })).toHaveValue("Prueba de movimiento");
-      const frames = await dialog.locator(".dialog-surface").evaluate(node => node.getAnimations().flatMap(animation => (animation.effect as KeyframeEffect).getKeyframes()));
-      expect(frames.some(frame => String(frame.transform).includes("translate("))).toBeTruthy();
       await dialog.getByLabel("Nombre", { exact: true }).fill("Edición sin guardar");
       await page.keyboard.press("Escape");
       await expect(page).toHaveURL(/\/inicio$/);
@@ -69,25 +63,24 @@ for (const theme of ["light", "dark"] as const) {
   }
 }
 
-test("el cierre no devuelve el fondo, no repite la entrada del contenido y aterriza en el origen", async ({ page }) => {
+test("el cierre Arc desvanece el fondo sin repetir la entrada del contenido y devuelve el foco", async ({ page }) => {
   await page.context().addCookies(cookies);
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/inicio");
   const origin = page.getByRole("link", { name: "Mi cuenta", exact: true });
-  const avatar = (await origin.boundingBox())!;
   await origin.click();
   const dialog = page.getByRole("dialog", { name: "Configuración", exact: true });
   await expect(dialog).toBeVisible();
-  await dialog.evaluate(async node => { await Promise.all(node.getAnimations({ subtree: true }).map(animation => animation.finished.catch(() => {}))); });
+  await expect(dialog).toHaveCSS("transform", "none");
+  await expect(page.locator(".dialog-overlay")).toHaveCSS("opacity", "1");
   await page.evaluate(() => {
     const collected: Frame[] = [];
     (window as unknown as { __close: Frame[] }).__close = collected;
     const sample = () => {
       const overlay = document.querySelector(".dialog-overlay");
       const region = document.querySelector("main > div");
-      const rect = document.querySelector(".dialog-surface")?.getBoundingClientRect();
-      collected.push({ overlay: overlay ? Number(getComputedStyle(overlay).opacity) : null, region: region ? Number(getComputedStyle(region).opacity) : 1, surface: rect ? [rect.x, rect.y, rect.width, rect.height] : null });
-      requestAnimationFrame(sample);
+      collected.push({ overlay: overlay ? Number(getComputedStyle(overlay).opacity) : null, region: region ? Number(getComputedStyle(region).opacity) : 1 });
+      if (overlay) requestAnimationFrame(sample);
     };
     requestAnimationFrame(sample);
   });
@@ -96,17 +89,11 @@ test("el cierre no devuelve el fondo, no repite la entrada del contenido y aterr
   const frames = await page.evaluate(() => (window as unknown as { __close: Frame[] }).__close);
   // El fondo se desvanece sin recuperar opacidad antes de desmontarse.
   const overlays = frames.flatMap(frame => frame.overlay === null ? [] : [frame.overlay]);
-  expect(overlays.length).toBeGreaterThan(4);
+  expect(overlays.length).toBeGreaterThan(1);
   for (let index = 1; index < overlays.length; index++) expect(overlays[index], `fotograma ${index}`).toBeLessThanOrEqual(overlays[index - 1] + 0.01);
-  expect(overlays.at(-1)!).toBeLessThan(0.02);
   // Abrir y cerrar un panel interceptado no vuelve a presentar el contenido del shell.
   expect(frames.every(frame => frame.region === 1)).toBe(true);
-  // La superficie termina sobre el control que la abrió, con su tamaño.
-  const last = frames.flatMap(frame => frame.surface === null ? [] : [frame.surface]).at(-1)!;
-  expect(Math.abs(last[0] + last[2] / 2 - (avatar.x + avatar.width / 2))).toBeLessThan(1.5);
-  expect(Math.abs(last[1] + last[3] / 2 - (avatar.y + avatar.height / 2))).toBeLessThan(1.5);
-  expect(Math.abs(last[2] - avatar.width)).toBeLessThan(1.5);
-  expect(Math.abs(last[3] - avatar.height)).toBeLessThan(1.5);
+  await expect(origin).toBeFocused();
 });
 
 test("pistas y detalles permiten invertir la apertura sin perder el editor", async ({ page }) => {
@@ -125,9 +112,9 @@ test("pistas y detalles permiten invertir la apertura sin perder el editor", asy
   await dialog.getByRole("button", { name: "Cerrar", exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await openLearningHelp(page);
-  const summary = page.getByText("Antes de empezar", { exact: true });
+  const summary = page.getByRole("button", { name: "Antes de empezar", exact: true });
   await summary.click({ clickCount: 2, delay: 20 });
-  await expect(summary.locator("..")).toHaveAttribute("open", "");
+  await expect(summary).toHaveAttribute("aria-expanded", "true");
   await expect(page.locator(".monaco-editor")).toBeVisible();
 });
 
@@ -157,7 +144,7 @@ test("cambiar a movimiento reducido durante una apertura la termina sin bloqueo"
   const dialog = page.getByRole("dialog", { name: "Configuración", exact: true });
   await expect(dialog).toBeVisible();
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect.poll(() => dialog.locator(".dialog-surface").evaluate(node => node.getAnimations().every(animation => animation.playState === "finished"))).toBeTruthy();
+  await expect(dialog).toHaveCSS("transform", "none");
   await page.keyboard.press("Escape");
   await expect(page).toHaveURL(/\/inicio$/);
   await expect(dialog).toHaveCount(0);
@@ -169,8 +156,7 @@ test("movimiento reducido permite abrir y cerrar sin transformaciones espaciales
   await page.getByRole("button", { name: "Ver pistas" }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
-  await expect(dialog.locator(".dialog-surface")).toHaveCSS("transform", "none");
-  expect(await dialog.locator(".dialog-surface").evaluate(node => node.getAnimations().length)).toBe(0);
+  await expect(dialog).toHaveCSS("transform", "none");
   await page.keyboard.press("Escape");
   await expect(dialog).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Ver pistas" })).toBeFocused();

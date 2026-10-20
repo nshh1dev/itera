@@ -12,7 +12,7 @@ export default async function AdminPage(){
   const exercises=await db.exercise.findMany({orderBy:{order:"asc"},include:{versions:{orderBy:{number:"desc"},take:1}}});
   return <div className="page-container">
     <div className="page-intro">
-      <div><h1 className="page-title">Contenido que enseña.</h1><p className="page-description">Administración local: crea, revisa y publica ejercicios con versiones independientes.</p></div>
+       <div><h1 className="page-title">Administración</h1></div>
       <Button asChild><Link href="/admin/ejercicios/nuevo"><Plus aria-hidden="true" />Nuevo ejercicio</Link></Button>
     </div>
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground"><p>{exercises.length} ejercicios editoriales</p><p>Los borradores no son visibles para estudiantes.</p></div>

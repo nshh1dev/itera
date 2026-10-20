@@ -1,19 +1,24 @@
 "use client";
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useSelectedLayoutSegments } from "next/navigation";
-import { motion, reducedMotion } from "@/lib/motion";
+import { useAnimate } from "motion/react";
+import { motionTokens } from "./arc/motion-tokens";
+import { useReducedMotion } from "./arc/use-reduced-motion";
 
-// Cambia la presentación, no la identidad de los hijos: Monaco y formularios no se remontan.
-// La clave son los segmentos que este layout renderiza de verdad: abrir un panel
-// interceptado cambia la URL sin cambiar el contenido, y no debe repetir la entrada.
+// No usar key en el contenedor: formularios, borradores y Monaco conservan su nodo.
 export function MotionRegion({ children, motionKey, className }: { children: React.ReactNode; motionKey?: string; className?: string }) {
-  const segments = useSelectedLayoutSegments() ?? [];
-  const element = useRef<HTMLDivElement>(null);
+  const segments = useSelectedLayoutSegments();
   const key = motionKey ?? segments.join("/");
-  useLayoutEffect(() => {
-    if (!element.current || reducedMotion() || !element.current.animate) return;
-    const animation = element.current.animate([{ opacity: .65, transform: "translateY(5px)" }, { opacity: 1, transform: "none" }], { duration: motion.navigation, easing: motion.ease });
-    return () => animation.cancel();
-  }, [key]);
-  return <div ref={element} className={className}>{children}</div>;
+  const previous = useRef(key);
+  const [scope, animate] = useAnimate<HTMLDivElement>();
+  const reduced = useReducedMotion();
+  useEffect(() => {
+    if (previous.current === key) return;
+    previous.current = key;
+    const node = scope.current;
+    if (reduced || !node) return;
+    const controls = animate(node, { opacity: [.65, 1] }, { duration: motionTokens.duration.fast, ease: motionTokens.ease.enter });
+    return () => { controls.stop(); node.style.opacity = ""; };
+  }, [key, reduced, animate, scope]);
+  return <div ref={scope} className={className}>{children}</div>;
 }

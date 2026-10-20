@@ -10,6 +10,7 @@ import { ExerciseRow } from "@/components/exercise-row";
 import { modulesForPath } from "@/lib/learning-modules";
 import { languages, languageNames, levelNames } from "@/lib/types";
 import { learningPaths } from "@/lib/learning-paths";
+import { Disclosure } from "@/components/arc/disclosure";
 
 export default async function PathPage({ params, searchParams }: { params: Promise<{slug:string}>; searchParams: Promise<{lenguaje?:string}> }) {
   const {slug} = await params;
@@ -31,11 +32,11 @@ export default async function PathPage({ params, searchParams }: { params: Promi
     {definition && <p className="mt-3 text-xs font-medium text-muted-foreground">{levelNames[definition.level]} · Fundamentos de programación y algoritmos</p>}
     <p className="page-description">{path.description}</p>
     <nav aria-label="Lenguaje de la ruta" className="segmented-control mt-5 flex-wrap">{languages.map(lang => <Link key={lang} href={`?lenguaje=${lang}`} aria-current={language === lang ? "page" : undefined} className="segment">{languageNames[lang]}</Link>)}</nav>
-    <p className="mt-4 text-sm leading-6 text-muted-foreground">{language === "typescript" ? "Puedes empezar aquí sin conocer JavaScript. Aprenderás los tipos a medida que los necesites. Las versiones antiguas necesitan una revisión publicada para ofrecer este lenguaje." : "Entender → observar → completar → resolver → integrar. Las ayudas disminuyen a medida que practicas."}</p>
+    <Disclosure title="Sobre esta ruta" className="mt-3 max-w-prose"><p className="pb-3 text-sm leading-6 text-muted-foreground">{language === "typescript" ? "Puedes empezar sin conocer JavaScript. Aprenderás los tipos a medida que los necesites. Las versiones antiguas necesitan una revisión publicada para ofrecer este lenguaje." : "Entender → observar → completar → resolver → integrar. Las ayudas disminuyen a medida que practicas."}</p></Disclosure>
     {nextExercise && <section className="surface-panel mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-surface p-5" aria-label="Siguiente ejercicio de la ruta"><div><p className="text-xs text-muted-foreground">{exercises.some(exercise => exercise.solved) ? "Sigue practicando" : "Empieza la ruta"}</p><h2 className="mt-2 text-lg font-semibold">{nextExercise.title}</h2></div><Button asChild><Link href={`/ejercicios/${nextExercise.slug}?lenguaje=${language}&ruta=${encodeURIComponent(slug)}`}>Abrir ejercicio<ArrowRight aria-hidden="true" /></Link></Button></section>}
     <p className="mt-6 mb-3 px-3 text-xs text-muted-foreground">{exercises.filter(e => e.solved).length} de {exercises.length} completados · Sin prisa, sin bloqueos</p>
     <div className="route-layout">
-    {modules.length > 0 && <nav className="route-outline" aria-label="Módulos de la ruta"><p className="section-title">Tu recorrido</p><ol>{modules.map(module => <li key={module.slug}><a href={`#module-${module.slug}`}>{module.title}</a></li>)}</ol><p className="text-xs leading-6 text-muted-foreground">Cada módulo combina una idea, ejemplos y práctica. No necesitas completarlos en una sola sesión.</p></nav>}
+    {modules.length > 0 && <nav className="route-outline" aria-label="Módulos de la ruta"><p className="section-title">Módulos</p><ol>{modules.map(module => <li key={module.slug}><a href={`#module-${module.slug}`}>{module.title}</a></li>)}</ol></nav>}
     <div className="route-content">
     {modules.map(module => {
       const entries = module.slugs.flatMap(slug => exercises.filter(exercise => exercise.slug === slug));

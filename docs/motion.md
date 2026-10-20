@@ -1,112 +1,84 @@
-# Sistema de movimiento de Itera
+# Movimiento con UIArc
 
-## Intención
+## Decisión
 
-Relacionar control, superficie y resultado sin distraer de la escritura de código.
-Se aplican principios de HIG a una aplicación web, no convenciones nativas de macOS:
-`motion.md › Best practices`: “Add motion purposefully, supporting the experience
-without overshadowing it.” `motion.md › Providing feedback`: “Let people cancel motion.”
-Referencias locales en `.agents/skills/apple-design/references/hig/`.
+El sistema anterior de CSS y Web Animations fue sustituido por componentes
+gratuitos de [Arc](https://uiarc.dev/), adaptados a los tokens de Itera.
+No se importan `foundation.css`, temas adicionales ni componentes Pro.
+`motion` y `@radix-ui/react-accordion` son las nuevas dependencias de ejecución.
+Todo el código se sirve localmente; el navegador no consulta el registro de Arc.
 
-## Base compartida
+La fuente y licencia MIT de Elia Kuratli están identificadas en
+`src/components/arc/`. Los componentes de `src/components/ui/` conservan la API
+de Itera, los tamaños compactos y la integración Radix existente.
 
-Sin dependencias nuevas ni APIs experimentales de React/Next. CSS y Web Animations
-API comparten tiempos verificados por `tests/motion.test.ts`:
+## Componentes y adaptaciones
 
-| Familia | Tiempo | Aplicación |
+| Fuente gratuita | Uso en Itera | Adaptación |
 | --- | --- | --- |
-| Respuesta | 120 ms | Pulsación y cambios de control |
-| Despliegue | 200 ms | Detalles, filtros, menús y pestañas |
-| Navegación | 200 ms | Cambio breve del contenido principal |
-| Apertura de panel | 320 ms | Superficie desde su activador |
-| Cierre de panel | 220 ms | Regreso al origen |
+| [Button](https://uiarc.dev/components/button/markdown) | Acciones, formularios y enlaces | Variantes existentes, `asChild`, etiquetas multilínea sin medir un ancho fijo, carga sin perder foco |
+| [Tabs](https://uiarc.dev/components/tabs/markdown) | Pistas, administración, selección de navegación y secciones móviles | Indicador compartido acotado por `LayoutGroup`; formularios persistentes sin animar su altura |
+| [Dialog](https://uiarc.dev/components/dialog/markdown) | Configuración, ayudas, confirmaciones y navegación móvil | Mantiene títulos/descripciones originales; entrada lateral para navegación; cierre de ruta después de salir |
+| [Accordion](https://uiarc.dev/components/accordion/markdown) | Ayudas, teoría, restricciones, resultados y datos locales | `Disclosure` independiente, contenido inerte al cerrar, sin borrar su estado |
+| [Progress](https://uiarc.dev/components/progress/markdown) | Inicio, rutas y categorías | Valor real desde el primer render, sin reiniciar a cero ni convertir la barra en celebración |
 
-Curva: `cubic-bezier(.2, .8, .2, 1)`, sin rebotes. Tokens CSS en `globals.css`;
-constantes y geometría en `src/lib/motion.ts`.
+Los presets de `arc/motion-tokens.ts` proceden del registro gratuito de Arc:
+`snappy` para pulsaciones, `smooth` para paneles y `morph` para indicadores.
+Los tiempos CSS complementarios en `arc/motion.css` corresponden a `fast`
+(160 ms) y `standard` (240 ms), con la curva estándar de Arc.
 
-## Cobertura
+## Intención y cobertura
 
-- **Configuración y cuenta:** la ruta interceptada `@panel/(.)configuracion`
-  conserva el contexto anterior, también desde el taller. Avatar y enlace lateral
-  registran su origen. La superficie crece hacia un panel centrado en escritorio
-  o una hoja de ancho completo en móvil; su contenido aparece sin escalar letras.
-  Al cerrarse aterriza sobre el control con el tamaño de este, y el fondo mantiene
-  su opacidad final hasta desmontarse. Escape, cierre y exterior vuelven al
-  historial anterior. El foco retorna al origen. Recargar o abrir
-  `/configuracion` directamente muestra la página completa.
-- **Bienvenida:** el registro usa deliberadamente navegación de documento hacia
-  `/configuracion?bienvenida=1`, evitando interceptar el primer recorrido de cuenta.
-- **Ediciones pendientes:** el formulario del panel guarda nombre, lenguaje y nivel
-  en `sessionStorage`, por cuenta y pestaña. Cerrar no guarda en PostgreSQL. Reabrir
-  restaura la edición; guardar correctamente elimina la copia temporal. No se
-  almacenan contraseñas ni se cambian las reglas de borradores de código.
-- **Navegación:** `MotionRegion` anima brevemente el contenido principal del shell
-  y los formularios de acceso, registro y recuperación, sin usar claves para
-  remontar sus hijos. Su clave son los segmentos que el layout renderiza de verdad,
-  no la URL: abrir o cerrar un panel interceptado no repite la entrada. La barra
-  lateral cambia de ancho suavemente. El menú móvil usa una entrada lateral en
-   lugar de expandirse desde un punto. Abrir añade una entrada temporal de historial:
-   Atrás lo cierra y Adelante lo reabre; navegar consume esa entrada antes del destino.
-- **Catálogo:** `next/form` mantiene navegación cliente y los filtros en la URL,
-  con estado de búsqueda pendiente. Se actualiza la región de resultados;
-  los filtros móviles expanden y contraen su espacio, sin desmontar los campos.
-- **Rutas e inicio:** transición de contenido al navegar, enlaces de módulos con
-  desplazamiento suave y barras que interpolan valores reales. No hay cascadas
-  de tarjetas ni barras que se reinicien artificialmente desde cero.
-- **Ayudas, pistas y confirmaciones editoriales:** usan el mismo `Dialog` con
-  origen. Cada pista nueva expande su propio espacio sin remontar las anteriores.
-  La confirmación de restablecer el código vuelve al control de opciones,
-  que sigue disponible después de cerrar el menú. Sin origen visible, la superficie
-  usa una variación mínima de escala y fundido, no coordenadas obsoletas.
-- **Teoría, restricciones, errores comunes, atajos y casos de prueba:** el controlador
-  compartido anima la altura de los `details` nativos, permite invertir el gesto
-  y conserva sus resúmenes y operación por teclado. El menú de opciones se excluye
-  de esta lógica de altura y se despliega desde su esquina superior derecha.
-- **Editor:** la presentación de paneles móviles cambia sin remontar Monaco.
-  Los resultados contraídos recuperan espacio con transición de altura donde
-  el navegador lo admite; al arrastrar el separador no hay interpolación atrasada.
-- **Ejecución:** transición localizada entre espera, error y resultado, sin retrasar
-  peticiones ni revelar casos ocultos. Autoguardado conserva sus mensajes legibles;
-   no tiene un bucle animado en cada pulsación. La demo muestra una sustitución
-   numérica tras probar la entrada, con un fundido breve junto al resultado; no
-   añade celebraciones ni repite entradas de secciones.
-- **Preferencias y administración:** tema con transición breve de superficies,
-  indicador deslizante en las pestañas administrativas, cambio de contenido y
-  feedback localizado de guardado, validación, publicación y errores.
+- El momento protagonista es probar una entrada y ver su resultado en la demo,
+  no una cascada de apariciones al desplazarse por la portada.
+- El movimiento responde a pulsar, seleccionar, abrir, cerrar o recibir un
+  resultado. No retrasa peticiones, guardado, evaluación ni navegación.
+- `MotionRegion` presenta cambios de contenido con un fundido localizado, sin
+  claves que desmonten sus hijos. Abrir Configuración sobre el taller conserva
+  el editor. Su activador se recuerda únicamente para devolverle el foco.
+- `Disclosure` mantiene el contenido montado; los paneles cerrados son inertes
+  y quedan fuera del árbol accesible. Las aperturas pueden invertirse.
+- El menú del editor conserva cierre exterior, Escape y devolución de foco.
+- Los filtros mantienen todos sus campos y el envío nativo. Los selectores
+  siguen usando la mejora progresiva `appearance: base-select`.
+- La navegación móvil conserva su entrada temporal de historial y su cierre
+  con Atrás. Configuración directa sigue siendo una página completa.
+- Los borradores pendientes del formulario siguen en `sessionStorage` por
+  cuenta. Las preferencias del editor y el código no cambian de contrato.
+- Se han retirado animaciones globales sobre `role=status`/`role=alert` y el
+  controlador que interceptaba todos los `details` del documento.
 
-## Accesibilidad y compatibilidad
+## Menos texto
 
-- `prefers-reduced-motion` elimina los desplazamientos y transformaciones JS y
-   pone a cero los tokens CSS de movimiento y desactiva los indicadores giratorios,
-   sin una anulación global de toda animación. Cambiarlo durante una apertura termina las
-  animaciones finitas sin intentar terminar indicadores infinitos de carga.
-- Radix conserva modalidad, foco atrapado, Escape y semántica de título/descripción.
-  El fondo continúa inerte; el botón de cierre no depende del scroll del formulario.
-- El cierre de Configuración espera únicamente su transición de salida antes de
-  volver; no retrasa el guardado ni otras operaciones. Atrás del navegador puede
-  retirar la ruta inmediatamente: no se intercepta ni se bloquea la navegación nativa.
-- Las transiciones espaciales usan transform/opacity. Solo los desplegables pequeños,
-  el ancho de navegación y la altura de resultados animan dimensiones. Monaco no
-  se incluye en una animación de tamaño al escribir; se mantienen sus temas locales.
-- Si falta Web Animations, el panel aparece y cierra sin la transformación. La
-  interpolación de resultados se habilita con `@supports`; los detalles conservan
-  funcionamiento nativo sin JavaScript.
-- No se habilita View Transitions experimental ni una transformación compartida
-  de títulos entre rutas. La alternativa estable es el fundido/desplazamiento breve
-  del destino; no se conservan capturas que puedan ocultar contenido o foco.
+La portada prioriza demo, práctica y rutas. Las pantallas internas eliminan
+introducciones repetidas y usan nombres breves. Las explicaciones secundarias
+se abren bajo demanda. Se conservan enunciados, teoría, ejemplos, objetivos,
+restricciones, pistas, soluciones, advertencias destructivas y errores útiles.
 
-## Verificación
+## Accesibilidad
 
-Pruebas específicas en `tests/e2e/motion.spec.ts`: geometría de origen y destino,
-ambos temas en 390/1440 px, cerrar/reabrir, historial, copia temporal, guardado,
-recarga como página completa, foco atrapado y restaurado, conservación del nodo de
-Monaco, doble pulsación en detalles y movimiento reducido inicial y sobrevenido.
-Las capturas locales `motion-settings-*` esperan el fin de las animaciones.
-La limpieza del diálogo cancela y libera su referencia de animación: al repetir
-el montaje en Strict Mode, la apertura vuelve a partir del control de origen y
-no de una transformación cancelada. La suite comprueba los fotogramas de entrada
-además del cierre y la restauración de foco.
+`MotionConfig reducedMotion="user"`, las ramas de `useReducedMotion` y la media
+query CSS eliminan desplazamientos, escalas, interpolación de altura y bucles
+cuando se solicita menos movimiento. Los estados siguen siendo legibles.
+El hook local de preferencia usa `useSyncExternalStore` para responder también
+a cambios sobrevenidos; el hook de la versión instalada de Motion solo lee
+el valor inicial. El render de servidor adopta la opción sin movimiento.
+La modalidad, Escape, foco y semántica de pestañas y acordeones los proporciona
+Radix. Los controles de carga conservan su nombre accesible y bloquean la acción
+sin retirar el foco.
 
-La suite E2E usa el doble HTTP de Piston: no demuestra ejecución ni aislamiento
-reales. Otros navegadores, lectores de pantalla y la fluidez en dispositivos físicos
-requieren revisión manual; las pruebas de Chromium no garantizan 60 fps.
+## Estado de verificación de esta entrega
+
+Por petición expresa del usuario, no se ejecutaron pruebas, lint, comprobación
+de tipos, build, detector de diseño ni aplicación. La revisión fue estática:
+lectura de código, referencias, selectores y diff. Las expectativas existentes
+se adaptaron al sistema nuevo, pero no se han ejecutado.
+
+Pendiente verificar en navegador ambos temas, móvil/escritorio, navegación por
+teclado, cierres rápidos, movimiento reducido inicial y sobrevenido, foco de
+Configuración y conservación del nodo/cursor de Monaco. No se afirma fluidez
+medida, accesibilidad auditada ni ejecución real comprobada.
+
+Durante la instalación, npm informó de cinco vulnerabilidades de severidad
+alta. No se aplicó `audit fix --force` ni se ampliaron dependencias ajenas a esta
+migración. Es un aviso pendiente de diagnóstico separado, no una prueba aprobada.

@@ -3,6 +3,9 @@
 import { useState, type FormEvent } from "react";
 import { ArrowRight, Check, Code2, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion } from "motion/react";
+import { motionTokens } from "@/components/arc/motion-tokens";
+import { useReducedMotion } from "@/components/arc/use-reduced-motion";
 
 // Solo se calculan entradas numéricas con esta función fija; nunca se evalúa código del visitante.
 function solve(data: { a: number; b: number }) {
@@ -10,6 +13,7 @@ function solve(data: { a: number; b: number }) {
 }
 
 export function PracticeDemo() {
+  const reduced = useReducedMotion();
   const [a, setA] = useState("3");
   const [b, setB] = useState("5");
   const [result, setResult] = useState<number | null>(() => solve({ a: 3, b: 5 }));
@@ -33,9 +37,8 @@ export function PracticeDemo() {
   return <section className="landing-demo" aria-labelledby="demo-title">
     <div className="landing-demo-toolbar"><span className="flex items-center gap-2"><Code2 className="size-4" aria-hidden="true" /> Prueba la idea</span><span className="text-muted-foreground">JavaScript · código fijo</span></div>
     <div className="landing-demo-problem">
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground"><span>Fundamentos</span><span>Principiante</span></div>
       <h2 id="demo-title">Dos números, una suma.</h2>
-      <p>Recibe dos números, <code>a</code> y <code>b</code>.<br className="sm:hidden" /> Devuelve su suma.</p>
+      <p>Cambia los números y prueba.</p>
     </div>
     <div className="landing-demo-workbench">
     <div className="landing-demo-editor">
@@ -60,15 +63,15 @@ export function PracticeDemo() {
           <label htmlFor="demo-a"><span>a</span><input id="demo-a" name="a" type="number" step="1" min="-1000000" max="1000000" required value={a} aria-describedby="demo-help demo-error" aria-invalid={!!error} onChange={event => { setA(event.target.value); setResult(null); setError(""); }} /></label>
           <span className="text-muted-foreground" aria-hidden="true">+</span>
           <label htmlFor="demo-b"><span>b</span><input id="demo-b" name="b" type="number" step="1" min="-1000000" max="1000000" required value={b} aria-describedby="demo-help demo-error" aria-invalid={!!error} onChange={event => { setB(event.target.value); setResult(null); setError(""); }} /></label>
-          <Button variant="outline" type="submit"><Play aria-hidden="true" data-icon="inline-start" />Probar entrada</Button>
+          <Button variant="outline" type="submit"><Play aria-hidden="true" data-icon="inline-start" />Probar</Button>
         </div>
       </fieldset>
       <div id="demo-error" role="alert" className="text-xs text-destructive">{error}</div>
       <div className="landing-demo-result" role="status" aria-live="polite" aria-atomic="true">
-        <div className="flex items-center gap-3"><ArrowRight className="size-4 text-muted-foreground" aria-hidden="true" /><span>Resultado</span><output key={result} className="motion-feedback" htmlFor="demo-a demo-b">{result ?? "—"}</output></div>
+        <div className="flex items-center gap-3"><ArrowRight className="size-4 text-muted-foreground" aria-hidden="true" /><span>Resultado</span><motion.output key={`${attempt}:${result}`} initial={reduced ? false : { opacity: .5, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduced ? 0 : motionTokens.duration.standard, ease: motionTokens.ease.enter }} htmlFor="demo-a demo-b">{result ?? "—"}</motion.output></div>
         <span className="text-muted-foreground">{result === null ? "Entrada modificada" : <><Check className="size-3.5" aria-hidden="true" /> Suma calculada</>}</span>
       </div>
-      <p id="demo-help" className="landing-demo-help">Esta demo calcula la suma en tu navegador. En el editor completo puedes escribir y evaluar tu propio código.</p>
+      <p id="demo-help" className="sr-only">La demo calcula una suma fija. Abre el editor para escribir tu propio código.</p>
     </form>
     </div>
   </section>;

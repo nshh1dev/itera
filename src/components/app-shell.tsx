@@ -10,13 +10,15 @@ import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { rememberSettingsOrigin } from "@/lib/motion";
 import { MotionRegion } from "./motion-region";
+import { LayoutGroup } from "motion/react";
+import { Selection } from "./arc/selection";
 
 export type ShellUser = { name: string; email: string; role: string };
 const navigation = [
   { href: "/inicio", label: "Inicio", icon: Home },
   { href: "/ejercicios", label: "Ejercicios", icon: Code2 },
-  { href: "/rutas", label: "Rutas de aprendizaje", icon: Route },
-  { href: "/progreso", label: "Mi progreso", icon: ChartNoAxesCombined },
+  { href: "/rutas", label: "Rutas", icon: Route },
+  { href: "/progreso", label: "Progreso", icon: ChartNoAxesCombined },
 ];
 const preferenceKey = "itera:navigation";
 function subscribe(listener: () => void) {
@@ -75,7 +77,8 @@ export function AppShell({ children, user, workspace = false, header }: { childr
   function navigationContent(mobile = false) {
     function item({ href, label, icon: Icon }: typeof navigation[number]) {
       const active = pathname.startsWith(href);
-      const link = <Link href={href} scroll={href === "/configuracion" ? false : undefined} onClick={event => { if (href === "/configuracion") rememberSettingsOrigin(event.currentTarget); }} className="navigation-link" aria-label={label} aria-current={active ? "page" : undefined}>
+      const link = <Link href={href} scroll={href === "/configuracion" ? false : undefined} onClick={event => { if (href === "/configuracion") rememberSettingsOrigin(event.currentTarget); }} className="navigation-link relative isolate" aria-label={label} aria-current={active ? "page" : undefined}>
+        {active && <Selection id="navigation" />}
         <Icon aria-hidden="true" /><span className="navigation-label">{label}</span>
       </Link>;
       return <div key={href} className="navigation-item relative">
@@ -83,17 +86,14 @@ export function AppShell({ children, user, workspace = false, header }: { childr
         {!mobile && <span className="navigation-tooltip" aria-hidden="true">{label}</span>}
       </div>;
     }
-    return <>
+    return <LayoutGroup id={mobile ? "mobile-navigation" : "desktop-navigation"}>
       <div className="flex h-11 items-center px-1 md:h-9"><Logo className="navigation-brand" href="/" /></div>
-      <nav aria-label={mobile ? "Navegación móvil" : "Navegación principal"} className="mt-7 space-y-1"><p className="navigation-caption">Tu práctica</p>{navigation.map(entry => item(entry))}</nav>
+      <nav aria-label={mobile ? "Navegación móvil" : "Navegación principal"} className="mt-7 space-y-1">{navigation.map(entry => item(entry))}</nav>
       <div className="mt-auto space-y-1 pt-8">
         {user?.role === "ADMIN" && item({ href: "/admin", label: "Administración", icon: Shield })}
         {item({ href: "/configuracion", label: "Configuración", icon: Settings2 })}
-        <div className="mx-2 mt-4 flex min-h-10 items-center justify-center gap-2 pt-3 text-xs text-muted-foreground">
-          <Code2 className="size-4 shrink-0" aria-hidden="true" /><span className="navigation-footer-label">Entorno local</span>
-        </div>
       </div>
-    </>;
+    </LayoutGroup>;
   }
 
   return <div className="app-shell" data-collapsed={collapsed}>

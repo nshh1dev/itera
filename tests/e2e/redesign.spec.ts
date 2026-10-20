@@ -20,7 +20,7 @@ for (const theme of ["light", "dark"] as const) {
         }
         if (path === "/") {
           await expect(page.locator(".landing-code")).toHaveCSS("font-size", "14px");
-          await page.getByRole("button", { name: "Probar entrada" }).click();
+          await page.getByRole("button", { name: "Probar", exact: true }).click();
           await expect(page.getByRole("status").filter({ hasText: "Suma calculada" })).toBeVisible();
           await page.evaluate(() => window.scrollTo(0, 0));
           await page.screenshot({ path: `.local/screenshots/redesign-landing-${theme}-${width}.png`, fullPage: true, animations: "disabled" });

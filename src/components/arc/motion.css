@@ -1,0 +1,30 @@
+/* Arc UI (MIT): respuesta CSS complementaria a motion-tokens.ts. */
+:root { --arc-duration-fast: 160ms; --arc-ease-standard: cubic-bezier(.22, 1, .36, 1); }
+.arc-button { position: relative; -webkit-tap-highlight-color: transparent; }
+.arc-button-slot { position: relative; display: inline-flex; min-width: 0; max-width: 100%; justify-content: inherit; flex: 1; transition: opacity var(--arc-duration-fast) var(--arc-ease-standard); }
+.arc-button-label { display: inline-flex; min-width: 0; max-width: 100%; align-items: center; justify-content: inherit; gap: .5rem; }
+.arc-button-slot > .arc-button-label { width: 100%; }
+.arc-button-loader { position: absolute; inset: 0; display: grid; place-items: center; }
+.arc-spinner { display: inline-block; width: 1rem; height: 1rem; border: 1.5px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: arc-spin .7s linear infinite; }
+.arc-spin { animation: arc-spin .7s linear infinite; }
+.arc-loading { animation: arc-pulse 1.4s ease-in-out infinite alternate; }
+.arc-tabs-list { scrollbar-width: thin; scroll-padding: 4px; }
+.arc-tabs-list [role="tab"]:focus-visible { outline-offset: -3px; }
+.arc-disclosure-trigger:hover { color: var(--primary-text); }
+.dialog-content[data-state="closed"], .dialog-overlay[data-state="closed"] { pointer-events: none !important; }
+.navigation-link, .segment, .arc-button, .field, .list-entry, .path-map-entry, .landing-quiet-link, .landing-route-link, .landing-nav-link {
+  transition: color var(--arc-duration-fast) var(--arc-ease-standard), background-color var(--arc-duration-fast) var(--arc-ease-standard), box-shadow var(--arc-duration-fast) var(--arc-ease-standard);
+}
+.app-sidebar { transition: width 240ms var(--arc-ease-standard), padding 240ms var(--arc-ease-standard); }
+.app-shell { transition: padding-left 240ms var(--arc-ease-standard); }
+.filter-disclosure { transition: grid-template-rows 240ms var(--arc-ease-standard), visibility 240ms; }
+@keyframes arc-spin { to { transform: rotate(360deg); } }
+@keyframes arc-pulse { from { opacity: .55; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  :root { --arc-duration-fast: 0ms; }
+  .arc-spinner, .arc-spin, .arc-loading { animation: none; }
+  .app-sidebar, .app-shell, .filter-disclosure { transition: none; }
+}
+@media (forced-colors: active) {
+  .arc-tabs-list [aria-selected="true"], .workspace-mobile-tabs [aria-pressed="true"] { outline: 1px solid Highlight; outline-offset: -2px; }
+}

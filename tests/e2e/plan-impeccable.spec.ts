@@ -14,8 +14,8 @@ test.afterAll(async () => {
 
 test("la ayuda llega cerrada y se descubre con teclado sin perder código", async ({ page }) => {
   await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
-  const summary = page.getByText("Contexto y ayuda", { exact: true });
-  await expect(summary.locator("..")).not.toHaveAttribute("open");
+  const summary = page.getByRole("button", { name: "Contexto y ayuda", exact: true });
+  await expect(summary).toHaveAttribute("aria-expanded", "false");
   await expect(page.getByRole("heading", { name: "Tu reto", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Ver pistas", exact: true })).toBeVisible();
   await openSimpleEditor(page);
@@ -34,16 +34,16 @@ test("la demo muestra la sustitución numérica sin evaluar código ni repetir a
   await page.goto("/");
   await page.locator("#demo-a").fill("-2");
   await page.locator("#demo-b").fill("7");
-  await page.getByRole("button", { name: "Probar entrada" }).click();
+  await page.getByRole("button", { name: "Probar", exact: true }).click();
   await expect(page.locator(".landing-demo-trace")).toHaveText("La misma idea, con tus números-2 + 7 → 5");
   await expect(page.locator("output")).toHaveText("5");
   await expect(page.locator(".landing-demo-trace p")).toHaveCSS("animation-duration", "0s");
   await page.locator("#demo-a").fill("3");
   await page.locator("#demo-b").fill("2");
-  await page.getByRole("button", { name: "Probar entrada" }).click();
+  await page.getByRole("button", { name: "Probar", exact: true }).click();
   await expect(page.locator(".landing-demo-trace code")).toHaveText("3 + 2 → 5");
   await page.locator("#demo-a").fill("");
-  await page.getByRole("button", { name: "Probar entrada" }).click();
+  await page.getByRole("button", { name: "Probar", exact: true }).click();
   await expect(page.locator("#demo-error")).toContainText("Introduce dos enteros");
   await expect(page.locator(".landing-demo-trace")).toBeEmpty();
 });
@@ -75,8 +75,8 @@ test("una cuenta nueva entiende el progreso y distingue cambios pendientes de pr
   });
   expect(signup.ok(), await signup.text()).toBe(true);
   await page.goto("/progreso");
-  await expect(page.getByRole("heading", { name: "Tu primer intento cuenta" })).toBeVisible();
-  await page.getByRole("link", { name: "Cambiar lenguaje preferido" }).click();
+  await expect(page.getByRole("heading", { name: "Aún no hay comprobaciones" })).toBeVisible();
+  await page.getByRole("link", { name: "Cambiar", exact: true }).click();
   const panel = page.getByRole("dialog", { name: "Configuración", exact: true });
   await expect(panel).toBeVisible();
   await panel.getByLabel("Nombre", { exact: true }).fill("Prueba editada");

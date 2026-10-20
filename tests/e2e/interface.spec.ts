@@ -7,7 +7,7 @@ test("la sidebar se contrae, conserva la preferencia y mantiene navegación acce
   await expect(sidebar).toHaveCSS("width", "224px");
   await page.getByRole("button", { name: "Contraer navegación", exact: true }).click();
   await expect(sidebar).toHaveCSS("width", "64px");
-  const paths = page.getByRole("navigation", { name: "Navegación principal", exact: true }).getByRole("link", { name: "Rutas de aprendizaje", exact: true });
+  const paths = page.getByRole("navigation", { name: "Navegación principal", exact: true }).getByRole("link", { name: "Rutas", exact: true });
   await paths.focus();
   await expect(paths.locator("..").locator(".navigation-tooltip")).toBeVisible();
   await paths.click();
@@ -115,9 +115,9 @@ test("las opciones del editor y la confirmación conservan el código y restaura
   await page.getByRole("button", { name: "Cambiar tema claro u oscuro" }).click();
   await options.click();
   await page.getByRole("button", { name: "Restablecer plantilla", exact: true }).click();
-  await expect(page.getByRole("dialog").locator(".dialog-surface")).toHaveCSS("background-color", "rgb(36, 36, 38)");
+  await expect(page.getByRole("dialog")).toHaveCSS("background-color", "rgb(36, 36, 38)");
   await page.screenshot({ path: ".local/screenshots/ui-confirmation-dark.png", fullPage: true, animations: "disabled" });
-  await page.getByRole("button", { name: "Seguir editando", exact: true }).click();
+  await page.getByRole("button", { name: "Cancelar", exact: true }).click();
   await expect(editor).toHaveValue(code);
   await page.reload();
   await expect(page.getByRole("button", { name: "Usar editor avanzado", exact: true })).toBeVisible();
@@ -153,9 +153,9 @@ test("las pantallas se adaptan sin desbordamientos y conservan el editor entre p
 
 test("las superficies y listas mantienen su jerarquía en ambos temas y tamaños", async ({ page }) => {
   const screens = [
-    { path: "/inicio", title: "Tu primer paso en programación.", name: "home" },
+    { path: "/inicio", title: "Empieza a practicar.", name: "home" },
     { path: "/ejercicios", title: "Ejercicios", name: "catalog" },
-    { path: "/rutas", title: "Rutas de aprendizaje", name: "paths" },
+    { path: "/rutas", title: "Rutas", name: "paths" },
     { path: "/rutas/desde-cero", title: "Desde cero", name: "path" },
   ];
   for (const theme of ["light", "dark"]) {

@@ -1,31 +1,33 @@
 "use client";
+// Adaptado de https://uiarc.dev/r/tabs.json (MIT; ../arc/LICENSE).
 import * as TabsPrimitive from "@radix-ui/react-tabs";
+import { createContext, useContext, useId, useState } from "react";
+import { LayoutGroup, motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import { useLayoutEffect, useRef } from "react";
-export const Tabs = TabsPrimitive.Root;
-export function TabsList({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
-  const list = useRef<HTMLDivElement>(null);
-  const indicator = useRef<HTMLSpanElement>(null);
-  useLayoutEffect(() => {
-    const node = list.current;
-    const marker = indicator.current;
-    if (!node || !marker) return;
-    function update() {
-      const active = node!.querySelector<HTMLElement>('[role="tab"][data-state="active"]');
-      if (!active) return;
-      marker!.style.width = `${active.offsetWidth}px`;
-      marker!.style.height = `${active.offsetHeight}px`;
-      marker!.style.transform = `translate(${active.offsetLeft}px, ${active.offsetTop}px)`;
-      node!.dataset.indicator = "ready";
-    }
-    update();
-    const mutations = new MutationObserver(update);
-    mutations.observe(node, { subtree: true, attributes: true, attributeFilter: ["data-state"] });
-    const resize = new ResizeObserver(update);
-    resize.observe(node);
-    return () => { mutations.disconnect(); resize.disconnect(); };
-  }, []);
-  return <TabsPrimitive.List ref={list} className={cn("tabs-tray relative inline-flex gap-1 rounded-xl bg-surface-inset p-1", className)} {...props}><span ref={indicator} className="tabs-indicator" aria-hidden="true" />{children}</TabsPrimitive.List>;
+import { motionTokens } from "../arc/motion-tokens";
+import { useReducedMotion } from "../arc/use-reduced-motion";
+
+const TabsContext = createContext("");
+export function Tabs({ value, defaultValue, onValueChange, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) {
+  const [internal, setInternal] = useState(defaultValue ?? "");
+  const id = useId();
+  return <TabsContext.Provider value={value ?? internal}><LayoutGroup id={id}><TabsPrimitive.Root {...props} value={value ?? internal} onValueChange={next => { if (value === undefined) setInternal(next); onValueChange?.(next); }} /></LayoutGroup></TabsContext.Provider>;
 }
-export function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) { return <TabsPrimitive.Trigger className={cn("min-h-11 rounded-md px-3 text-[13px] text-tonal-foreground transition-colors hover:text-foreground data-[state=active]:bg-control data-[state=active]:text-foreground data-[state=active]:shadow-control md:min-h-9", className)} {...props} />; }
-export function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>) { return <TabsPrimitive.Content className={cn("rounded-lg", className)} {...props} />; }
+
+export function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
+  return <TabsPrimitive.List className={cn("arc-tabs-list relative inline-flex max-w-full gap-1 overflow-x-auto rounded-xl bg-surface-inset p-1", className)} {...props} />;
+}
+
+export function TabsTrigger({ className, children, value, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+  const active = useContext(TabsContext);
+  const reduced = useReducedMotion();
+  return <TabsPrimitive.Trigger {...props} value={value} className={cn("relative isolate min-h-11 shrink-0 rounded-md px-3 text-[13px] text-tonal-foreground hover:text-foreground data-[state=active]:text-foreground md:min-h-9", className)} onFocus={event => { event.currentTarget.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" }); props.onFocus?.(event); }}>
+    {active === value && <motion.span className="absolute inset-0 -z-10 rounded-md bg-control shadow-control" layoutId="selection" transition={reduced ? { duration: 0 } : motionTokens.spring.morph} aria-hidden="true" />}
+    {children}
+  </TabsPrimitive.Trigger>;
+}
+
+export function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>) {
+  // Radix gestiona el montaje. No animamos altura ni duplicamos paneles con formularios.
+  return <TabsPrimitive.Content className={cn("rounded-lg", className)} {...props} />;
+}

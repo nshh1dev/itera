@@ -324,8 +324,14 @@ son de 1 px y siempre suaves; ningún borde lateral grueso marca tarjetas ni avi
   desde 768 px.
 - **Primary:** fondo azul de instrumento, texto blanco (negro en oscuro), relleno
   de 16 px, icono de 16 px.
-- **Hover / Focus:** el principal baja el brillo al 95 % y se comprime a 0.98 al
+- **Hover / Focus:** el principal baja el brillo al 95 % y se comprime a 0.97 al
   pulsar; el foco es un anillo de 2 px con desplazamiento de 3 px.
+
+El movimiento compartido usa los componentes gratuitos de UIArc adaptados a
+Itera: pulsaciones breves, indicadores de selección continuos y paneles con
+resortes amortiguados. La portada prioriza la demo y acciones breves; las ayudas
+secundarias se despliegan bajo demanda. El contenido educativo no se recorta.
+Detalles de integración y límites de verificación en `docs/motion.md`.
 - **Secondary / Ghost / Outline:** secundario sobre bandeja terciaria, fantasma
   solo texto que gana fondo de selección, contorno de 1 px sobre control.
 

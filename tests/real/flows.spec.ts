@@ -44,7 +44,7 @@ test("registro y preferencias con el ejecutor real disponible",async({page})=>{
   await page.getByLabel("Tu nombre").fill("Prueba Real");
   await page.getByLabel("Correo electrónico").fill(email);
   await page.getByLabel("Contraseña",{exact:true}).fill(password);
-  await page.getByRole("button",{name:"Crear mi cuenta"}).click();
+  await page.getByRole("button",{name:"Crear cuenta",exact:true}).click();
   await expect(page.getByRole("heading",{name:"Bienvenido, Prueba."})).toBeVisible();
   await page.getByLabel("Nivel",{exact:true}).selectOption("BEGINNER");
   await page.getByLabel("Lenguaje preferido",{exact:true}).selectOption("typescript");
@@ -155,9 +155,9 @@ test("la administración publica tras ejecutar las referencias y rechaza una ref
   await page.locator("#typescript-solution").fill("function solve(data: {a: number; b: number}): number { return data.a + data.b; }");
   await page.locator("#typescript-explanation").fill("El contrato describe una entrada con dos propiedades numéricas y un retorno numérico.");
   await page.locator("#typescript-typeContract").fill("const __iteraContract: (data: {a: number; b: number}) => number = solve;");
-  await page.getByRole("button",{name:"Guardar nueva versión"}).click();
+  await page.getByRole("button",{name:"Guardar versión"}).click();
   await expect(page).toHaveURL(new RegExp(`/admin/ejercicios/${badSlug}`));
-  await page.getByRole("button",{name:"Validar y publicar versión guardada"}).click();
+  await page.getByRole("button",{name:"Validar y publicar",exact:true}).click();
   await page.getByRole("button",{name:"Validar y publicar",exact:true}).click();
   await expect(page.getByText(/no supera el caso/)).toBeVisible({timeout:60000});
   expect((await db.exercise.findUniqueOrThrow({where:{slug:badSlug}})).published).toBe(false);
@@ -184,10 +184,10 @@ test("la administración publica tras ejecutar las referencias y rechaza una ref
   await page.locator("#typescript-solution").fill("function solve(data: {a: number; b: number}): number { return data.a + data.b; }");
   await page.locator("#typescript-explanation").fill("El contrato describe una entrada con dos propiedades numéricas y un retorno numérico.");
   await page.locator("#typescript-typeContract").fill("const __iteraContract: (data: {a: number; b: number}) => number = solve;");
-  await page.getByRole("button",{name:"Guardar nueva versión"}).click();
+  await page.getByRole("button",{name:"Guardar versión"}).click();
   await expect(page).toHaveURL(new RegExp(`/admin/ejercicios/${goodSlug}`));
   expect((await page.request.get(`/ejercicios/${goodSlug}`)).status()).toBe(404);
-  await page.getByRole("button",{name:"Validar y publicar versión guardada"}).click();
+  await page.getByRole("button",{name:"Validar y publicar",exact:true}).click();
   await page.getByRole("button",{name:"Validar y publicar",exact:true}).click();
   await expect.poll(async()=>(await db.exercise.findUniqueOrThrow({where:{slug:goodSlug}})).published,{timeout:60000}).toBe(true);
   expect((await page.request.get(`/ejercicios/${goodSlug}`)).status()).toBe(200);

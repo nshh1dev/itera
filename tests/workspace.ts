@@ -1,9 +1,9 @@
 import { expect, type Page } from "@playwright/test";
 
 export async function openLearningHelp(page: Page) {
-  const summary = page.getByText("Contexto y ayuda", { exact: true });
+  const summary = page.getByRole("button", { name: "Contexto y ayuda", exact: true });
   await expect(summary).toBeVisible();
-  if (!await summary.locator("..").evaluate(element => element.hasAttribute("open"))) await summary.click();
+  if (await summary.getAttribute("aria-expanded") !== "true") await summary.click();
   await expect(page.getByRole("region", { name: "Guía de aprendizaje" })).toBeVisible();
 }
 

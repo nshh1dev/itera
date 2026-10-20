@@ -8,7 +8,7 @@ import { Button } from "./ui/button";
 
 function SearchButton() {
   const { pending } = useFormStatus();
-  return <Button type="submit" aria-busy={pending} disabled={pending} className="self-start min-[1024px]:w-full">{pending ? "Buscando ejercicios…" : "Buscar ejercicios"}</Button>;
+  return <Button type="submit" loading={pending} className="self-start min-[1024px]:w-full">Buscar ejercicios</Button>;
 }
 
 export function ExerciseFilters({ query, language, level, category, status, categories }: { query: string; language: Language; level: string; category: string; status: string; categories: string[] }) {

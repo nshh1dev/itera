@@ -1,4 +1,10 @@
-// La altura responde al contenido; no hay medidas ni temporizadores de desmontaje.
+"use client";
+import { motion } from "motion/react";
+import { motionTokens } from "./arc/motion-tokens";
+import { useReducedMotion } from "./arc/use-reduced-motion";
+
+// Revelado de contenido de Arc Accordion, sin volver a montar pistas anteriores.
 export function MotionReveal({ children }: { children: React.ReactNode }) {
-  return <div className="motion-reveal"><div className="motion-reveal-clip">{children}</div></div>;
+  const reduced = useReducedMotion();
+  return <motion.div initial={reduced ? false : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} transition={reduced ? { duration: 0 } : motionTokens.spring.smooth} className="overflow-hidden">{children}</motion.div>;
 }
