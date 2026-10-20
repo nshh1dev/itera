@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, Code2, Route, ChartNoAxesCombined, Settings2, LogOut, Shield, PanelLeftClose, PanelLeftOpen, Menu } from "lucide-react";
+import { Home, Code2, Route, ChartNoAxesCombined, Settings2, Shield, PanelLeftClose, PanelLeftOpen, Menu } from "lucide-react";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Logo } from "./logo";
@@ -12,6 +12,7 @@ import { rememberSettingsOrigin } from "@/lib/motion";
 import { MotionRegion } from "./motion-region";
 import { LayoutGroup } from "motion/react";
 import { Selection } from "./arc/selection";
+import { AccountMenu } from "./account-menu";
 
 export type ShellUser = { name: string; email: string; role: string };
 const navigation = [
@@ -120,14 +121,11 @@ export function AppShell({ children, user, workspace = false, header }: { childr
       <div className="min-w-0 flex-1">{header ?? <p className="text-sm font-medium">{title}</p>}</div>
       <div className="flex shrink-0 items-center gap-2">
         <ThemeToggle />
-        {!workspace && (user ? <>
-          <Link href="/configuracion" scroll={false} onClick={event => rememberSettingsOrigin(event.currentTarget)} aria-label="Mi cuenta" className="ml-1 flex size-8 items-center justify-center rounded-full border bg-surface text-xs font-medium" title={user.name}>{user.name.slice(0, 1).toUpperCase()}</Link>
-          <Button variant="ghost" size="icon" disabled={signingOut} aria-label="Cerrar sesión" title="Cerrar sesión" onClick={async () => {
-            setSigningOut(true); setLogoutError(false);
-            try { const result = await authClient.signOut(); if (result.error) throw new Error(); router.push("/"); router.refresh(); }
-            catch { setLogoutError(true); } finally { setSigningOut(false); }
-          }}><LogOut /></Button>
-        </> : <Button asChild variant="outline" size="sm"><Link href="/registro">Crear cuenta</Link></Button>)}
+        {user ? <AccountMenu user={user} signingOut={signingOut} onSignOut={async () => {
+             setSigningOut(true); setLogoutError(false);
+             try { const result = await authClient.signOut(); if (result.error) throw new Error(); window.location.replace("/"); }
+             catch { setLogoutError(true); } finally { setSigningOut(false); }
+           }} /> : !workspace && <Button asChild variant="outline" size="sm"><Link href="/registro">Crear cuenta</Link></Button>}
       </div>
     </header>
     {logoutError && <p role="alert" className="border-b px-5 py-3 text-sm text-destructive">No se pudo cerrar la sesión. Inténtalo de nuevo.</p>}

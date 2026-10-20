@@ -13,7 +13,7 @@ export default async function AdminPage(){
   return <div className="page-container">
     <div className="page-intro">
        <div><h1 className="page-title">Administración</h1></div>
-      <Button asChild><Link href="/admin/ejercicios/nuevo"><Plus aria-hidden="true" />Nuevo ejercicio</Link></Button>
+      <div className="flex flex-wrap gap-2"><Button asChild variant="outline"><Link href="/admin/cuentas">Cuentas desactivadas</Link></Button><Button asChild><Link href="/admin/ejercicios/nuevo"><Plus aria-hidden="true" />Nuevo ejercicio</Link></Button></div>
     </div>
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground"><p>{exercises.length} ejercicios editoriales</p><p>Los borradores no son visibles para estudiantes.</p></div>
     {exercises.length ? <ul className="space-y-1">{exercises.map(e=>{

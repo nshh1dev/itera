@@ -41,6 +41,7 @@ model User {
   emailVerified Boolean  @default(false)
   image         String?
   role          Role     @default(USER)
+  disabledAt    DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   sessions      Session[]
@@ -52,6 +53,14 @@ model User {
   helpUsage     HelpUsage[]
   auditLogs     AuditLog[]
   practiceContexts PracticeContext[]
+  accountActionLimit AccountActionLimit?
+}
+
+model AccountActionLimit {
+  userId    String   @id
+  attempts  Int      @default(0)
+  startedAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Session {

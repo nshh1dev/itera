@@ -1,5 +1,6 @@
 import "server-only";
 import { betterAuth } from "better-auth";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -25,13 +26,30 @@ export const auth = betterAuth({
     },
   },
   user: { additionalFields: { role: { type: "string", defaultValue: "USER", input: false } } },
+  databaseHooks: {
+    session: { create: { before: async session => {
+      const user = await db.user.findUnique({ where: { id: session.userId }, select: { disabledAt: true } });
+      if (!user || user.disabledAt) throw new APIError("FORBIDDEN", { code: "ACCOUNT_DISABLED", message: "Esta cuenta está desactivada. Contacta con un administrador." });
+    } } },
+  },
+  hooks: { before: createAuthMiddleware(async ctx => {
+    // También protege las llamadas directas a Better Auth, no solo la interfaz.
+    if (ctx.path === "/change-password" && ctx.body) {
+      if (ctx.body.newPassword === ctx.body.currentPassword) throw new APIError("BAD_REQUEST", { message: "Elige una contraseña diferente a la actual." });
+      ctx.body.revokeOtherSessions = true;
+    }
+    const token = await ctx.getSignedCookie(ctx.context.authCookies.sessionToken.name, ctx.context.secret);
+    if (!token || ctx.path === "/sign-out") return;
+    const session = await db.session.findUnique({ where: { token }, select: { user: { select: { disabledAt: true } } } });
+    if (session?.user.disabledAt) throw new APIError("FORBIDDEN", { code: "ACCOUNT_DISABLED", message: "Esta cuenta está desactivada. Contacta con un administrador." });
+  }) },
   rateLimit: { enabled: true, window: 60, max: 40 },
 });
 
 export const currentUser = cache(async () => {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return null;
-  return db.user.findUnique({ where: { id: session.user.id }, select: { id: true, name: true, email: true, role: true, createdAt: true, preference: true } });
+  return db.user.findFirst({ where: { id: session.user.id, disabledAt: null }, select: { id: true, name: true, email: true, role: true, createdAt: true, preference: true } });
 });
 
 export async function requireUser() {

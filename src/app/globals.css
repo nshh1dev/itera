@@ -453,6 +453,7 @@
 .settings-layout form { margin-top: 0; max-width: none; }
 .settings-layout .settings-section { background: var(--surface-primary); }
 .settings-local { display: grid; align-content: start; gap: 28px; }
+.settings-local > * { min-width: 0; }
 .settings-local .settings-section { margin-top: 0; }
 .progress-summary { margin-top: 32px; display: grid; gap: 24px; padding: 28px; border-radius: 18px; background: var(--surface-primary); }
 .progress-summary dd { font-variant-numeric: tabular-nums; }

@@ -96,7 +96,9 @@ test("registro, preferencias y borrador persistente entre sesiones",async({page}
   await page.goto("/inicio");
   await expect(page.getByText("Continúa donde lo dejaste")).toBeVisible();
   await page.screenshot({path:".local/screenshots/desktop-home.png",fullPage:true});
-  await page.getByRole("button",{name:"Cerrar sesión"}).click();
+  await page.getByRole("button",{name:"Mi cuenta",exact:true}).click();
+  await page.getByRole("menuitem",{name:"Cerrar sesión",exact:true}).click();
+  await expect(page).toHaveURL("http://127.0.0.1:3000/");
   await page.goto("/iniciar-sesion");
   await page.getByLabel("Correo electrónico").fill(email);
   await page.getByLabel("Contraseña",{exact:true}).fill(password);

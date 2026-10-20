@@ -34,8 +34,9 @@ for (const theme of ["light", "dark"] as const) {
       await db.user.update({ where: { email }, data: { name: "Prueba de movimiento" } });
       await page.context().addCookies(cookies);
       await page.goto("/inicio");
-      const origin = page.getByRole("link", { name: "Mi cuenta", exact: true });
+      const origin = page.getByRole("button", { name: "Mi cuenta", exact: true });
       await origin.click();
+      await page.getByRole("menuitem", { name: "Configuración", exact: true }).click();
       await expect(page).toHaveURL(/\/configuracion$/);
       const dialog = page.getByRole("dialog", { name: "Configuración", exact: true });
       await expect(dialog).toBeVisible();
@@ -67,8 +68,9 @@ test("el cierre Arc desvanece el fondo sin repetir la entrada del contenido y de
   await page.context().addCookies(cookies);
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/inicio");
-  const origin = page.getByRole("link", { name: "Mi cuenta", exact: true });
+  const origin = page.getByRole("button", { name: "Mi cuenta", exact: true });
   await origin.click();
+  await page.getByRole("menuitem", { name: "Configuración", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Configuración", exact: true });
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveCSS("transform", "none");
@@ -147,7 +149,8 @@ test("cambiar a movimiento reducido durante una apertura la termina sin bloqueo"
   await page.context().addCookies(cookies);
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/inicio");
-  await page.getByRole("link", { name: "Mi cuenta", exact: true }).click();
+  await page.getByRole("button", { name: "Mi cuenta", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Configuración", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Configuración", exact: true });
   await expect(dialog).toBeVisible();
   await page.emulateMedia({ reducedMotion: "reduce" });

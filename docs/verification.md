@@ -1,5 +1,40 @@
 # Verificación local
 
+## Perfil y configuración de cuenta (20 de octubre de 2026)
+
+- `npm test`: **107 aprobadas**, incluidas tres nuevas comprobaciones de
+  normalización del correo, contraseña y confirmación de desactivación.
+- `npm run typecheck` y `npm run build`: aprobados. Se aplicó
+  `20261020210000_account_management` con `npm run db:migrate`.
+- `npm run lint`: cero errores y los **97 avisos previos** de herramientas locales
+  sin seguimiento en `.agents/` y `.opencode/`. El lint focalizado de código y
+  pruebas de esta entrega no emitió avisos.
+- `ITERA_E2E_PRODUCTION=1 npm run test:e2e`: **122 aprobadas**, sin omisiones.
+  Después del último ajuste de restauración del foco en los diálogos de cuenta,
+  se repitieron el build y las seis pruebas de `account.spec.ts`: **6 aprobadas**.
+  Los servidores temporales de las suites se cerraron al terminar.
+- La pasada focalizada de cuenta y movimiento aprobó **16 pruebas**. Cubre correo
+  duplicado, contraseña actual incorrecta, confirmación de contraseña, hash de
+  credenciales, revocación de otras sesiones, desactivación sin pérdida de datos,
+  bloqueo de acceso, reactivación administrativa y límite persistente de
+  reautenticación. Las fixtures se preparan sin consumir registros de la suite
+  de acceso y respetan `Retry-After` al iniciar sesión.
+- Las regresiones de acceso usan el nuevo menú del avatar y esperan el regreso
+  al inicio público antes de navegar de nuevo. Los registros temporales de la
+  prueba de experiencia también respetan `Retry-After`; no se rebajó ningún
+  límite de autenticación ni se modificó la recuperación existente.
+- En la verificación ampliada se detectó y corrigió el ancho mínimo de las
+  secciones de Configuración a 320 px con texto al 200 %. Las capturas de ambos
+  temas y formularios quedan en `.local/screenshots/`, fuera de Git.
+- `npm audit --omit=dev`: cero vulnerabilidades. La auditoría completa señala
+  cinco entradas altas en la cadena de desarrollo de `eslint-config-next`
+  (`fast-glob` → `micromatch` → `braces`), sin cambios de versión en esta entrega.
+  No se ejecutó `audit fix --force` ni se alteraron esas dependencias fuera del
+  alcance acordado.
+- No se ejecutan pruebas con Piston real para esta tarea de cuenta. El doble HTTP
+  de la suite general no verifica ejecución real ni aislamiento del ejecutor.
+- Política y persistencia: [account-management.md](account-management.md).
+
 ## Continuidad y organización de la práctica (20 de octubre de 2026)
 
 - `npm test`: **97 aprobadas**, incluidas recomendaciones, estados y orientación

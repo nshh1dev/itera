@@ -17,7 +17,7 @@ export function SettingsPanel({ user }: { user: React.ComponentProps<typeof Sett
       target?.focus({ preventScroll: true });
     }}>
       <DialogTitle className="page-title pr-10">Configuración</DialogTitle>
-      <DialogDescription className="sr-only">Perfil y preferencias. Pulsa Guardar para confirmar los cambios.</DialogDescription>
+      <DialogDescription className="sr-only">Mi perfil, práctica, apariencia y cuenta y privacidad. Guarda los cambios de nombre y práctica; las demás acciones se confirman por separado.</DialogDescription>
       <SettingsForm user={user} welcome={false} preserveDraft />
     </DialogContent>
   </Dialog>;

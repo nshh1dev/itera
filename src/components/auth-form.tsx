@@ -40,6 +40,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "re
       }
       const result = register ? await authClient.signUp.email({ email, password, name: String(data.get("name") || "").trim() }) : await authClient.signIn.email({ email, password });
       if (result.error?.status === 429) throw new Error("Has realizado varios intentos seguidos. Espera un momento antes de volver a intentarlo.");
+      if (result.error?.code === "ACCOUNT_DISABLED") throw new Error("Esta cuenta está desactivada. Contacta con un administrador para reactivarla.");
       if (result.error) throw new Error(register ? "No pudimos crear la cuenta. Comprueba el correo y usa una contraseña de al menos 10 caracteres; si ya tienes cuenta, inicia sesión." : "El correo o la contraseña no coinciden. Revisa los datos e inténtalo de nuevo.");
       // La bienvenida es una página, no el panel contextual de preferencias.
       // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- La navegación de documento evita deliberadamente la ruta interceptada.

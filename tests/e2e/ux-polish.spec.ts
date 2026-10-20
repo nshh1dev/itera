@@ -5,6 +5,7 @@ import { PrismaClient } from "../../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { languages } from "../../src/lib/types";
 import { exerciseHref } from "../../src/lib/learning-paths";
+import { postAuth } from "./auth-request";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 const email = `pulido-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.test`;
@@ -43,7 +44,7 @@ test("el estado sin sesión explica el progreso y permite entrar sin promesas de
 });
 
 test("la recuperación y el inicio de sesión devuelven al ejercicio y lenguaje originales", async ({ page }) => {
-  const signup = await page.request.post("/api/auth/sign-up/email", { headers: { origin: "http://127.0.0.1:3000" }, data: { name: "Prueba de pulido", email, password } });
+  const signup = await postAuth(page.request, "/api/auth/sign-up/email", { name: "Prueba de pulido", email, password });
   expect(signup.ok(), await signup.text()).toBe(true);
   await page.context().clearCookies();
   const target = exerciseHref("logica-dos-parametros", "typescript", "desde-cero");
