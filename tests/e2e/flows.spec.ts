@@ -370,7 +370,10 @@ test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borrador
   expect(await db.exerciseVersion.findUniqueOrThrow({where:{id:previous.id},include:{variants:{orderBy:{language:"asc"},include:{tests:{orderBy:{order:"asc"}}}}}})).toEqual(previous);
   const published=await db.exerciseVersion.findFirstOrThrow({where:{exerciseId:exercise.id,published:true},orderBy:{number:"desc"},include:{variants:{where:{language:"python"}}}});
   await page.goto(`/ejercicios/${exercise.slug}?lenguaje=python`);
-  await expect(page.locator('#exercise-statement')).toHaveText(published.variants[0]?.statement || published.statement);
+  // La presentación convierte las etiquetas conocidas en encabezados; el texto
+  // editorial debe aparecer completo y en orden, sin depender del marcado.
+  const statement = (published.variants[0]?.statement || published.statement).replace(/\s+/g, "");
+  await expect.poll(async () => (await page.locator('#exercise-statement').textContent() ?? "").replace(/\s+/g, "")).toBe(statement);
   await page.goto(`/admin/ejercicios/${exercise.slug}`);
   await prepare();
   await expect(page.getByRole("status")).toContainText("ya contiene esta revisión");

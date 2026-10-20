@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { MotionReveal } from "@/components/motion-reveal";
 import { AppShell, type ShellUser } from "@/components/app-shell";
 import { Results } from "./results";
+import { Statement } from "./statement";
 import { LearningGuide, type PreviousExercise } from "./learning-guide";
 import { Examples, type PublicExample } from "./examples";
 import { EditorOptions } from "./editor-options";
@@ -46,7 +47,6 @@ export function Workspace(props: Props) {
   const hydrated = useSyncExternalStore(subscribe, () => true, () => false);
   if (!hydrated) return <AppShell user={props.user} workspace header={<p className="text-sm font-medium">{props.title}</p>}>
     <main id="main-content" className="workspace-main">
-      <h1 className="sr-only">{props.title}</h1>
       <div className="workspace-mobile-tabs" aria-hidden="true"><span className="flex min-h-11 flex-1 items-center justify-center text-sm">Enunciado</span><span className="flex min-h-11 flex-1 items-center justify-center text-sm">Código</span><span className="flex min-h-11 flex-1 items-center justify-center text-sm">Resultados</span></div>
       <div className="workspace-grid" style={{ "--statement-width": "35%" } as React.CSSProperties}>
         <section className="workspace-statement px-5 py-6 sm:px-7" aria-label="Enunciado"><Challenge exercise={props} /></section>
@@ -191,9 +191,9 @@ function WorkspaceReady(props: Props) {
   return <AppShell user={props.user} workspace header={
       <div className="flex min-w-0 items-center gap-2 sm:gap-3">
         <Link href={props.pathSlug ? `/rutas/${encodeURIComponent(props.pathSlug)}?lenguaje=${props.language}` : `/ejercicios?lenguaje=${props.language}`} className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground hover:text-foreground" aria-label={props.pathSlug ? "Volver a la ruta" : "Volver a ejercicios"}><ArrowLeft className="size-4" /><span className="hidden sm:inline">{props.pathSlug ? "Mi ruta" : "Ejercicios"}</span></Link>
-          <ChevronRight className="hidden size-3 shrink-0 text-muted-foreground sm:block" /><span className="min-w-0 flex-1 text-sm font-medium" title={props.title}>{props.title}</span>
+          <ChevronRight className="hidden size-3 shrink-0 text-muted-foreground sm:block" /><span className="min-w-0 flex-1 truncate text-sm font-medium" title={props.title}>{props.title}</span>
          <div className="ml-auto flex shrink-0 items-center gap-1">
-           {props.position > 0 && <span className="px-1 text-xs tabular-nums text-muted-foreground"><span className="sr-only">Ejercicio </span>{props.position} de {props.total}</span>}
+            {props.pathSlug && props.position > 0 && <span className="px-1 text-xs tabular-nums text-muted-foreground"><span className="sr-only">Ejercicio </span>{props.position} de {props.total}</span>}
            <nav aria-label="Navegación entre ejercicios" className="flex items-center">
              {props.previousHref ? <Button asChild variant="ghost" size="icon" className="size-8"><Link href={props.previousHref} aria-label="Ejercicio anterior" title="Ejercicio anterior"><ChevronLeft /></Link></Button> : <Button variant="ghost" size="icon" className="size-8" disabled aria-label="No hay ejercicio anterior" title="No hay ejercicio anterior"><ChevronLeft /></Button>}
              {props.nextHref ? <Button asChild variant="ghost" size="icon" className="size-8"><Link href={props.nextHref} aria-label="Ejercicio siguiente" title="Ejercicio siguiente"><ChevronRight /></Link></Button> : <Button variant="ghost" size="icon" className="size-8" disabled aria-label="No hay ejercicio siguiente" title="No hay ejercicio siguiente"><ChevronRight /></Button>}
@@ -203,7 +203,6 @@ function WorkspaceReady(props: Props) {
       </div>
     }>
     <main id="main-content" className="workspace-main">
-      <h1 className="sr-only">{props.title}</h1>
       <p className="sr-only" role="status">Borrador: {saveError || saveState}</p>
       <LayoutGroup id="workspace-sections"><div className="workspace-mobile-tabs" role="group" aria-label="Secciones del ejercicio">{[{id:"statement",name:"Enunciado"},{id:"code",name:"Código"},{id:"results",name:"Resultados"}].map(tab=><button className="relative isolate" key={tab.id} onClick={()=>setMobileTab(tab.id)} aria-pressed={mobileTab === tab.id} aria-controls={`workspace-${tab.id}`}>{mobileTab === tab.id && <Selection id="workspace-selection" className="bg-control shadow-control" />}{tab.name}</button>)}</div></LayoutGroup>
       <div ref={grid} className="workspace-grid" style={{"--statement-width":`${width}%`} as React.CSSProperties}>
@@ -213,15 +212,15 @@ function WorkspaceReady(props: Props) {
           <div className="workspace-reference">
           <LearningGuide objective={props.objective} prerequisites={props.prerequisites} practiceGoals={props.practiceGoals} previousExercises={props.previousExercises} />
                   <Disclosure title="Pistas progresivas">
-                    {hintCount === 0 && <p className="py-4 text-base leading-7 text-muted-foreground">Las pistas van de lo general a lo concreto. Descubre solo lo que necesites.</p>}
+                    {hintCount === 0 && props.hints.length > 0 && <p className="py-4 text-base leading-7 text-muted-foreground">Descubre una pista cada vez, solo si la necesitas.</p>}
                     {props.hints.slice(0,hintCount).map((hint,index)=><MotionReveal key={index}><div className="mb-3 rounded-lg bg-surface p-4"><h3 className="text-sm font-medium">Pista {index+1}</h3><p className="mt-2 text-base leading-7">{hint}</p></div></MotionReveal>)}
-                    {hintCount < props.hints.length ? <Button variant="secondary" className="mt-3" onClick={()=>{setHintCount(n=>n+1); recordHint(props.variantId,hintCount).catch(()=>setSaveError("No se pudo registrar el uso de la pista."));}}><Lightbulb />{hintCount === 0 ? "Descubrir la primera pista" : "Una pista más"}</Button> : <p className="mt-4 text-sm text-muted-foreground">Ya tienes todas las pistas. Vuelve al código y prueba tu idea.</p>}
+                    {hintCount < props.hints.length ? <Button variant="secondary" className="mt-3" onClick={()=>{setHintCount(n=>n+1); recordHint(props.variantId,hintCount).catch(()=>setSaveError("No se pudo registrar el uso de la pista."));}}><Lightbulb />{hintCount === 0 ? "Descubrir la primera pista" : "Una pista más"}</Button> : <p className="mt-4 text-sm text-muted-foreground">{props.hints.length ? "Ya tienes todas las pistas. Prueba tu idea en el código." : "Esta versión no tiene pistas publicadas. Puedes consultar la teoría o la solución explicada."}</p>}
                   </Disclosure>
                   <Disclosure title="Solución explicada">
                     {solution?.code ? <><p className="whitespace-pre-line text-base leading-7 text-muted-foreground">{solution.explanation}</p><pre className="code-block mt-5 max-h-80">{solution.code}</pre><p className="mt-4 text-sm text-muted-foreground">Leer una solución no marca el ejercicio como resuelto.</p></> : <><p className="text-base leading-7 text-muted-foreground">Consulta una posible solución y entiende cómo funciona. Después, intenta reconstruirla con tus propias palabras y tu propio código.</p>{solution?.error && <p role="alert" className="mt-3 text-sm text-destructive">{solution.error}</p>}<Button className="mt-5" variant="secondary" loading={solutionBusy} onClick={async()=>{setSolutionBusy(true);try{setSolution(await revealSolution(props.variantId));}catch{setSolution({error:"No pudimos cargar la solución. Inténtalo de nuevo."});}finally{setSolutionBusy(false);}}}><BookOpen />Ver solución explicada</Button></>}
                   </Disclosure>
             {props.lesson && <ModuleLesson lesson={props.lesson} language={props.language} />}
-            <Disclosure title="Condiciones del ejercicio"><ul className="flex list-disc flex-col gap-2 pl-4 text-sm leading-6 text-muted-foreground">{props.constraints.map((constraint,index)=><li key={index}>{constraint}</li>)}</ul>{(props.level === "INITIATION" || props.level === "BEGINNER") && <p className="mt-3 text-sm leading-6 text-muted-foreground">{props.runtimeMode === "PROGRAM" ? "Escribe un programa completo. La aplicación ejecuta tu archivo y compara lo que imprime con el resultado esperado." : "La aplicación llama a solve(data) por ti. Conserva la primera línea de la plantilla y usa return para entregar el resultado. No necesitas leer la entrada ni imprimir la respuesta."} {props.language === "python" ? "La sangría forma parte del código." : props.language === "typescript" ? "TypeScript comprueba los tipos antes de ejecutar." : "Conserva las llaves que rodean los bloques."}</p>}</Disclosure>
+            {props.constraints.length > 0 && <Disclosure title="Condiciones del ejercicio"><ul className="flex list-disc flex-col gap-2 pl-4 text-sm leading-6 text-muted-foreground">{props.constraints.map((constraint,index)=><li key={index}>{constraint}</li>)}</ul></Disclosure>}
             <ExerciseNotes complexity={props.complexity} commonErrors={props.commonErrors} />
           </div>
           {props.recentSubmissions.length > 0 && <Disclosure title="Tus intentos en este ejercicio" className="mt-6"><section id="workspace-history" aria-label="Tus intentos en este ejercicio"><ActivityList entries={props.recentSubmissions} compact /></section></Disclosure>}
@@ -236,7 +235,7 @@ function WorkspaceReady(props: Props) {
             <div className="workspace-editor-footer flex shrink-0 flex-wrap items-center gap-2 px-4 py-1"><Button variant="ghost" size="sm" className="text-xs" aria-pressed={simple} onClick={()=>setSimple(!simple)}>{simple ? "Usar editor avanzado" : "Editor sencillo"}</Button><Disclosure className="ml-auto text-xs text-muted-foreground" title="Atajos de teclado" triggerClassName="text-xs md:min-h-8"><p className="max-w-sm pb-3 leading-6">Ctrl / ⌘ + Enter: ejecutar ejemplos.<br />Ctrl / ⌘ + Shift + Enter: comprobar solución.{!simple && <><br />Ctrl + M: permitir que Tab salga del editor.</>}</p></Disclosure></div>
           </div>
           <div className={cn("workspace-actions flex shrink-0 flex-wrap items-center justify-end gap-2 px-4 py-3 min-[1200px]:flex",mobileTab === "statement" && "hidden")}>
-            <p id="execution-help" className="w-full text-xs leading-6 text-muted-foreground">Ejecutar prueba los ejemplos visibles. Comprobar evalúa todos los casos y guarda tu progreso.{!props.userId && " Ambas acciones requieren una cuenta local. Tu código se conserva al entrar o registrarte."}</p>
+            <p id="execution-help" className="w-full text-xs leading-6 text-muted-foreground">Solo una comprobación con todas las pruebas superadas marca el ejercicio como resuelto.{!props.userId && " Para ejecutar, inicia sesión. Tu código queda en este navegador."}</p>
             <Button aria-describedby="execution-help" className="min-w-0 flex-1 whitespace-normal px-2 text-xs [&_svg]:hidden min-[380px]:[&_svg]:block sm:flex-none sm:px-3" variant="outline" disabled={busy || !code.trim()} onClick={()=>execute("examples")}><Play data-icon="inline-start" />Ejecutar ejemplos</Button>
             <Button aria-describedby="execution-help" className="min-w-0 flex-1 whitespace-normal px-2 text-xs [&_svg]:hidden min-[380px]:[&_svg]:block sm:flex-none sm:px-3" loading={busy} disabled={!code.trim()} onClick={()=>execute("submit")}><Check data-icon="inline-start" />Comprobar solución</Button>
           </div>
@@ -250,8 +249,8 @@ function WorkspaceReady(props: Props) {
 
 const Challenge = memo(function Challenge({ exercise: props }: { exercise: Props }) {
   return <div className="challenge-sheet">
-    <p className="text-2xl leading-tight font-semibold tracking-[-0.035em]">{props.title}</p><div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><Badge>{levelNames[props.level]}</Badge><span>{props.category}</span><span className="flex items-center gap-1.5"><Clock3 className="size-3.5" />{props.minutes} min orientativos</span></div>
-    <h2 className="mt-6 text-base font-semibold">Tu reto</h2><p id="exercise-statement" className="learning-copy mt-3 whitespace-pre-line">{props.statement}</p>
+    <h1 className="text-2xl leading-tight font-semibold tracking-[-0.035em]">{props.title}</h1><div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><Badge>{levelNames[props.level]}</Badge><span>{props.category}</span><span className="flex items-center gap-1.5"><Clock3 className="size-3.5" />{props.minutes} min orientativos</span></div>
+    <h2 className="mt-6 text-base font-semibold">Tu reto</h2><Statement text={props.statement} />
     <p className="mt-4 text-xs font-medium text-muted-foreground">{activityNames[props.activityType]}</p>
     <Examples examples={props.examples} runtimeMode={props.runtimeMode} />
   </div>;

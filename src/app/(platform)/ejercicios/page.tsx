@@ -11,6 +11,7 @@ import { ExerciseFilters } from "@/components/exercise-filters";
 import { Badge } from "@/components/ui/badge";
 import { MotionRegion } from "@/components/motion-region";
 import { sortExercises } from "@/lib/practice-navigation";
+import { exerciseSkillSummary } from "@/lib/exercise-skills";
 
 export const metadata = { title: "Ejercicios" };
 export default async function ExercisesPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
@@ -24,7 +25,7 @@ export default async function ExercisesPage({ searchParams }: { searchParams: Pr
   const category = str("categoria");
   const status = str("estado");
   const order = ["dificultad", "duracion"].includes(str("orden")) ? str("orden") : "curricular";
-  const filtered = sortExercises(catalog.filter(e => (!query || searchNormalize(`${e.title} ${e.description} ${e.category} ${e.practiceGoals?.join(" ") ?? ""}`).includes(searchNormalize(query))) && (!level || e.level === level) && (!category || e.category === category) && (!status || (status === "resueltos" ? e.solved : status === "pendientes" ? !e.solved : status === "sin-empezar" ? !e.started && !e.solved : status === "en-progreso" ? e.started && !e.solved : true))), order);
+  const filtered = sortExercises(catalog.filter(e => (!query || searchNormalize(`${e.title} ${e.description} ${e.category} ${e.practiceGoals?.join(" ") ?? ""} ${exerciseSkillSummary(e)}`).includes(searchNormalize(query))) && (!level || e.level === level) && (!category || e.category === category) && (!status || (status === "resueltos" ? e.solved : status === "pendientes" ? !e.solved : status === "sin-empezar" ? !e.started && !e.solved : status === "en-progreso" ? e.started && !e.solved : true))), order);
   const pages = Math.max(1, Math.ceil(filtered.length / 12));
   const page = Math.min(pages, Math.max(1, Number.parseInt(str("pagina")) || 1));
   const pageLink = (n: number) => { const p = new URLSearchParams({ lenguaje: language, q: query, nivel: level, categoria: category, estado: status, orden: order, pagina: String(n) }); return `/ejercicios?${p}`; };

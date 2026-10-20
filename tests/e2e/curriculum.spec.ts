@@ -9,10 +9,7 @@ for (const path of learningPaths) {
     for (const unit of modulesForPath(path.slug)) await expect(page.getByRole("button", { name: new RegExp(unit.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")) })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Pon en práctica lo aprendido", exact: true })).toBeVisible();
     await expect(page.getByRole("checkbox")).toHaveCount(0);
-    const review = page.getByRole("button", { name: "Ideas para repasar", exact: true });
-    await expect(review).toHaveAttribute("aria-expanded", "false");
-    await review.click();
-    await expect(review).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByRole("link", { name: "Abrir primer integrador", exact: true })).toBeVisible();
     const next = learningPaths.find(entry => entry.order > path.order);
     if (next) await expect(page.getByRole("link", { name: `Continuar con ${next.title}`, exact: true })).toHaveAttribute("href", `/rutas/${next.slug}?lenguaje=typescript`);
   });
