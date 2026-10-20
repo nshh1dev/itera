@@ -17,7 +17,7 @@ test("Desde cero ofrece módulos progresivos y comienza con un programa completo
   await expect(page.getByRole("heading", { name: "Tu reto", exact: true })).toBeVisible();
   await openLearningHelp(page);
   await expect(page.getByText(/Entiende la idea/)).toBeVisible();
-  await expect(page.getByText("Antes de empezar", { exact: true }).locator("..")).toHaveAttribute("open", "");
+  await expect(page.getByRole("button", { name: "Antes de empezar", exact: true })).toHaveAttribute("aria-expanded", "true");
   await openSimpleEditor(page);
   await expect(page.getByRole("textbox", { name: "Editor sencillo de Python" })).toHaveValue(/Escribe tu primer programa/);
 });

@@ -22,8 +22,8 @@ function labelKey(node: ReactNode): string {
 function LabelPhase({ children, reduced, ref }: { children: ReactNode; reduced: boolean; ref?: Ref<HTMLSpanElement> }) {
   const present = useIsPresent();
   return <motion.span ref={ref} className="arc-button-label" aria-hidden={present ? undefined : true}
-    initial={reduced ? false : { opacity: 0, y: 4, filter: `blur(${motionTokens.blur.subtle}px)` }}
-    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+    initial={reduced ? false : { opacity: 0, y: 4 }}
+    animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, transition: { duration: reduced ? 0 : motionTokens.duration.instant } }}
     transition={{ duration: reduced ? 0 : motionTokens.duration.fast, ease: motionTokens.ease.enter }}>
     {children}

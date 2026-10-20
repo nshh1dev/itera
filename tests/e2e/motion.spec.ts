@@ -113,8 +113,14 @@ test("pistas y detalles permiten invertir la apertura sin perder el editor", asy
   await expect(dialog).toHaveCount(0);
   await openLearningHelp(page);
   const summary = page.getByRole("button", { name: "Antes de empezar", exact: true });
-  await summary.click({ clickCount: 2, delay: 20 });
-  await expect(summary).toHaveAttribute("aria-expanded", "true");
+  const initial = await summary.getAttribute("aria-expanded");
+  await summary.focus();
+  // El contenido que se contrae puede desplazar el botón bajo el puntero.
+  // El teclado invierte el estado durante la animación sin depender de coordenadas.
+  await summary.press("Enter");
+  await expect(summary).toHaveAttribute("aria-expanded", initial === "true" ? "false" : "true");
+  await summary.press("Enter");
+  await expect(summary).toHaveAttribute("aria-expanded", initial!);
   await expect(page.locator(".monaco-editor")).toBeVisible();
 });
 
@@ -125,7 +131,9 @@ test("Configuración superpuesta conserva Monaco y el código del taller", async
   await expect(editor).toBeVisible();
   await editor.evaluate(node => node.setAttribute("data-motion-preserved", "true"));
   const settings = page.getByRole("link", { name: "Configuración", exact: true });
-  await settings.click();
+  // El indicador de desarrollo de Next puede superponerse a la esquina inferior.
+  await settings.focus();
+  await settings.press("Enter");
   const dialog = page.getByRole("dialog", { name: "Configuración", exact: true });
   await expect(dialog).toBeVisible();
   await page.keyboard.press("Tab");

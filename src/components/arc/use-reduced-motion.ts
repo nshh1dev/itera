@@ -2,12 +2,19 @@
 import { useSyncExternalStore } from "react";
 
 const query = "(prefers-reduced-motion: reduce)";
+let media: MediaQueryList | undefined;
+const listeners = new Set<() => void>();
+const getMedia = () => media ??= window.matchMedia(query);
+const notify = () => listeners.forEach(listener => listener());
 function subscribe(listener: () => void) {
-  const preference = window.matchMedia(query);
-  preference.addEventListener("change", listener);
-  return () => preference.removeEventListener("change", listener);
+  if (listeners.size === 0) getMedia().addEventListener("change", notify);
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+    if (listeners.size === 0) getMedia().removeEventListener("change", notify);
+  };
 }
-const snapshot = () => window.matchMedia(query).matches;
+const snapshot = () => getMedia().matches;
 const serverSnapshot = () => true;
 
 // La versión instalada de Motion lee su hook una sola vez. Esta adaptación

@@ -1,5 +1,36 @@
 # Verificación local
 
+## Revisión de UIArc y rendimiento (20 de octubre de 2026)
+
+- `npm test`: 81 pruebas aprobadas.
+- `npm run typecheck`: aprobado. La primera comprobación del nuevo instrumento
+  de rendimiento encontró errores de tipos en sus listeners; quedaron corregidos.
+- `npm run build`: aprobado tras esa corrección.
+- `npm run lint`: sin errores; 97 avisos de herramientas locales sin seguimiento
+  en `.agents/` y `.opencode/`. Lint focalizado de `src/` y pruebas nuevas sin avisos.
+- 69 escenarios distintos de navegador verificados contra el servidor ya abierto:
+  66 aprobaron inicialmente y tres fallaron por expectativas/acciones de pruebas
+  obsoletas. Tras corregirlas, los 26 escenarios completos de `motion.spec.ts` y
+  `onboarding.spec.ts` aprobaron; se reutilizan los otros 43 resultados sin cambios.
+  Cobertura: controles, currículo, lote R1, interfaz, movimiento, onboarding,
+  rendimiento, simplificación y reflujo. No son 95 escenarios distintos.
+- El recorrido completo `npm run test:e2e` anterior fue cancelado al reiniciarse
+  el servidor; no se presenta como aprobado. Los flujos de evaluación y publicación
+  con doble HTTP no se han completado de nuevo. No se detuvo el servidor existente.
+- `npm run test:runner`: comprobación de ejecutor ausente aprobada; los casos que
+  requieren Piston real se omitieron por indisponibilidad. No se arrancó Docker
+  ni se verificó ejecución real o aislamiento en esta revisión.
+
+Las regresiones nuevas comprueban que las pestañas de ayuda no muestran barras
+de desplazamiento y conservan su altura, foco y selección por teclado. Los cuatro
+selectores del catálogo abren por debajo en Chromium en ambos temas, a 390 y
+1440 px. Se conserva el selector del sistema en navegadores sin `base-select`:
+allí la dirección del desplegable la decide el navegador/sistema operativo.
+
+La comparación de rendimiento y el recorrido para ver los cambios están en
+[motion.md](motion.md) y [recorrido-uiarc.md](recorrido-uiarc.md). Las capturas y
+mediciones permanecen en `.local/`, fuera de Git.
+
 ## Cobertura automatizada
 
 - 74 pruebas de dominio, contenido, revisión editorial, metadatos, comparación, modo programa, currículo, TypeScript y herramientas locales.

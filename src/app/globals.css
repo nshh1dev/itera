@@ -255,6 +255,13 @@
     max-height: min(320px, 60dvh);
     overflow-y: auto;
   }
+  /* El catálogo abre debajo del control, sin elegir la zona superior por ser
+     más amplia. Conserva el ajuste lateral y el desplazamiento de opciones. */
+  .exercise-filter-form select::picker(select) {
+    position-area: block-end span-inline-end;
+    position-try-order: normal;
+    position-try-fallbacks: block-end span-inline-start;
+  }
   select:not([multiple]) option {
     display: flex;
     align-items: center;

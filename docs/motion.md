@@ -63,11 +63,43 @@ cuando se solicita menos movimiento. Los estados siguen siendo legibles.
 El hook local de preferencia usa `useSyncExternalStore` para responder también
 a cambios sobrevenidos; el hook de la versión instalada de Motion solo lee
 el valor inicial. El render de servidor adopta la opción sin movimiento.
+La consulta y su listener nativo se comparten entre los controles, en lugar de
+crear uno por componente y consultar `matchMedia` en cada lectura del estado.
 La modalidad, Escape, foco y semántica de pestañas y acordeones los proporciona
 Radix. Los controles de carga conservan su nombre accesible y bloquean la acción
 sin retirar el foco.
 
-## Estado de verificación de esta entrega
+## Optimización posterior
+
+La barra lateral cambia su ancho de una vez, sin interpolar ancho ni padding:
+Monaco deja de recalcular su disposición en cada fotograma. Los botones
+conservan la pulsación y el cambio de etiqueta, pero sin el filtro de desenfoque.
+
+Medición local en Chromium, desarrollo, mismo ejercicio y expansión de la
+navegación (`tests/e2e/performance.spec.ts`):
+
+| Trabajo observado | Antes | Después |
+| --- | ---: | ---: |
+| Llamadas a `matchMedia` para movimiento reducido | 242 | 3 |
+| Suscripciones activas a esa preferencia (incluye Motion) | 27 | 3 |
+| Notificaciones de tamaño del editor (incluye la inicial) | 15 | 2 |
+
+No son tiempos de carga ni una mejora porcentual de velocidad. Los bytes de
+desarrollo dependen de la compilación y no se usan para afirmar ahorro de red.
+La prueba comprueba límites de suscripciones y reajustes para evitar regresiones.
+
+## Estado de verificación
+
+La revisión posterior autorizada ejecutó pruebas unitarias, tipos, build y
+recorridos de navegador. Resultados actuales y límites en
+[verification.md](verification.md#revisión-de-uiarc-y-rendimiento-20-de-octubre-de-2026).
+
+Las pestañas conservan el scroll horizontal para teclado/pantallas estrechas,
+sin barra visible ni scroll vertical durante el movimiento del indicador. Los
+selectores del catálogo desactivan los fallbacks hacia arriba y la selección
+automática del área más grande; conservan el ajuste lateral de `base-select`.
+
+### Entrega inicial (histórico)
 
 Por petición expresa del usuario, no se ejecutaron pruebas, lint, comprobación
 de tipos, build, detector de diseño ni aplicación. La revisión fue estática:
