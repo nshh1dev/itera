@@ -296,9 +296,9 @@ test("administración guarda borradores privados y publica tras validar las refe
   await page.goto(`/ejercicios/${editorialSlug}?lenguaje=python`);
   await openLearningHelp(page);
   const guide=page.getByRole("region",{name:"Guía de aprendizaje"});
-  await expect(guide.getByText(objective,{exact:true})).toBeVisible();
+  await expect(guide.getByText("Sumar dos propiedades numéricas.",{exact:true})).toBeVisible();
   await expect(guide.getByText("Acceder a propiedades",{exact:true})).toBeVisible();
-  await expect(guide.getByText(/no bloqueos/)).toBeVisible();
+  await expect(guide.getByText("Repaso opcional",{exact:true})).toBeVisible();
   await expect(guide.getByText("Sumar dos propiedades numéricas.",{exact:true})).toBeVisible();
   await expect(guide.getByRole("link",{name:"Calcula con dos parámetros",exact:true})).toHaveAttribute("href","/ejercicios/logica-dos-parametros?lenguaje=python");
   await expect(page.getByText("Sumamos tres y cinco para obtener ocho.",{exact:true})).toBeVisible();
@@ -307,7 +307,7 @@ test("administración guarda borradores privados y publica tras validar las refe
   await page.getByLabel("Lenguaje del ejercicio").selectOption("javascript");
   await expect(page).toHaveURL(/lenguaje=javascript/);
   await openLearningHelp(page);
-  await expect(guide.getByText(objective,{exact:true})).toBeVisible();
+  await expect(guide.getByText("Sumar dos propiedades numéricas.",{exact:true})).toBeVisible();
   await expect(guide.getByRole("link",{name:"Calcula con dos parámetros",exact:true})).toHaveAttribute("href","/ejercicios/logica-dos-parametros?lenguaje=javascript");
   // Un objetivo nuevo en borrador no se filtra al catálogo ni reescribe el anterior.
   await page.goto(`/admin/ejercicios/${editorialSlug}`);
@@ -323,7 +323,7 @@ test("administración guarda borradores privados y publica tras validar las refe
   expect(preserved.prerequisiteSlugs).toEqual(firstVersion.prerequisiteSlugs);
   await page.goto(`/ejercicios/${editorialSlug}`);
   await openLearningHelp(page);
-  await expect(guide.getByText(objective,{exact:true})).toBeVisible();
+  await expect(guide.getByText("Sumar dos propiedades numéricas.",{exact:true})).toBeVisible();
   await expect(guide.getByText(draftObjective,{exact:true})).toHaveCount(0);
   await page.goto(`/admin/ejercicios/${editorialSlug}`);
   await expect(page.getByLabel("Objetivo de aprendizaje",{exact:true})).toHaveValue(draftObjective);

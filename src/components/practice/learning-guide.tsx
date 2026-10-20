@@ -1,21 +1,23 @@
 import Link from "next/link";
 import { Disclosure } from "@/components/arc/disclosure";
+import { Children, type ReactNode } from "react";
+import { learningHelp } from "@/lib/learning-help";
 
 export type PreviousExercise = { title: string; href: string };
 
-export function LearningGuide({ objective, prerequisites, practiceGoals = [], previousExercises = [] }: { objective: string; prerequisites: string[]; practiceGoals?: string[]; previousExercises?: PreviousExercise[] }) {
-  const documented = objective.trim().length > 0;
+export function LearningGuide({ objective, prerequisites, practiceGoals = [], previousExercises = [], title, statement, children }: { objective: string; prerequisites: string[]; practiceGoals?: string[]; previousExercises?: PreviousExercise[]; title?: string; statement?: string; children?: ReactNode }) {
+  const content = learningHelp({ title, statement, objective, practiceGoals, prerequisites });
+  if (!content.goals.length && !content.prerequisites.length && !previousExercises.length && !Children.toArray(children).some(child => child !== "")) return null;
   return <section aria-label="Guía de aprendizaje">
-    <Disclosure title="Qué vas a practicar">
-    <p className="learning-copy mt-2 text-muted-foreground">{documented ? objective : "Esta versión todavía no tiene un objetivo editorial descrito. Puedes consultar el enunciado y las pistas."}</p>
-    {practiceGoals.length > 0 && <ul className="mt-2 list-disc space-y-1 pl-4 text-xs leading-6 text-muted-foreground">{practiceGoals.map(goal => <li key={goal}>{goal}</li>)}</ul>}
-    </Disclosure>
-    <Disclosure title="Conocimientos previos">
-    {prerequisites.length > 0
-      ? <ul className="mt-2 list-disc space-y-1 pl-4 text-xs leading-6 text-muted-foreground">{prerequisites.map((item, index) => <li key={index}>{item}</li>)}</ul>
-      : <p className="mt-2 text-xs leading-6 text-muted-foreground">{documented ? "No necesitas conocimientos de programación previos para esta actividad." : "Esta versión no especifica conocimientos previos."}</p>}
-    {previousExercises.length > 0 && <nav aria-label="Ejercicios previos recomendados" className="mt-3"><p className="text-xs font-medium">Puedes repasarlos aquí</p><ul className="mt-1 flex flex-col items-start">{previousExercises.map(exercise => <li key={exercise.href}><Link className="text-link min-h-11 py-2 text-xs" href={exercise.href}>{exercise.title}</Link></li>)}</ul></nav>}
-    <p className="mt-3 text-sm leading-6 text-muted-foreground">Son recomendaciones, no bloqueos.</p>
+    <Disclosure title="Comprender la idea">
+    <div className="space-y-5 pb-3">
+    {content.goals.length > 0 && <div><h3 className="text-sm font-semibold">Qué vas a practicar</h3><ul className="mt-2 list-disc space-y-1 pl-4 text-base leading-7 text-muted-foreground">{content.goals.map(goal => <li key={goal}>{goal}</li>)}</ul></div>}
+    {children}
+    {(content.prerequisites.length > 0 || previousExercises.length > 0) && <div><h3 className="text-sm font-semibold">Antes de empezar</h3>
+    {content.prerequisites.length > 0 && <ul className="mt-2 list-disc space-y-1 pl-4 text-base leading-7 text-muted-foreground">{content.prerequisites.map(item => <li key={item}>{item}</li>)}</ul>}
+    {previousExercises.length > 0 && <nav aria-label="Ejercicios previos recomendados" className="mt-3"><p className="text-sm text-muted-foreground">Repaso opcional</p><ul className="mt-1 flex flex-col items-start">{previousExercises.map(exercise => <li key={exercise.href}><Link className="text-link min-h-11 py-2 text-sm" href={exercise.href}>{exercise.title}</Link></li>)}</ul></nav>}
+    </div>}
+    </div>
     </Disclosure>
   </section>;
 }

@@ -46,7 +46,7 @@ for (const language of ["python", "javascript"] as const) {
       await page.goto(href);
       await openLearningHelp(page);
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
-      await expect(guide.getByText(exercise.objective!, { exact: true })).toBeVisible();
+      // Los objetivos concretos sustituyen el resumen general, sin repetirlo.
       for (const goal of exercise.practiceGoals!) await expect(guide.getByText(goal, { exact: true })).toBeVisible();
       await expect(page.getByText(activityNames[exercise.activityType!], { exact: true })).toBeVisible();
       await expect(guide.getByText(/todavía no tiene|no especifica/)).toHaveCount(0);

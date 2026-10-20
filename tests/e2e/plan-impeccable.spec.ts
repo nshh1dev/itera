@@ -14,7 +14,7 @@ test.afterAll(async () => {
 
 test("la ayuda llega cerrada y se descubre con teclado sin perder código", async ({ page }) => {
   await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
-  const summary = page.getByRole("button", { name: "Qué vas a practicar", exact: true });
+  const summary = page.getByRole("button", { name: "Comprender la idea", exact: true });
   await expect(summary).toHaveAttribute("aria-expanded", "false");
   await expect(page.getByRole("heading", { name: "Tu reto", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Pistas progresivas", exact: true })).toBeVisible();

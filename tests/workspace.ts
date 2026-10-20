@@ -1,7 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 
 export async function openLearningHelp(page: Page) {
-  for (const name of ["Qué vas a practicar", "Conocimientos previos"]) {
+  for (const name of ["Comprender la idea"]) {
     const summary = page.getByRole("button", { name, exact: true });
     await expect(summary).toBeVisible();
     if (await summary.getAttribute("aria-expanded") !== "true") await summary.click();

@@ -9,8 +9,9 @@ import { Button } from "@/components/ui/button";
 import { MotionRegion } from "@/components/motion-region";
 import { Disclosure } from "@/components/arc/disclosure";
 import { executionFeedback } from "@/lib/execution-feedback";
+import { ActivityList, type Activity } from "@/components/activity-list";
 
-export const Results = memo(function Results({ result, busy, error, nextHref, nextLabel = "Practicar un ejercicio relacionado", collapsed = false, onToggle, runtimeMode = "FUNCTION" }: { result: ExecutionResult | null; busy: boolean; error: string; nextHref?: string; nextLabel?: string; collapsed?: boolean; onToggle?: () => void; runtimeMode?: RuntimeMode }) {
+export const Results = memo(function Results({ result, busy, error, nextHref, nextLabel = "Practicar un ejercicio relacionado", collapsed = false, onToggle, runtimeMode = "FUNCTION", recentSubmissions }: { result: ExecutionResult | null; busy: boolean; error: string; nextHref?: string; nextLabel?: string; collapsed?: boolean; onToggle?: () => void; runtimeMode?: RuntimeMode; recentSubmissions?: Activity[] }) {
   const contentId = useId();
   return <section aria-label="Resultados de ejecución">
     <div className="results-toolbar flex h-[42px] items-center gap-2 px-4 text-xs font-medium">
@@ -57,6 +58,7 @@ export const Results = memo(function Results({ result, busy, error, nextHref, ne
           {result.status === "PASSED" && result.mode === "submit" && nextHref && <Link className="text-link mt-4 text-xs" href={nextHref}>{nextLabel}<ArrowRight className="size-3.5" /></Link>}
         </>}
       </MotionRegion>
+      {!!recentSubmissions?.length && <Disclosure title="Tus intentos en este ejercicio" className="mt-4"><section id="workspace-history" aria-label="Tus intentos en este ejercicio"><ActivityList entries={recentSubmissions} compact /></section></Disclosure>}
     </div>
   </section>;
 });

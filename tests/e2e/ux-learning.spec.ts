@@ -139,7 +139,7 @@ for (const theme of ["light", "dark"] as const) test(`jerarquía, acordeones y r
     await openSimpleEditor(page);
     await page.getByRole("textbox", { name: "Editor sencillo de Python" }).fill("# código conservado");
     if (width < 1200) await page.getByRole("button", { name: "Enunciado", exact: true }).click();
-    await page.getByRole("button", { name: "Qué vas a practicar", exact: true }).click();
+    await page.getByRole("button", { name: "Comprender la idea", exact: true }).click();
     await page.getByRole("button", { name: "Pistas progresivas", exact: true }).click();
     await page.getByRole("button", { name: "Descubrir la primera pista" }).click();
     await page.screenshot({ path: `.local/screenshots/ux-editor-${theme}-${width}.png`, fullPage: true });

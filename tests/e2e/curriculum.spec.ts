@@ -21,7 +21,7 @@ test("TypeScript empieza con variables sin exigir JavaScript y conserva su espac
   await page.goto("/ejercicios/logica-guarda-cantidad?lenguaje=typescript&ruta=desde-cero");
   await expect(page.getByRole("heading", { name: "Guarda una cantidad", exact: true })).toBeVisible();
   await openLearningHelp(page);
-  await expect(page.getByText(/Entiende la idea/)).toBeVisible();
+  await expect(page.getByRole("region", { name: "Teoría y ejemplo" })).toBeVisible();
   await page.getByRole("button", { name: "Código", exact: true }).click();
   await expect(page.getByLabel("Lenguaje del ejercicio")).toHaveValue("typescript");
   await expect(page.locator(".monaco-editor")).toBeVisible();
