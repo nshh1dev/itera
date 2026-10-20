@@ -65,7 +65,7 @@ test("los filtros móviles muestran la selección y se pueden quitar sin cambiar
 });
 
 test("el IDE permite ajustar paneles por teclado y colapsar los resultados", async ({ page }) => {
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   await expect(page.locator(".monaco-editor")).toBeVisible();
   await expect(page.locator(".monaco-editor-background").first()).toHaveCSS("background-color", "rgb(255, 255, 255)");
   const width = page.getByRole("separator", { name: "Ajustar ancho de los paneles" });
@@ -93,7 +93,7 @@ test("el IDE permite ajustar paneles por teclado y colapsar los resultados", asy
 });
 
 test("las opciones del editor y la confirmación conservan el código y restauran el foco", async ({ page }) => {
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   await openSimpleEditor(page);
   const editor = page.getByRole("textbox", { name: "Editor sencillo de Python" });
   const code = "def solve(data):\n    # Mi borrador\n    return 42\n";
@@ -130,8 +130,8 @@ test("las pantallas se adaptan sin desbordamientos y conservan el editor entre p
     await page.setViewportSize({ width, height: 740 });
     await page.goto("/ejercicios");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Catálogo a ${width}px`).toBeTruthy();
-    await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=javascript");
-    await expect(page.getByRole("heading", { name: "Dos números, una suma", exact: true })).toBeVisible();
+    await page.goto("/ejercicios/logica-dos-parametros?lenguaje=javascript");
+    await expect(page.getByRole("heading", { name: "Calcula con dos parámetros", exact: true })).toBeVisible();
     if (width < 1200) await page.getByRole("button", { name: "Código", exact: true }).click();
     await openSimpleEditor(page);
     const editor = page.getByRole("textbox", { name: "Editor sencillo de JavaScript" });

@@ -32,7 +32,7 @@ for (const { width, height, theme } of [
     await page.setViewportSize({ width, height });
     await page.emulateMedia({ reducedMotion: "no-preference", colorScheme: theme });
     await page.context().addCookies(cookies);
-    await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+    await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
     await page.getByRole("button", { name: "Ver pistas", exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Pistas y solución" });
     await expect(dialog).toHaveCSS("transform", "none");
@@ -93,7 +93,7 @@ test("la solución corta del programa no deja una ventana artificialmente alta",
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.emulateMedia({ colorScheme: "dark" });
   await page.context().addCookies(cookies);
-  await page.goto("/ejercicios/ordena-las-instrucciones?lenguaje=python");
+  await page.goto("/ejercicios/logica-orden-mensaje?lenguaje=python");
   await page.getByRole("button", { name: "Ver pistas", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Pistas y solución" });
   await dialog.getByRole("tab", { name: "Solución explicada", exact: true }).click();

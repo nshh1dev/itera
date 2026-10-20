@@ -46,6 +46,7 @@ export type SeedExercise = {
   typescriptContract?: string;
   complexity?: string; commonErrors?: string[];
   explanations?: { python: string; javascript: string; typescript?: string };
+  statements?: { python: string; javascript: string; typescript: string };
 };
 
 const t = (input: Json, expected: Json) => ({ input, expected });

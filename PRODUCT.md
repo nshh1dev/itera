@@ -57,8 +57,8 @@ sin bloquear ni conceder progreso.
 
 ## Capabilities and Constraints
 
-- Tres lenguajes: Python, JavaScript y TypeScript; niveles principiante,
-  intermedio y avanzado.
+- Tres lenguajes: Python, JavaScript y TypeScript; niveles Iniciación,
+  Principiante, Intermedio y Avanzado. Comparten 136 ejercicios en idéntico orden.
 - Dos contratos de ejercicio. **Función:** se implementa `solve(data)` y se
   devuelve un valor JSON. **Programa:** se escribe el archivo completo y su salida
   estándar se compara con el texto esperado.
@@ -75,8 +75,8 @@ sin bloquear ni conceder progreso.
 - Restricciones firmes: la interfaz y los ejercicios están en español; no hay IA,
   analítica externa ni servicios de pago; el código de quien aprende nunca se
   ejecuta en el proceso principal de la aplicación.
-- Decisiones aplazadas: la IA y una ampliación masiva del catálogo quedan después
-  de validar la experiencia básica.
+- Alcance: lógica de programación y algoritmos. La IA sigue aplazada.
+  El currículo nuevo requiere validación completa en Piston antes de activarse.
 
 ## Brand Commitments
 

@@ -15,7 +15,7 @@ export function getRecentSubmissions(userId: string, take: number, exerciseId?: 
     where: { userId, ...(exerciseId ? { variant: { version: { exerciseId } } } : {}) },
     orderBy: { createdAt: "desc" }, take,
     select: { id: true, status: true, mode: true, createdAt: true, passedCount: true, totalCount: true,
-      variant: { select: { language: true, version: { select: { title: true, exercise: { select: { slug: true } } } } } },
+      variant: { select: { language: true, version: { select: { title: true, exercise: { select: { slug: true, published: true } } } } } },
     },
   });
 }

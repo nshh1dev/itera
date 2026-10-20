@@ -32,7 +32,7 @@ export default async function PathPage({ params, searchParams }: { params: Promi
     {definition && <p className="mt-3 text-xs font-medium text-muted-foreground">{levelNames[definition.level]} · Fundamentos de programación y algoritmos</p>}
     <p className="page-description">{path.description}</p>
     <nav aria-label="Lenguaje de la ruta" className="segmented-control mt-5 flex-wrap">{languages.map(lang => <Link key={lang} href={`?lenguaje=${lang}`} aria-current={language === lang ? "page" : undefined} className="segment">{languageNames[lang]}</Link>)}</nav>
-    <Disclosure title="Sobre esta ruta" className="mt-3 max-w-prose"><p className="pb-3 text-sm leading-6 text-muted-foreground">{language === "typescript" ? "Puedes empezar sin conocer JavaScript. Aprenderás los tipos a medida que los necesites. Las versiones antiguas necesitan una revisión publicada para ofrecer este lenguaje." : "Entender → observar → completar → resolver → integrar. Las ayudas disminuyen a medida que practicas."}</p></Disclosure>
+    <Disclosure title="Sobre esta ruta" className="mt-3 max-w-prose"><p className="pb-3 text-sm leading-6 text-muted-foreground">Los mismos retos y el mismo orden en Python, JavaScript y TypeScript. Cambia la sintaxis, no el problema. El progreso se guarda por lenguaje y todas las etapas tienen acceso libre. {language === "typescript" ? "Puedes empezar sin conocer JavaScript: los tipos se presentan gradualmente." : "Las ayudas disminuyen a medida que practicas."}</p></Disclosure>
     {nextExercise && <section className="surface-panel mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-surface p-5" aria-label="Siguiente ejercicio de la ruta"><div><p className="text-xs text-muted-foreground">{exercises.some(exercise => exercise.solved) ? "Sigue practicando" : "Empieza la ruta"}</p><h2 className="mt-2 text-lg font-semibold">{nextExercise.title}</h2></div><Button asChild><Link href={`/ejercicios/${nextExercise.slug}?lenguaje=${language}&ruta=${encodeURIComponent(slug)}`}>Abrir ejercicio<ArrowRight aria-hidden="true" /></Link></Button></section>}
     <p className="mt-6 mb-3 px-3 text-xs text-muted-foreground">{exercises.filter(e => e.solved).length} de {exercises.length} completados · Sin prisa, sin bloqueos</p>
     <div className="route-layout">
@@ -48,7 +48,7 @@ export default async function PathPage({ params, searchParams }: { params: Promi
       </section>;
     })}
     {exercises.filter(exercise => !modules.some(module => module.slugs.includes(exercise.slug))).map(exercise => <ExerciseRow key={exercise.id} exercise={exercise} language={language} pathSlug={slug} />)}
-    {modules.length > 0 && <section className="mt-10 rounded-xl bg-surface p-5" aria-labelledby="path-readiness">
+    {modules.length > 0 && <section className="mt-10 rounded-xl bg-surface p-5 wrap-anywhere" aria-labelledby="path-readiness">
       <h2 id="path-readiness" className="text-lg font-semibold">Estás preparado para continuar si puedes…</h2>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">Autoevaluación orientativa. Completar ejercicios no demuestra por sí solo dominio; intenta explicar y resolver sin consultar la solución. Estas casillas no guardan progreso ni bloquean rutas.</p>
       <div className="mt-4 flex flex-col gap-3">{modules.flatMap(module => module.readiness).map((goal, index) => <label key={goal} className="flex min-h-11 items-start gap-3 text-sm leading-6"><input key={`${language}-${index}`} type="checkbox" className="mt-1 size-4 shrink-0 accent-primary" />{goal}</label>)}</div>

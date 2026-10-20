@@ -3,6 +3,7 @@ import { exercises, starter, type SeedExercise } from "./content";
 import type { Level, RuntimeMode } from "../src/lib/types";
 import { languages } from "../src/lib/types";
 import { statementForLanguage } from "./lesson-statements";
+import { logicExercises } from "./logic-content";
 
 type VersionContent = {
   title: string; description: string; statement: string; constraints: string[]; hints: string[]; level: Level; minutes: number;
@@ -15,7 +16,7 @@ type VersionContent = {
 };
 
 export function catalogRevision(slug: string): SeedExercise | undefined {
-  return exercises.find(exercise => exercise.slug === slug);
+  return logicExercises.find(exercise => exercise.slug === slug) ?? exercises.find(exercise => exercise.slug === slug);
 }
 
 export function seedVersionContent(exercise: SeedExercise): VersionContent {

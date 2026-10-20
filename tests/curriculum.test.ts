@@ -3,8 +3,7 @@ import assert from "node:assert/strict";
 import { renderToStaticMarkup } from "react-dom/server";
 import { exercises } from "../prisma/content";
 import { seedVersionContent } from "../prisma/editorial-revision";
-import { learningModules, modulesForPath } from "../src/lib/learning-modules";
-import { learningPaths, introductorySteps } from "../src/lib/learning-paths";
+import { learningModules, modulesForPath, learningPaths, introductorySteps } from "./historical-curriculum";
 import { languages } from "../src/lib/types";
 import { editorialSchema, publicationMetadataSchema } from "../src/lib/editorial";
 import { prerequisiteIssue } from "../src/lib/curriculum";
@@ -36,7 +35,7 @@ test("los nuevos pasos enseñan variables antes de leer y separan imprimir de de
 });
 
 test("todo el catálogo supera la validación editorial y de publicación y tiene prerrequisitos anteriores", () => {
-  const entries = exercises.map((exercise, order) => ({ slug: exercise.slug, order }));
+  const entries = learningPaths.flatMap(path => path.slugs!).map((slug, order) => ({ slug, order }));
   for (const exercise of exercises) {
     const version = seedVersionContent(exercise);
     const variants = Object.fromEntries(version.variants.map(variant => [variant.language, variant]));

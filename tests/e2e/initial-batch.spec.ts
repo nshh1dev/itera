@@ -13,17 +13,19 @@ const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.
 const prefix = `r1-e2e-${Date.now()}`;
 const email = `${prefix}@example.test`;
 const batch = initialBatchSlugs.map(slug => exercises.find(exercise => exercise.slug === slug)!);
-const slugs = batch.map(exercise => `${prefix}-${exercise.slug}`);
+const fixtureSlugs = [...new Set([...initialBatchSlugs, ...batch.flatMap(exercise => exercise.prerequisiteSlugs ?? [])])];
+const fixtures = fixtureSlugs.map(slug => exercises.find(exercise => exercise.slug === slug)!);
+const slugs = fixtures.map(exercise => `${prefix}-${exercise.slug}`);
 const json = (value: unknown) => value === null ? Prisma.JsonNull : value as Prisma.InputJsonValue;
 
 test.beforeAll(async () => {
   // Copias temporales para verificar presentación, no la publicación real ni Piston.
   // Nunca se modifica una identidad, versión o ruta del catálogo del propietario.
-  for (const [index, exercise] of batch.entries()) {
+  for (const [index, exercise] of fixtures.entries()) {
     const { variants, ...version } = seedVersionContent(exercise);
     await db.exercise.create({ data: {
       slug: slugs[index], category: exercise.category, order: 10000 + index,
-      versions: { create: { ...version, published: true, variants: { create: variants.map(({ tests, ...variant }) => ({
+      versions: { create: { ...version, prerequisiteSlugs: version.prerequisiteSlugs.map(slug => `${prefix}-${slug}`), published: true, variants: { create: variants.map(({ tests, ...variant }) => ({
         ...variant, tests: { create: tests.map(fixture => ({ ...fixture, input: json(fixture.input), expected: json(fixture.expected), explanation: fixture.visible ? fixture.explanation : "MARCADOR_OCULTO_R1" })) },
       })) } } },
     } });
@@ -53,7 +55,7 @@ for (const language of ["python", "javascript"] as const) {
       const previous = guide.getByRole("navigation", { name: "Ejercicios previos recomendados" });
       if (exercise.prerequisiteSlugs!.length) {
         await expect(previous.getByRole("link")).toHaveCount(exercise.prerequisiteSlugs!.length);
-        for (const slug of exercise.prerequisiteSlugs!) await expect(previous.locator(`a[href="/ejercicios/${slug}?lenguaje=${language}"]`)).toBeVisible();
+        for (const slug of exercise.prerequisiteSlugs!) await expect(previous.locator(`a[href="/ejercicios/${prefix}-${slug}?lenguaje=${language}"]`)).toBeVisible();
       } else await expect(previous).toHaveCount(0);
       await openSimpleEditor(page);
       const editor = page.getByRole("textbox", { name: `Editor sencillo de ${language === "python" ? "Python" : "JavaScript"}` });

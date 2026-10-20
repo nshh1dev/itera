@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { openSimpleEditor } from "../workspace";
 
-const exerciseUrl = "/ejercicios/suma-de-dos-numeros?lenguaje=python";
+const exerciseUrl = "/ejercicios/logica-dos-parametros?lenguaje=python";
 
 test("el enunciado y los ejemplos se pueden leer antes de ejecutar JavaScript", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ baseURL, javaScriptEnabled: false });

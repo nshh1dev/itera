@@ -7,8 +7,7 @@ import { programExercises } from "../prisma/program-content";
 import { introductoryExercises } from "../prisma/introductory-content";
 import { foundationExercises } from "../prisma/foundation-content";
 import { collectionsExercises } from "../prisma/collections-content";
-import { exerciseHref, exercisePosition, foundationSteps, introductorySteps, intermediateSteps, learningPaths, nextExerciseSlug, previousExerciseSlug } from "../src/lib/learning-paths";
-import { modulesForPath } from "../src/lib/learning-modules";
+import { exerciseHref, exercisePosition, foundationSteps, introductorySteps, intermediateSteps, learningPaths, nextExerciseSlug, previousExerciseSlug, modulesForPath } from "./historical-curriculum";
 
 // Solo se ejecutan las soluciones de referencia escritas en este repositorio.
 // Este código de verificación editorial no forma parte del servidor ni acepta programas de usuarios.

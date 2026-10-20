@@ -4,7 +4,7 @@ import vm from "node:vm";
 import { spawnSync } from "node:child_process";
 import { exercises, type SeedExercise } from "../prisma/content";
 import { searchExercises } from "../prisma/search-content";
-import { intermediateSteps, foundationSteps, nextExerciseSlug } from "../src/lib/learning-paths";
+import { intermediateSteps, foundationSteps, nextExerciseSlug } from "./historical-curriculum";
 
 test("while, índices, centro y descarte preceden a la búsqueda binaria", () => {
   for (const slug of ["repite-con-while", "recorre-por-indices"]) assert.ok(foundationSteps.includes(slug), slug);

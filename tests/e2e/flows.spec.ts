@@ -6,7 +6,7 @@ import { PrismaClient } from "../../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { catalogRevision, catalogRevisionDecision, seedVersionContent } from "../../prisma/editorial-revision";
 import { actionStreamMonitor } from "./action-stream";
-import { initialBatchSlugs } from "../../prisma/initial-batch";
+import { logicExercises } from "../../prisma/logic-content";
 import { openLearningHelp, openSimpleEditor } from "../workspace";
 
 const db=new PrismaClient({adapter:new PrismaPg({connectionString:process.env.DATABASE_URL})});
@@ -14,7 +14,7 @@ const email=`itera-e2e-${Date.now()}@example.test`;
 const password="Itera-test-local-12345";
 const otherEmail=`other-${email}`;
 const editorialSlug=`prueba-editorial-${Date.now()}`;
-const revisionSlugs=[...new Set([...initialBatchSlugs,"sin-duplicados","frecuencia-caracteres","palindromo","anagramas","segundo-mayor","busqueda-binaria","rotar-arreglo"])];
+const revisionSlugs=["logica-dos-parametros", "logica-deduplica", "logica-busqueda-binaria", "logica-merienda"];
 let server:Server;
 let providerRequests=0;
 let providerOnline=true;
@@ -88,7 +88,7 @@ test("registro, preferencias y borrador persistente entre sesiones",async({page}
   await page.getByLabel("Nivel",{exact:true}).selectOption("INTERMEDIATE");
   await page.getByRole("button",{name:"Guardar y empezar"}).click();
   await expect(page.getByText("Tus preferencias están guardadas.")).toBeVisible();
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   await expect(page.locator(".monaco-editor")).toBeVisible();
   await openSimpleEditor(page);
   await page.getByRole("textbox",{name:"Editor sencillo de Python"}).fill("def solve(data):\n    return data['a'] + data['b']\n");
@@ -102,7 +102,7 @@ test("registro, preferencias y borrador persistente entre sesiones",async({page}
   await page.getByLabel("Contraseña",{exact:true}).fill(password);
   await page.getByRole("button",{name:"Iniciar sesión",exact:true}).click();
   await expect(page).toHaveURL(/\/inicio/);
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   await expect(page.getByRole("button",{name:"Usar editor avanzado",exact:true})).toBeVisible();
   await expect(page.getByRole("textbox",{name:"Editor sencillo de Python"})).toHaveValue("def solve(data):\n    return data['a'] + data['b']\n");
   authCookies=await page.context().cookies();
@@ -110,7 +110,7 @@ test("registro, preferencias y borrador persistente entre sesiones",async({page}
 
 test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async({page})=>{
   await page.context().addCookies(authCookies);
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python&ruta=desde-cero");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python&ruta=desde-cero");
   await page.getByRole("button",{name:"Ejecutar ejemplos",exact:true}).click();
   await expect(page.getByText("Los ejemplos funcionan.",{exact:true})).toBeVisible();
   const user=await db.user.findUniqueOrThrow({where:{email}});
@@ -121,8 +121,8 @@ test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async
   const hiddenCount=await db.testCase.count({where:{variantId:submission.variantId,visible:false}});
   expect(hiddenCount).toBeGreaterThan(0);
   await expect(page.getByText(`${hiddenCount} de ${hiddenCount} pruebas ocultas superadas`)).toBeVisible();
-  // La suma continúa con el cierre de la misma ruta, no con el catálogo global.
-  await expect(page.getByRole("link",{name:"Continuar con otro ejercicio"})).toHaveAttribute("href","/ejercicios/presupuesto-de-merienda?lenguaje=python&ruta=desde-cero");
+  // El siguiente paso mantiene la ruta y el orden común a los tres lenguajes.
+  await expect(page.getByRole("link",{name:"Continuar con otro ejercicio"})).toHaveAttribute("href","/ejercicios/logica-imprimir-devolver?lenguaje=python&ruta=desde-cero");
   await expect(page.getByRole("link",{name:"Volver a la ruta"})).toHaveAttribute("href","/rutas/desde-cero?lenguaje=python");
   const result=await page.request.get(`/api/executions/${submission.id}`);
   const payload=await result.json();
@@ -156,17 +156,17 @@ test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async
 
 test("ayudas progresivas, solución explícita y autorización administrativa",async({page})=>{
   await page.context().addCookies(authCookies);
-  const version=await db.exerciseVersion.findFirstOrThrow({where:{exercise:{slug:"par-o-impar"},published:true},orderBy:{number:"desc"}});
+  const version=await db.exerciseVersion.findFirstOrThrow({where:{exercise:{slug:"logica-dos-requisitos"},published:true},orderBy:{number:"desc"}});
   const firstHint=version.hints[0];
   expect(firstHint.length).toBeGreaterThan(0);
-  await page.goto("/ejercicios/par-o-impar");
+  await page.goto("/ejercicios/logica-dos-requisitos");
   await page.getByRole("button",{name:"Ver pistas",exact:true}).click();
   await expect(page.getByText(firstHint,{exact:true})).toHaveCount(0);
   await page.getByRole("button",{name:"Descubrir la primera pista"}).click();
   await expect(page.getByText(firstHint,{exact:true})).toBeVisible();
   await page.getByRole("tab",{name:"Solución explicada"}).click();
   await page.getByRole("button",{name:"Ver solución explicada"}).click();
-  await expect(page.getByText("return data % 2 == 0",{exact:false})).toBeVisible();
+  await expect(page.getByRole("dialog").locator("pre")).toHaveText(logicExercises.find(e => e.slug === "logica-dos-requisitos")!.python);
   await page.goto("/admin");
   await expect(page).toHaveURL(/\/inicio/);
   const noOrigin=await page.request.post("/api/executions",{data:{}});
@@ -175,7 +175,7 @@ test("ayudas progresivas, solución explícita y autorización administrativa",a
 
 test("workspace móvil conserva el código al cambiar de panel",async({page})=>{
   await page.setViewportSize({width:390,height:844});
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=javascript");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=javascript");
   await page.getByRole("button",{name:"Código",exact:true}).click();
   await openSimpleEditor(page);
   await page.getByRole("textbox",{name:"Editor sencillo de JavaScript"}).fill("function solve(data) { return data.a + data.b; }");
@@ -188,26 +188,26 @@ test("workspace móvil conserva el código al cambiar de panel",async({page})=>{
 
 test("el borrador detecta cambios de otra pestaña sin sobrescribirlos",async({page,context})=>{
   await page.context().addCookies(authCookies);
-  await page.goto("/ejercicios/par-o-impar?lenguaje=python");
+  await page.goto("/ejercicios/logica-dos-requisitos?lenguaje=python");
   await openSimpleEditor(page);
   const input=page.getByRole("textbox",{name:"Editor sencillo de Python"});
   await input.fill("def solve(data):\n    return data % 2 == 0\n");
   await expect(page.getByText("Guardado",{exact:true})).toBeVisible();
   const second=await context.newPage();
-  await second.goto("/ejercicios/par-o-impar?lenguaje=python");
+  await second.goto("/ejercicios/logica-dos-requisitos?lenguaje=python");
   await openSimpleEditor(second);
   await input.fill("def solve(data):\n    # Primera pestaña\n    return data % 2 == 0\n");
   await expect(page.getByText("Guardado",{exact:true})).toBeVisible();
   await second.getByRole("textbox",{name:"Editor sencillo de Python"}).fill("def solve(data):\n    # Segunda pestaña\n    return False\n");
   await expect(second.getByRole("alert").filter({ hasText: "Este borrador cambió en otra pestaña" })).toBeVisible();
-  const draft=await db.draft.findFirstOrThrow({where:{user:{email},variant:{version:{exercise:{slug:"par-o-impar"}}}}});
+  const draft=await db.draft.findFirstOrThrow({where:{user:{email},variant:{version:{exercise:{slug:"logica-dos-requisitos"}}}}});
   expect(draft.code).toContain("Primera pestaña");
   await second.close();
 });
 
 test("fallos del proveedor no crean aprobados y los lenguajes tienen progreso independiente",async({page})=>{
   await page.context().addCookies(authCookies);
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=javascript");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=javascript");
   await openSimpleEditor(page);
   await page.getByRole("textbox",{name:"Editor sencillo de JavaScript"}).fill("function solve(data) { return 999; }");
   const user=await db.user.findUniqueOrThrow({where:{email}});
@@ -233,7 +233,7 @@ test("recuperación local, rechazo de roles enviados por cliente y privacidad de
   await page.request.post("/api/auth/sign-out",{headers:{origin:"http://127.0.0.1:3000"}});
   await page.goto("/recuperar-cuenta");
   await page.getByLabel("Correo electrónico").fill(otherEmail);
-  await page.getByRole("button",{name:"Crear enlace de recuperación"}).click();
+  await page.getByRole("button",{name:"Crear enlace",exact:true}).click();
   await expect(page.getByText("Solicitud recibida.")).toBeVisible();
   let link="";
   for(const file of await readdir(".local/mail")){
@@ -263,7 +263,7 @@ test("administración guarda borradores privados y publica tras validar las refe
   await page.getByLabel("Objetivo de aprendizaje",{exact:true}).fill(objective);
   await page.getByLabel("Conocimientos previos recomendados",{exact:true}).fill("  Usar return  \nAcceder a propiedades\n\n");
   await page.getByLabel("Qué vas a practicar",{exact:true}).fill("  Sumar dos propiedades numéricas.  \nDevolver un resultado con return.\n");
-  await page.getByLabel("Ejercicios previos (slugs)",{exact:true}).fill("suma-de-dos-numeros");
+  await page.getByLabel("Ejercicios previos (slugs)",{exact:true}).fill("logica-dos-parametros");
   await page.getByLabel("Tipo de actividad",{exact:true}).selectOption("INTEGRATION");
   await page.getByLabel("Enunciado",{exact:true}).fill("Recibe un objeto con a y b, y devuelve la suma de ambos valores.");
   await page.getByLabel("Pistas progresivas").fill("Necesitas combinar ambos valores.\nObtén cada propiedad por su nombre.\nUtiliza el operador de suma para combinar los valores.");
@@ -286,7 +286,7 @@ test("administración guarda borradores privados y publica tras validar las refe
   expect(firstVersion.objective).toBe(objective);
   expect(firstVersion.prerequisites).toEqual(["Usar return","Acceder a propiedades"]);
   expect(firstVersion.practiceGoals).toEqual(["Sumar dos propiedades numéricas.","Devolver un resultado con return."]);
-  expect(firstVersion.prerequisiteSlugs).toEqual(["suma-de-dos-numeros"]);
+  expect(firstVersion.prerequisiteSlugs).toEqual(["logica-dos-parametros"]);
   expect(firstVersion.activityType).toBe("INTEGRATION");
   expect((await page.request.get(`/ejercicios/${editorialSlug}`)).status()).toBe(404);
   await page.getByRole("button",{name:"Validar y publicar",exact:true}).click();
@@ -300,7 +300,7 @@ test("administración guarda borradores privados y publica tras validar las refe
   await expect(guide.getByText("Acceder a propiedades",{exact:true})).toBeVisible();
   await expect(guide.getByText(/no bloqueos/)).toBeVisible();
   await expect(guide.getByText("Sumar dos propiedades numéricas.",{exact:true})).toBeVisible();
-  await expect(guide.getByRole("link",{name:"Dos números, una suma",exact:true})).toHaveAttribute("href","/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await expect(guide.getByRole("link",{name:"Calcula con dos parámetros",exact:true})).toHaveAttribute("href","/ejercicios/logica-dos-parametros?lenguaje=python");
   await expect(page.getByText("Sumamos tres y cinco para obtener ocho.",{exact:true})).toBeVisible();
   await expect(page.getByText("Explicación privada que no debe entregarse al cliente.",{exact:true})).toHaveCount(0);
   await expect(page.getByRole("button",{name:"Comprobar solución",exact:true})).toBeEnabled();
@@ -308,7 +308,7 @@ test("administración guarda borradores privados y publica tras validar las refe
   await expect(page).toHaveURL(/lenguaje=javascript/);
   await openLearningHelp(page);
   await expect(guide.getByText(objective,{exact:true})).toBeVisible();
-  await expect(guide.getByRole("link",{name:"Dos números, una suma",exact:true})).toHaveAttribute("href","/ejercicios/suma-de-dos-numeros?lenguaje=javascript");
+  await expect(guide.getByRole("link",{name:"Calcula con dos parámetros",exact:true})).toHaveAttribute("href","/ejercicios/logica-dos-parametros?lenguaje=javascript");
   // Un objetivo nuevo en borrador no se filtra al catálogo ni reescribe el anterior.
   await page.goto(`/admin/ejercicios/${editorialSlug}`);
   const draftObjective="Practicar una revisión distinta que todavía no debe verse públicamente.";

@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { exercises } from "../prisma/content";
 import { textExercises } from "../prisma/text-content";
-import { intermediateSteps, foundationSteps, nextExerciseSlug } from "../src/lib/learning-paths";
+import { intermediateSteps, foundationSteps, nextExerciseSlug } from "./historical-curriculum";
 
 test("los filtros y comparaciones preceden a palíndromos y anagramas", () => {
   const curriculum = [...foundationSteps, ...intermediateSteps];

@@ -1,5 +1,40 @@
 # Verificación local
 
+## Currículo común de lógica (20 de octubre de 2026)
+
+- Activación real con Piston: `npm run content:replace -- --apply` validó 116
+  funciones por lenguaje en lotes y 20 programas completos por lenguaje, y
+  publicó 136 ejercicios (28/36/36/36), 408 variantes y cuatro rutas. Una segunda
+  pasada revalidó y publicó la versión 2 de «Corrige una fórmula con paréntesis»
+  como programa de salida fija sin entrada, para no adelantar la lectura de datos
+  en Iniciación; la versión anterior sigue publicada para el historial. El
+  catálogo activo conserva 28 ejercicios de Iniciación.
+- `npm test`: 89 pruebas aprobadas, incluidas referencias y plantillas Python,
+  JavaScript y TypeScript, contratos estrictos y validación editorial común.
+- `npm run typecheck` y `npm run build`: aprobados. `npx eslint src prisma scripts
+  tests`: sin avisos. `npm run lint` termina con 0 errores, pero recorre las
+  herramientas locales sin seguimiento y muestra 97 avisos previos en `.agents/`
+  y `.opencode/`; no forman parte de la entrega ni de CI.
+- Migraciones aplicadas. La integración `tests/logic-install.integration.ts`
+  comprueba preparación idempotente, conservación del estado activo y de los
+  estudiantes y rechazo de una instantánea obsoleta sin cambios parciales.
+- `npm run test:runner`: ocho pruebas aprobadas con Piston real y sus tres
+  runtimes, sin omisiones. No se repitió tras la revisión de paréntesis; la
+  activación completa sí validó esa versión en los tres runtimes.
+- `npm run test:e2e`: 103 pruebas aprobadas en 4,9 minutos con el doble HTTP de
+  Piston. Cubren las cuatro rutas, el cambio de lenguaje, el acceso libre, el
+  archivo histórico, la administración editorial y el texto al 200 % en móvil.
+  El doble no ejecuta código; la activación y `test:runner` cubren el ejecutor
+  real.
+- Correcciones surgidas de la verificación: la prueba de recuperación esperaba
+  «Crear enlace de recuperación» mientras la interfaz muestra «Crear enlace»; se
+  alineó la prueba. En `/rutas/desde-cero` a 320 px con texto al 200 %, la
+  autoevaluación desbordaba por palabras largas; `wrap-anywhere` permite partirlas
+  sin alterar el aspecto con tamaños normales.
+
+Los apartados siguientes registran verificaciones anteriores, no ejecuciones
+repetidas automáticamente para esta entrega.
+
 ## Revisión de UIArc y rendimiento (20 de octubre de 2026)
 
 **Comportamiento compacto acordado:** se retiró la altura fija de 640 px porque

@@ -55,11 +55,12 @@ test("registro y preferencias con el ejecutor real disponible",async({page})=>{
 
 test("el sandbox real aprueba Python y guarda el progreso",async({page})=>{
   await page.context().addCookies(authCookies);
-  await solve(page,"par-o-impar","python","def solve(data):\n    return data % 2 == 0\n");
+  await solve(page,"logica-dos-requisitos","python","def solve(data):\n    return data % 3 == 0 and data % 5 == 0\n");
   await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
   await expect(page.getByText("Un paso más. Ejercicio resuelto.")).toBeVisible({timeout:40000});
-  await expect(page.getByText("5 / 5 pruebas")).toBeVisible();
-  await expect(page.getByText("3 de 3 pruebas ocultas superadas")).toBeVisible();
+  const caseCount = await db.testCase.count({ where: { variant: { language: "python", version: { published: true, exercise: { slug: "logica-dos-requisitos" } } } } });
+  await expect(page.getByText(`${caseCount} / ${caseCount} pruebas`)).toBeVisible();
+  await expect(page.getByText(`${caseCount - 2} de ${caseCount - 2} pruebas ocultas superadas`)).toBeVisible();
   const user=await db.user.findUniqueOrThrow({where:{email}});
   const progress=await db.progress.findMany({where:{userId:user.id}});
   expect(progress).toHaveLength(1);
@@ -71,30 +72,30 @@ test("el sandbox real aprueba Python y guarda el progreso",async({page})=>{
 
 test("un resultado distinto y un bucle infinito no aprueban",async({page})=>{
   await page.context().addCookies(authCookies);
-  await solve(page,"contar-vocales","python","def solve(data):\n    return 42\n");
+  await solve(page,"logica-vocales","python","def solve(data):\n    return 42\n");
   await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
   await expect(page.getByText("Tu solución todavía puede mejorar.")).toBeVisible({timeout:40000});
   await expect(page.getByText("Resultado diferente").first()).toBeVisible();
-  await solve(page,"contar-vocales","python","def solve(data):\n    while True:\n        pass\n");
+  await solve(page,"logica-vocales","python","def solve(data):\n    while True:\n        pass\n");
   await page.getByRole("button",{name:"Ejecutar ejemplos",exact:true}).click();
   await expect(page.getByText("Límite de tiempo").first()).toBeVisible({timeout:40000});
   const user=await db.user.findUniqueOrThrow({where:{email}});
-  expect(await db.progress.count({where:{userId:user.id,language:"python",exercise:{slug:"contar-vocales"},firstPassedAt:{not:null}}})).toBe(0);
+  expect(await db.progress.count({where:{userId:user.id,language:"python",exercise:{slug:"logica-vocales"},firstPassedAt:{not:null}}})).toBe(0);
 });
 
 test("JavaScript registra un progreso independiente del de Python",async({page})=>{
   await page.context().addCookies(authCookies);
-  await solve(page,"par-o-impar","javascript","function solve(data) {\n  return data % 2 === 0;\n}\n");
+  await solve(page,"logica-dos-requisitos","javascript","function solve(data) {\n  return data % 3 === 0 && data % 5 === 0;\n}\n");
   await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
   await expect(page.getByText("Un paso más. Ejercicio resuelto.")).toBeVisible({timeout:40000});
   const user=await db.user.findUniqueOrThrow({where:{email}});
-  const progress=await db.progress.findMany({where:{userId:user.id,exercise:{slug:"par-o-impar"}}});
+  const progress=await db.progress.findMany({where:{userId:user.id,exercise:{slug:"logica-dos-requisitos"}}});
   expect(progress.map((p:{language:string})=>p.language).sort()).toEqual(["javascript","python"]);
 });
 
 test("TypeScript rechaza errores de tipos sin conceder progreso y luego aprueba una función",async({page})=>{
   await page.context().addCookies(authCookies);
-  await solve(page,"lee-un-opcional","typescript",'function solve(data: {cantidad?: number}): number { const incorrecto: number = "error"; return data.cantidad ?? 1; }');
+  await solve(page,"logica-opcional","typescript",'function solve(data: {cantidad?: number}): number { const incorrecto: number = "error"; return data.cantidad ?? 1; }');
   await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
   await expect(page.getByText("Error de ejecución").first()).toBeVisible({timeout:60000});
   await expect(page.getByText(/TS2322/).first()).toBeVisible();
@@ -109,22 +110,22 @@ test("TypeScript rechaza errores de tipos sin conceder progreso y luego aprueba 
   await page.getByRole("textbox",{name:"Editor sencillo de TypeScript",exact:true}).fill('function solve(data: {cantidad?: number}): number { return data.cantidad ?? 1; }');
   await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
   await expect(page.getByText("Un paso más. Ejercicio resuelto.")).toBeVisible({timeout:60000});
-  expect(await db.progress.count({where:{userId:user.id,language:"typescript",exercise:{slug:"lee-un-opcional"},firstPassedAt:{not:null}}})).toBe(1);
+  expect(await db.progress.count({where:{userId:user.id,language:"typescript",exercise:{slug:"logica-opcional"},firstPassedAt:{not:null}}})).toBe(1);
 });
 
 test("TypeScript ejecuta un programa completo con entrada y salida",async({page})=>{
   await page.context().addCookies(authCookies);
-  await solve(page,"lee-y-suma","typescript","const numero: number = Number(require('fs').readFileSync(0, 'utf8').trim());\nconsole.log(numero + 5);");
+  await solve(page,"logica-lee-suma","typescript","const lineas: string[] = require('fs').readFileSync(0, 'utf8').trim().split('\\n');\nconsole.log(Number(lineas[0]) + Number(lineas[1]));");
   await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
   await expect(page.getByText("Un paso más. Ejercicio resuelto.")).toBeVisible({timeout:60000});
   const user=await db.user.findUniqueOrThrow({where:{email}});
-  expect(await db.progress.count({where:{userId:user.id,language:"typescript",exercise:{slug:"lee-y-suma"},firstPassedAt:{not:null}}})).toBe(1);
+  expect(await db.progress.count({where:{userId:user.id,language:"typescript",exercise:{slug:"logica-lee-suma"},firstPassedAt:{not:null}}})).toBe(1);
 });
 
 test("el progreso publica el ejercicio como resuelto en el catálogo",async({page})=>{
   await page.context().addCookies(authCookies);
   await page.goto("/ejercicios?lenguaje=python&estado=resueltos");
-  await expect(page.locator('a[href="/ejercicios/par-o-impar?lenguaje=python"]').getByLabel("Resuelto",{exact:true})).toBeVisible();
+  await expect(page.locator('a[href="/ejercicios/logica-dos-requisitos?lenguaje=python"]').getByLabel("Resuelto",{exact:true})).toBeVisible();
   await page.goto("/progreso");
   await expect(page.getByText("Resuelto",{exact:true}).first()).toBeVisible();
 });

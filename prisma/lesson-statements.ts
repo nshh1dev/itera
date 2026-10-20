@@ -2,6 +2,7 @@ import type { Language } from "../src/lib/types";
 import type { SeedExercise } from "./content";
 
 export function statementForLanguage(exercise: SeedExercise, language: Language) {
+  if (exercise.statements) return exercise.statements[language];
   const print = language === "python" ? "print" : "console.log";
   const variants: Record<string, string> = {
     "imprime-un-saludo": `Un programa es una secuencia de instrucciones. ${print} muestra un valor por la pantalla.\n\nEscribe un programa que muestre Hola, mundo! en una línea. El texto va entre comillas. No hay entrada. Después de ejecutar los ejemplos, comprueba tu solución para guardar el paso.`,

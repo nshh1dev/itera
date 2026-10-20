@@ -50,7 +50,7 @@ export default async function LandingPage() {
               <fieldset><legend>¿Qué quieres practicar?</legend>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div><label htmlFor="landing-language" className="field-label">Lenguaje</label><select id="landing-language" name="lenguaje" defaultValue="python" className="field">{Object.entries(languageNames).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
-                  <div><label htmlFor="landing-level" className="field-label">Nivel</label><select id="landing-level" name="nivel" defaultValue="BEGINNER" className="field">{Object.entries(levelNames).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
+                  <div><label htmlFor="landing-level" className="field-label">Nivel</label><select id="landing-level" name="nivel" defaultValue="INITIATION" className="field">{Object.entries(levelNames).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
                 </div>
                 <Button type="submit" variant="outline" className="mt-5 w-full">Explorar ejercicios<ArrowRight aria-hidden="true" /></Button>
               </fieldset>

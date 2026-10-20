@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { PrismaClient, Prisma } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { exercises } from "../prisma/content";
+import { logicExercises as exercises } from "../prisma/logic-content";
 import { seedVersionContent, catalogRevisionDecision } from "../prisma/editorial-revision";
 import { editorialSchema } from "../src/lib/editorial";
 import { prerequisiteIssue } from "../src/lib/curriculum";

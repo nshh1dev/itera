@@ -4,7 +4,7 @@ import vm from "node:vm";
 import { spawnSync } from "node:child_process";
 import { exercises, type SeedExercise } from "../prisma/content";
 import { rotationExercises } from "../prisma/rotation-content";
-import { intermediateSteps, foundationSteps, nextExerciseSlug } from "../src/lib/learning-paths";
+import { intermediateSteps, foundationSteps, nextExerciseSlug } from "./historical-curriculum";
 
 test("resto, avance circular y reconstrucción preceden a la rotación", () => {
   assert.ok(foundationSteps.includes("reduce-vueltas-completas"), "reduce-vueltas-completas");

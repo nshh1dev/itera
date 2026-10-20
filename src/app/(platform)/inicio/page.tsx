@@ -25,7 +25,7 @@ export default async function DashboardPage() {
   ]);
   const solved = catalog.filter(e => e.solved).length;
   const continueExercise = catalog.find(e => e.slug === lastDraft?.variant.version.exercise.slug && !e.solved);
-  const recommendation = continueExercise ?? catalog.find(e => !e.solved && e.level === (user?.preference?.level ?? "BEGINNER")) ?? catalog.find(e => !e.solved) ?? catalog[0];
+  const recommendation = continueExercise ?? catalog.find(e => !e.solved && e.level === (user?.preference?.level ?? "INITIATION")) ?? catalog.find(e => !e.solved) ?? catalog[0];
   const suggestions = catalog.filter(e => !e.solved && e.id !== recommendation?.id).slice(0, 3);
   return <div className="page-container">
     <div className="page-intro">

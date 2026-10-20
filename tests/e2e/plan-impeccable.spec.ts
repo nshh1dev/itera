@@ -13,7 +13,7 @@ test.afterAll(async () => {
 });
 
 test("la ayuda llega cerrada y se descubre con teclado sin perder código", async ({ page }) => {
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   const summary = page.getByRole("button", { name: "Contexto y ayuda", exact: true });
   await expect(summary).toHaveAttribute("aria-expanded", "false");
   await expect(page.getByRole("heading", { name: "Tu reto", exact: true })).toBeVisible();

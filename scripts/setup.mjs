@@ -26,7 +26,7 @@ try {
   runNode("node_modules/prisma/build/index.js", ["generate"]);
   runNode("node_modules/prisma/build/index.js", ["migrate", "deploy"]);
   runNode("node_modules/tsx/dist/cli.mjs", ["prisma/seed.ts"]);
-  console.log("\nItera está lista. Inicia la aplicación con npm run dev.");
+  console.log("\nEntorno preparado. El catálogo nuevo queda en borrador: con Piston disponible, ejecuta npm run content:replace -- --apply. Después inicia la aplicación con npm run dev.");
 } catch (error) {
   console.error(`\nNo se pudo completar la preparación: ${error.message}\nConsulta README.md para configurar PostgreSQL.`);
   process.exitCode = 1;

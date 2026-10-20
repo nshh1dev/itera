@@ -47,7 +47,7 @@ test("los accesos de teclado y las ayudas tienen nombres claros", async ({ page 
   await expect(skip).toBeInViewport();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/#main-content$/);
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   const hints = page.getByRole("button", { name: "Ver pistas", exact: true });
   await hints.focus();
   await page.keyboard.press("Enter");
@@ -62,7 +62,7 @@ for (const theme of ["light", "dark"] as const) {
   test(`el taller conserva espacio de código en ventana baja y consulta separada: ${theme}`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
     await page.setViewportSize({ width: 1440, height: 650 });
-    await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+    await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await openLearningHelp(page);
     await expect(page.getByRole("heading", { name: "Aprende mientras practicas" })).toBeVisible();

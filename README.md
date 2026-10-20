@@ -7,10 +7,10 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 ## Qué incluye
 
 - Landing, espacio personal, catálogo con filtros y cuatro rutas de aprendizaje.
-- Ejercicios originales en español con progresión por niveles: principiante, intermedio y avanzado.
+- 136 ejercicios de lógica en español: Iniciación (28), Principiante (36), Intermedio (36) y Avanzado (36).
 - Ruta **Desde cero**: instrucciones, valores, variables, entrada y operaciones antes de introducir funciones, con plantillas propias por lenguaje.
 - Ruta **Construye tus bases**: comparaciones, condiciones, listas, cadenas, rangos y acumuladores antes de combinarlos en retos.
-- Varios lenguajes; casos editoriales por lenguaje, entre visibles y ocultos.
+- Los mismos ejercicios y el mismo orden en Python, JavaScript y TypeScript, con variantes propias y los mismos casos visibles y ocultos.
 - Módulos con teoría breve, ejemplos adaptados y retos de integración. Autoevaluación al terminar cada ruta, sin bloqueos.
 - Registro e inicio de sesión con correo y contraseña; recuperación en una bandeja de correo local.
 - Monaco servido localmente, editor sencillo alternativo, tamaño de fuente, paneles ajustables y copia del código; las preferencias se recuerdan en el navegador.
@@ -26,9 +26,9 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 
 - **Node.js 24 LTS** y npm (también es compatible Node 22.12+).
 - **PostgreSQL 16 o superior**, con `initdb`, `pg_ctl`, `psql` y `createdb`.
-- **Solo para ejecutar código:** Docker con contenedores Linux, Docker Compose y cgroup v2. En Windows, Docker necesita un backend como WSL2.
+- **Para ejecutar código y validar la primera activación del catálogo:** Docker con contenedores Linux, Docker Compose y cgroup v2. En Windows, Docker necesita un backend como WSL2.
 
-La aplicación y el catálogo funcionan sin Piston. El botón de ejecución informa si el sandbox está detenido; nunca se ejecuta el código del usuario en Node o Python del servidor principal.
+Una instalación con el catálogo ya activado funciona sin Piston; el botón de ejecución informa si el sandbox está detenido. La primera activación valida las referencias en Piston antes de publicar. Nunca se ejecuta el código del usuario en Node o Python del servidor principal.
 
 ## Primer inicio
 
@@ -47,10 +47,12 @@ Abre **http://127.0.0.1:3000** y crea tu cuenta. Utiliza siempre el mismo hostna
 1. Crea `.env` con contraseñas aleatorias si todavía no existe.
 2. Copia Monaco a `public/monaco`; no utiliza CDN.
 3. Inicializa un clúster privado en `.local/postgres`, puerto **5434**, escuchando solo en loopback.
-4. Genera Prisma, aplica migraciones e inserta el catálogo sin sobreescribir ejercicios existentes.
+4. Genera Prisma, aplica migraciones y prepara el catálogo nuevo en borrador, sin sobrescribir trabajo existente ni publicarlo.
 5. Desactiva la telemetría de Next.js.
 
 No modifica los servicios PostgreSQL ni las bases existentes. No sobrescribe un `.env` personalizado; únicamente añade la desactivación de telemetría si falta.
+
+Para activar por primera vez el currículo nuevo, prepara Piston siguiendo la sección siguiente y ejecuta `npm run content:replace -- --apply`. Se validan referencias y plantillas de los tres lenguajes antes de publicar las cuatro rutas. El proceso puede tardar varios minutos. Sin Piston no se publica el catálogo nuevo ni se retira el anterior.
 
 En Windows detecta instalaciones habituales, incluida `D:/PostgresSQL/bin`. Si tu instalación está en otra ruta, configura `PG_BIN` en `.env`. Debe ser la misma versión mayor de PostgreSQL con la que creaste el clúster.
 
@@ -115,9 +117,11 @@ Tras registrarte, puedes convertir tu cuenta en administradora:
 npm run admin -- tu@correo.com
 ```
 
-Abre `/admin`. Guardar crea una versión en borrador. **Validar y publicar** comprueba las referencias y plantillas de todos los lenguajes en Piston; TypeScript debe cumplir también su contrato de tipos. El catálogo inicial se incorpora mediante seed y sus referencias se verifican con las pruebas editoriales del repositorio.
+Abre `/admin`. Guardar crea una versión en borrador. **Validar y publicar** comprueba las referencias y plantillas de todos los lenguajes en Piston; TypeScript debe cumplir también su contrato de tipos. El seed prepara el currículo nuevo sin publicarlo. Las pruebas editoriales locales no sustituyen a Piston.
 
-En una instalación existente, el seed no actualiza ejercicios antiguos. `npm run content:revisions` previsualiza las nuevas versiones y `npm run content:revisions -- --apply` prepara sus borradores sin publicar ni reemplazar borradores distintos. Después valídalos desde administración con Piston disponible. Hasta publicarlos, algunos lenguajes pueden no estar disponibles en las versiones antiguas. Procedimiento y currículo: [docs/curriculum.md](docs/curriculum.md).
+En una instalación existente, `npm run content:replace` previsualiza la sustitución. `-- --prepare` crea borradores; `-- --apply` valida el lote completo en Piston y sustituye el catálogo activo atómicamente. Se conservan cuentas, preferencias, intentos, borradores y progreso anteriores; las identidades nuevas empiezan sin completados. El contenido personalizado no se retira automáticamente. Los últimos códigos archivados propios se consultan en Progreso.
+
+Para revisiones posteriores, `npm run content:revisions -- --apply` prepara nuevas versiones del catálogo de lógica sin publicar ni sobrepasar borradores distintos. Valídalas desde administración con Piston disponible. Procedimiento y currículo: [docs/curriculum.md](docs/curriculum.md).
 
 Los usuarios nuevos no pueden asignarse el rol de administrador. Los permisos se comprueban en cada operación del servidor.
 
@@ -134,6 +138,7 @@ Los usuarios nuevos no pueden asignarse el rol de administrador. Los permisos se
 | `npm run content:paths` | Vista previa del orden de las cuatro rutas con secuencia editorial. Añade `-- --apply` para actualizarlo explícitamente. |
 | `npm run content:metadata` | Vista previa de la guía de aprendizaje (objetivo y conocimientos previos) que falta en versiones publicadas antiguas. Añade `-- --apply` para completarla sin sobrescribir. |
 | `npm run content:revisions` | Previsualizar revisiones del catálogo; `-- --apply` crea borradores nuevos sin publicar ni modificar versiones existentes. |
+| `npm run content:replace` | Previsualizar la sustitución; `-- --prepare` prepara borradores y `-- --apply` valida en Piston antes de activar el currículo nuevo. |
 | `npm run doctor` | Estado de dependencias locales. |
 | `npm run lint` / `npm run typecheck` | Calidad estática. |
 | `npm test` | Evaluador, validación y referencias editoriales. |
@@ -151,6 +156,8 @@ npm run test:e2e
 ```
 
 Las pruebas editoriales ejecutan **únicamente las referencias fijas del repositorio**, no código de usuarios. Requieren Python local (`PYTHON_BIN` permite elegir su ejecutable).
+
+`npx tsx --test tests/logic-install.integration.ts` prepara el catálogo nuevo en la base configurada y comprueba idempotencia y conservación de los datos existentes, sin publicarlo. Las suites de navegador requieren haber activado previamente el currículo nuevo; nunca lo publican con el doble HTTP.
 
 Las pruebas E2E levantan su propia aplicación en el puerto 3000; detén antes cualquier instancia de Itera. Usan un doble de contrato HTTP en **2001**, sin ejecutar código, para verificar evaluación asíncrona, confidencialidad e idempotencia. La aplicación normal usa **2000**, reservado al Piston real. Crean cuentas y contenido temporales, los eliminan al terminar y dejan capturas en `.local/screenshots`.
 
@@ -190,10 +197,6 @@ Para respaldar tus datos usa `pg_dump` de tu versión de PostgreSQL, o copia `.l
 
 Prioridades y criterios pedagógicos: [docs/roadmap.md](docs/roadmap.md).
 
-Para incorporar **Desde cero** a una instalación existente, inicia PostgreSQL y ejecuta `npm run db:seed`. Se añaden sus actividades y la ruta sin reemplazar los ejercicios, rutas, borradores ni progresos existentes. No hace falta resetear la base.
+El currículo común sustituye al catálogo anterior con `npm run content:replace -- --apply`, previa validación en Piston. No hace falta resetear la base: no se eliminan cuentas, intentos, borradores ni progreso. Las identidades `logica-` empiezan sin completados y los registros anteriores quedan consultables en Progreso.
 
-Para incorporar la ampliación completa del currículo —**Construye tus bases**, **Conecta las ideas** y **Ve un paso más allá**—, ejecuta `npm run db:seed`, revisa `npm run content:paths` y aplica con `npm run content:paths -- --apply`. Esta actualización solo reemplaza el orden y la composición de las cuatro rutas editoriales con secuencia definida; no modifica ejercicios, versiones, borradores, intentos, progreso ni rutas personalizadas. Es atómica y comprueba que todos los ejercicios estén publicados antes de cambiar nada. El currículo queda completo con la progresión por niveles principiante, intermedio y avanzado. Después, `npm run content:metadata -- --apply` completa la guía (objetivo y conocimientos previos) de las versiones publicadas anteriores, sin tocar enunciados, pruebas ni datos de estudiantes.
-
-Los cambios en las referencias y la plantilla de ejercicios ya existentes **no** se aplican con el seed. Para importar contenido del catálogo (incluidas las revisiones de los ocho retos principiantes, **Una sola vez**, **Cada letra cuenta**, **De ida y vuelta** y **Las mismas letras**), abre `/admin/ejercicios/<slug>` y usa **Preparar revisión didáctica** → **Crear borrador didáctico**. El botón exige permisos de administrador, conserva versiones anteriores y no crea duplicados si la revisión ya está incorporada. Si hay un borrador distinto o una actualización concurrente, se detiene sin reemplazarlo. Guarda o copia los cambios sin guardar del formulario antes de importar.
-
-Revisa el borrador y usa **Validar y publicar versión guardada** con Piston disponible. Preparar una revisión nunca la publica ni cambia el progreso, los borradores de estudiantes o los intentos históricos. Los demás cambios editoriales se guardan manualmente como nuevas versiones desde `/admin`.
+Para revisiones posteriores del contenido, ejecuta `npm run content:revisions -- --apply` o abre `/admin/ejercicios/<slug>`. Revisa el borrador y usa **Validar y publicar versión guardada** con Piston disponible. Preparar una revisión nunca la publica ni cambia el progreso, los borradores de estudiantes o los intentos históricos.

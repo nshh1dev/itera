@@ -1,37 +1,37 @@
-# Currículo de fundamentos y algoritmos
+# Currículo común de lógica de programación
 
 ## Alcance
 
 El currículo enseña programación y resolución de problemas, no desarrollo web, frameworks ni todas las bibliotecas de cada lenguaje. Se puede elegir Python, JavaScript o TypeScript desde el inicio; TypeScript no exige haber estudiado JavaScript.
 
-`src/lib/learning-modules.ts` es la fuente del orden y la organización didáctica. Cada módulo contiene objetivo, teoría breve, ejemplos por lenguaje y criterios de autoevaluación. `learning-paths.ts` deriva sus secuencias de esos módulos. La navegación persistida se actualiza explícitamente con `content:paths`.
+`src/lib/curriculum-v2.ts` define los 136 ejercicios, sus títulos, orden, 25 bloques, teoría breve, ejemplos por lenguaje y criterios de salida. `learning-modules.ts` y `learning-paths.ts` derivan las cuatro secuencias. Cambiar de lenguaje conserva el reto y su posición. Cada identidad tiene tres variantes con los mismos casos de entrada y salida; el progreso sigue separado por persona, ejercicio y lenguaje.
 
 ## Etapas y competencias de salida
 
-| Ruta | Módulos | Al terminar |
+| Nivel y ruta | Ejercicios | Al terminar |
 | --- | --- | --- |
-| Principiante · Desde cero | Instrucciones; valores y variables; entradas y operaciones; funciones y retorno; cierre inicial. | Escribir un programa pequeño, explicar su orden, usar datos variables y distinguir imprimir de devolver. |
-| Principiante · Construye tus bases | Decisiones; listas y recorridos; textos; funciones y contratos; integración. | Combinar condiciones, bucles y funciones sin una receta, tratar ausencias y proponer casos límite. |
-| Intermedio · Conecta las ideas | Mapas y conjuntos; agregaciones y matrices; búsqueda y orden; estado y recursión; ventanas e integración. | Elegir estructuras, reutilizar funciones con distintos tipos de datos y justificar una estrategia sencilla. |
-| Avanzado · Ve un paso más allá | Divide y vencerás/backtracking; programación dinámica; árboles; grafos; integración de estrategias. | Argumentar corrección, coste y limitaciones, comparar alternativas y buscar contraejemplos. |
+| Iniciación · Desde cero | 28: instrucciones, variables, operaciones, entrada, tipos y comparaciones, funciones e integración. | Escribir un programa pequeño, explicar su orden, usar datos variables y distinguir imprimir de devolver. |
+| Principiante · Construye tus bases | 36: decisiones, repetición, listas, textos, funciones y registros, integración. | Combinar condiciones, bucles y funciones sin una receta, tratar ausencias y proponer casos límite. |
+| Intermedio · Conecta las ideas | 36: conjuntos y mapas, búsqueda y orden, recorridos eficientes, matrices, pilas/colas/recursión e integración. | Elegir estructuras, evitar trabajo repetido y justificar corrección y costes básicos. |
+| Avanzado · Ve un paso más allá | 36: árboles, prioridades y estrategias voraces, exploración, programación dinámica, grafos e integración. | Modelar estados y conexiones, comparar alternativas y defender una estrategia con argumentos y contraejemplos. |
 
-La progresión es entender → observar → completar → resolver → integrar, no una obligación de cinco ejercicios por concepto. La observación de una función sigue resuelta; las demás plantillas no superan todos sus casos. Un error lógico puede coincidir con algún caso, por lo que no se exige que una plantilla falle absolutamente todos.
+La progresión es entender → completar → resolver → integrar. Las plantillas nuevas se ejecutan sin errores, producen resultados JSON en modo función y no resuelven todos sus casos. Un fallo lógico puede coincidir con algún caso: no se exige que una plantilla falle todos. La actividad del bucle utiliza un avance incorrecto que termina, no una plantilla infinita.
 
-Los retos de cierre son `presupuesto-de-merienda`, `resumen-de-mediciones`, `ranking-de-frecuencias` y `planifica-entregas`. Las casillas «Estás preparado para continuar si puedes…» son una autoevaluación no persistida: no certifican dominio, no actualizan progreso y no bloquean el siguiente nivel.
+Los cierres son `logica-merienda`, `logica-saldo`, `logica-inventario` y `logica-planifica-tareas`. Todas las etapas tienen acceso libre. Las casillas «Estás preparado para continuar si puedes…» son una autoevaluación no persistida: no certifican dominio, no actualizan progreso y no bloquean el siguiente nivel. Avanzado describe el dominio de lógica y algoritmos dentro del recorrido, no una certificación profesional.
 
 ## Revisión y conservación del catálogo
 
-- Se conservan las identidades anteriores, sus contratos de entrada/salida, referencias y casos históricos. Se reorganizan por módulos y se añade teoría contextual, sin reconstruir la aplicación.
-- Se añaden actividades nuevas para secuencia, variables, actualizaciones, tipos básicos, conversiones, expresiones, mensajes, depuración, ausencia, opcionales, reutilización genérica y los cierres. Los conceptos nuevos no se atribuyen automáticamente al progreso anterior.
-- Se adaptan los enunciados introductorios al lenguaje de la variante. Otros problemas conservan su formulación común y sus ejemplos de entrada/salida, junto con teoría y ejemplos de código del lenguaje elegido. No se afirma que todos los enunciados históricos hayan recibido una reescritura individual.
+- Las identidades nuevas usan el prefijo `logica-`. No heredan completados, borradores ni intentos de las anteriores. Los registros históricos se conservan vinculados a sus variantes originales.
+- `prisma/logic-lessons.ts` contiene los contratos nuevos; `logic-content.ts` compone el catálogo. Cuando el objetivo y el contrato coinciden se reutilizan referencias algorítmicas ya verificadas del catálogo histórico; se asignan nuevas identidades, títulos, nivel y prerrequisitos. No se afirma que todos los algoritmos sean nuevos.
+- La teoría tiene ejemplos adaptados a los tres lenguajes. Los contratos comunes se mantienen y las particularidades sintácticas se explican por variante. TypeScript tiene firmas explícitas comprobadas en modo estricto.
 - Las pruebas verifican valores y tipos; no demuestran que se haya empleado una técnica concreta ni una complejidad determinada. En actividades de salida fija se declara que imprimir directamente la respuesta puede coincidir con el resultado, aunque didácticamente se pida practicar un cálculo.
-- No se eliminan ejercicios, versiones, borradores, envíos ni progreso. En una base existente las revisiones son versiones nuevas, no cambios sobre contenido publicado. El progreso sigue separado por ejercicio y lenguaje.
+- La sustitución retira del catálogo activo solo las identidades editoriales históricas conocidas. No elimina ejercicios, versiones, borradores, envíos ni progreso, ni retira contenido personalizado. Progreso muestra el conteo anterior y los últimos 20 borradores y 20 intentos archivados propios, de todos los lenguajes. No entrega datos de otras personas ni casos ocultos.
 
 ## TypeScript
 
-Las referencias comparten el algoritmo con JavaScript, pero tienen contratos editoriales explícitos en `prisma/typescript-content.ts`: tipos de entrada y salida, anotaciones locales, estructuras recursivas y comprobaciones de ausencia. No se infieren contratos desde los tests ni se utiliza `any`, `@ts-ignore` o `@ts-nocheck` en las referencias o plantillas.
+Las referencias comparten el algoritmo con JavaScript, pero tienen contratos editoriales explícitos: los del catálogo nuevo viven en `prisma/logic-lessons.ts` y los históricos en `prisma/typescript-content.ts`. Incluyen tipos de entrada y salida, anotaciones locales, estructuras recursivas y comprobaciones de ausencia. No se infieren contratos desde los tests ni se utiliza `any`, `@ts-ignore` o `@ts-nocheck` en las referencias o plantillas.
 
-La ruta inicial presenta inferencia y anotaciones simples; las funciones introducen firmas y propiedades; las bases añaden uniones y opcionales; las colecciones presentan `Record`, interfaces y genéricos. `reutiliza-una-funcion` practica la relación entre entrada y retorno de una función genérica. El contrato comprueba también esa función auxiliar, no solo el JSON final.
+La ruta inicial presenta inferencia y anotaciones simples; las funciones introducen firmas y propiedades; las bases añaden uniones y opcionales; las colecciones utilizan `Record` y parámetros de tipos de `Map` y `Set`. Los tipos acompañan la lógica sin crear un itinerario distinto ni exigir estudiar JavaScript primero.
 
 ### Ejecución
 
@@ -57,13 +57,21 @@ Con PostgreSQL preparado, sin necesidad de iniciar Next:
 npm run db:migrate
 npx prisma generate
 npm run db:seed
-npm run content:revisions
-npm run content:revisions -- --apply
-npm run content:paths -- --apply
+npm run content:replace
 ```
 
-`content:revisions` valida todo el catálogo y crea solo versiones en borrador para identidades existentes. Es idempotente: una revisión idéntica no crea otra versión; un borrador distinto se conserva y se informa como conflicto. No publica ni necesita Piston para preparar borradores.
+`db:seed` equivale a preparar borradores: no publica ni modifica las rutas activas. `content:replace` sin argumentos es una vista previa sin escrituras; `-- --prepare` también prepara el catálogo de forma idempotente. Un borrador distinto impide importar el lote y se conserva. No hacen falta Next ni Piston para preparar el contenido.
 
-Después el propietario debe iniciar Docker/Piston y ejecutar `npm run runner:setup`. Comprobar con `npm run test:runner`; en administración, validar y publicar cada revisión. No se debe publicar por haber aprobado únicamente las pruebas locales de referencias. Si una versión antigua no tiene TypeScript, la interfaz lo indica y ofrece sus lenguajes disponibles en lugar de usar silenciosamente otra versión.
+Después, con Docker/Piston y sus tres runtimes preparados:
 
-El seed sigue incorporando identidades nuevas como contenido editorial inicial, con referencias comprobadas localmente. Esto no acredita la compatibilidad real del adaptador con Piston. Las limitaciones de la entrega están en [verification.md](verification.md).
+```sh
+docker compose up -d
+npm run runner:setup
+npm run content:replace -- --apply
+```
+
+La activación ejecuta las referencias y plantillas de los tres lenguajes contra todos sus casos en Piston, sin usar el doble HTTP. Solo si todo funciona relee las revisiones y sustituye las cuatro rutas en una transacción serializable. Si falta el ejecutor, falla un caso o cambia una revisión, conserva el catálogo activo. Las escrituras nuevas se limitan a borradores preparados antes de una validación fallida. No se inicia Next automáticamente.
+
+Las revisiones posteriores se preparan con `content:revisions -- --apply` y se validan desde administración. `content:paths` sigue actualizando únicamente la navegación de ejercicios ya publicados. Las fuentes históricas y sus pruebas editoriales siguen en el repositorio para verificar los envíos anteriores.
+
+Pruebas focalizadas: `npx tsx --test tests/logic-content.test.ts` (contenido y referencias locales) y `npx tsx --test tests/logic-install.integration.ts` (preparación en la base configurada, idempotencia y conservación de datos). Esta última prepara borradores reales sin publicar. Las suites de navegador requieren el catálogo activado y permiso para arrancar la aplicación. Las limitaciones de la entrega están en [verification.md](verification.md).

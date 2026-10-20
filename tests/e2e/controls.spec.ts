@@ -6,7 +6,7 @@ for (const theme of ["light", "dark"] as const) {
     test(`pistas sin scrollbar y filtros hacia abajo: ${theme}, ${width}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 760 });
       await page.emulateMedia({ colorScheme: theme });
-      await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+      await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
       await page.getByRole("button", { name: "Ver pistas", exact: true }).click();
       const dialog = page.getByRole("dialog", { name: "Pistas y solución" });
       const tabs = dialog.getByRole("tablist");

@@ -13,6 +13,7 @@ enum Role {
 }
 
 enum Level {
+  INITIATION
   BEGINNER
   INTERMEDIATE
   ADVANCED
@@ -97,7 +98,7 @@ model Verification {
 model UserPreference {
   userId   String @id
   language String @default("python")
-  level    Level  @default(BEGINNER)
+  level    Level  @default(INITIATION)
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 

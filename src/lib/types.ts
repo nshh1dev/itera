@@ -1,12 +1,12 @@
 export const languages = ["python", "javascript", "typescript"] as const;
 export type Language = (typeof languages)[number];
 export const languageNames: Record<Language, string> = { python: "Python", javascript: "JavaScript", typescript: "TypeScript" };
-export const levels = ["BEGINNER", "INTERMEDIATE", "ADVANCED"] as const;
+export const levels = ["INITIATION", "BEGINNER", "INTERMEDIATE", "ADVANCED"] as const;
 export type Level = (typeof levels)[number];
 export const categories = ["Fundamentos", "Cadenas", "Arreglos", "Algoritmos", "Estructuras", "Grafos"] as const;
 export const activityNames = { OBSERVATION: "Observación guiada", GUIDED: "Práctica guiada", PRACTICE: "Resolución de un reto", INTEGRATION: "Integración de lo aprendido" } as const;
 export type ActivityType = keyof typeof activityNames;
-export const levelNames: Record<Level, string> = { BEGINNER: "Principiante", INTERMEDIATE: "Intermedio", ADVANCED: "Avanzado" };
+export const levelNames: Record<Level, string> = { INITIATION: "Iniciación", BEGINNER: "Principiante", INTERMEDIATE: "Intermedio", ADVANCED: "Avanzado" };
 export type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
 export const runtimeModes = ["FUNCTION", "PROGRAM"] as const;
 export type RuntimeMode = (typeof runtimeModes)[number];

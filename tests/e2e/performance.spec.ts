@@ -24,7 +24,7 @@ test("el movimiento no multiplica suscripciones ni redimensiona el editor por fo
       return media;
     };
   });
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   const editor = page.locator(".monaco-editor");
   await expect(editor).toBeVisible();
   await expect(page.getByRole("button", { name: "Expandir navegación", exact: true })).toBeVisible();

@@ -120,9 +120,17 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 - Nueve pruebas de observación/transporte cubren fragmentos pendientes, EOF, errores, cancelación del lector/cuerpo, HTTP real sin comprimir/gzip, conexión truncada, cancelación real y HTTP 503. Se mantienen las comprobaciones de interfaz y persistencia de los recorridos administrativos.
 - Lint, tipos, build, 39 pruebas unitarias/editoriales y 42 E2E aprobados en desarrollo y en dos ejecuciones completas consecutivas de producción. Compresión y revalidación conservan su configuración original; no se añadieron reintentos ni se aumentaron timeouts. Catálogo y rutas sin cambios. Piston real continúa pendiente.
 
+## Decimotercera entrega: currículo común de lógica
+
+- 136 ejercicios nuevos, 28 de Iniciación, 36 de Principiante, 36 de Intermedio y 36 de Avanzado, agrupados en 25 bloques. Python, JavaScript y TypeScript comparten enunciados, casos y posiciones; solo cambian sintaxis, explicaciones y plantillas.
+- Iniciación es un nivel real en esquema, filtros y preferencias. La ruta Desde cero presenta instrucciones, variables, operaciones, entrada, tipos, comparaciones, funciones e integración antes de las demás etapas. TypeScript introduce tipos desde la primera variante sin exigir JavaScript.
+- La sustitución `npm run content:replace -- --apply` valida referencias y plantillas en Piston antes de publicar; retira solo las 140 identidades históricas conocidas y conserva cuentas, intentos, borradores, progreso y rutas personalizadas. Las identidades nuevas empiezan sin completados y el historial anterior queda consultable.
+- La activación completa validó 116 funciones por lenguaje y 20 programas por lenguaje. Una revisión posterior convirtió «Corrige una fórmula con paréntesis» en un programa de salida fija para no adelantar la entrada de datos; se publicó como versión 2 y la anterior permanece en el historial.
+- Lint focalizado, tipos, build, 89 pruebas unitarias/editoriales y 103 E2E aprobaron. La verificación corrigió una etiqueta de recuperación desactualizada y el desbordamiento de la autoevaluación con texto al 200 % a 320 px.
+
 ## Siguiente entrega
 
-Introducir pilas, consulta y retirada del último elemento y correspondencia entre aperturas y cierres antes de Todo en su lugar.
+Revisar con uso real la progresión de Iniciación y ajustar la dificultad de los primeros pasos; después, ensayar una instalación limpia con Piston y documentar el respaldo.
 
 ## Fiabilidad y experiencia
 

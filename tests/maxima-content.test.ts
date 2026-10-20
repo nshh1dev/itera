@@ -4,7 +4,7 @@ import vm from "node:vm";
 import { spawnSync } from "node:child_process";
 import { exercises, type SeedExercise } from "../prisma/content";
 import { maximaExercises } from "../prisma/maxima-content";
-import { intermediateSteps, foundationSteps, nextExerciseSlug } from "../src/lib/learning-paths";
+import { intermediateSteps, foundationSteps, nextExerciseSlug } from "./historical-curriculum";
 
 test("máximos y ausencia se presentan antes de buscar el segundo lugar", () => {
   for (const slug of ["maximo-de-una-lista", "primer-valor-o-ausencia"]) assert.ok(foundationSteps.includes(slug), slug);

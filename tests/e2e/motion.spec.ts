@@ -98,7 +98,7 @@ test("el cierre Arc desvanece el fondo sin repetir la entrada del contenido y de
 
 test("pistas y detalles permiten invertir la apertura sin perder el editor", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   await expect(page.locator(".monaco-editor")).toBeVisible();
   const trigger = page.getByRole("button", { name: "Ver pistas" });
   await trigger.click();
@@ -126,7 +126,7 @@ test("pistas y detalles permiten invertir la apertura sin perder el editor", asy
 
 test("Configuración superpuesta conserva Monaco y el código del taller", async ({ page }) => {
   await page.context().addCookies(cookies);
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   const editor = page.locator(".monaco-editor");
   await expect(editor).toBeVisible();
   await editor.evaluate(node => node.setAttribute("data-motion-preserved", "true"));
@@ -139,7 +139,7 @@ test("Configuración superpuesta conserva Monaco y el código del taller", async
   await page.keyboard.press("Tab");
   expect(await dialog.evaluate(node => node.contains(document.activeElement))).toBeTruthy();
   await page.keyboard.press("Escape");
-  await expect(page).toHaveURL(/\/ejercicios\/suma-de-dos-numeros\?lenguaje=python$/);
+  await expect(page).toHaveURL(/\/ejercicios\/logica-dos-parametros\?lenguaje=python$/);
   await expect(editor).toHaveAttribute("data-motion-preserved", "true");
   await expect(settings).toBeFocused();
 });
@@ -160,7 +160,7 @@ test("cambiar a movimiento reducido durante una apertura la termina sin bloqueo"
 
 test("movimiento reducido permite abrir y cerrar sin transformaciones espaciales", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/ejercicios/suma-de-dos-numeros?lenguaje=python");
+  await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   await page.getByRole("button", { name: "Ver pistas" }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();

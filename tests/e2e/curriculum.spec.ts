@@ -19,8 +19,8 @@ for (const path of learningPaths) {
 test("TypeScript empieza con variables sin exigir JavaScript y conserva su espacio en móvil", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
-  await page.goto("/ejercicios/guarda-y-muestra?lenguaje=typescript&ruta=desde-cero");
-  await expect(page.getByRole("heading", { name: "Un nombre para un valor", exact: true })).toBeVisible();
+  await page.goto("/ejercicios/logica-guarda-cantidad?lenguaje=typescript&ruta=desde-cero");
+  await expect(page.getByRole("heading", { name: "Guarda una cantidad", exact: true })).toBeVisible();
   await openLearningHelp(page);
   await expect(page.getByText(/Entiende la idea/)).toBeVisible();
   await page.getByRole("button", { name: "Código", exact: true }).click();

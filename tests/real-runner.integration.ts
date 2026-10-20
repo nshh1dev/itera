@@ -10,6 +10,7 @@ import assert from "node:assert/strict";
 import { availableRuntime, runCode, RunnerUnavailable } from "../src/server/execution/piston";
 import { judge, judgeProgram } from "../src/server/execution/judge";
 import { exercises } from "../prisma/content";
+import { logicExercises } from "../prisma/logic-content";
 import type { Json } from "../src/lib/types";
 
 const subset = ["suma-de-dos-numeros", "par-o-impar", "el-mayor-de-tres", "contar-vocales", "invertir-cadena"];
@@ -57,7 +58,7 @@ test("TypeScript conserva los veredictos y no expone diagnósticos de casos ocul
 });
 
 test("las soluciones de referencia del catálogo pasan sus casos dentro del sandbox", only, async () => {
-  const selected = process.env.ITERA_RUNNER_ALL ? exercises : exercises.filter((exercise) => subset.includes(exercise.slug));
+  const selected = process.env.ITERA_RUNNER_ALL ? [...exercises, ...logicExercises] : exercises.filter((exercise) => subset.includes(exercise.slug));
   assert.ok(selected.length >= 5);
   for (const language of ["python", "javascript"] as const) {
     const runtime = await availableRuntime(language);
@@ -126,7 +127,7 @@ test("TypeScript compila estrictamente antes de evaluar funciones y programas", 
 
 test("las referencias TypeScript pasan en el runtime real", typescriptOnly, async () => {
   const runtime = await availableRuntime("typescript");
-  const selected = process.env.ITERA_RUNNER_ALL ? exercises : exercises.filter(exercise => ["lee-y-saluda", "valor-o-respaldo", "suma-de-dos-numeros", "presupuesto-de-merienda"].includes(exercise.slug));
+  const selected = process.env.ITERA_RUNNER_ALL ? [...exercises, ...logicExercises] : [...exercises.filter(exercise => ["lee-y-saluda", "valor-o-respaldo", "suma-de-dos-numeros", "presupuesto-de-merienda"].includes(exercise.slug)), ...logicExercises.filter(exercise => ["logica-lee-suma", "logica-monticulo-extrae", "logica-planifica-tareas"].includes(exercise.slug))];
   for (const exercise of selected) for (const [order, fixture] of exercise.tests.entries()) {
     const mode = exercise.runtimeMode ?? "FUNCTION";
     const output = await runCode("typescript", runtime, exercise.typescript!, fixture.input, mode, exercise.typescriptContract);
