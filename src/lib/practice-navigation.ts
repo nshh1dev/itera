@@ -15,6 +15,12 @@ export function sortExercises(items: ExerciseCard[], order: string) {
   return [...items].sort((a, b) => (order === "duracion" ? a.minutes - b.minutes : order === "dificultad" ? levels.indexOf(a.level) - levels.indexOf(b.level) : 0) || a.order - b.order);
 }
 
+export function activePathExercise(exercises: ExerciseCard[]) {
+  return exercises.filter(exercise => exercise.started && !exercise.solved)
+    .sort((a, b) => (b.lastActivityAt ?? "").localeCompare(a.lastActivityAt ?? ""))[0]
+    ?? exercises.find(exercise => !exercise.solved);
+}
+
 export type PracticeEntry = { exercise: ExerciseCard; language: Language; pathSlug?: string; routes?: string[]; date?: string };
 export function nextPractice(entries: PracticeEntry[], fallbackLanguage: Language) {
   const recent = entries.filter(entry => entry.date).sort((a, b) => b.date!.localeCompare(a.date!));
