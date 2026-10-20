@@ -187,10 +187,13 @@ test("desactivar conserva datos, bloquea acceso y permite reactivación solo adm
     await adminPage.goto("/admin/cuentas");
     await expect(adminPage).toHaveURL(/\/inicio$/);
     await db.user.update({ where: { id: admin.id }, data: { role: "ADMIN" } });
-    await adminPage.goto("/admin/cuentas");
-    const row = adminPage.getByRole("listitem").filter({ hasText: user.email });
-    await row.getByRole("button", { name: "Reactivar cuenta" }).click();
-    await expect(row).toHaveCount(0);
+    await adminPage.goto(`/admin/cuentas/${user.id}`);
+    await adminPage.getByRole("button", { name: "Reactivar cuenta", exact: true }).click();
+    const reactivation = adminPage.getByRole("dialog", { name: "Reactivar cuenta" });
+    await reactivation.getByLabel("Tu contraseña actual").fill(password);
+    await reactivation.getByRole("checkbox").check();
+    await reactivation.getByRole("button", { name: "Reactivar cuenta", exact: true }).click();
+    await expect(reactivation).toHaveCount(0);
     expect((await db.user.findUniqueOrThrow({ where: { id: user.id } })).disabledAt).toBeNull();
     await page.context().addCookies(oldCookies);
     expect(await (await page.request.get("/api/auth/get-session")).json()).toBeNull();

@@ -125,6 +125,11 @@ Para revisiones posteriores, `npm run content:revisions -- --apply` prepara nuev
 
 Los usuarios nuevos no pueden asignarse el rol de administrador. Los permisos se comprueban en cada operación del servidor.
 
+El panel también permite buscar cuentas, consultar progreso, gestionar roles y
+desactivar/reactivar sin borrar datos. Para crear diez perfiles ficticios locales,
+usa el seed independiente de desarrollo; credenciales, garantías de conservación y
+comandos en [Administración y perfiles locales](docs/administration.md).
+
 ## Comandos
 
 | Comando | Función |
@@ -134,6 +139,8 @@ Los usuarios nuevos no pueden asignarse el rol de administrador. Los permisos se
 | `npm run build` / `npm start` | Build y ejecución de producción local. |
 | `npm run db:start` / `npm run db:stop` | Controlar el clúster privado. |
 | `npm run db:migrate` / `npm run db:seed` | Migraciones y catálogo. |
+| `npm run db:seed:users -- --apply` | Crear perfiles ficticios sin sobrescribir cuentas; requiere activación local explícita. |
+| `npm run test:admin` / `npm run test:dev-users` | Verificar administración transaccional y seed local con PostgreSQL. |
 | `npm run db:studio` | Inspección local mediante Prisma Studio. |
 | `npm run content:paths` | Vista previa del orden de las cuatro rutas con secuencia editorial. Añade `-- --apply` para actualizarlo explícitamente. |
 | `npm run content:metadata` | Vista previa de la guía de aprendizaje (objetivo y conocimientos previos) que falta en versiones publicadas antiguas. Añade `-- --apply` para completarla sin sobrescribir. |

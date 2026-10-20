@@ -1,5 +1,49 @@
 # Verificación local
 
+## Usuarios ficticios y administración (20 de octubre de 2026)
+
+- Se crearon los diez perfiles locales con `ITERA_DEV_USERS=1 npm run
+  db:seed:users -- --apply`. El archivo de credenciales está en `.local/`, excluido
+  de Git; no se publican claves ni se modifican cuentas preexistentes.
+- `npm test`: **110 aprobadas**. Las tres pruebas nuevas cubren barreras del seed,
+  distribución de perfiles y validación de operaciones administrativas. Tras
+  endurecer los parámetros de conexión se repitieron esas tres: **3 aprobadas**.
+- `npm run test:admin`: **1 aprobada** con PostgreSQL en un esquema temporal
+  aislado. Comprueba permisos, sesión caducada/revocada o ajena, estado obsoleto,
+  concurrencia y protección del último administrador activo frente a desactivación
+  y degradación. El esquema se elimina al terminar.
+- `ITERA_DEV_USERS=1 npm run test:dev-users`: **1 aprobada**. Comprueba repetición
+  sin cambios mediante huellas, contadores, fechas de finalización y saneamiento
+  de resultados ocultos. No ejecuta los programas sintéticos.
+- `npm run typecheck` y `npm run build`: aprobados. No se necesitan migraciones ni
+  cambios de dependencias: se reutilizan roles, estado, sesiones y auditoría.
+- `npm run lint`: cero errores; **97 avisos previos** en herramientas locales sin
+  seguimiento de `.agents/` y `.opencode/`, no incluidos en la entrega.
+- `ITERA_E2E_PRODUCTION=1 npm run test:e2e`: **127 aprobadas**, sin omisiones.
+  Tras endurecer la lectura de filtros repetidos en la URL se repitieron el build
+  y las cinco pruebas administrativas: **5 aprobadas**, incluida esa regresión.
+- Pruebas focalizadas de `admin.spec.ts` contra build de producción: **5 aprobadas**,
+  sin omisiones. Incluyen acceso de los diez perfiles, rechazo del desactivado,
+  progreso por lenguaje en las cuatro vistas, estadísticas, filtros, cambio de rol,
+  revocación de sesiones, reactivación, reenvío no autorizado de una Server Action,
+  teclado, movimiento reducido y ambos temas a 1440/320 px.
+- La primera ejecución focalizada detectó dos problemas de selectores: etiqueta
+  implícita del selector personalizable y dos regiones de estado en Ejercicios.
+  Se hizo explícita la asociación de etiquetas y se acotó el selector de prueba.
+  Una ejecución anterior terminó por el límite externo de tiempo del comando;
+  no se considera aprobada. Se aumentó ese límite sin rebajar la autenticación.
+  Se eliminaron únicamente las dos fixtures propias que dejó esa interrupción,
+  comprobando identidad, fecha y ausencia de actividad antes de limpiarlas.
+- La última repetición de `test:dev-users`, ya sin servidores ni escrituras de E2E,
+  aprobó también la huella de preferencias, sesiones, ayudas y límites de cuenta.
+  Los servidores temporales de navegador se cerraron al terminar.
+- Capturas en `.local/screenshots/admin-*.png`, fuera de Git. Detector de diseño
+  focalizado sin hallazgos; revisión de escritorio claro y móvil oscuro sin
+  desbordamiento horizontal. Se conserva la gestión editorial existente.
+- Docker/Piston real no disponibles según `npm run doctor`. No se ejecutaron
+  `test:runner` ni E2E real; el doble HTTP no verifica aislamiento ni ejecución real.
+- Uso y garantías: [administration.md](administration.md).
+
 ## Perfil y configuración de cuenta (20 de octubre de 2026)
 
 - `npm test`: **107 aprobadas**, incluidas tres nuevas comprobaciones de

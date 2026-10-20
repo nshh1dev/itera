@@ -28,7 +28,7 @@ también en el espacio de práctica.
   incluso si se invoca el endpoint directamente. Better Auth mantiene el hash
   scrypt; las acciones propias delegan su comprobación y no persisten contraseñas
   en claro.
-- Correo y desactivación comparten un máximo persistente de cinco verificaciones
+- Correo, desactivación y acciones administrativas comparten un máximo persistente de cinco verificaciones
   de contraseña por minuto y usuario en `AccountActionLimit`, serializado con un
   bloqueo asesor de PostgreSQL. Los endpoints de Better Auth conservan sus
   límites propios y sus comprobaciones de origen y sesión.
@@ -47,9 +47,13 @@ impide volver a entrar y el middleware protege llamadas de autenticación con un
 sesión de cuenta desactivada. El último administrador activo no puede
 desactivarse: se necesita otro que pueda reactivar la cuenta.
 
-Administración → Cuentas desactivadas (`/admin/cuentas`) permite reactivar con
-`requireAdmin()`. La transacción elimina cualquier sesión residual y registra al
-administrador que actuó. Reactivar requiere iniciar sesión de nuevo.
+Administración → Gestionar usuarios (`/admin/cuentas`) permite consultar todas las
+cuentas y filtrar por estado. El detalle permite reactivar, desactivar y gestionar
+roles con `requireAdmin()`, contraseña y confirmación. La transacción elimina
+cualquier sesión residual y registra al administrador que actuó. Reactivar requiere
+iniciar sesión de nuevo. La protección del último administrador también impide
+degradaciones de rol concurrentes. Detalles y perfiles ficticios en
+[administration.md](administration.md).
 
 La migración `20261020210000_account_management` añade el estado y el contador
 de verificaciones, sin transformar ni borrar datos existentes. En otra
