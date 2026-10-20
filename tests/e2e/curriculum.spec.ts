@@ -6,11 +6,13 @@ import { openLearningHelp } from "../workspace";
 for (const path of learningPaths) {
   test(`${path.title} presenta módulos y permite continuar sin bloqueos`, async ({ page }) => {
     await page.goto(`/rutas/${path.slug}?lenguaje=typescript`);
-    for (const unit of modulesForPath(path.slug)) await expect(page.getByRole("heading", { name: unit.title, exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Estás preparado para continuar si puedes…", exact: true })).toBeVisible();
-    await expect(page.getByRole("checkbox").first()).not.toBeChecked();
-    await page.getByRole("checkbox").first().check();
-    await expect(page.getByRole("checkbox").first()).toBeChecked();
+    for (const unit of modulesForPath(path.slug)) await expect(page.getByRole("button", { name: new RegExp(unit.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")) })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Pon en práctica lo aprendido", exact: true })).toBeVisible();
+    await expect(page.getByRole("checkbox")).toHaveCount(0);
+    const review = page.getByRole("button", { name: "Ideas para repasar", exact: true });
+    await expect(review).toHaveAttribute("aria-expanded", "false");
+    await review.click();
+    await expect(review).toHaveAttribute("aria-expanded", "true");
     const next = learningPaths.find(entry => entry.order > path.order);
     if (next) await expect(page.getByRole("link", { name: `Continuar con ${next.title}`, exact: true })).toHaveAttribute("href", `/rutas/${next.slug}?lenguaje=typescript`);
   });

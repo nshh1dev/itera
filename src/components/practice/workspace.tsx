@@ -9,11 +9,9 @@ import { activityNames, type ActivityType } from "@/lib/types";
 import { languageNames, levelNames } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { exerciseHref } from "@/lib/learning-paths";
-import { saveDraft, recordHint, revealSolution } from "@/server/actions";
+import { saveDraft, recordHint, revealSolution, rememberPractice } from "@/server/actions";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { MotionReveal } from "@/components/motion-reveal";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AppShell, type ShellUser } from "@/components/app-shell";
 import { Results } from "./results";
 import { LearningGuide, type PreviousExercise } from "./learning-guide";
@@ -107,6 +105,10 @@ function WorkspaceReady(props: Props) {
   const [solution, setSolution] = useState<{ code?: string; explanation?: string; error?: string } | null>(null);
   const [solutionBusy, setSolutionBusy] = useState(false);
   const busy = posting || !!activeId;
+
+  useEffect(() => {
+    if (props.userId) void rememberPractice({ variantId: props.variantId, language: props.language, pathSlug: props.pathSlug }).catch(() => setSaveError("No se pudo guardar dónde continuar. Tu código se conserva por separado."));
+  }, [props.userId, props.variantId, props.language, props.pathSlug]);
 
   useEffect(() => { if (props.userId) { try { sessionStorage.removeItem(transferKey); } catch {} } }, [props.userId, transferKey]);
   useEffect(() => { try { localStorage.setItem(settingsKey, JSON.stringify({ simple, fontSize, width: savedWidth, resultsHeight: savedResultsHeight })); } catch {} }, [simple, fontSize, savedWidth, savedResultsHeight]);
@@ -208,34 +210,21 @@ function WorkspaceReady(props: Props) {
         <section id="workspace-statement" className={cn("workspace-statement px-5 py-6 sm:px-7 min-[1200px]:block", mobileTab !== "statement" && "hidden")} aria-label="Enunciado">
           <Challenge exercise={props} />
           <Button variant="outline" className="mt-6 w-full min-[1200px]:hidden" onClick={()=>{setMobileTab("code");setFocusCodeRequest(value=>value+1);}}>Ir al código<ArrowRight /></Button>
-          <Disclosure className="workspace-reference" title="Contexto y ayuda">
-          <h2 className="section-title">Aprende mientras practicas</h2>
+          <div className="workspace-reference">
           <LearningGuide objective={props.objective} prerequisites={props.prerequisites} practiceGoals={props.practiceGoals} previousExercises={props.previousExercises} />
-          {props.lesson && <ModuleLesson lesson={props.lesson} language={props.language} />}
-          <ExerciseNotes complexity={props.complexity} commonErrors={props.commonErrors} />
-          <Disclosure defaultOpen={props.level === "INITIATION" || props.level === "BEGINNER"} className="mt-6" title="Antes de empezar"><ul className="mt-1 flex list-disc flex-col gap-2 pl-4 text-xs leading-6 text-muted-foreground">{props.constraints.map((constraint,index)=><li key={index}>{constraint}</li>)}</ul>{(props.level === "INITIATION" || props.level === "BEGINNER") && <p className="mt-3 text-xs leading-6 text-muted-foreground">{props.runtimeMode === "PROGRAM" ? "Escribe un programa completo. La aplicación ejecuta tu archivo y compara lo que imprime con el resultado esperado." : "La aplicación llama a solve(data) por ti. Conserva la primera línea de la plantilla y usa return para entregar el resultado. No necesitas leer la entrada ni imprimir la respuesta."} {props.language === "python" ? "Los espacios al principio de cada instrucción (la sangría) forman parte del código." : props.language === "typescript" ? "TypeScript comprueba los tipos antes de ejecutar: corrige primero los diagnósticos de compilación." : "Conserva las llaves que rodean los bloques de instrucciones."} El tiempo indicado es orientativo: puedes tomarte lo que necesites.</p>}</Disclosure>
-          </Disclosure>
-          <div className="mt-7">
-            <Dialog>
-              <DialogTrigger asChild><Button variant="secondary" className="w-full justify-between"><span className="flex items-center gap-2"><Lightbulb className="size-4" aria-hidden="true" />Ver pistas</span><ChevronRight aria-hidden="true" /></Button></DialogTrigger>
-              <DialogContent className="learning-help-dialog max-w-xl">
-                <DialogTitle className="pr-6 text-xl font-semibold tracking-tight">Pistas y solución</DialogTitle>
-                <DialogDescription className="sr-only">Descubre pistas progresivas o consulta la solución explicada.</DialogDescription>
-                <Tabs defaultValue="hints" className="learning-help-tabs mt-6">
-                  <TabsList><TabsTrigger value="hints">Pistas</TabsTrigger><TabsTrigger value="solution">Solución explicada</TabsTrigger></TabsList>
-                  <TabsContent value="hints" forceMount className="mt-5 data-[state=inactive]:hidden">
+                  <Disclosure title="Pistas progresivas">
                     {hintCount === 0 && <p className="py-4 text-base leading-7 text-muted-foreground">Las pistas van de lo general a lo concreto. Descubre solo lo que necesites.</p>}
                     {props.hints.slice(0,hintCount).map((hint,index)=><MotionReveal key={index}><div className="mb-3 rounded-lg bg-surface p-4"><h3 className="text-sm font-medium">Pista {index+1}</h3><p className="mt-2 text-base leading-7">{hint}</p></div></MotionReveal>)}
                     {hintCount < props.hints.length ? <Button variant="secondary" className="mt-3" onClick={()=>{setHintCount(n=>n+1); recordHint(props.variantId,hintCount).catch(()=>setSaveError("No se pudo registrar el uso de la pista."));}}><Lightbulb />{hintCount === 0 ? "Descubrir la primera pista" : "Una pista más"}</Button> : <p className="mt-4 text-sm text-muted-foreground">Ya tienes todas las pistas. Vuelve al código y prueba tu idea.</p>}
-                  </TabsContent>
-                  <TabsContent value="solution" forceMount className="mt-5 data-[state=inactive]:hidden">
+                  </Disclosure>
+                  <Disclosure title="Solución explicada">
                     {solution?.code ? <><p className="whitespace-pre-line text-base leading-7 text-muted-foreground">{solution.explanation}</p><pre className="code-block mt-5 max-h-80">{solution.code}</pre><p className="mt-4 text-sm text-muted-foreground">Leer una solución no marca el ejercicio como resuelto.</p></> : <><p className="text-base leading-7 text-muted-foreground">Consulta una posible solución y entiende cómo funciona. Después, intenta reconstruirla con tus propias palabras y tu propio código.</p>{solution?.error && <p role="alert" className="mt-3 text-sm text-destructive">{solution.error}</p>}<Button className="mt-5" variant="secondary" loading={solutionBusy} onClick={async()=>{setSolutionBusy(true);try{setSolution(await revealSolution(props.variantId));}catch{setSolution({error:"No pudimos cargar la solución. Inténtalo de nuevo."});}finally{setSolutionBusy(false);}}}><BookOpen />Ver solución explicada</Button></>}
-                  </TabsContent>
-                </Tabs>
-              </DialogContent>
-            </Dialog>
+                  </Disclosure>
+            {props.lesson && <ModuleLesson lesson={props.lesson} language={props.language} />}
+            <Disclosure title="Condiciones del ejercicio"><ul className="flex list-disc flex-col gap-2 pl-4 text-sm leading-6 text-muted-foreground">{props.constraints.map((constraint,index)=><li key={index}>{constraint}</li>)}</ul>{(props.level === "INITIATION" || props.level === "BEGINNER") && <p className="mt-3 text-sm leading-6 text-muted-foreground">{props.runtimeMode === "PROGRAM" ? "Escribe un programa completo. La aplicación ejecuta tu archivo y compara lo que imprime con el resultado esperado." : "La aplicación llama a solve(data) por ti. Conserva la primera línea de la plantilla y usa return para entregar el resultado. No necesitas leer la entrada ni imprimir la respuesta."} {props.language === "python" ? "La sangría forma parte del código." : props.language === "typescript" ? "TypeScript comprueba los tipos antes de ejecutar." : "Conserva las llaves que rodean los bloques."}</p>}</Disclosure>
+            <ExerciseNotes complexity={props.complexity} commonErrors={props.commonErrors} />
           </div>
-          {props.recentSubmissions.length > 0 && <section id="workspace-history" className="mt-6" aria-label="Tus intentos en este ejercicio"><h2 className="mb-2 text-sm font-semibold">Tus intentos en este ejercicio</h2><ActivityList entries={props.recentSubmissions} compact /></section>}
+          {props.recentSubmissions.length > 0 && <Disclosure title="Tus intentos en este ejercicio" className="mt-6"><section id="workspace-history" aria-label="Tus intentos en este ejercicio"><ActivityList entries={props.recentSubmissions} compact /></section></Disclosure>}
           {!props.userId && <Link onClick={preserveGuestCode} href={`/registro?volver=${encodeURIComponent(exerciseHref(props.slug, props.language, props.pathSlug))}`} className="text-link mt-5 text-xs sm:hidden">Guardar mi progreso<ArrowRight className="size-3.5" /></Link>}
         </section>
         <div role="separator" aria-label="Ajustar ancho de los paneles" aria-orientation="vertical" aria-valuenow={width} aria-valuemin={28} aria-valuemax={55} aria-valuetext={`${Math.round(width)} % del ancho`} tabIndex={0} className="panel-resizer hidden cursor-col-resize items-center justify-center min-[1200px]:flex" onKeyDown={event=>{if(event.key==="ArrowLeft"||event.key==="ArrowRight"){event.preventDefault();statementSize.step(event.key==="ArrowRight"?1:-1);}}} onPointerDown={event=>event.currentTarget.setPointerCapture(event.pointerId)} onPointerMove={event=>{if(event.currentTarget.hasPointerCapture(event.pointerId)&&grid.current){const rect=grid.current.getBoundingClientRect();statementSize.move((event.clientX-rect.left)/rect.width*100);}}} onPointerUp={event=>{statementSize.finish();event.currentTarget.releasePointerCapture(event.pointerId);}} onLostPointerCapture={statementSize.finish} onPointerCancel={statementSize.finish}><GripVertical className="size-3 shrink-0 text-muted-foreground" /></div>
@@ -252,7 +241,7 @@ function WorkspaceReady(props: Props) {
             <Button aria-describedby="execution-help" className="min-w-0 flex-1 whitespace-normal px-2 text-xs [&_svg]:hidden min-[380px]:[&_svg]:block sm:flex-none sm:px-3" loading={busy} disabled={!code.trim()} onClick={()=>execute("submit")}><Check data-icon="inline-start" />Comprobar solución</Button>
           </div>
           {!resultsCollapsed && <div role="separator" aria-label="Ajustar altura de resultados" aria-orientation="horizontal" aria-valuenow={resultsHeight} aria-valuemin={140} aria-valuemax={400} aria-valuetext={`${resultsHeight} píxeles`} tabIndex={0} className="panel-resizer hidden h-[7px] shrink-0 cursor-row-resize items-center justify-center min-[1200px]:flex" onKeyDown={event=>{if(event.key==="ArrowUp"||event.key==="ArrowDown"){event.preventDefault();resultSize.step(event.key==="ArrowUp"?20:-20);}}} onPointerDown={event=>event.currentTarget.setPointerCapture(event.pointerId)} onPointerMove={event=>{if(event.currentTarget.hasPointerCapture(event.pointerId)&&editorColumn.current){const rect=editorColumn.current.getBoundingClientRect();resultSize.move(rect.bottom-event.clientY);}}} onPointerUp={event=>{resultSize.finish();event.currentTarget.releasePointerCapture(event.pointerId);}} onLostPointerCapture={resultSize.finish} onPointerCancel={resultSize.finish}><GripHorizontal className="size-3 text-muted-foreground" /></div>}
-          <div id="workspace-results" data-collapsed={resultsCollapsed} className={cn("workspace-results min-[1200px]:block",mobileTab !== "results" && "hidden")}><Results result={result} busy={busy} error={error} nextHref={props.nextHref} collapsed={resultsCollapsed} onToggle={toggleResults} runtimeMode={props.runtimeMode} />{executedCode !== null && executedCode !== code && (result || error) && <p className={cn("px-5 pb-4 text-xs text-muted-foreground", resultsCollapsed && "min-[1200px]:hidden")}>Has editado el código desde la última ejecución. Vuelve a comprobarlo.</p>}</div>
+          <div id="workspace-results" data-collapsed={resultsCollapsed} className={cn("workspace-results min-[1200px]:block",mobileTab !== "results" && "hidden")}><Results result={result} busy={busy} error={error} nextHref={props.nextHref ?? (props.pathSlug ? `/rutas/${encodeURIComponent(props.pathSlug)}?lenguaje=${props.language}` : undefined)} nextLabel={props.pathSlug ? props.nextHref ? "Siguiente ejercicio de la ruta" : "Volver a la ruta" : "Practicar un ejercicio relacionado"} collapsed={resultsCollapsed} onToggle={toggleResults} runtimeMode={props.runtimeMode} />{executedCode !== null && executedCode !== code && (result || error) && <p className={cn("px-5 pb-4 text-xs text-muted-foreground", resultsCollapsed && "min-[1200px]:hidden")}>Has editado el código desde la última ejecución. Vuelve a comprobarlo.</p>}</div>
         </div>
       </div>
     </main>
@@ -261,10 +250,9 @@ function WorkspaceReady(props: Props) {
 
 const Challenge = memo(function Challenge({ exercise: props }: { exercise: Props }) {
   return <div className="challenge-sheet">
-    <p className="workspace-section-label">Entiende el problema</p>
-    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><Badge>{levelNames[props.level]}</Badge><span>{props.category}</span><span className="flex items-center gap-1.5"><Clock3 className="size-3.5" />{props.minutes} min orientativos</span></div><p className="mt-5 text-2xl leading-tight font-semibold tracking-[-0.035em]">{props.title}</p>
+    <p className="text-2xl leading-tight font-semibold tracking-[-0.035em]">{props.title}</p><div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><Badge>{levelNames[props.level]}</Badge><span>{props.category}</span><span className="flex items-center gap-1.5"><Clock3 className="size-3.5" />{props.minutes} min orientativos</span></div>
     <h2 className="mt-6 text-base font-semibold">Tu reto</h2><p id="exercise-statement" className="learning-copy mt-3 whitespace-pre-line">{props.statement}</p>
-    {props.practiceGoals.length > 0 && <p className="mt-4 text-xs font-medium text-muted-foreground">{activityNames[props.activityType]}</p>}
+    <p className="mt-4 text-xs font-medium text-muted-foreground">{activityNames[props.activityType]}</p>
     <Examples examples={props.examples} runtimeMode={props.runtimeMode} />
   </div>;
 });

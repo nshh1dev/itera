@@ -59,8 +59,9 @@ test("el movimiento no multiplica suscripciones ni redimensiona el editor por fo
   await writeFile(`.local/performance/motion-${process.env.ITERA_PERF_LABEL ?? "actual"}.json`, JSON.stringify(metrics, null, 2));
   await expect(editor).toBeVisible();
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.getByRole("button", { name: "Ver pistas", exact: true }).click();
-  await expect(page.getByRole("dialog", { name: "Pistas y solución" })).toHaveCSS("transform", "none");
-  await page.keyboard.press("Escape");
+  const hints = page.getByRole("button", { name: "Pistas progresivas", exact: true });
+  await hints.click();
+  await expect(page.getByRole("region", { name: "Pistas progresivas", exact: true })).toHaveCSS("height", /[1-9]/);
+  await hints.click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });

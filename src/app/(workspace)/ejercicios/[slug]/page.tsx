@@ -11,6 +11,7 @@ import { educationalMetadataSchema } from "@/lib/learning-metadata";
 import { languages, languageNames } from "@/lib/types";
 import { moduleForExercise } from "@/lib/learning-modules";
 import Link from "next/link";
+import { relatedExercise } from "@/lib/practice-navigation";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Espacio de práctica" };
@@ -26,7 +27,7 @@ export default async function ExercisePage({ params, searchParams }: { params: P
     typeof query.ruta === "string" && query.ruta.length <= 100
       ? db.learningPath.findUnique({ where: { slug: query.ruta }, include: { items: { orderBy: { position: "asc" }, select: { exerciseId: true } } } })
       : null,
-    exercisePromise.then(exercise => user && exercise ? getRecentSubmissions(user.id, 5, exercise.id) : []),
+    exercisePromise.then(exercise => user && exercise ? getRecentSubmissions(user.id, 5, exercise.id, language) : []),
   ]);
   const version = exercise?.versions[0];
   if (!exercise || !version) notFound();
@@ -38,7 +39,8 @@ export default async function ExercisePage({ params, searchParams }: { params: P
   const pathSlugs = path?.items.flatMap(item => { const entry = catalog.find(e => e.id === item.exerciseId); return entry ? [entry.slug] : []; });
   const pathSlug = pathSlugs?.includes(slug) ? path!.slug : undefined;
   const sequence = pathSlug ? pathSlugs! : catalog.map(e => e.slug);
-  const nextSlug = nextExerciseSlug(slug, sequence);
+  const current = catalog.find(item => item.slug === slug);
+  const nextSlug = pathSlug ? nextExerciseSlug(slug, sequence) : current ? relatedExercise(catalog, current)?.slug : undefined;
   const nextHref = nextSlug ? exerciseHref(nextSlug, language, pathSlug) : undefined;
   const previousSlug = previousExerciseSlug(slug, sequence);
   const previousHref = previousSlug ? exerciseHref(previousSlug, language, pathSlug) : undefined;

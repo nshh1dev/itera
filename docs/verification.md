@@ -1,5 +1,29 @@
 # Verificación local
 
+## Continuidad y organización de la práctica (20 de octubre de 2026)
+
+- `npm test`: **97 aprobadas**, incluidas recomendaciones, estados y orientación
+  de errores. `npm run typecheck` y `npm run build`: aprobados.
+- `npm run lint`: cero errores y los **97 avisos previos** de herramientas locales
+  sin seguimiento en `.agents/` y `.opencode/`. No se incluyen esas herramientas
+  en la entrega.
+- `ITERA_E2E_PRODUCTION=1 npm run test:e2e`: **107 aprobadas** con el doble HTTP.
+  Tras acotar a dos líneas los conceptos de las filas y evitar que el historial
+  estire su superficie vacía, se repitieron `redesign`, `interface` y
+  `ux-learning`: **25 aprobadas**, además del build.
+- Cobertura de ambos temas, anchos de 320 a 1440 px, texto al 200 %, teclado,
+  movimiento reducido, editor antes de JavaScript, persistencia de código,
+  concurrencia de borradores, continuación en otro navegador, cambio de origen,
+  agrupación de versiones e intentos y separación por lenguaje. Las capturas
+  quedan en `.local/screenshots/`, fuera de Git.
+- Se aplicó `20261020200000_practice_context` con `prisma migrate deploy`. Añade
+  continuidad por cuenta sin transformar contenido ni registros de estudiantes.
+- `npm run test:runner`: **1 aprobada y 7 omitidas** porque Piston está detenido.
+  No se ejecutó E2E real ni se inició Docker. El doble HTTP no verifica ejecución
+  real ni aislamiento. La suite de navegador usó servidores temporales propios
+  y los cerró al terminar.
+- Alcance y reglas de continuidad: [learning-experience.md](learning-experience.md).
+
 ## Currículo común de lógica (20 de octubre de 2026)
 
 - Activación real con Piston: `npm run content:replace -- --apply` validó 116

@@ -55,7 +55,7 @@ test("los filtros móviles muestran la selección y se pueden quitar sin cambiar
   await expect(page.getByLabel("Nivel", { exact: true })).not.toBeVisible();
   await page.getByRole("button", { name: "Filtros", exact: true }).click();
   await page.getByLabel("Nivel", { exact: true }).selectOption("ADVANCED");
-  await page.getByRole("button", { name: "Buscar ejercicios" }).click();
+  await expect(page).toHaveURL(/nivel=ADVANCED/);
   await expect(page.getByRole("link", { name: "Quitar filtro: Avanzado", exact: true })).toBeVisible();
   await expect(page.getByLabel("Lenguaje", { exact: true })).toHaveValue("javascript");
   await page.getByRole("link", { name: "Quitar filtro: Avanzado", exact: true }).click();

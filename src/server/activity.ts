@@ -10,9 +10,9 @@ export function getLastDraft(userId: string, language: Language) {
   });
 }
 
-export function getRecentSubmissions(userId: string, take: number, exerciseId?: string) {
+export function getRecentSubmissions(userId: string, take: number, exerciseId?: string, language?: Language) {
   return db.submission.findMany({
-    where: { userId, ...(exerciseId ? { variant: { version: { exerciseId } } } : {}) },
+    where: { userId, variant: { ...(exerciseId ? { version: { exerciseId } } : {}), ...(language ? { language } : {}) } },
     orderBy: { createdAt: "desc" }, take,
     select: { id: true, status: true, mode: true, createdAt: true, passedCount: true, totalCount: true,
       variant: { select: { language: true, version: { select: { title: true, exercise: { select: { slug: true, published: true } } } } } },

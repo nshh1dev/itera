@@ -48,11 +48,11 @@ test("los accesos de teclado y las ayudas tienen nombres claros", async ({ page 
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/#main-content$/);
   await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
-  const hints = page.getByRole("button", { name: "Ver pistas", exact: true });
+  const hints = page.getByRole("button", { name: "Pistas progresivas", exact: true });
   await hints.focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("dialog", { name: "Pistas y solución" })).toBeVisible();
-  await page.keyboard.press("Escape");
+  await expect(page.getByRole("region", { name: "Pistas progresivas", exact: true })).toBeVisible();
+  await page.keyboard.press("Enter");
   await expect(hints).toBeFocused();
   await page.getByText("Atajos de teclado", { exact: true }).click();
   await expect(page.getByText("Ctrl / ⌘ + Enter: ejecutar ejemplos.", { exact: false })).toBeVisible();
@@ -65,7 +65,7 @@ for (const theme of ["light", "dark"] as const) {
     await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await openLearningHelp(page);
-    await expect(page.getByRole("heading", { name: "Aprende mientras practicas" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Qué vas a practicar", exact: true })).toHaveAttribute("aria-expanded", "true");
     await expect(page.locator(".editor-region")).toBeVisible();
     await expect(page.getByRole("button", { name: "Comprobar solución", exact: true })).toBeInViewport();
     const editor = await page.locator(".editor-region").boundingBox();

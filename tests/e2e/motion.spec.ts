@@ -100,19 +100,18 @@ test("pistas y detalles permiten invertir la apertura sin perder el editor", asy
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   await expect(page.locator(".monaco-editor")).toBeVisible();
-  const trigger = page.getByRole("button", { name: "Ver pistas" });
+  const trigger = page.getByRole("button", { name: "Pistas progresivas", exact: true });
   await trigger.click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+  await trigger.press("Enter");
+  await expect(trigger).toHaveAttribute("aria-expanded", "false");
   await expect(trigger).toBeFocused();
   await trigger.click();
-  await expect(dialog).toBeVisible();
-  await dialog.getByRole("button", { name: "Cerrar", exact: true }).click();
-  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+  await trigger.press("Enter");
+  await expect(trigger).toHaveAttribute("aria-expanded", "false");
   await openLearningHelp(page);
-  const summary = page.getByRole("button", { name: "Antes de empezar", exact: true });
+  const summary = page.getByRole("button", { name: "Condiciones del ejercicio", exact: true });
   const initial = await summary.getAttribute("aria-expanded");
   await summary.focus();
   // El contenido que se contrae puede desplazar el botón bajo el puntero.
@@ -161,13 +160,14 @@ test("cambiar a movimiento reducido durante una apertura la termina sin bloqueo"
 test("movimiento reducido permite abrir y cerrar sin transformaciones espaciales", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
-  await page.getByRole("button", { name: "Ver pistas" }).click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog).toBeVisible();
-  await expect(dialog).toHaveCSS("transform", "none");
-  await page.keyboard.press("Escape");
-  await expect(dialog).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Ver pistas" })).toBeFocused();
+  const trigger = page.getByRole("button", { name: "Pistas progresivas", exact: true });
+  await trigger.click();
+  const content = page.getByRole("region", { name: "Pistas progresivas", exact: true });
+  await expect(content).toBeVisible();
+  await expect(content).toHaveCSS("transform", "none");
+  await trigger.press("Enter");
+  await expect(trigger).toHaveAttribute("aria-expanded", "false");
+  await expect(trigger).toBeFocused();
 });
 
 test("Configuración desde el menú móvil restaura un control visible aunque desaparezca su origen", async ({ page }) => {

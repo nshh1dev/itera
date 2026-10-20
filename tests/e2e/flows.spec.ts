@@ -66,7 +66,7 @@ test("catálogo público, filtros y navegación móvil sin desbordamientos",asyn
   await expect(page.getByRole("heading",{level:1,name:/Menos teoría\.\s*Más intentos\./})).toBeVisible();
   await page.goto("/ejercicios");
   await page.getByLabel("Nivel",{exact:true}).selectOption("ADVANCED");
-  await page.getByRole("button",{name:"Buscar ejercicios"}).click();
+   await expect(page).toHaveURL(/nivel=ADVANCED/);
    const catalogVersions=await db.exercise.findMany({where:{published:true},select:{versions:{where:{published:true},orderBy:{number:"desc"},take:1,select:{level:true}}}});
    const advancedCount=catalogVersions.filter(exercise=>exercise.versions[0]?.level==="ADVANCED").length;
    await expect(page.getByText(`${advancedCount} ejercicios`,{exact:true})).toBeVisible();
@@ -122,7 +122,7 @@ test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async
   expect(hiddenCount).toBeGreaterThan(0);
   await expect(page.getByText(`${hiddenCount} de ${hiddenCount} pruebas ocultas superadas`)).toBeVisible();
   // El siguiente paso mantiene la ruta y el orden común a los tres lenguajes.
-  await expect(page.getByRole("link",{name:"Continuar con otro ejercicio"})).toHaveAttribute("href","/ejercicios/logica-imprimir-devolver?lenguaje=python&ruta=desde-cero");
+  await expect(page.getByRole("link",{name:"Siguiente ejercicio de la ruta"})).toHaveAttribute("href","/ejercicios/logica-imprimir-devolver?lenguaje=python&ruta=desde-cero");
   await expect(page.getByRole("link",{name:"Volver a la ruta"})).toHaveAttribute("href","/rutas/desde-cero?lenguaje=python");
   const result=await page.request.get(`/api/executions/${submission.id}`);
   const payload=await result.json();
@@ -141,7 +141,7 @@ test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async
   await expect(page.locator(".monaco-editor-background").first()).toHaveCSS("background-color","rgb(28, 28, 30)");
   await page.screenshot({path:".local/screenshots/workspace-dark.png",fullPage:true});
   await page.goto("/progreso");
-  await expect(page.getByText("Resuelto",{exact:true}).first()).toBeVisible();
+  await expect(page.getByRole("button",{name:/Calcula con dos parámetros.*Resuelto/})).toBeVisible();
   await page.screenshot({path:".local/screenshots/ui-progress-dark.png",fullPage:true,animations:"disabled"});
   await page.getByRole("button",{name:"Cambiar tema claro u oscuro"}).click();
   await expect(page.locator("html")).not.toHaveClass(/dark/);
@@ -160,13 +160,13 @@ test("ayudas progresivas, solución explícita y autorización administrativa",a
   const firstHint=version.hints[0];
   expect(firstHint.length).toBeGreaterThan(0);
   await page.goto("/ejercicios/logica-dos-requisitos");
-  await page.getByRole("button",{name:"Ver pistas",exact:true}).click();
+  await page.getByRole("button",{name:"Pistas progresivas",exact:true}).click();
   await expect(page.getByText(firstHint,{exact:true})).toHaveCount(0);
   await page.getByRole("button",{name:"Descubrir la primera pista"}).click();
   await expect(page.getByText(firstHint,{exact:true})).toBeVisible();
-  await page.getByRole("tab",{name:"Solución explicada"}).click();
+  await page.getByRole("button",{name:"Solución explicada",exact:true}).click();
   await page.getByRole("button",{name:"Ver solución explicada"}).click();
-  await expect(page.getByRole("dialog").locator("pre")).toHaveText(logicExercises.find(e => e.slug === "logica-dos-requisitos")!.python);
+  await expect(page.getByRole("region",{name:"Solución explicada",exact:true}).locator("pre")).toHaveText(logicExercises.find(e => e.slug === "logica-dos-requisitos")!.python);
   await page.goto("/admin");
   await expect(page).toHaveURL(/\/inicio/);
   const noOrigin=await page.request.post("/api/executions",{data:{}});

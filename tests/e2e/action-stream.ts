@@ -67,7 +67,12 @@ export async function actionStreamMonitor(page: Page) {
   // Los eventos se conservan en Node incluso si crear un ejercicio navega a su URL.
   const streams = new Map<string, ActionStream>();
   const deliveries = new Map<Request, { streamId: string; status: number }>();
+  const responses = new Map<Request, number>();
   const failures = new Map<Request, string>();
+  page.on("response", response => {
+    const request = response.request();
+    if (request.method() === "POST" && request.headers()["next-action"] !== undefined) responses.set(request, response.status());
+  });
   page.on("requestfailed", request => {
     if (request.method() === "POST" && request.headers()["next-action"] !== undefined) {
       failures.set(request, request.failure()?.errorText ?? "Petición fallida");
@@ -95,7 +100,17 @@ export async function actionStreamMonitor(page: Page) {
   return Object.assign(complete, {
     async assertComplete() {
       for (const stream of streams.values()) {
-        expect(stream, `Stream incompleto: ${stream.url}`).toMatchObject({ state: "closed" });
+        await expect.poll(() => streams.get(stream.id), { message: `Stream incompleto: ${stream.url}` }).toMatchObject({ state: "closed" });
+        // También se comprueban las acciones automáticas (continuidad y guardado),
+        // aunque no nazcan de un botón envuelto en complete(). Cada respuesta se
+        // asigna una sola vez y exige la misma URL y el mismo identificador de acción.
+        if (![...deliveries.values()].some(delivery => delivery.streamId === stream.id)) {
+          const response = [...responses].find(([request]) => !deliveries.has(request) && request.url() === stream.url && request.headers()["next-action"] === stream.action);
+          expect(response, `Sin respuesta HTTP para ${stream.url}`).toBeDefined();
+          expect(response![1]).toBeGreaterThanOrEqual(200);
+          expect(response![1]).toBeLessThan(300);
+          deliveries.set(response![0], { streamId: stream.id, status: response![1] });
+        }
         expect([...deliveries.values()].some(delivery => delivery.streamId === stream.id), `Entrega sin comprobar: ${stream.url}`).toBe(true);
       }
       // Se conserva la comprobación de requestfailed: no se permite atribuir un

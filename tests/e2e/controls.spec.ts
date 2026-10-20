@@ -3,27 +3,20 @@ import { test, expect } from "@playwright/test";
 
 for (const theme of ["light", "dark"] as const) {
   for (const width of [390, 1440]) {
-    test(`pistas sin scrollbar y filtros hacia abajo: ${theme}, ${width}`, async ({ page }) => {
+    test(`ayudas desplegables y filtros hacia abajo: ${theme}, ${width}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 760 });
       await page.emulateMedia({ colorScheme: theme });
       await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
-      await page.getByRole("button", { name: "Ver pistas", exact: true }).click();
-      const dialog = page.getByRole("dialog", { name: "Pistas y solución" });
-      const tabs = dialog.getByRole("tablist");
-      await expect(tabs).toHaveCSS("scrollbar-width", "none");
-      await expect(tabs).toHaveCSS("overflow-y", "hidden");
-      const height = await tabs.evaluate(node => node.clientHeight);
-      const solution = dialog.getByRole("tab", { name: "Solución explicada" });
-      await solution.click();
-      await expect(solution).toHaveAttribute("aria-selected", "true");
-      await expect.poll(() => tabs.evaluate(node => node.scrollHeight - node.clientHeight)).toBe(0);
-      await expect(tabs).toHaveJSProperty("clientHeight", height);
-      await solution.press("ArrowLeft");
-      await expect(dialog.getByRole("tab", { name: "Pistas", exact: true })).toBeFocused();
-      await page.keyboard.press("Escape");
+      const hints = page.getByRole("button", { name: "Pistas progresivas", exact: true });
+      await hints.focus();
+      await hints.press("Enter");
+      await expect(hints).toHaveAttribute("aria-expanded", "true");
+      await hints.press("Enter");
+      await expect(hints).toHaveAttribute("aria-expanded", "false");
+      await expect(hints).toBeFocused();
       await page.goto("/ejercicios");
       if (width < 768) await page.getByRole("button", { name: /^Filtros/ }).click();
-      for (const name of ["Lenguaje", "Nivel", "Categoría", "Estado"]) {
+      for (const name of ["Lenguaje", "Nivel", "Categoría", "Estado", "Ordenar por"]) {
         const select = page.getByRole("combobox", { name, exact: true });
         await select.scrollIntoViewIfNeeded();
         await select.click();

@@ -51,6 +51,7 @@ model User {
   progress      Progress[]
   helpUsage     HelpUsage[]
   auditLogs     AuditLog[]
+  practiceContexts PracticeContext[]
 }
 
 model Session {
@@ -113,6 +114,7 @@ model Exercise {
   progress    Progress[]
   pathItems   LearningPathItem[]
   helpUsage   HelpUsage[]
+  practiceContexts PracticeContext[]
 }
 
 model ExerciseVersion {
@@ -225,6 +227,19 @@ model HelpUsage {
   user       User @relation(fields: [userId], references: [id], onDelete: Cascade)
   exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
   @@unique([userId, exerciseId, language, kind])
+}
+
+// Continuidad entre navegadores. Abrir un ejercicio no concede progreso.
+model PracticeContext {
+  userId     String
+  exerciseId String
+  language   String
+  pathSlug   String?
+  visitedAt  DateTime @default(now())
+  user       User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  @@id([userId, exerciseId, language])
+  @@index([userId, visitedAt])
 }
 
 model LearningPath {

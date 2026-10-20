@@ -16,4 +16,4 @@ export const runtimeModeNames: Record<RuntimeMode, string> = { FUNCTION: "Funci√
 // para pruebas ocultas.
 export type TestResult = { index: number; visible: boolean; passed: boolean; status: "passed" | "wrong" | "runtime" | "timeout"; input?: Json; expected?: Json; actual?: Json; output?: string; error?: string };
 export type ExecutionResult = { id: string; status: string; mode: string; passedCount: number; totalCount: number; results: TestResult[]; message?: string | null };
-export type ExerciseCard = { id: string; slug: string; category: string; order: number; title: string; description: string; level: Level; minutes: number; runtimeMode: RuntimeMode; solved: boolean; started: boolean; solvedOther: boolean };
+export type ExerciseCard = { id: string; slug: string; category: string; order: number; title: string; description: string; level: Level; minutes: number; runtimeMode: RuntimeMode; solved: boolean; started: boolean; solvedOther: boolean; practiceGoals?: string[]; activityType?: string; lastActivityAt?: string };

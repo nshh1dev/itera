@@ -9,6 +9,7 @@ for (const path of learningPaths) for (const language of languages) {
   test(`${path.title} mantiene todos sus pasos en orden en ${languageNames[language]}`, async ({ page }) => {
     await page.goto(`/rutas/${path.slug}?lenguaje=${language}`);
     await expect(page.getByRole("heading", { name: path.title, exact: true })).toBeVisible();
+    for (const trigger of await page.locator(".route-module > div > h3 > button").all()) if (await trigger.getAttribute("aria-expanded") !== "true") await trigger.click();
     const steps = page.locator(".route-module").getByRole("link");
     await expect(steps).toHaveCount(path.slugs!.length);
     expect(await steps.evaluateAll(links => links.map(link => link.getAttribute("href"))))
@@ -17,7 +18,7 @@ for (const path of learningPaths) for (const language of languages) {
       .toHaveAttribute("href", exerciseHref(path.slugs![0], language, path.slug));
     // Acceso libre: el último reto se puede abrir sin resolver ninguno.
     await steps.last().click();
-    await expect(page.getByRole("heading", { name: logicExercises.find(e => e.slug === path.slugs!.at(-1))!.title, exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: logicExercises.find(e => e.slug === path.slugs!.at(-1))!.title, exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "Volver a la ruta" })).toHaveAttribute("href", `/rutas/${path.slug}?lenguaje=${language}`);
   });
 }
@@ -29,7 +30,7 @@ test("Desde cero es Iniciación y comienza con un programa completo", async ({ p
   await expect(page.getByRole("heading", { level: 1, name: "Muestra un saludo", exact: true })).toBeVisible();
   await openLearningHelp(page);
   await expect(page.getByText(/Entiende la idea/)).toBeVisible();
-  await expect(page.getByRole("button", { name: "Antes de empezar", exact: true })).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("button", { name: "Condiciones del ejercicio", exact: true })).toHaveAttribute("aria-expanded", "false");
   await openSimpleEditor(page);
   await expect(page.getByRole("textbox", { name: "Editor sencillo de Python" })).toHaveValue(logicExercises[0].starters!.python);
 });
