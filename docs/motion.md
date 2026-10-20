@@ -99,6 +99,12 @@ sin barra visible ni scroll vertical durante el movimiento del indicador. Los
 selectores del catálogo desactivan los fallbacks hacia arriba y la selección
 automática del área más grande; conservan el ajuste lateral de `base-select`.
 
+El diálogo de pistas se ancla por arriba, en lugar de recentrarse al variar su
+altura. El contenido crece hacia abajo, con scroll interno al alcanzar el límite
+de pantalla. Sus dos paneles permanecen montados mientras el diálogo está abierto:
+volver a Pistas no repite la aparición de pistas ya descubiertas. Solo el panel
+activo es visible y accesible; cerrar y reabrir conserva la animación del diálogo.
+
 ### Entrega inicial (histórico)
 
 Por petición expresa del usuario, no se ejecutaron pruebas, lint, comprobación

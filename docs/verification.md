@@ -2,6 +2,18 @@
 
 ## Revisión de UIArc y rendimiento (20 de octubre de 2026)
 
+Corrección posterior del salto en ayudas: `help-motion.spec.ts` reprodujo un
+desplazamiento del encabezado de más de 220 px al revelar pistas/solución. Tras
+anclar el diálogo por arriba y conservar sus paneles, los 16 escenarios de
+`help-motion.spec.ts`, `controls.spec.ts` y `motion.spec.ts` aprobaron. La regresión
+comprueba fotogramas de posición, opacidad y transformación, además de que la
+primera pista conserva su nodo al volver desde Solución. No ejecuta código en Piston.
+La repetición final de `help-motion.spec.ts` junto con `initial-batch.spec.ts`
+aprobó nueve escenarios, incluyendo la conservación del nodo de la pista y la
+carga de explicaciones sin conceder progreso. Build (incluye tipos) y lint
+focalizado también aprobaron; se reutilizan las pruebas unitarias anteriores
+porque no cambió la lógica del dominio.
+
 - `npm test`: 81 pruebas aprobadas.
 - `npm run typecheck`: aprobado. La primera comprobación del nuevo instrumento
   de rendimiento encontró errores de tipos en sus listeners; quedaron corregidos.

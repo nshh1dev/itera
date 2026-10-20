@@ -218,17 +218,17 @@ function WorkspaceReady(props: Props) {
           <div className="mt-7">
             <Dialog>
               <DialogTrigger asChild><Button variant="secondary" className="w-full justify-between"><span className="flex items-center gap-2"><Lightbulb className="size-4" aria-hidden="true" />Ver pistas</span><ChevronRight aria-hidden="true" /></Button></DialogTrigger>
-              <DialogContent className="max-w-xl">
+              <DialogContent className="learning-help-dialog max-w-xl">
                 <DialogTitle className="pr-6 text-xl font-semibold tracking-tight">Pistas y solución</DialogTitle>
                 <DialogDescription className="sr-only">Descubre pistas progresivas o consulta la solución explicada.</DialogDescription>
                 <Tabs defaultValue="hints" className="mt-6">
                   <TabsList><TabsTrigger value="hints">Pistas</TabsTrigger><TabsTrigger value="solution">Solución explicada</TabsTrigger></TabsList>
-                  <TabsContent value="hints" className="mt-5">
+                  <TabsContent value="hints" forceMount className="mt-5 data-[state=inactive]:hidden">
                     {hintCount === 0 && <p className="py-4 text-base leading-7 text-muted-foreground">Las pistas van de lo general a lo concreto. Descubre solo lo que necesites.</p>}
                     {props.hints.slice(0,hintCount).map((hint,index)=><MotionReveal key={index}><div className="mb-3 rounded-lg bg-surface p-4"><h3 className="text-sm font-medium">Pista {index+1}</h3><p className="mt-2 text-base leading-7">{hint}</p></div></MotionReveal>)}
                     {hintCount < props.hints.length ? <Button variant="secondary" className="mt-3" onClick={()=>{setHintCount(n=>n+1); recordHint(props.variantId,hintCount).catch(()=>setSaveError("No se pudo registrar el uso de la pista."));}}><Lightbulb />{hintCount === 0 ? "Descubrir la primera pista" : "Una pista más"}</Button> : <p className="mt-4 text-sm text-muted-foreground">Ya tienes todas las pistas. Vuelve al código y prueba tu idea.</p>}
                   </TabsContent>
-                  <TabsContent value="solution" className="mt-5">
+                  <TabsContent value="solution" forceMount className="mt-5 data-[state=inactive]:hidden">
                     {solution?.code ? <><p className="whitespace-pre-line text-base leading-7 text-muted-foreground">{solution.explanation}</p><pre className="code-block mt-5 max-h-80">{solution.code}</pre><p className="mt-4 text-sm text-muted-foreground">Leer una solución no marca el ejercicio como resuelto.</p></> : <><p className="text-base leading-7 text-muted-foreground">Consulta una posible solución y entiende cómo funciona. Después, intenta reconstruirla con tus propias palabras y tu propio código.</p>{solution?.error && <p role="alert" className="mt-3 text-sm text-destructive">{solution.error}</p>}<Button className="mt-5" variant="secondary" loading={solutionBusy} onClick={async()=>{setSolutionBusy(true);try{setSolution(await revealSolution(props.variantId));}catch{setSolution({error:"No pudimos cargar la solución. Inténtalo de nuevo."});}finally{setSolutionBusy(false);}}}><BookOpen />Ver solución explicada</Button></>}
                   </TabsContent>
                 </Tabs>
