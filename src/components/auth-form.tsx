@@ -7,7 +7,7 @@ import { authClient } from "@/lib/auth-client";
 import { safeReturnTo } from "@/lib/utils";
 import { Button } from "./ui/button";
 
-export function AuthForm({ mode, developmentLogin = false }: { mode: "login" | "register" | "forgot" | "reset"; developmentLogin?: boolean }) {
+export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "reset" }) {
   const router = useRouter();
   const search = useSearchParams();
   const [busy, setBusy] = useState(false);
@@ -19,20 +19,6 @@ export function AuthForm({ mode, developmentLogin = false }: { mode: "login" | "
   const reset = mode === "reset";
   const returnTo = safeReturnTo(search.get("volver"));
   const loginHref = `/iniciar-sesion?volver=${encodeURIComponent(returnTo)}`;
-
-  async function quickLogin() {
-    if (busy) return;
-    setBusy(true); setError("");
-    try {
-      const result = await fetch("/api/development-login", { method: "POST" });
-      if (result.status === 503) throw new Error("Configura el acceso local en .local/dev-login/credentials.json y vuelve a intentarlo.");
-      if (result.status === 429) throw new Error("Has realizado varios intentos seguidos. Espera un momento antes de volver a intentarlo.");
-      if (!result.ok) throw new Error("No se pudo entrar con la cuenta local. Revisa las credenciales y que la cuenta esté activa, o usa el formulario.");
-      router.push(returnTo);
-      router.refresh();
-    } catch (error) { setError(error instanceof Error ? error.message : "No se pudo conectar con Itera."); }
-    finally { setBusy(false); }
-  }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); setError("");
@@ -74,7 +60,6 @@ export function AuthForm({ mode, developmentLogin = false }: { mode: "login" | "
       {!forgot && <div><div className="mb-2 flex items-center justify-between"><label htmlFor="password" className="text-sm font-medium">Contraseña</label>{!register && !reset && <Link href={`/recuperar-cuenta?volver=${encodeURIComponent(returnTo)}`} className="text-xs text-muted-foreground hover:text-primary-text">¿La olvidaste?</Link>}</div><div className="relative"><input id="password" name="password" type={visible ? "text" : "password"} autoComplete={register || reset ? "new-password" : "current-password"} className="field pr-12" placeholder={register || reset ? "Al menos 10 caracteres" : "Tu contraseña"} required minLength={register || reset ? 10 : 1} maxLength={128} /><button type="button" className="absolute top-0 right-0 flex size-11 items-center justify-center text-muted-foreground" aria-label={visible ? "Ocultar contraseña" : "Mostrar contraseña"} onClick={() => setVisible(!visible)}>{visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}</button></div></div>}
       {error && <p id="auth-error" className="rounded-lg border border-destructive p-3 text-sm leading-6 text-destructive" role="alert">{error}</p>}
       <Button className="w-full" loading={busy}>{register ? "Crear cuenta" : forgot ? "Crear enlace" : reset ? "Guardar contraseña" : "Iniciar sesión"}<ArrowRight /></Button>
-      {mode === "login" && developmentLogin && <div className="space-y-2"><Button type="button" variant="secondary" className="w-full" disabled={busy} onClick={quickLogin}>Entrar con mi cuenta<ArrowRight /></Button><p className="text-center text-xs text-muted-foreground">Acceso rápido solo para desarrollo local.</p></div>}
       {!forgot && !reset && <p className="pt-2 text-center text-sm text-muted-foreground">{register ? "¿Ya tienes cuenta?" : "¿Es tu primera vez?"} <Link className="text-primary-text hover:underline" href={`${register ? "/iniciar-sesion" : "/registro"}?volver=${encodeURIComponent(returnTo)}`}>{register ? "Inicia sesión" : "Crea una cuenta"}</Link></p>}
     </form>}
     {!success && <Link href={forgot || reset ? loginHref : returnTo} className="mt-9 inline-flex min-h-11 items-center gap-2 text-xs text-muted-foreground hover:text-foreground"><ArrowLeft className="size-3.5" />{forgot || reset ? "Volver a iniciar sesión" : returnTo.startsWith("/ejercicios/") ? "Volver al ejercicio" : "Volver a explorar"}</Link>}

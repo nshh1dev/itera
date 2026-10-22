@@ -7,8 +7,6 @@ services:
       target: development
     labels:
       itera.mode: development
-    volumes:
-      - ./.local/dev-login:/app/.local/dev-login:ro
     healthcheck:
       start_period: 90s
     develop:
