@@ -24,6 +24,7 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 
 ## Requisitos
 
+- **Para desarrollar con recarga automática en Docker:** `docker-desarrollar` mantiene una terminal siguiendo el código de Windows; no hay que reconstruir por cada cambio de la aplicación. Requiere Node.js en Windows, comparte la base Docker y se usa en lugar de `docker-iniciar`, no a la vez. Preparación y límites: [desarrollo en Docker](docs/docker-development.md).
 - **Modo Docker completo (recomendado para usar Itera):** Docker Engine con Compose y cgroup v2; Git para obtener el código. Node y PostgreSQL están incluidos en las imágenes. Sigue [la instalación Docker](docs/docker.md). En el PC ya preparado basta `docker-iniciar` y abrir **http://127.0.0.1:3000**; al terminar, `docker-apagar`. No ejecutes además `npm run dev`.
 - **Modo nativo de desarrollo (alternativo):** los siguientes requisitos y pasos mantienen Node y PostgreSQL fuera de Docker. No uses ambos modos en el puerto 3000 simultáneamente.
 
