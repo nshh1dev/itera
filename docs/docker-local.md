@@ -4,6 +4,8 @@
 
 Docker Engine, Docker CLI y Compose están instalados desde el repositorio oficial de Docker en **Ubuntu-24.04 sobre WSL2**, con cgroup v2. El código permanece en `D:\proyectos\itera`; la aplicación, Node, PostgreSQL y Piston funcionan ahora en contenedores. La instalación nativa de Windows se conserva como respaldo. Instalación, migración y actualizaciones: [Docker completo](docker.md).
 
+El disco virtual de Ubuntu y Docker reside en **`D:\WSL\Ubuntu-24.04\ext4.vhdx`**, fuera del repositorio. Se trasladó desde C: con `wsl --manage Ubuntu-24.04 --move D:\WSL\Ubuntu-24.04`, manteniendo el nombre de la distribución y los lanzadores. Tras el traslado se comprobaron el arranque saludable de app/base, las huellas y recuentos de las 19 tablas y una ejecución real en Python, JavaScript y TypeScript; no se repitieron las suites completas porque el código no cambió. No mover ni borrar ese archivo manualmente ni incluirlo en Git.
+
 **El encendido es manual.** La tarea de Windows `Docker-WSL` mantiene una sesión WSL activa cuando se solicita, pero no tiene disparadores de inicio de sesión. No hay que abrir Ubuntu para trabajar.
 
 Los lanzadores están en `%LOCALAPPDATA%\DockerCLI`, carpeta añadida al PATH del usuario:
