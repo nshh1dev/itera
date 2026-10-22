@@ -131,7 +131,7 @@ node scripts/docker.mjs exec -T app npm run test:runner
 
 La imagen no incorpora secretos ni la base local. Las migraciones son explícitas y no se ejecutan durante el build. Los datos viven en `database-data`, los runtimes en `piston-packages` y la recuperación local en `local-mail`.
 
-El modo Docker sirve la compilación de producción: **no recarga al editar código**. Tras cambios, reconstruye la imagen y recrea la app con los comandos anteriores. Para edición con recarga rápida sigue disponible el modo nativo, usando su propia base.
+`docker-iniciar` sirve la compilación de producción: **no recarga al editar código**. Tras cambios terminados, reconstruye esa imagen y recrea la app con los comandos anteriores. Para editar con recarga automática dentro de Docker, usa `docker-desarrollar`: [guía de desarrollo](docker-development.md). El modo nativo sigue disponible con su propia base.
 
 Para los ocho recorridos reales de navegador, con Node, dependencias y Chromium instalados en el host, y la app Docker activa en 3000:
 

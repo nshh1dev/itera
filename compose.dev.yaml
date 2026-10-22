@@ -1,0 +1,57 @@
+# Superponer a compose.yaml + compose.app.yaml. Reutiliza el mismo servicio app
+# y los mismos volúmenes, pero nunca sobrescribe la imagen de producción.
+services:
+  app:
+    image: itera-local:development
+    build:
+      target: development
+    labels:
+      itera.mode: development
+    healthcheck:
+      start_period: 90s
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          initial_sync: true
+          ignore: [generated/]
+        - action: sync
+          path: ./public
+          target: /app/public
+          initial_sync: true
+          ignore: [monaco/]
+        - action: sync
+          path: ./prisma
+          target: /app/prisma
+          initial_sync: true
+        - action: sync
+          path: ./scripts
+          target: /app/scripts
+          initial_sync: true
+        - action: sync
+          path: ./tests
+          target: /app/tests
+          initial_sync: true
+        - action: sync+restart
+          path: ./next.config.ts
+          target: /app/next.config.ts
+        - action: sync+restart
+          path: ./tsconfig.json
+          target: /app/tsconfig.json
+        - action: sync+restart
+          path: ./postcss.config.mjs
+          target: /app/postcss.config.mjs
+        - action: sync+restart
+          path: ./prisma.config.ts
+          target: /app/prisma.config.ts
+        - action: rebuild
+          path: ./package.json
+        - action: rebuild
+          path: ./package-lock.json
+        - action: rebuild
+          path: ./Dockerfile
+        - action: rebuild
+          path: ./.dockerignore
+        - action: rebuild
+          path: ./.npmrc

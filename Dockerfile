@@ -4,6 +4,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-cert
 COPY package.json package-lock.json ./
 RUN npm ci
 
+FROM dependencies AS development
+COPY --chown=node:node . .
+ENV NODE_ENV=development NEXT_TELEMETRY_DISABLED=1
+RUN mkdir -p public/monaco .local/mail \
+    && cp -R node_modules/monaco-editor/min/vs public/monaco/vs \
+    && DATABASE_URL=postgresql://build:build@127.0.0.1:5432/build node node_modules/prisma/build/index.js generate \
+    && chown node:node /app && chown -R node:node src/generated public/monaco .local
+USER node
+EXPOSE 3000
+# No usar npm run dev: su predev intenta iniciar el PostgreSQL nativo.
+CMD ["node", "node_modules/next/dist/bin/next", "dev", "--hostname", "0.0.0.0"]
+
 FROM dependencies AS build
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1

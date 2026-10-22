@@ -18,6 +18,8 @@ services:
 
   app:
     image: itera-local:docker
+    labels:
+      itera.mode: production
     build: .
     restart: "no"
     init: true

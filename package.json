@@ -6,6 +6,7 @@
   "scripts": {
     "docker:configure": "node scripts/docker-configure.mjs",
     "docker:build": "node scripts/docker.mjs build app",
+    "docker:dev": "node scripts/docker-develop.mjs",
     "docker:up": "node scripts/docker.mjs up -d --wait",
     "docker:stop": "node scripts/docker.mjs stop",
     "docker:status": "node scripts/docker.mjs ps",

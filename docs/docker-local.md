@@ -12,6 +12,7 @@ Los lanzadores están en `%LOCALAPPDATA%\DockerCLI`, carpeta añadida al PATH de
 
 - `docker.cmd`: delega los comandos a Docker en Ubuntu, conservando el directorio de trabajo.
 - `docker-iniciar.cmd`: inicia WSL y Docker y combina los dos archivos Compose para levantar los tres servicios.
+- `docker-desarrollar.cmd`: inicia los mismos servicios con Next.js dev y un sincronizador del código de Windows; requiere Node.js en el host. No modifica la imagen compilada. Véase [desarrollo en Docker](docker-development.md).
 - `docker-apagar.cmd`: detiene ordenadamente los servicios y la tarea, y termina Ubuntu-24.04.
 - `LEEME.md`: instrucciones locales de la instalación.
 
