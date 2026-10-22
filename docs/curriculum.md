@@ -64,6 +64,8 @@ npm run content:replace
 
 Después, con Docker/Piston y sus tres runtimes preparados:
 
+En el PC con Docker CLI en WSL2, ejecuta primero `docker-iniciar`; al terminar las validaciones puedes usar `docker-apagar`. Son lanzadores locales descritos en [Docker local](docker-local.md).
+
 ```sh
 docker compose up -d
 npm run runner:setup

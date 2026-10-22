@@ -426,7 +426,13 @@ Resultado histórico anterior a Desde cero: 24 ejercicios aprobados (240 ejecuci
 
 ## Requisitos del ejecutor
 
-Docker Desktop con WSL2 y cgroup v2. Sin ellos la aplicación funciona igual, pero el botón de ejecución informa de que el sandbox está detenido; nunca se ejecuta código del usuario en Node o Python del servidor principal.
+Docker Engine con contenedores Linux, Compose y cgroup v2. El PC actual usa Ubuntu-24.04/WSL2 sin Docker Desktop y se controla manualmente mediante `docker-iniciar` y `docker-apagar`; estos lanzadores son locales, no se distribuyen con el repositorio. Véase [Docker local](docker-local.md). Sin Piston, una instalación con catálogo activo permite navegar, pero no ejecutar ejercicios ni validar publicaciones; nunca se ejecuta código del usuario en Node o Python del servidor principal.
+
+### Sustitución local de Docker Desktop por Docker CLI
+
+Durante la sustitución se prepararon Python 3.12.0, JavaScript/Node 20.11.1 y TypeScript 5.0.3. La primera ejecución de `npm run test:runner` tuvo cinco aprobadas y tres fallos de TypeScript por tiempos agotados. Se observaron saltos del reloj entre Ubuntu y Windows; tras desactivar la sincronización NTP independiente de Ubuntu, la suite completa aprobó **8/8, sin omisiones**. No se modificó el código del ejecutor.
+
+Se comprobó después el encendido mediante `docker-iniciar`, la respuesta HTTP de los tres runtimes y el apagado mediante `docker-apagar`. Ubuntu quedó `Stopped` y la tarea `Docker-WSL` sin disparadores automáticos. Node, PostgreSQL y la carpeta del proyecto permanecen en Windows. No se ejecutaron E2E ni se validó de nuevo el catálogo completo en esta instalación; los resultados históricos conservan su alcance original.
 
 ## Dependencias
 

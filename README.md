@@ -60,6 +60,8 @@ Si ya tienes una base propia, copia `.env.example` a `.env`, establece `DATABASE
 
 ### Inicios siguientes
 
+En el PC configurado con Docker CLI en WSL2, ejecuta primero `docker-iniciar` en PowerShell si vas a ejecutar ejercicios. Docker no arranca al iniciar Windows. Después:
+
 ```sh
 npm run dev
 ```
@@ -68,11 +70,15 @@ npm run dev
 
 Para parar la aplicación: `Ctrl+C`. Para parar **solo el clúster del proyecto**: `npm run db:stop`.
 
+Al terminar los ejercicios, `docker-apagar` apaga Ubuntu, Docker y Piston y conserva sus datos. No detiene Next.js ni PostgreSQL. Estos dos comandos son lanzadores locales de este PC, no vienen al clonar el repositorio. Consulta [Docker local y uso diario](docs/docker-local.md).
+
 Si necesitas investigar PostgreSQL, consulta `.local/postgres.log`. `npm run doctor` comprueba configuración, base, editor, Docker y lenguajes del ejecutor sin mostrar credenciales.
 
 ## Activar la ejecución aislada
 
-Con Docker/WSL2 funcionando:
+La instalación local actual usa **Docker Engine, CLI y Compose dentro de Ubuntu-24.04/WSL2**, sin Docker Desktop. Itera, Node y PostgreSQL siguen en Windows. En este PC, `docker-iniciar` arranca el entorno y ejecuta Compose; después usa `npm run runner:setup` si faltan los lenguajes.
+
+En cualquier otro entorno con un motor Docker y Compose funcionando, la preparación general es:
 
 ```sh
 docker compose up -d
@@ -92,9 +98,9 @@ Si ya tenías Piston instalado antes de incorporar TypeScript, repite `docker co
 - Se permiten como máximo una evaluación activa por usuario y cuatro globales.
 - Si se interrumpe Next.js, los intentos pendientes se marcan como error al consultarlos después de dos minutos. No cuentan como respuestas incorrectas.
 
-El repositorio no llama a la API pública de Piston ni necesita una clave de terceros. Para detener el sandbox: `docker compose stop`.
+El repositorio no llama a la API pública de Piston ni necesita una clave de terceros. `docker compose stop` detiene solo el sandbox; en este PC, usa `docker-apagar` para apagar también su entorno WSL y liberar sus recursos.
 
-**Verificación del sandbox.** Con Docker Desktop y WSL2 instalados, `npm run test:runner` ejecuta las soluciones de referencia dentro de Piston y `npm run test:e2e:real` recorre la aplicación completa con el ejecutor real. Las pruebas se omiten cuando el ejecutor no está disponible: eso no acredita su funcionamiento. Consulta el estado de cada entrega en [docs/verification.md](docs/verification.md). No hay ejecución simulada en la aplicación normal.
+**Verificación del sandbox.** Con Docker y Piston activos (`docker-iniciar` en este PC), `npm run test:runner` ejecuta las soluciones de referencia dentro de Piston y `npm run test:e2e:real` recorre la aplicación completa con el ejecutor real. Las pruebas se omiten cuando el ejecutor no está disponible: eso no acredita su funcionamiento. Consulta el estado de cada entrega en [docs/verification.md](docs/verification.md). No hay ejecución simulada en la aplicación normal.
 
 ## Contrato de los ejercicios
 
