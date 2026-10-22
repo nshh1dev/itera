@@ -42,6 +42,16 @@ Nada arranca al iniciar Windows. Si ya hay un servidor nativo en 3000, cerrarlo 
 
 ## Qué ocurre al guardar
 
+### Acceso rápido a una cuenta local
+
+En `/iniciar-sesion`, el modo desarrollo muestra **Entrar con mi cuenta**. Lee el correo y la contraseña de `.local/dev-login/credentials.json`, con formato `{"email":"tu-correo","password":"tu-contraseña"}`. Ese archivo es privado, está excluido de Git y de las imágenes, y solo se monta en lectura en el contenedor de desarrollo. No guardar credenciales en el código ni subir el archivo a GitHub. Cualquiera que use la aplicación local en desarrollo podrá entrar con esa cuenta mediante el botón; úsalo solo en tu computadora de confianza.
+
+El botón usa la autenticación normal, no crea cuentas ni cambia contraseñas. Conserva la vuelta a la página solicitada y respeta las cuentas desactivadas y los límites de intentos. En modo compilado el botón no aparece y el endpoint responde 404. Si cambias de cuenta o contraseña, actualiza el archivo local; no requiere reconstruir. Para deshabilitar el acceso, retira ese archivo. Tras actualizar `compose.dev.yaml`, vuelve a iniciar `docker-desarrollar` para añadir el montaje.
+
+Con desarrollo activo, `node tests/development-login.integration.mjs` comprueba el acceso con la cuenta configurada, teclado, temas y tamaños, y cierra su sesión de prueba. Con la versión compilada ya activa, `node tests/development-login.integration.mjs --production` comprueba que el botón y el endpoint estén deshabilitados; ninguno de los comandos inicia la aplicación.
+
+### Sincronización
+
 | Archivos | Acción |
 | --- | --- |
 | `src/`, `public/`, `scripts/`, `tests/` | Copiar altas/cambios al contenedor y retirar los archivos borrados; Next.js recarga lo que corresponde. |
