@@ -1,0 +1,144 @@
+# Itera completa en Docker
+
+## Alcance
+
+`compose.yaml` conserva Piston y sus paquetes. `compose.app.yaml` añade la aplicación Next.js/Node y PostgreSQL. El modo nativo sigue disponible, pero ambas aplicaciones no pueden ocupar 3000 a la vez. La base Docker y la base Windows son **copias independientes**: los cambios posteriores no se sincronizan.
+
+Versiones fijadas: Node 24.16.0 y PostgreSQL 18.3 con digest de imagen, Piston con digest, dependencias mediante `package-lock.json`; preparación de Python 3.12.0, Node 20.11.1 y TypeScript 5.0.3. Las actualizaciones son explícitas: no cambiar versiones mayores de PostgreSQL sin migrar datos. Las herramientas de mantenimiento se conservan en la imagen para ejecutar Prisma, importaciones y pruebas sin instalar dependencias en el host.
+
+Se verificó Windows x64 + Ubuntu/WSL2 con cgroup v2. No se promete soporte ARM/macOS sin comprobar la imagen y el aislamiento de Piston. No es un despliegue público: la aplicación escucha solo en loopback, Piston permanece en `127.0.0.1:2000` y PostgreSQL no publica puerto. Solo Piston necesita `privileged`; la app usa el usuario `node`, no tiene el socket Docker ni carpetas del host montadas.
+
+## Instalación nueva
+
+Con Git, Docker Engine y Compose preparados, clona el repositorio y abre una terminal en su raíz. En Windows sin Desktop se necesita una distribución WSL2 con el motor instalado; una CLI sola no basta. Los comandos siguientes requieren Docker activo. No es necesario instalar Node ni PostgreSQL en el host para usar la aplicación.
+
+En Windows sin Desktop, instala primero los lanzadores desde PowerShell (puede requerir permisos de administrador para registrar la tarea) y reabre la terminal. Esto no inicia la aplicación:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/install-docker-launchers.ps1
+```
+
+Crear secretos locales sin Node ni PostgreSQL en el host (no utiliza ni modifica `.env`):
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/docker-configure.ps1
+Start-ScheduledTask -TaskName Docker-WSL
+```
+
+La tarea mantiene WSL activo durante la preparación inicial; se inicia solo porque ejecutaste este comando, no al entrar en Windows. Para equipos con Docker Desktop o Linux no se usa esa tarea.
+
+En Linux, la alternativa sin Node en el host es:
+
+```sh
+docker run --rm --mount "type=bind,source=$(pwd),target=/app" -w /app node:24.16.0-bookworm-slim@sha256:2c87ef9bd3c6a3bd4b472b4bec2ce9d16354b0c574f736c476489d09f560a203 node scripts/docker-configure.mjs
+```
+
+Con Node instalado también sirve `npm run docker:configure`. Los secretos se guardan en `.local/docker.env`, excluido de Git y del contexto de construcción. Respalda ese archivo de forma privada; no compartas la salida de `docker compose config`, porque expande las contraseñas.
+
+Preparar imagen, base y ejecutor:
+
+```powershell
+docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml build app
+docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml up -d --wait database piston
+docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml run --rm --no-deps app node scripts/docker-prepare.mjs
+```
+
+La preparación aplica migraciones, crea borradores sin publicarlos e instala los tres lenguajes. Para activar el currículo nuevo, explícitamente y con Piston funcionando:
+
+```powershell
+docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml run --rm --no-deps app npm run content:replace -- --apply
+docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml up -d --wait
+```
+
+Abrir **http://127.0.0.1:3000**. La primera validación del catálogo puede tardar varios minutos. No se ejecuta al arrancar ni se publica contenido implícitamente. Para promover una cuenta existente, ejecutar el script `admin` dentro de `app`.
+
+## Uso diario y lanzadores Windows
+
+En el PC con Ubuntu-24.04 y el motor ya instalados, preparar los lanzadores una vez desde PowerShell:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/install-docker-launchers.ps1
+```
+
+Este comando instala `docker`, `docker-iniciar` y `docker-apagar` para el usuario actual y registra la tarea `Docker-WSL` **sin disparadores automáticos**. Conserva una copia de los lanzadores previos. El motor y la distribución deben existir antes; el instalador no los descarga. Si cambia el directorio del proyecto, repetirlo. Los scripts npm de mantenimiento en Windows usan Ubuntu-24.04.
+
+Reabrir la terminal y usar:
+
+```powershell
+docker-iniciar
+# Usar Itera en http://127.0.0.1:3000
+docker-apagar
+```
+
+No hace falta `npm run dev`. Espera a que finalicen las evaluaciones antes de apagar. El apagado termina también otros procesos de esa distribución. Para comprobar que quedó apagada sin activarla: `wsl --list --verbose`. Véase [diagnóstico local](docker-local.md).
+
+En Linux, o sin lanzadores, usar el comando Compose completo con `up -d --wait` y `stop`. Los atajos npm `docker:up`, `docker:stop`, `docker:status` y `docker:build` requieren Node en el host, pero no son necesarios para el uso normal. `docker:stop` detiene contenedores, no el motor/WSL.
+
+## Copiar una instalación Windows existente
+
+No ejecutes el seed ni la activación del catálogo encima de la copia como parte de esta migración. Cierra la aplicación original para impedir escrituras durante el respaldo, pero deja PostgreSQL disponible. Conserva el volumen de destino vacío y levanta únicamente `database` y `piston`.
+
+Con Node y las dependencias del modo nativo disponibles:
+
+```powershell
+npm.cmd run docker:configure
+node scripts/docker.mjs up -d --wait database piston
+npm.cmd run docker:import-local
+node scripts/docker.mjs run --rm --no-deps app npm run db:migrate
+npm.cmd run docker:up
+```
+
+El importador usa `.env` como origen y `PG_BIN`/rutas habituales para `pg_dump`. Crea un respaldo en `.local/backups`, restaura mediante `pg_restore` en una transacción **solo si el destino está vacío**, compara recuentos y hashes de las filas de todas las tablas públicas con ambas sesiones en UTC y conserva el secreto de autenticación original. No borra ni detiene la base Windows. Si el origen cambia o las huellas difieren, informa del bloqueo; no sobrescribe un destino existente para reintentar.
+
+`node scripts/docker-data.mjs verify-local archivo.dump` compara de nuevo las dos bases sin restaurar ni copiar secretos. Las diferencias después de usar una de ellas son esperables: no hay sincronización automática.
+
+## Respaldo y restauración
+
+Con la base Docker encendida:
+
+```powershell
+npm.cmd run docker:backup
+```
+
+Sin Node en el host, puede hacerse un respaldo dentro del contenedor y copiarlo sin redirección binaria de PowerShell:
+
+```powershell
+docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml exec database pg_dump -U itera -d itera -Fc --no-owner --no-privileges -f /tmp/itera.dump
+docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml cp database:/tmp/itera.dump ./itera.dump
+docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml exec database rm /tmp/itera.dump
+```
+
+Guarda los respaldos fuera de Git y cópialos a otro dispositivo de forma privada. Contienen datos personales. Guarda también `.local/docker.env` para conservar el secreto de autenticación. Los archivos de recuperación de contraseña viven en el volumen `local-mail`; se consultan mediante `exec app ls .local/mail` y se copian con Compose `cp` si se necesitan.
+
+Para restaurar, prepara **una base vacía** en otro equipo o volumen y ejecuta:
+
+```powershell
+node scripts/docker-data.mjs restore ruta/al/respaldo.dump
+```
+
+Sin Node en el host: copia el archivo con Compose `cp` a `database:/tmp/itera.dump` y ejecuta `pg_restore -U itera -d itera --no-owner --no-privileges --exit-on-error --single-transaction /tmp/itera.dump` dentro del servicio. No restaura sobre una instalación en uso. Nunca utilices `down -v` ni elimines volúmenes para apagar el proyecto.
+
+## Actualización y verificación
+
+Con el entorno activo y un respaldo reciente:
+
+```powershell
+npm.cmd run docker:build
+node scripts/docker.mjs run --rm --no-deps app npm run db:migrate
+npm.cmd run docker:up
+node scripts/docker.mjs exec -T app npm run test:runner
+```
+
+La imagen no incorpora secretos ni la base local. Las migraciones son explícitas y no se ejecutan durante el build. Los datos viven en `database-data`, los runtimes en `piston-packages` y la recuperación local en `local-mail`.
+
+El modo Docker sirve la compilación de producción: **no recarga al editar código**. Tras cambios, reconstruye la imagen y recrea la app con los comandos anteriores. Para edición con recarga rápida sigue disponible el modo nativo, usando su propia base.
+
+Para los ocho recorridos reales de navegador, con Node, dependencias y Chromium instalados en el host, y la app Docker activa en 3000:
+
+```powershell
+npm.cmd run docker:test:e2e
+```
+
+El script publica PostgreSQL temporalmente en **127.0.0.1:55434**, ejecuta la secuencia real completa contra la base Docker y retira el puerto en `finally`. No inicia un servidor Next nativo. Las pruebas crean y limpian cuentas y ejercicios temporales. Las suites con doble HTTP siguen siendo distintas y no acreditan aislamiento.
+
+Si se interrumpe el proceso a la fuerza, ejecutar `npm run docker:up` para retirar de nuevo ese puerto temporal.

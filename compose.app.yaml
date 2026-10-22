@@ -1,0 +1,50 @@
+# Usar junto con compose.yaml; conserva el volumen y el servicio Piston existentes.
+services:
+  database:
+    image: postgres:18.3-bookworm@sha256:80630f83606d8db77d30b3851b16a9f78be2d0d4dda6f7b82a1fdca5ebe3acba
+    restart: "no"
+    environment:
+      POSTGRES_USER: itera
+      POSTGRES_DB: itera
+      POSTGRES_PASSWORD: ${DOCKER_DB_PASSWORD:?Ejecuta primero npm run docker:configure}
+    volumes:
+      - database-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U itera -d itera"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [default]
+
+  app:
+    image: itera-local:docker
+    build: .
+    restart: "no"
+    init: true
+    stop_grace_period: 45s
+    environment:
+      DATABASE_URL: postgresql://itera:${DOCKER_DB_PASSWORD}@database:5432/itera
+      BETTER_AUTH_SECRET: ${DOCKER_AUTH_SECRET:?Ejecuta primero npm run docker:configure}
+      BETTER_AUTH_URL: http://127.0.0.1:3000
+      PISTON_URL: http://piston:2000
+      ITERA_CONTAINER: "1"
+      NEXT_TELEMETRY_DISABLED: "1"
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - local-mail:/app/.local/mail
+    depends_on:
+      database:
+        condition: service_healthy
+      piston:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+volumes:
+  database-data:
+  local-mail:

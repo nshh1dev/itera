@@ -12,6 +12,7 @@ src/generated/
 public/monaco/
 *.tsbuildinfo
 *.log
+*.dump
 .DS_Store
 Thumbs.db
 .idea/

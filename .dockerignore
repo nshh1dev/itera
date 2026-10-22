@@ -1,0 +1,17 @@
+.git
+.agents
+.opencode
+.local
+.env
+.env.*
+node_modules
+.next
+src/generated
+public/monaco
+test-results
+playwright-report
+coverage
+*.tsbuildinfo
+*.log
+**/*.dump
+skills-lock.json
