@@ -2,28 +2,26 @@
 
 ## Configuración de este PC
 
-Docker Engine, Docker CLI y Compose están instalados desde el repositorio oficial de Docker en **Ubuntu-24.04 sobre WSL2**, con cgroup v2. Itera permanece en `D:\proyectos\itera`; Node y el PostgreSQL privado siguen en Windows.
+Docker Engine, Docker CLI y Compose están instalados desde el repositorio oficial de Docker en **Ubuntu-24.04 sobre WSL2**, con cgroup v2. El código permanece en `D:\proyectos\itera`; la aplicación, Node, PostgreSQL y Piston funcionan ahora en contenedores. La instalación nativa de Windows se conserva como respaldo. Instalación, migración y actualizaciones: [Docker completo](docker.md).
 
 **El encendido es manual.** La tarea de Windows `Docker-WSL` mantiene una sesión WSL activa cuando se solicita, pero no tiene disparadores de inicio de sesión. No hay que abrir Ubuntu para trabajar.
 
 Los lanzadores están en `%LOCALAPPDATA%\DockerCLI`, carpeta añadida al PATH del usuario:
 
 - `docker.cmd`: delega los comandos a Docker en Ubuntu, conservando el directorio de trabajo.
-- `docker-iniciar.cmd`: inicia la tarea de mantenimiento de WSL, el servicio Docker y `docker compose up -d` desde la carpeta de Itera.
-- `docker-apagar.cmd`: detiene esa tarea y termina Ubuntu-24.04, incluido Piston.
+- `docker-iniciar.cmd`: inicia WSL y Docker y combina los dos archivos Compose para levantar los tres servicios.
+- `docker-apagar.cmd`: detiene ordenadamente los servicios y la tarea, y termina Ubuntu-24.04.
 - `LEEME.md`: instrucciones locales de la instalación.
 
-Estos archivos y la tarea son configuración del PC: **no se instalan al clonar el repositorio ni al ejecutar `npm run setup`**. El lanzador usa explícitamente root dentro de esta distribución para acceder al motor. No se guardan contraseñas. Si cambia la ubicación del proyecto, hay que actualizar la ruta del lanzador de inicio.
+Estos archivos y la tarea se instalan mediante `scripts/install-docker-launchers.ps1`: **no aparecen solo por clonar ni al ejecutar `npm run setup`**. El lanzador accede al motor como root dentro de Ubuntu; la aplicación se ejecuta como usuario no privilegiado. Si cambia la ubicación del proyecto, repite el instalador.
 
 ## Rutina diaria desde PowerShell
 
 ```powershell
 docker-iniciar
-cd D:\proyectos\itera
-npm.cmd run dev
 ```
 
-Si Next.js ya estaba iniciado, no repitas `npm.cmd run dev`. Abre **http://127.0.0.1:3000**, entra en un ejercicio y usa **Ejecutar** o **Enviar**.
+Abre **http://127.0.0.1:3000**, entra en un ejercicio y usa **Ejecutar** o **Enviar**. No necesitas `npm run dev`. Si hay un servidor nativo en ese puerto, ciérralo tú con `Ctrl+C` antes de iniciar el modo Docker.
 
 Al terminar, espera a que finalicen las evaluaciones y ejecuta:
 
@@ -31,7 +29,7 @@ Al terminar, espera a que finalicen las evaluaciones y ejecuta:
 docker-apagar
 ```
 
-Esto conserva los paquetes y datos de Docker. Termina también cualquier otro proceso que estuviera ejecutándose en Ubuntu-24.04. Next.js y PostgreSQL en Windows son independientes: para detenerlos, usa `Ctrl+C` en la terminal de Next y, si lo deseas, `npm.cmd run db:stop` desde el proyecto.
+Esto conserva los paquetes y datos de Docker. Termina también cualquier otro proceso de Ubuntu-24.04. La instalación nativa de Windows sigue siendo independiente; si la utilizaste, se detiene con `Ctrl+C` y `npm.cmd run db:stop`.
 
 ## Estado y diagnóstico
 
@@ -46,9 +44,9 @@ Debe aparecer `Ubuntu-24.04` como `Stopped`. Abrir Ubuntu, ejecutar `docker` o u
 Con el entorno encendido, desde la raíz del proyecto:
 
 ```powershell
-docker compose ps
+node scripts/docker.mjs ps
 docker compose logs --tail=50 piston
-npm.cmd run test:runner
+node scripts/docker.mjs exec -T app npm run test:runner
 ```
 
 Piston debe aparecer como `Up` y responder en `127.0.0.1:2000`. Una prueba omitida por falta de Piston no acredita funcionamiento.
@@ -59,7 +57,7 @@ Si falta un comando, reinicia la aplicación de terminal para que recoja el PATH
 & "$env:LOCALAPPDATA\DockerCLI\docker-iniciar.cmd"
 ```
 
-`docker compose stop` detiene solo Piston, no libera todo WSL. `docker-iniciar` vuelve a levantarlo aunque se haya detenido manualmente. No elimines la distribución ni el volumen `itera_piston-packages` para apagar Docker.
+`docker compose stop` sin los dos archivos solo conoce Piston. Usa `docker-apagar` para el entorno completo. No elimines la distribución ni los volúmenes para apagar Docker.
 
 ## Preparación y particularidades
 
@@ -68,7 +66,7 @@ Los runtimes ya están preparados. Solo para una instalación nueva o para añad
 ```powershell
 docker-iniciar
 cd D:\proyectos\itera
-npm.cmd run runner:setup
+node scripts/docker.mjs exec -T app npm run runner:setup
 ```
 
 En otro equipo se necesita un motor Docker con contenedores Linux, Compose y cgroup v2. Puede usarse Docker Engine dentro de WSL2 o Docker Desktop. Una CLI sola no ejecuta contenedores. Con el motor preparado, el comando estándar del repositorio es `docker compose up -d`.

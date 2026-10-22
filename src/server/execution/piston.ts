@@ -4,15 +4,16 @@ import type { Json, Language, RuntimeMode } from "@/lib/types";
 import type { RunOutput } from "./judge";
 import { languageNames } from "@/lib/types";
 import { executionFiles, executionInput, executionOutput } from "./harness";
+import { pistonOrigin } from "@/lib/piston-url.mjs";
 
 export class RunnerUnavailable extends Error {
   constructor(message = "El ejecutor local no está disponible. Inicia Docker y Piston, y ejecuta npm run runner:setup. Tu código sigue guardado.") { super(message); }
 }
 
 function baseUrl() {
-  const url = new URL(process.env.PISTON_URL || "http://127.0.0.1:2000");
-  if (!["127.0.0.1", "localhost", "[::1]"].includes(url.hostname) || url.protocol !== "http:") throw new RunnerUnavailable("PISTON_URL debe apuntar al ejecutor HTTP de tu computadora.");
-  return url.origin;
+  try {
+    return pistonOrigin(process.env.PISTON_URL || "http://127.0.0.1:2000", process.env.ITERA_CONTAINER === "1");
+  } catch { throw new RunnerUnavailable("PISTON_URL debe apuntar al ejecutor HTTP local o al servicio Piston de Docker."); }
 }
 
 const runtimeSchema = z.array(z.object({ language: z.string(), version: z.string(), aliases: z.array(z.string()) }));

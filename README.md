@@ -24,13 +24,16 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 
 ## Requisitos
 
+- **Modo Docker completo (recomendado para usar Itera):** Docker Engine con Compose y cgroup v2; Git para obtener el código. Node y PostgreSQL están incluidos en las imágenes. Sigue [la instalación Docker](docs/docker.md). En el PC ya preparado basta `docker-iniciar` y abrir **http://127.0.0.1:3000**; al terminar, `docker-apagar`. No ejecutes además `npm run dev`.
+- **Modo nativo de desarrollo (alternativo):** los siguientes requisitos y pasos mantienen Node y PostgreSQL fuera de Docker. No uses ambos modos en el puerto 3000 simultáneamente.
+
 - **Node.js 24 LTS** y npm (también es compatible Node 22.12+).
 - **PostgreSQL 16 o superior**, con `initdb`, `pg_ctl`, `psql` y `createdb`.
 - **Para ejecutar código y validar la primera activación del catálogo:** Docker con contenedores Linux, Docker Compose y cgroup v2. En Windows, Docker necesita un backend como WSL2.
 
 Una instalación con el catálogo ya activado funciona sin Piston; el botón de ejecución informa si el sandbox está detenido. La primera activación valida las referencias en Piston antes de publicar. Nunca se ejecuta el código del usuario en Node o Python del servidor principal.
 
-## Primer inicio
+## Primer inicio en modo nativo
 
 Desde la carpeta del proyecto:
 
@@ -60,7 +63,7 @@ Si ya tienes una base propia, copia `.env.example` a `.env`, establece `DATABASE
 
 ### Inicios siguientes
 
-En el PC configurado con Docker CLI en WSL2, ejecuta primero `docker-iniciar` en PowerShell si vas a ejecutar ejercicios. Docker no arranca al iniciar Windows. Después:
+Estos pasos son solo para el modo nativo. Con el motor Docker activo, `docker compose up -d piston` inicia únicamente el ejecutor. Para el modo completo usa `docker-iniciar` y no el comando siguiente:
 
 ```sh
 npm run dev
@@ -76,7 +79,7 @@ Si necesitas investigar PostgreSQL, consulta `.local/postgres.log`. `npm run doc
 
 ## Activar la ejecución aislada
 
-La instalación local actual usa **Docker Engine, CLI y Compose dentro de Ubuntu-24.04/WSL2**, sin Docker Desktop. Itera, Node y PostgreSQL siguen en Windows. En este PC, `docker-iniciar` arranca el entorno y ejecuta Compose; después usa `npm run runner:setup` si faltan los lenguajes.
+La instalación local actual usa **Docker Engine, CLI y Compose dentro de Ubuntu-24.04/WSL2**, sin Docker Desktop. `docker-iniciar` levanta ahora la aplicación, PostgreSQL y Piston; la instalación nativa permanece como respaldo independiente. El procedimiento siguiente prepara únicamente Piston para el modo nativo:
 
 En cualquier otro entorno con un motor Docker y Compose funcionando, la preparación general es:
 

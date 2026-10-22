@@ -1,0 +1,5 @@
+# Solo durante pruebas desde el host; no usar para el arranque cotidiano.
+services:
+  database:
+    ports:
+      - "127.0.0.1:55434:5432"

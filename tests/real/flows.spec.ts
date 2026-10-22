@@ -98,6 +98,7 @@ test("TypeScript rechaza errores de tipos sin conceder progreso y luego aprueba 
   await solve(page,"logica-opcional","typescript",'function solve(data: {cantidad?: number}): number { const incorrecto: number = "error"; return data.cantidad ?? 1; }');
   await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
   await expect(page.getByText("Error de ejecución").first()).toBeVisible({timeout:60000});
+  await page.getByRole("button",{name:"Detalle del error",exact:true}).first().click();
   await expect(page.getByText(/TS2322/).first()).toBeVisible();
   const user=await db.user.findUniqueOrThrow({where:{email}});
   expect(await db.progress.count({where:{userId:user.id,language:"typescript",firstPassedAt:{not:null}}})).toBe(0);
@@ -125,9 +126,9 @@ test("TypeScript ejecuta un programa completo con entrada y salida",async({page}
 test("el progreso publica el ejercicio como resuelto en el catálogo",async({page})=>{
   await page.context().addCookies(authCookies);
   await page.goto("/ejercicios?lenguaje=python&estado=resueltos");
-  await expect(page.locator('a[href="/ejercicios/logica-dos-requisitos?lenguaje=python"]').getByLabel("Resuelto",{exact:true})).toBeVisible();
-  await page.goto("/progreso");
-  await expect(page.getByText("Resuelto",{exact:true}).first()).toBeVisible();
+  await expect(page.locator('a[href="/ejercicios/logica-dos-requisitos?lenguaje=python"]').getByText("Resuelto",{exact:true})).toBeVisible();
+  await page.goto("/progreso?lenguaje=python");
+  await expect(page.getByRole("button",{name:/Comprueba dos requisitos simultáneos Resuelto/})).toBeVisible();
 });
 
 test("la administración publica tras ejecutar las referencias y rechaza una referencia rota",async({page})=>{

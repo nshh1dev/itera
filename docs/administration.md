@@ -1,5 +1,7 @@
 # Administración y perfiles locales
 
+En el modo Docker completo, los comandos de mantenimiento deben ejecutarse dentro de `app`, por ejemplo `node scripts/docker.mjs exec -T app npm run admin -- correo@example.com`. Ejecutarlos directamente en Windows usa la base nativa de `.env`, no la base Docker. Instalación y respaldo: [Docker completo](docker.md).
+
 ## Panel y permisos
 
 `/admin` muestra estadísticas, actividad reciente y el contenido editorial existente.

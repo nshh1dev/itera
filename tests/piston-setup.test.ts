@@ -12,7 +12,8 @@ test("prepara runtimes usando language_version del contrato real de Piston", asy
       res.end(JSON.stringify([
         {language:"python",language_version:"3.9.4",installed:false},
         {language:"python",language_version:"3.12.0",installed:false},
-        {language:"node",language_version:"22.0.0",installed:true},
+        {language:"node",language_version:"20.11.1",installed:true},
+        {language:"node",language_version:"22.0.0",installed:false},
         {language:"typescript",language_version:"5.0.3",installed:false},
       ]));
     }else{
