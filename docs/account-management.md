@@ -1,18 +1,20 @@
 # Perfil, configuración y estado de cuenta
 
-Configuración conserva la página `/configuracion`, la bienvenida y el panel
-contextual. Sus cuatro secciones son Mi perfil, Práctica, Apariencia y Cuenta y
-privacidad. El avatar abre un menú con identidad, Configuración y Cerrar sesión,
-también en el espacio de práctica.
+Configuración es una página completa en `/configuracion`, con cinco secciones:
+Mi cuenta, Aprendizaje, Apariencia, Seguridad y Privacidad y cuenta. No se abre
+como panel contextual. La bienvenida del registro vive en `/bienvenida`; véase
+[learning-personalization.md](learning-personalization.md). El avatar mantiene
+el menú con identidad, Configuración y Cerrar sesión, también en el taller.
 
 ## Persistencia
 
-- El nombre, correo, lenguaje preferido y nivel se guardan en PostgreSQL.
+- El nombre, correo, lenguaje preferido, niveles por lenguaje y diagnósticos se
+  guardan en PostgreSQL. Son independientes del progreso real.
 - El tema (claro, oscuro o sistema) se conserva por navegador mediante
   `next-themes`. Las preferencias del editor siguen usando `itera:workspace`.
-- El borrador temporal de Configuración usa el identificador de usuario, no el
-  correo mutable. Se recupera la clave anterior cuando existe. Solo contiene
-  nombre, lenguaje y nivel: nunca contraseñas.
+- Los cambios pendientes de los formularios se conservan al navegar entre
+  secciones de la misma página. Cada sección se guarda por separado. No se
+  guardan contraseñas en el almacenamiento del navegador.
 - Cerrar sesión invalida la sesión actual, vuelve al inicio público y conserva
   cuenta, progreso, intentos y borradores. No borra datos del navegador.
 
@@ -39,7 +41,7 @@ también en el espacio de práctica.
 
 La acción solicita contraseña y confirmación explícita. Una transacción escribe
 `User.disabledAt`, elimina todas las sesiones y registra la operación. No elimina
-perfil, preferencias, progreso, borradores, intentos, ayudas ni contexto de
+perfil, preferencias, diagnósticos, progreso, borradores, intentos, ayudas ni contexto de
 práctica; tampoco afecta al catálogo ni a otros usuarios.
 
 `currentUser()` excluye cuentas desactivadas. El hook de creación de sesiones

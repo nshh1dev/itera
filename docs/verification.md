@@ -1,5 +1,41 @@
 # Verificación local
 
+## Bienvenida, diagnósticos y Configuración (23 de octubre de 2026)
+
+- Se guardó un respaldo local de PostgreSQL Docker antes de aplicar la migración
+  aditiva `20261023120000_learning_onboarding`. La migración se aplicó sin reset
+  ni seed. La consulta de integridad confirmó cero preferencias sin perfil en su
+  lenguaje correspondiente. No se modificó la base nativa de Windows.
+- `npm test`: **123 aprobadas**, incluidas ocho pruebas nuevas para selección
+  diagnóstica, recomendaciones, separación del progreso, contexto de ejecución y
+  los cuatro pasos de bienvenida.
+- `npm run typecheck`: aprobado. Se regeneraron los tipos de rutas de Next.js
+  mediante sus generadores, sin editar manualmente `.next/` ni iniciar un servidor
+  nativo. Las referencias anteriores al panel eliminado ya no intervienen.
+- `npm run lint`: sin errores. Los **97 avisos** proceden de las herramientas
+  locales preexistentes sin seguimiento bajo `.agents/` y `.opencode/`; no se
+  incorporan a la entrega. El lint focalizado de fuentes y pruebas pasó sin avisos.
+- `npx prisma validate`: aprobado con Prisma 7.10.0, sin actualizar dependencias.
+- La imagen Docker ejecutó `npm run build` satisfactoriamente, incluyendo Prisma,
+  compilación Next.js y comprobación TypeScript.
+- La primera pasada Docker aprobó 24 de 27 recorridos y detectó una aserción antigua
+  sobre el correo, una carrera de navegación y la pérdida del editor sencillo al
+  cambiar de reto. Se corrigieron antes de la repetición final.
+- `npm run docker:test:e2e`: **27 aprobados**, ninguno omitido, con la imagen
+  corregida y Piston real. Cubren registro, bienvenida saltable, perfiles por
+  lenguaje, recomendaciones, edición entre secciones, correo/contraseña,
+  desactivación/reactivación, límites de reautenticación, teclado y movimiento
+  reducido. El diagnóstico verifica idempotencia por contexto, propiedad, casos
+  ocultos filtrados, repetición y conflicto optimista sin sobrescribir la copia
+  local; no genera `Progress`, `Draft` ni `PracticeContext`.
+- Tras añadir la omisión explícita del diagnóstico real cuando Piston esté
+  desconectado, se repitió su archivo completo: **3 aprobados**, ninguno omitido.
+- Se revisaron capturas de bienvenida, Configuración y diagnóstico en escritorio
+  y móvil, con temas claro/oscuro. Las capturas permanecen en `.local/screenshots/`,
+  fuera de Git. Los recorridos temporales limpian sus usuarios y contenido.
+- No se ejecutó la suite nativa completa con doble HTTP: se verificó el entorno
+  Docker autorizado. La base nativa sigue pendiente de migrar si se utiliza.
+
 ## Usuarios ficticios y administración (20 de octubre de 2026)
 
 - Se crearon los diez perfiles locales con `ITERA_DEV_USERS=1 npm run

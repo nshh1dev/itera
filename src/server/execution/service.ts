@@ -23,7 +23,7 @@ export async function evaluateSubmission(id: string) {
     const passed = passedCount === tests.length;
     await db.$transaction(async tx => {
       const finalized = await tx.submission.updateMany({ where: { id, status: "RUNNING" }, data: { status: passed ? "PASSED" : "FAILED", passedCount, totalCount: tests.length, results, finishedAt: new Date() } });
-      if (!finalized.count || submission.mode !== "submit") return;
+      if (!finalized.count || submission.mode !== "submit" || submission.diagnosticItemId) return;
       const key = { userId: submission.userId, exerciseId: variant.version.exerciseId, language: variant.language };
       await tx.progress.upsert({ where: { userId_exerciseId_language: key },
         create: { ...key, attempts: 1, firstPassedAt: passed ? new Date() : null },

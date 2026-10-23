@@ -31,7 +31,7 @@ async function openSettings(page: Page) {
   await page.goto("/inicio");
   await page.getByRole("button", { name: "Mi cuenta", exact: true }).click();
   await page.getByRole("menuitem", { name: "Configuración", exact: true }).click();
-  await expect(page.getByRole("dialog", { name: "Configuración", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Configuración", exact: true })).toBeVisible();
 }
 
 test.afterEach(async () => {
@@ -52,19 +52,26 @@ for (const theme of ["light", "dark"] as const) {
     await expect(page.getByRole("menu")).toContainText(user.email);
     await page.keyboard.press("Escape"); await expect(avatar).toBeFocused();
     await avatar.click(); await page.getByRole("menuitem", { name: "Configuración", exact: true }).click();
-    const settings = page.getByRole("dialog", { name: "Configuración", exact: true });
-    for (const name of ["Mi perfil", "Práctica", "Apariencia", "Cuenta y privacidad"]) await expect(settings.getByRole("heading", { name, exact: true })).toBeVisible();
+    const settings = page.getByRole("main");
+    const sections = page.getByRole("navigation", { name: "Secciones de configuración" });
+    for (const name of ["Mi cuenta", "Aprendizaje", "Apariencia", "Seguridad", "Privacidad y cuenta"]) await expect(sections.getByRole("link", { name, exact: true })).toBeVisible();
     await settings.getByLabel("Nombre", { exact: true }).fill("Nombre actualizado");
+    await settings.getByRole("button", { name: "Guardar nombre" }).click();
+    await expect(settings.getByRole("status")).toHaveText("Tu nombre está actualizado.");
+    await sections.getByRole("link", { name: "Aprendizaje", exact: true }).click();
     await settings.getByLabel("Lenguaje preferido").selectOption("typescript");
-    await settings.getByLabel("Nivel", { exact: true }).selectOption("ADVANCED");
-    await settings.getByRole("button", { name: "Guardar cambios" }).click();
-    await expect(settings.getByRole("status")).toHaveText("Tus preferencias están guardadas.");
+    await settings.getByRole("radio", { name: /Avanzado/ }).check();
+    await settings.getByRole("button", { name: "Guardar preferencias" }).click();
+    await expect(settings.getByRole("status").filter({ visible: true })).toHaveText("Tus preferencias están guardadas. Tu progreso no ha cambiado.");
     expect(await db.userPreference.findUnique({ where: { userId: user.id } })).toMatchObject({ language: "typescript", level: "ADVANCED" });
+    await sections.getByRole("link", { name: "Apariencia", exact: true }).click();
     await settings.getByRole("button", { name: "Oscuro", exact: true }).click();
     await page.reload();
     await expect(page.locator("html")).toHaveClass(/dark/);
+    await sections.getByRole("link", { name: "Mi cuenta", exact: true }).click();
     await expect(page.getByLabel("Nombre", { exact: true })).toHaveValue("Nombre actualizado");
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+    await sections.getByRole("link", { name: "Seguridad", exact: true }).click();
     await page.getByRole("button", { name: "Cambiar contraseña", exact: true }).click();
     const passwordDialog = page.getByRole("dialog", { name: "Cambiar contraseña", exact: true });
     await expect(passwordDialog.getByLabel("Contraseña actual")).toBeVisible();
@@ -107,7 +114,7 @@ test("cambiar correo exige contraseña, evita duplicados y revoca otras sesiones
     await dialog.getByLabel("Nuevo correo electrónico").fill(email);
     await dialog.getByRole("button", { name: "Cambiar correo", exact: true }).click();
     await expect(dialog).toHaveCount(0);
-    await expect(page.getByLabel("Correo electrónico", { exact: true })).toHaveValue(email);
+    await expect(page.getByRole("region", { name: "Mi cuenta", exact: true }).getByText(email, { exact: true })).toBeVisible();
     expect(await db.user.findUnique({ where: { id: user.id } })).toMatchObject({ email, emailVerified: false });
     expect(await db.session.count({ where: { userId: user.id } })).toBe(1);
     expect(await (await other.get("/api/auth/get-session")).json()).toBeNull();
@@ -124,6 +131,7 @@ test("cambio de contraseña valida confirmación y actual, guarda hash y revoca 
   try {
     expect((await signIn(other, user.email)).ok()).toBeTruthy();
     await openSettings(page);
+    await page.getByRole("navigation", { name: "Secciones de configuración" }).getByRole("link", { name: "Seguridad", exact: true }).click();
     await page.getByRole("button", { name: "Cambiar contraseña", exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Cambiar contraseña", exact: true });
     const next = "Itera-renovada-67890";
@@ -159,6 +167,7 @@ test("desactivar conserva datos, bloquea acceso y permite reactivación solo adm
   await db.submission.create({ data: { userId: user.id, variantId: variant.id, code: "# intento conservado", mode: "submit", status: "FAILED", idempotencyKey: randomUUID() } });
   const oldCookies = await page.context().cookies();
   await openSettings(page);
+  await page.getByRole("navigation", { name: "Secciones de configuración" }).getByRole("link", { name: "Privacidad y cuenta", exact: true }).click();
   await page.getByRole("button", { name: "Desactivar cuenta", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Desactivar cuenta", exact: true });
   await expect(dialog).toContainText("No se eliminará ningún dato ni ejercicio");

@@ -133,7 +133,7 @@ La imagen no incorpora secretos ni la base local. Las migraciones son explícita
 
 `docker-iniciar` sirve la compilación de producción: **no recarga al editar código**. Tras cambios terminados, reconstruye esa imagen y recrea la app con los comandos anteriores. Para editar con recarga automática dentro de Docker, usa `docker-desarrollar`: [guía de desarrollo](docker-development.md). El modo nativo sigue disponible con su propia base.
 
-Para los ocho recorridos reales de navegador, con Node, dependencias y Chromium instalados en el host, y la app Docker activa en 3000:
+Para los recorridos reales de navegador, bienvenida, cuenta y configuración, con Node, dependencias y Chromium instalados en el host, y la app Docker activa en 3000:
 
 ```powershell
 npm.cmd run docker:test:e2e

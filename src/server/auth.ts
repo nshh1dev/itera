@@ -25,7 +25,7 @@ export const auth = betterAuth({
       await writeFile(`.local/mail/${Date.now()}-${randomUUID()}.txt`, `Para: ${user.email}\nAsunto: Recupera tu cuenta de Itera\n\nAbre este enlace para elegir una nueva contraseña:\n${url}\n\nEste mensaje solo existe en tu computadora.\n`, { mode: 0o600 });
     },
   },
-  user: { additionalFields: { role: { type: "string", defaultValue: "USER", input: false } } },
+  user: { additionalFields: { role: { type: "string", defaultValue: "USER", input: false }, onboardingStep: { type: "number", defaultValue: 2, input: false } } },
   databaseHooks: {
     session: { create: { before: async session => {
       const user = await db.user.findUnique({ where: { id: session.userId }, select: { disabledAt: true } });
@@ -33,6 +33,11 @@ export const auth = betterAuth({
     } } },
   },
   hooks: { before: createAuthMiddleware(async ctx => {
+    if (ctx.path === "/sign-up/email") {
+      const name = typeof ctx.body?.name === "string" ? ctx.body.name.trim() : "";
+      if (name.length < 2 || name.length > 60) throw new APIError("BAD_REQUEST", { message: "El nombre debe tener entre 2 y 60 caracteres." });
+      ctx.body.name = name;
+    }
     // También protege las llamadas directas a Better Auth, no solo la interfaz.
     if (ctx.path === "/change-password" && ctx.body) {
       if (ctx.body.newPassword === ctx.body.currentPassword) throw new APIError("BAD_REQUEST", { message: "Elige una contraseña diferente a la actual." });
@@ -49,7 +54,7 @@ export const auth = betterAuth({
 export const currentUser = cache(async () => {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return null;
-  return db.user.findFirst({ where: { id: session.user.id, disabledAt: null }, select: { id: true, name: true, email: true, role: true, createdAt: true, preference: true } });
+  return db.user.findFirst({ where: { id: session.user.id, disabledAt: null }, select: { id: true, name: true, email: true, role: true, createdAt: true, preference: true, onboardingStep: true } });
 });
 
 export async function requireUser() {

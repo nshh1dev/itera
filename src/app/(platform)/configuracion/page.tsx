@@ -1,10 +1,15 @@
 import { requireUser } from "@/server/auth";
-import { SettingsForm } from "@/components/settings-form";
+import { SettingsPageContent } from "@/components/settings-page";
+import { getLearningSummary } from "@/server/learning";
+import { db } from "@/server/db";
 import type { Language } from "@/lib/types";
-import Link from "next/link";
 export const metadata = { title: "Configuración" };
-export default async function SettingsPage({ searchParams }: { searchParams: Promise<{bienvenida?: string}> }) {
-  const user = await requireUser();
-  const welcome = (await searchParams).bienvenida === "1";
-  return <div className="page-container"><h1 className="page-title">{welcome ? `Bienvenido, ${user.name.split(" ")[0]}.` : "Configuración"}</h1><p className="mt-2 text-sm text-muted-foreground">{welcome ? "Elige un punto de partida. Todo se puede cambiar después." : "Tu perfil y tus preferencias de práctica."}</p><SettingsForm welcome={welcome} user={{id:user.id,name:user.name,email:user.email,language:(user.preference?.language ?? "python") as Language,level:user.preference?.level ?? "INITIATION"}} />{welcome && <Link href="/inicio" className="text-link mt-9">Ir a mi espacio →</Link>}</div>;
+export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ seccion?: string }> }) {
+  const [user, query] = await Promise.all([requireUser(), searchParams]);
+  const [summary, profiles, history] = await Promise.all([
+    getLearningSummary(user.id, (user.preference?.language ?? "python") as Language),
+    db.learningProfile.findMany({ where: { userId: user.id }, select: { language: true, declaredLevel: true } }),
+    db.diagnostic.findMany({ where: { userId: user.id, finishedAt: { not: null } }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 10, select: { id: true, language: true, suggestedLevel: true, reason: true, finishedAt: true } }),
+  ]);
+  return <div className="page-container"><h1 className="page-title">Configuración</h1><SettingsPageContent section={query.seccion ?? "cuenta"} user={{ id: user.id, name: user.name, email: user.email }} profiles={profiles} summary={summary} history={history.map(entry => ({ ...entry, date: entry.finishedAt!.toISOString() }))} /></div>;
 }

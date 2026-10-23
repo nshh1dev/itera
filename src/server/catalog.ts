@@ -11,8 +11,8 @@ export async function getCatalog(userId?: string, language: Language = "python")
       progress: { where: { userId: userId ?? "__guest__", language: { in: [...languages] } }, select: { language: true, firstPassedAt: true, attempts: true } },
     },
   }), userId ? db.exerciseVariant.findMany({
-    where: { language, version: { exercise: { published: true } }, OR: [{ drafts: { some: { userId } } }, { submissions: { some: { userId } } }] },
-    select: { version: { select: { exerciseId: true } }, drafts: { where: { userId }, select: { updatedAt: true } }, submissions: { where: { userId }, orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true } } },
+    where: { language, version: { exercise: { published: true } }, OR: [{ drafts: { some: { userId } } }, { submissions: { some: { userId, diagnosticItemId: null } } }] },
+    select: { version: { select: { exerciseId: true } }, drafts: { where: { userId }, select: { updatedAt: true } }, submissions: { where: { userId, diagnosticItemId: null }, orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true } } },
   }) : []]);
   const activityDates = new Map<string, string>();
   for (const variant of activity) {

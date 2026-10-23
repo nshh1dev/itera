@@ -21,12 +21,14 @@ export async function POST(request: Request) {
   const parsed = executionSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Revisa el programa y vuelve a intentarlo (máximo 30 000 caracteres)." }, { status: 400 });
   const input = parsed.data;
-  const existing = await db.submission.findUnique({ where: { userId_idempotencyKey: { userId: user.id, idempotencyKey: input.idempotencyKey } }, select: { id: true, variantId: true, code: true, mode: true } });
+  const existing = await db.submission.findUnique({ where: { userId_idempotencyKey: { userId: user.id, idempotencyKey: input.idempotencyKey } }, select: { id: true, variantId: true, code: true, mode: true, diagnosticItemId: true } });
   if (existing) {
-    if (existing.variantId !== input.variantId || existing.code !== input.code || existing.mode !== input.mode) return NextResponse.json({ error: "La clave del intento ya fue utilizada con otro programa." }, { status: 409 });
+    if (existing.variantId !== input.variantId || existing.code !== input.code || existing.mode !== input.mode || existing.diagnosticItemId !== (input.diagnosticItemId ?? null)) return NextResponse.json({ error: "La clave del intento ya fue utilizada con otro programa." }, { status: 409 });
     return NextResponse.json({ id: existing.id }, { status: 202 });
   }
-  const variant = await db.exerciseVariant.findFirst({ where: { id: input.variantId, version: { published: true, exercise: { published: true } } }, select: { id: true, language: true, tests: { select: { visible: true } } } });
+  const diagnosticWhere = { id: input.diagnosticItemId, variantId: input.variantId, diagnostic: { userId: user.id, finishedAt: null } };
+  if (input.diagnosticItemId && !await db.diagnosticItem.findFirst({ where: diagnosticWhere })) return NextResponse.json({ error: "Diagnóstico no disponible." }, { status: 404 });
+  const variant = await db.exerciseVariant.findFirst({ where: { id: input.variantId, ...(!input.diagnosticItemId ? { version: { published: true, exercise: { published: true } } } : {}) }, select: { id: true, language: true, tests: { select: { visible: true } } } });
   if (!variant) return NextResponse.json({ error: "Ejercicio no disponible." }, { status: 404 });
   try { await availableRuntime(variant.language as Language); }
   catch (error) { return NextResponse.json({ error: error instanceof RunnerUnavailable ? error.message : "El ejecutor no está disponible." }, { status: 503 }); }
@@ -35,7 +37,8 @@ export async function POST(request: Request) {
     // Un bloqueo corto serializa las reservas. Nunca se mantiene durante la ejecución.
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(742901)`;
     const duplicate = await tx.submission.findUnique({ where: { userId_idempotencyKey: { userId: user.id, idempotencyKey: input.idempotencyKey } } });
-    if (duplicate) return duplicate.code === input.code && duplicate.variantId === input.variantId && duplicate.mode === input.mode ? { id: duplicate.id, created: false } : { error: "La clave del intento ya fue utilizada." };
+    if (duplicate) return duplicate.code === input.code && duplicate.variantId === input.variantId && duplicate.mode === input.mode && duplicate.diagnosticItemId === (input.diagnosticItemId ?? null) ? { id: duplicate.id, created: false } : { error: "La clave del intento ya fue utilizada." };
+    if (input.diagnosticItemId && !await tx.diagnosticItem.findFirst({ where: diagnosticWhere })) return { error: "El diagnóstico ya terminó. Vuelve a Aprendizaje." };
     const active = await tx.submission.count({ where: { status: "RUNNING" } });
     const userActive = await tx.submission.count({ where: { userId: user.id, status: "RUNNING" } });
     if (active >= 4 || userActive >= 1) return { error: "Ya hay una evaluación en curso. Espera a que termine antes de iniciar otra." };

@@ -22,6 +22,14 @@ export function activePathExercise(exercises: ExerciseCard[]) {
 }
 
 export type PracticeEntry = { exercise: ExerciseCard; language: Language; pathSlug?: string; routes?: string[]; date?: string };
+export function personalizedPractice(entries: PracticeEntry[], preferred: Language, recommendedPath?: string) {
+  const catalog = entries.filter(entry => entry.language === preferred);
+  const hasActivity = catalog.some(entry => entry.date);
+  if (hasActivity) return nextPractice(catalog, preferred);
+  const choice = catalog.find(entry => recommendedPath && entry.routes?.includes(recommendedPath) && !entry.exercise.solved)
+    ?? catalog.find(entry => !entry.exercise.solved) ?? catalog[0];
+  return choice ? { ...choice, pathSlug: recommendedPath && choice.routes?.includes(recommendedPath) ? recommendedPath : undefined, resume: false } : undefined;
+}
 export function nextPractice(entries: PracticeEntry[], fallbackLanguage: Language) {
   const recent = entries.filter(entry => entry.date).sort((a, b) => b.date!.localeCompare(a.date!));
   const unfinished = recent.find(entry => entry.exercise.started && !entry.exercise.solved);

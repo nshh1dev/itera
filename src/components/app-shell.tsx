@@ -8,7 +8,6 @@ import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { rememberSettingsOrigin } from "@/lib/motion";
 import { MotionRegion } from "./motion-region";
 import { LayoutGroup } from "motion/react";
 import { Selection } from "./arc/selection";
@@ -48,7 +47,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
         navigationDestination.current = null;
         // Next restaura primero la entrada anterior durante este mismo popstate.
         // Navegar en el siguiente turno evita que esa restauración pise el destino.
-        window.setTimeout(() => router.push(href, { scroll: href !== "/configuracion" }), 0);
+        window.setTimeout(() => router.push(href), 0);
       }
     }
     window.addEventListener("popstate", restoreNavigation);
@@ -67,7 +66,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
       setNavigationOpen(false);
     }
   }
-  const title = navigation.find(n => pathname.startsWith(n.href))?.label ?? (pathname.startsWith("/admin") ? "Administración" : "Configuración");
+  const title = navigation.find(n => pathname.startsWith(n.href))?.label ?? (pathname.startsWith("/admin") ? "Administración" : pathname.startsWith("/diagnostico/") ? "Diagnóstico" : "Configuración");
 
   function toggleNavigation() {
     const next = collapsed ? "expanded" : "collapsed";
@@ -78,7 +77,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
   function navigationContent(mobile = false) {
     function item({ href, label, icon: Icon }: typeof navigation[number]) {
       const active = pathname.startsWith(href);
-      const link = <Link href={href} scroll={href === "/configuracion" ? false : undefined} onClick={event => { if (href === "/configuracion") rememberSettingsOrigin(event.currentTarget); }} className="navigation-link relative isolate" aria-label={label} aria-current={active ? "page" : undefined}>
+       const link = <Link href={href} className="navigation-link relative isolate" aria-label={label} aria-current={active ? "page" : undefined}>
         {active && <Selection id="navigation" />}
         <Icon aria-hidden="true" /><span className="navigation-label">{label}</span>
       </Link>;
@@ -106,7 +105,6 @@ export function AppShell({ children, user, workspace = false, header }: { childr
           const link = event.target instanceof Element ? event.target.closest("a") : null;
           if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           event.preventDefault();
-          if (link.pathname === "/configuracion") rememberSettingsOrigin(link);
           navigationDestination.current = link.pathname + link.search + link.hash;
           changeNavigation(false);
         }}>

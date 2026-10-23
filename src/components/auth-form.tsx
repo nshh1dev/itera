@@ -6,6 +6,7 @@ import { ArrowRight, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { safeReturnTo } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { OnboardingProgress } from "./onboarding-progress";
 
 export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "reset" }) {
   const router = useRouter();
@@ -42,9 +43,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "re
       if (result.error?.status === 429) throw new Error("Has realizado varios intentos seguidos. Espera un momento antes de volver a intentarlo.");
       if (result.error?.code === "ACCOUNT_DISABLED") throw new Error("Esta cuenta está desactivada. Contacta con un administrador para reactivarla.");
       if (result.error) throw new Error(register ? "No pudimos crear la cuenta. Comprueba el correo y usa una contraseña de al menos 10 caracteres; si ya tienes cuenta, inicia sesión." : "El correo o la contraseña no coinciden. Revisa los datos e inténtalo de nuevo.");
-      // La bienvenida es una página, no el panel contextual de preferencias.
-      // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- La navegación de documento evita deliberadamente la ruta interceptada.
-      if (register && returnTo === "/inicio") { window.location.assign("/configuracion?bienvenida=1"); return; }
+      if (register) { router.push(`/bienvenida?volver=${encodeURIComponent(returnTo)}`); router.refresh(); return; }
       router.push(returnTo);
       router.refresh();
     } catch (error) { setError(error instanceof Error ? error.message : "No se pudo conectar con Itera."); }
@@ -52,6 +51,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "re
   }
 
   return <div className="w-full min-w-0 max-w-[420px]">
+    {register && <OnboardingProgress step={1} />}
     <h1 className="text-[2rem] leading-tight font-semibold tracking-[-0.04em]">{register ? "Crear cuenta" : forgot ? "Recuperar cuenta" : reset ? "Cambiar contraseña" : "Iniciar sesión"}</h1>
     {(register || forgot || reset) && <p className="mt-4 text-sm leading-6 text-muted-foreground">{register ? "Retoma tus borradores e intentos al entrar en esta instalación de Itera." : forgot ? "El enlace se guarda en la carpeta .local/mail del proyecto. No se envía por correo." : "Usa al menos 10 caracteres."}</p>}
     {success ? <div className="mt-8 rounded-xl bg-surface p-5" role="status"><p className="text-sm font-medium">{reset ? "Tu contraseña fue actualizada." : "Solicitud recibida."}</p><p className="mt-2 text-base leading-7 text-muted-foreground">{reset ? "Ya puedes iniciar sesión con tu nueva contraseña." : <>Si el correo está registrado, abre el archivo más reciente de <code className="break-all font-mono">.local/mail</code> y sigue su enlace.</>}</p><Link href={loginHref} className="text-link mt-4">Volver a iniciar sesión <ArrowRight className="size-4" /></Link></div> : <form onSubmit={submit} className="mt-8 space-y-5" aria-describedby={error ? "auth-error" : undefined}>

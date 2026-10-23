@@ -14,6 +14,7 @@ export async function savePreferences(input: unknown) {
   await db.$transaction([
     db.user.update({ where: { id: user.id }, data: { name } }),
     db.userPreference.upsert({ where: { userId: user.id }, create: { userId: user.id, language, level }, update: { language, level } }),
+    db.learningProfile.upsert({ where: { userId_language: { userId: user.id, language } }, create: { userId: user.id, language, declaredLevel: level }, update: { declaredLevel: level } }),
   ]);
   revalidatePath("/", "layout");
   return { success: true };
@@ -81,7 +82,7 @@ export async function getExerciseAttempts(input: unknown) {
   if (!parsed.success) return { error: "No pudimos identificar el historial.", entries: [], more: false };
   const { exerciseId, language, page } = parsed.data;
   const entries = await db.submission.findMany({
-    where: { userId: user.id, variant: { language, version: { exerciseId, exercise: { published: true } } } },
+    where: { userId: user.id, diagnosticItemId: null, variant: { language, version: { exerciseId, exercise: { published: true } } } },
     orderBy: [{ createdAt: "desc" }, { id: "desc" }], skip: page * 10, take: 11,
     select: { id: true, code: true, status: true, mode: true, passedCount: true, totalCount: true, createdAt: true, variant: { select: { version: { select: { number: true } } } } },
   });

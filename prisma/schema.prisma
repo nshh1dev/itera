@@ -42,11 +42,14 @@ model User {
   image         String?
   role          Role     @default(USER)
   disabledAt    DateTime?
+  onboardingStep Int @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   sessions      Session[]
   accounts      Account[]
   preference    UserPreference?
+  learningProfiles LearningProfile[]
+  diagnostics Diagnostic[]
   drafts        Draft[]
   submissions   Submission[]
   progress      Progress[]
@@ -112,6 +115,43 @@ model UserPreference {
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// La declaración no es progreso ni una certificación de conocimientos.
+model LearningProfile {
+  userId String
+  language String
+  declaredLevel Level
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@id([userId, language])
+}
+
+model Diagnostic {
+  id String @id @default(cuid())
+  userId String
+  language String
+  declaredLevel Level
+  rulesVersion Int @default(1)
+  createdAt DateTime @default(now())
+  finishedAt DateTime?
+  suggestedLevel Level?
+  reason String?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items DiagnosticItem[]
+  @@index([userId, language, createdAt])
+}
+
+model DiagnosticItem {
+  id String @id @default(cuid())
+  diagnosticId String
+  variantId String
+  position Int
+  code String
+  revision Int @default(1)
+  diagnostic Diagnostic @relation(fields: [diagnosticId], references: [id], onDelete: Cascade)
+  variant ExerciseVariant @relation(fields: [variantId], references: [id])
+  submissions Submission[]
+  @@unique([diagnosticId, position])
+}
+
 model Exercise {
   id          String   @id @default(cuid())
   slug        String   @unique
@@ -165,6 +205,7 @@ model ExerciseVariant {
   tests       TestCase[]
   drafts      Draft[]
   submissions Submission[]
+  diagnosticItems DiagnosticItem[]
   @@unique([versionId, language])
 }
 
@@ -198,6 +239,8 @@ model Submission {
   variantId      String
   code           String
   mode           String
+  diagnosticItemId String?
+  diagnosticItem DiagnosticItem? @relation(fields: [diagnosticItemId], references: [id], onDelete: Cascade)
   status         SubmissionStatus @default(RUNNING)
   idempotencyKey String
   passedCount    Int @default(0)
@@ -211,6 +254,7 @@ model Submission {
   @@unique([userId, idempotencyKey])
   @@index([userId, createdAt])
   @@index([status, createdAt])
+  @@index([diagnosticItemId, createdAt])
 }
 
 model Progress {

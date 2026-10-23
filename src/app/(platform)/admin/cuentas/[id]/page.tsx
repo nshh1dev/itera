@@ -13,13 +13,13 @@ export const metadata = { title: "Detalle de usuario" };
 export default async function AccountPage({ params }: { params: Promise<{ id: string }> }) {
   const admin = await requireAdmin();
   const { id } = await params;
-  const user = await db.user.findUnique({ where: { id }, select: { id: true, name: true, email: true, role: true, disabledAt: true, createdAt: true, _count: { select: { submissions: true, drafts: true } }, submissions: { orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true } }, drafts: { orderBy: { updatedAt: "desc" }, take: 1, select: { updatedAt: true } }, practiceContexts: { orderBy: { visitedAt: "desc" }, take: 1, select: { visitedAt: true } } } });
+  const user = await db.user.findUnique({ where: { id }, select: { id: true, name: true, email: true, role: true, disabledAt: true, createdAt: true, _count: { select: { submissions: { where: { diagnosticItemId: null } }, drafts: true } }, submissions: { where: { diagnosticItemId: null }, orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true } }, drafts: { orderBy: { updatedAt: "desc" }, take: 1, select: { updatedAt: true } }, practiceContexts: { orderBy: { visitedAt: "desc" }, take: 1, select: { visitedAt: true } } } });
   if (!user) notFound();
   const [catalogs, paths, passed, failed] = await Promise.all([
     Promise.all(languages.map(language => getCatalog(id, language))),
     db.learningPath.findMany({ orderBy: { order: "asc" }, select: { slug: true, title: true, items: { select: { exerciseId: true } } } }),
-    db.submission.count({ where: { userId: id, mode: "submit", status: "PASSED" } }),
-    db.submission.count({ where: { userId: id, mode: "submit", status: "FAILED" } }),
+    db.submission.count({ where: { userId: id, diagnosticItemId: null, mode: "submit", status: "PASSED" } }),
+    db.submission.count({ where: { userId: id, diagnosticItemId: null, mode: "submit", status: "FAILED" } }),
   ]);
   const latest = [user.submissions[0]?.createdAt, user.drafts[0]?.updatedAt, user.practiceContexts[0]?.visitedAt].filter((date): date is Date => !!date).sort((a, b) => b.getTime() - a.getTime())[0];
   const date = (value: Date) => new Intl.DateTimeFormat("es", { dateStyle: "medium", timeStyle: "short" }).format(value);

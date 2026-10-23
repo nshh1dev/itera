@@ -84,10 +84,12 @@ test("registro, preferencias y borrador persistente entre sesiones",async({page}
   await page.getByLabel("Correo electrónico").fill(email);
   await page.getByLabel("Contraseña",{exact:true}).fill(password);
   await page.getByRole("button",{name:"Crear cuenta",exact:true}).click();
-  await expect(page.getByRole("heading",{name:"Bienvenido, Prueba."})).toBeVisible();
-  await page.getByLabel("Nivel",{exact:true}).selectOption("INTERMEDIATE");
-  await page.getByRole("button",{name:"Guardar y empezar"}).click();
-  await expect(page.getByText("Tus preferencias están guardadas.")).toBeVisible();
+   await expect(page.getByRole("heading",{name:"Aprende a tu manera"})).toBeVisible();
+   await page.getByRole("radio",{name:/Intermedio/}).check();
+   await page.getByRole("button",{name:"Guardar y continuar"}).click();
+   await page.getByRole("button",{name:"Saltar diagnóstico"}).click();
+   await expect(page.getByRole("heading",{name:"Tu punto de partida"})).toBeVisible();
+   await page.getByRole("button",{name:"Explorar ejercicios libremente"}).click();
   await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   await expect(page.locator(".monaco-editor")).toBeVisible();
   await openSimpleEditor(page);
@@ -149,7 +151,8 @@ test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async
   await expect(page.locator("html")).not.toHaveClass(/dark/);
   await page.screenshot({path:".local/screenshots/ui-progress-light.png",fullPage:true,animations:"disabled"});
   await page.goto("/configuracion");
-  await expect(page.getByLabel("Correo electrónico",{exact:true})).toHaveValue(email);
+   await expect(page.getByText(email,{exact:true}).last()).toBeVisible();
+   await page.getByRole("navigation",{name:"Secciones de configuración"}).getByRole("link",{name:"Apariencia",exact:true}).click();
   await page.screenshot({path:".local/screenshots/ui-settings-light.png",fullPage:true,animations:"disabled"});
   await page.getByRole("button",{name:"Oscuro",exact:true}).click();
   await expect(page.getByRole("button",{name:"Oscuro",exact:true})).toHaveAttribute("aria-pressed","true");

@@ -682,3 +682,34 @@
   .progress-fill { background: Highlight; forced-color-adjust: none; }
   .navigation-link[aria-current="page"], .segment[aria-current="page"], .segment[aria-pressed="true"] { outline: 1px solid Highlight; }
 }
+
+/* Configuración de página y bienvenida: heredan los tonos y controles del taller. */
+.preferences-page { display: grid; gap: 28px; margin-top: 32px; min-width: 0; }
+.preferences-navigation { display: flex; flex-wrap: wrap; align-content: start; gap: 4px; }
+.preferences-link { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 10px; font-size: .875rem; color: var(--muted-foreground); overflow-wrap: anywhere; }
+.preferences-link:hover { color: var(--foreground); background: var(--selection); }
+.preferences-link[aria-current="page"] { color: var(--foreground); background: var(--selection); font-weight: 500; }
+.preferences-detail { min-width: 0; padding: 24px; border-radius: 16px; background: var(--surface-primary); }
+.preferences-detail > section { max-width: 680px; }
+.preferences-description { margin-top: 12px; margin-bottom: 28px; font-size: .875rem; line-height: 1.75; color: var(--muted-foreground); }
+.preferences-group { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--border-soft); }
+.learning-levels { display: grid; gap: 8px; }
+.learning-level { display: flex; align-items: start; gap: 12px; padding: 14px; border-radius: 10px; background: var(--surface-inset); cursor: pointer; }
+.learning-level:hover { background: var(--selection); }
+.learning-level:has(input:checked) { outline: 1px solid var(--primary); }
+.learning-level input { flex-shrink: 0; margin-top: 5px; accent-color: var(--primary); }
+.onboarding-progress { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.onboarding-progress li { display: flex; min-width: 0; flex-direction: column; gap: 6px; border-top: 2px solid var(--border); padding-top: 10px; font-size: .75rem; color: var(--muted-foreground); overflow-wrap: anywhere; }
+.onboarding-progress li[data-reached="true"] { border-color: var(--primary); color: var(--foreground); }
+.onboarding-progress li[aria-current="step"] { font-weight: 600; }
+.diagnostic-grid { display: grid; gap: 20px; min-width: 0; align-items: start; }
+@media (min-width: 1024px) {
+  .preferences-page { grid-template-columns: 200px minmax(0, 1fr); }
+  .preferences-navigation { position: sticky; top: 24px; display: grid; align-self: start; }
+  .preferences-detail { padding: 32px; }
+  .diagnostic-grid { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+}
+@media (max-width: 399px) {
+  .preferences-detail { padding: 18px; }
+  .preferences-link { padding: 10px 8px; }
+}

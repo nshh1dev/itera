@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "./ui/dial
 type Mode = "email" | "password" | "deactivate";
 const titles: Record<Mode, string> = { email: "Cambiar correo", password: "Cambiar contraseña", deactivate: "Desactivar cuenta" };
 
-export function AccountSecurity({ email, privacy = false }: { email: string; privacy?: boolean }) {
+export function AccountSecurity({ email, section = "account" }: { email: string; section?: "account" | "security" | "privacy" }) {
   const [mode, setMode] = useState<Mode | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -65,7 +65,7 @@ export function AccountSecurity({ email, privacy = false }: { email: string; pri
 
   return <div className="mt-4">
     <div className="flex flex-wrap gap-2">
-      {privacy ? <><Button type="button" variant="outline" loading={busy} onClick={signOut}>Cerrar sesión</Button><Button type="button" variant="ghost" className="text-destructive" onClick={event => open("deactivate", event.currentTarget)}>Desactivar cuenta</Button></> : <><Button type="button" variant="outline" onClick={event => open("email", event.currentTarget)}>Cambiar correo</Button><Button type="button" variant="outline" onClick={event => open("password", event.currentTarget)}>Cambiar contraseña</Button></>}
+      {section === "privacy" ? <Button type="button" variant="ghost" className="text-destructive" onClick={event => open("deactivate", event.currentTarget)}>Desactivar cuenta</Button> : section === "security" ? <><Button type="button" variant="outline" onClick={event => open("password", event.currentTarget)}>Cambiar contraseña</Button><Button type="button" variant="outline" loading={busy} onClick={signOut}>Cerrar sesión</Button></> : <Button type="button" variant="outline" onClick={event => open("email", event.currentTarget)}>Cambiar correo</Button>}
     </div>
     {message && <p role="status" className="mt-3 text-sm text-muted-foreground">{message}</p>}
     {!mode && error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}

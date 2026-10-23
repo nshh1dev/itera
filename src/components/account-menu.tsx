@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRef } from "react";
 import { LogOut, Settings2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { rememberSettingsOrigin } from "@/lib/motion";
 import type { ShellUser } from "./app-shell";
 
 export function AccountMenu({ user, signingOut, onSignOut }: { user: ShellUser; signingOut: boolean; onSignOut: () => void }) {
@@ -14,7 +13,7 @@ export function AccountMenu({ user, signingOut, onSignOut }: { user: ShellUser; 
     <DropdownMenuContent align="end">
       <DropdownMenuGroup>
         <DropdownMenuLabel className="flex max-w-72 flex-col gap-1 px-3 py-2"><span className="break-words text-sm font-medium">{user.name}</span><span className="break-all text-xs font-normal text-muted-foreground">{user.email}</span></DropdownMenuLabel>
-        <DropdownMenuItem asChild><Link href="/configuracion" scroll={false} onClick={() => { if (trigger.current) rememberSettingsOrigin(trigger.current); }}><Settings2 aria-hidden="true" />Configuración</Link></DropdownMenuItem>
+        <DropdownMenuItem asChild><Link href="/configuracion"><Settings2 aria-hidden="true" />Configuración</Link></DropdownMenuItem>
         <DropdownMenuItem disabled={signingOut} onSelect={onSignOut}><LogOut aria-hidden="true" />{signingOut ? "Cerrando sesión…" : "Cerrar sesión"}</DropdownMenuItem>
       </DropdownMenuGroup>
     </DropdownMenuContent>
