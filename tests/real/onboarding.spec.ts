@@ -50,7 +50,7 @@ for (const [theme, width] of [["light", 1440], ["dark", 390]] as const) {
     await expect(page).toHaveURL(/\/rutas\/pensar-en-soluciones\?lenguaje=python/);
     expect((await db.user.findUniqueOrThrow({ where: { id: userId } })).onboardingStep).toBe(0);
     await page.goto("/inicio");
-    await expect(page.getByText("Tu punto de partida: Conecta las ideas.")).toBeVisible();
+    await expect(page.getByRole("region", { name: "Tu ruta", exact: true }).getByRole("heading", { name: "Conecta las ideas", exact: true })).toBeVisible();
     await page.goto("/configuracion?seccion=aprendizaje");
     await expect(page.getByRole("dialog")).toHaveCount(0);
     const sections = page.getByRole("navigation", { name: "Secciones de configuración" });

@@ -24,6 +24,7 @@ export function activePathExercise(exercises: ExerciseCard[]) {
 export type PracticeEntry = { exercise: ExerciseCard; language: Language; pathSlug?: string; routes?: string[]; date?: string };
 export function personalizedPractice(entries: PracticeEntry[], preferred: Language, recommendedPath?: string) {
   const catalog = entries.filter(entry => entry.language === preferred);
+  if (!catalog.some(entry => !entry.exercise.solved)) return undefined;
   const hasActivity = catalog.some(entry => entry.date);
   if (hasActivity) return nextPractice(catalog, preferred);
   const choice = catalog.find(entry => recommendedPath && entry.routes?.includes(recommendedPath) && !entry.exercise.solved)

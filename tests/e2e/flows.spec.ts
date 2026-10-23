@@ -96,7 +96,7 @@ test("registro, preferencias y borrador persistente entre sesiones",async({page}
   await page.getByRole("textbox",{name:"Editor sencillo de Python"}).fill("def solve(data):\n    return data['a'] + data['b']\n");
   await expect(page.getByText("Guardado",{exact:true})).toBeVisible();
   await page.goto("/inicio");
-  await expect(page.getByText("Continúa donde lo dejaste")).toBeVisible();
+  await expect(page.getByRole("region",{name:"Tu siguiente paso",exact:true}).getByRole("link",{name:"Continuar ejercicio",exact:true})).toBeVisible();
   await page.screenshot({path:".local/screenshots/desktop-home.png",fullPage:true});
   await page.getByRole("button",{name:"Mi cuenta",exact:true}).click();
   await page.getByRole("menuitem",{name:"Cerrar sesión",exact:true}).click();

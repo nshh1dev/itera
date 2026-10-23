@@ -58,6 +58,32 @@ abren desde su control de origen, transiciones breves de navegación y respeto d
 
 ## Fundamento de diseño
 
+### Ajuste de Inicio (23 de octubre de 2026)
+
+El dashboard concentra la decisión en un siguiente ejercicio compacto, con resumen
+de la habilidad, lenguaje, contexto, tiempo orientativo y motivo de recomendación.
+«Continuar» se reserva para práctica pendiente; una visita sin borrador ni intentos
+muestra «Empezar». Un catálogo terminado invita a explorar, no a empezar de nuevo
+un ejercicio ya resuelto.
+
+El avance corresponde a la ruta del ejercicio destacado o a la última ruta visitada
+en el lenguaje preferido; sin contexto previo se usa la ruta recomendada del perfil.
+El recuento incluye solo ejercicios publicados de esa ruta y completados en ese
+lenguaje. Una ruta terminada conserva su estado, sin sustituirse silenciosamente
+por otra. Las estadísticas globales siguen en Progreso.
+
+«Seguir mi ruta» y «Práctica libre» son accesos secundarios explicados, no botones
+que compiten con la acción principal. La actividad reciente contiene como máximo
+tres ejercicios distintos del destacado, con estados Resuelto/Pendiente y acceso
+al historial. Se retira la explicación permanente del nivel y su enlace de ajuste;
+esas preferencias permanecen en Configuración → Aprendizaje.
+
+Las reglas de presentación se prueban en `tests/dashboard.test.ts`; los recorridos
+de cuenta temporal, continuación del borrador y capturas están en
+`tests/real/dashboard.spec.ts`. No se cambia el editor ni la forma de conceder progreso.
+
+### Referencias del rediseño inicial
+
 Referencias consultadas dentro de la skill:
 
 - `typography.md › Ensuring legibility`: “Use font sizes that most people can read easily.”

@@ -683,6 +683,22 @@
   .navigation-link[aria-current="page"], .segment[aria-current="page"], .segment[aria-pressed="true"] { outline: 1px solid Highlight; }
 }
 
+/* Inicio: siguiente práctica, avance de la ruta y accesos secundarios. */
+.dashboard-top { display: grid; gap: 24px; align-items: start; }
+.dashboard-next { min-width: 0; background: var(--surface-primary); }
+.dashboard-route { min-width: 0; padding: 4px 4px 0; }
+.dashboard-modes { display: grid; gap: 8px; }
+.dashboard-mode { display: flex; align-items: center; gap: 14px; min-width: 0; padding: 16px; border-radius: 12px; }
+.dashboard-mode-guided { background: var(--surface-secondary); }
+.dashboard-mode:hover { background: var(--selection); }
+.dashboard-activity:hover { background: var(--selection); }
+@media (min-width: 768px) {
+  .dashboard-modes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+}
+@media (min-width: 1100px) {
+  .dashboard-top { grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr); gap: 32px; }
+  .dashboard-route { padding: 8px 0; }
+}
 /* Configuración de página y bienvenida: heredan los tonos y controles del taller. */
 .preferences-page { display: grid; gap: 28px; margin-top: 32px; min-width: 0; }
 .preferences-navigation { display: flex; flex-wrap: wrap; align-content: start; gap: 4px; }

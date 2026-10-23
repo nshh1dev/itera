@@ -1,5 +1,36 @@
 # Verificación local
 
+## Dashboard centrado en la siguiente práctica (23 de octubre de 2026)
+
+- Cambio acotado a Inicio y sus reglas de recomendación/presentación; sin
+  migraciones, dependencias nuevas ni cambios en la evaluación del progreso.
+- `npm test`: **130 aprobadas**, con siete nuevas para avance de la ruta actual,
+  exclusión de actividad duplicada, estados Empezar/Continuar y catálogo terminado.
+  Tras acortar el texto de continuación se repitieron las suites afectadas de
+  dashboard, navegación y perfil: **22 aprobadas**.
+- `npm run typecheck`, lint focalizado de todos los archivos TypeScript afectados
+  y `npm run lint -- --quiet`: aprobados. `--quiet` omite los avisos ya conocidos
+  de herramientas locales sin seguimiento; no implica que hayan desaparecido.
+- El detector de diseño se ejecutó una vez sobre Inicio y el CSS. No señaló la
+  nueva composición; sus avisos orientativos corresponden a valores de tipografía
+  y radios preexistentes en otras reglas del archivo global. No se modificaron
+  pantallas ajenas para silenciarlos.
+- Primera revisión de navegador: **3 recorridos focalizados aprobados** sobre
+  Docker. Se verificaron continuación real del borrador, avance independiente por
+  lenguaje, elección del siguiente ejercicio, ausencia de actividad duplicada y
+  estados sin actividad/catálogo completado. Las capturas en ambos temas a 320,
+  390, 768 y 1440 px motivaron un único ajuste del pie de la tarjeta en móvil.
+- El build de producción Docker pasó tras ese ajuste, con Prisma, Next.js y
+  TypeScript. La confirmación visual de invitado en ambos temas, a 390 y 1440 px,
+  no mostró desbordamiento horizontal; la acción principal conserva foco visible
+  de 2 px. La tarjeta ocupa aproximadamente 242 px de alto en escritorio, frente
+  a los 285 px de la composición anterior, con más contexto útil.
+- Confirmación final: `npm run docker:test:e2e`, **30 recorridos aprobados**
+  sobre la app Docker actualizada, incluidos los tres del dashboard y las pruebas
+  de ejecución con Piston real. PostgreSQL volvió a quedar sin puerto publicado.
+  No se ejecutó la suite nativa completa con doble HTTP; el cambio de su aserción
+  de continuación se comprobó con lint y tipos, no como recorrido ejecutado.
+
 ## Bienvenida, diagnósticos y Configuración (23 de octubre de 2026)
 
 - Se guardó un respaldo local de PostgreSQL Docker antes de aplicar la migración

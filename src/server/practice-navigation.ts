@@ -4,6 +4,7 @@ import { getCatalog } from "./catalog";
 import { languages, type Language } from "@/lib/types";
 import { personalizedPractice } from "@/lib/practice-navigation";
 import { getLearningSummary } from "./learning";
+import { dashboardOverview } from "@/lib/dashboard";
 
 export async function getPracticeNavigation(userId: string | undefined, preferred: Language) {
   const [catalogs, contexts, paths, learning] = await Promise.all([
@@ -23,8 +24,8 @@ export async function getPracticeNavigation(userId: string | undefined, preferre
   const language = recommendation?.language ?? preferred;
   const catalog = catalogs[languages.indexOf(language)];
   const lastPath = contexts.find(context => context.language === preferred && context.pathSlug && paths.some(path => path.slug === context.pathSlug));
-  const suggestedPath = paths.find(path => path.slug === lastPath?.pathSlug && path.items.some(item => catalog.some(exercise => exercise.id === item.exerciseId && !exercise.solved)))
-    ?? paths.find(path => path.slug === learning?.path.slug && path.items.some(item => catalog.some(exercise => exercise.id === item.exerciseId && !exercise.solved)))
-    ?? paths.find(path => path.items.some(item => catalog.some(exercise => exercise.id === item.exerciseId && !exercise.solved))) ?? paths[0];
-  return { recommendation, language, catalog, suggestedPath, paths, learning };
+  // Una ruta completada sigue siendo la ruta actual: no ocultar su finalización
+  // sustituyéndola automáticamente por otra con ejercicios pendientes.
+  const overview = dashboardOverview({ catalog, paths, recommendation, currentPathSlug: lastPath?.pathSlug ?? learning?.path.slug });
+  return { recommendation, language, catalog, ...overview };
 }
