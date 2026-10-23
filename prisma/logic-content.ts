@@ -3,6 +3,7 @@ import { statementForLanguage } from "./lesson-statements";
 import { logicLessons } from "./logic-lessons";
 import { curriculumSlug, curriculumUnits } from "../src/lib/curriculum-v2";
 import { languages } from "../src/lib/types";
+import { reviseLearningContent } from "./learning-revisions";
 
 // Se reutilizan referencias algorítmicas verificadas cuando el contrato coincide.
 // Nunca se reutiliza la identidad ni se atribuye progreso del catálogo anterior.
@@ -15,15 +16,15 @@ export const logicExercises: SeedExercise[] = curriculumUnits.flatMap(unit => un
   const prerequisites = previous ? [previous] : [];
   previous = slug;
   const statements = Object.fromEntries(languages.map(language => [language, statementForLanguage(source, language)])) as Record<typeof languages[number], string>;
-  return {
+  return reviseLearningContent({
     ...source, slug, title: step.title, level: unit.level,
     category: ["arboles", "prioridades", "estado-recursion"].includes(unit.slug) ? "Estructuras" : unit.slug === "grafos" ? "Grafos" : unit.slug === "textos" ? "Cadenas" : unit.slug === "matrices" || unit.slug === "listas" ? "Arreglos" : unit.level === "ADVANCED" || unit.level === "INTERMEDIATE" ? "Algoritmos" : source.category,
     minutes: logicLessons.has(step.key) ? unit.level === "ADVANCED" ? 25 : unit.level === "INTERMEDIATE" ? 15 : unit.level === "INITIATION" ? 5 : 10 : source.minutes,
     statements, statement: statements.python,
     prerequisiteSlugs: prerequisites,
-    prerequisites: unit.slug.startsWith("integracion") ? ["Los bloques anteriores de esta etapa."] : [],
+    prerequisites: unit.slug.startsWith("integracion") ? ["Los bloques anteriores de esta etapa."] : source.prerequisites ?? [],
     objective: source.objective || `${step.title} utilizando los datos y reglas del problema.`,
     practiceGoals: source.practiceGoals?.length ? source.practiceGoals : [step.title],
     activityType: unit.slug.startsWith("integracion") ? "INTEGRATION" : unit.level === "INITIATION" ? "GUIDED" : "PRACTICE",
-  } satisfies SeedExercise;
+  } satisfies SeedExercise, step.key);
 }));

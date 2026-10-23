@@ -252,10 +252,9 @@ function WorkspaceReady(props: Props) {
 
 const Challenge = memo(function Challenge({ exercise: props }: { exercise: Props }) {
   return <div className="challenge-sheet">
-    <h1 className="text-2xl leading-tight font-semibold tracking-[-0.035em]">{props.title}</h1><div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><Badge>{levelNames[props.level]}</Badge><span>{props.category}</span><span className="flex items-center gap-1.5"><Clock3 className="size-3.5" />{props.minutes} min orientativos</span></div>
+    <h1 className="text-2xl leading-tight font-semibold tracking-[-0.035em]">{props.title}</h1><div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground"><span className="font-medium text-foreground">{props.activityType === "PRACTICE" || props.activityType === "INTEGRATION" ? "Desafío independiente" : activityNames[props.activityType]}</span><Badge>{levelNames[props.level]}</Badge><span className="flex items-center gap-1.5"><Clock3 className="size-3.5" />{props.minutes} min orientativos</span></div>
     <h2 className="mt-6 text-base font-semibold">Tu reto</h2><Statement text={props.statement} />
     {uniqueHelp(props.constraints, props.statement.split(/\n+/)).length > 0 && <section className="mt-5" aria-label="Condiciones del ejercicio"><h3 className="text-sm font-semibold">Condiciones</h3><ul className="mt-2 list-disc space-y-1 pl-4 text-base leading-7 text-muted-foreground">{uniqueHelp(props.constraints, props.statement.split(/\n+/)).map(constraint => <li key={constraint}>{constraint}</li>)}</ul></section>}
-    <p className="mt-4 text-xs font-medium text-muted-foreground">{activityNames[props.activityType]}</p>
     <Examples examples={props.examples} runtimeMode={props.runtimeMode} />
   </div>;
 });

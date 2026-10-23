@@ -81,3 +81,14 @@ test("las tres variantes, sus contratos y los casos ocultos forman parte de la r
     assert.equal(catalogRevisionDecision(changed.current, changed.source, changed.current.id), "create", field);
   }
 });
+
+test("una regla conceptual nueva exige otra versión sin modificar la versión histórica", () => {
+  const { source, current } = fixture();
+  const before = structuredClone(current);
+  assert.equal(current.conceptRule, "");
+  const revised = { ...source, conceptRule: "subtraction" };
+  assert.equal(catalogRevisionDecision(current, revised, current.id), "create");
+  assert.deepEqual(current, before);
+  current.published = false;
+  assert.equal(catalogRevisionDecision(current, revised, current.id), "draft");
+});

@@ -10,6 +10,7 @@ type VersionContent = {
   objective: string; prerequisites: string[];
   practiceGoals: string[]; prerequisiteSlugs: string[]; activityType: string;
   runtimeMode: RuntimeMode;
+  conceptRule?: string;
   complexity: string; commonErrors: string[];
   variants: { language: string; starter: string; solution: string; explanation: string; statement?: string; typeContract?: string;
     tests: { input: unknown; expected: unknown; explanation?: string; visible: boolean; order: number }[] }[];
@@ -25,11 +26,12 @@ export function seedVersionContent(exercise: SeedExercise): VersionContent {
     objective: exercise.objective ?? "", prerequisites: exercise.prerequisites ?? [],
     practiceGoals: exercise.practiceGoals ?? [], prerequisiteSlugs: exercise.prerequisiteSlugs ?? [], activityType: exercise.activityType ?? "PRACTICE",
     runtimeMode: exercise.runtimeMode ?? "FUNCTION",
+    conceptRule: exercise.conceptRule ?? "",
     complexity: exercise.complexity ?? "", commonErrors: exercise.commonErrors ?? [],
     constraints: exercise.constraints, hints: exercise.hints, level: exercise.level, minutes: exercise.minutes,
     variants: languages.map(language => ({
       language, statement: statementForLanguage(exercise, language), typeContract: language === "typescript" ? exercise.typescriptContract ?? "" : "", starter: exercise.starters?.[language] ?? starter[language], solution: exercise[language]!, explanation: exercise.explanations?.[language] ?? exercise.explanation,
-      tests: exercise.tests.map((test, order) => ({ ...test, explanation: test.explanation ?? "", order, visible: order < 2 })),
+      tests: exercise.tests.map((test, order) => ({ ...test, explanation: test.explanation ?? "", order, visible: test.visible ?? order < 2 })),
     })),
   };
 }
@@ -40,6 +42,7 @@ function normalized(version: VersionContent): VersionContent {
     objective: version.objective, prerequisites: version.prerequisites,
     practiceGoals: version.practiceGoals, prerequisiteSlugs: version.prerequisiteSlugs, activityType: version.activityType,
     runtimeMode: version.runtimeMode,
+    conceptRule: version.conceptRule ?? "",
     complexity: version.complexity, commonErrors: version.commonErrors,
     constraints: version.constraints, hints: version.hints, level: version.level, minutes: version.minutes,
     variants: version.variants.map(variant => ({

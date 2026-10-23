@@ -11,6 +11,7 @@ import { catalogRevision, catalogRevisionDecision, seedVersionContent } from "..
 import { editorialSchema as schema, publicationMetadataSchema } from "@/lib/editorial";
 import { prerequisiteIssue } from "@/lib/curriculum";
 import { languages } from "@/lib/types";
+import { checkConcept } from "./execution/concepts";
 
 async function checkPrerequisites(slug: string, slugs: string[]) {
   if (!slugs.length) return;
@@ -41,7 +42,7 @@ export async function saveExercise(input: unknown) {
         statement:data.statement, level:data.level, minutes:data.minutes, hints:data.hints, constraints:data.constraints,
         objective:data.objective, prerequisites:data.prerequisites,
         practiceGoals:data.practiceGoals, prerequisiteSlugs:data.prerequisiteSlugs, activityType:data.activityType,
-        runtimeMode:data.runtimeMode,
+        runtimeMode:data.runtimeMode, conceptRule:data.conceptRule,
         complexity:data.complexity, commonErrors:data.commonErrors,
         variants:{create:languages.map(language=>({language,...data[language],tests:{create:data.tests.map((test,order)=>({input:test.input===null?Prisma.JsonNull:test.input,expected:test.expected===null?Prisma.JsonNull:test.expected,visible:test.visible,explanation:test.explanation,order}))}}))},
       } });
@@ -66,11 +67,14 @@ export async function publishExerciseVersion(versionId: string) {
     if (issue) return { error: issue };
     for (const variant of version.variants) {
       if (variant.language === "typescript" && version.runtimeMode === "FUNCTION" && !variant.typeContract.trim()) return {error:"Define el contrato de tipos de TypeScript antes de publicar esta función."};
-      if (!variant.tests.some(t=>t.visible) || !variant.tests.some(t=>!t.visible)) return {error:"Incluye pruebas visibles y ocultas antes de publicar."};
+      const fixed = version.runtimeMode === "PROGRAM" && variant.tests.every(test => test.input === "");
+      if (!variant.tests.some(t=>t.visible) || (!fixed && (variant.tests.length < 3 || !variant.tests.some(t=>!t.visible)))) return {error:"Incluye ejemplos visibles y, cuando hay entrada, al menos tres pruebas con alguna oculta."};
+      if (version.conceptRule && (!fixed || version.activityType !== "GUIDED")) return {error:"La comprobación conceptual requiere una práctica guiada sin entrada."};
       const runtime = await availableRuntime(variant.language as Language);
       const mode = version.runtimeMode as RuntimeMode;
       const evaluate = mode === "PROGRAM" ? judgeProgram : judge;
       let starterSolved = true;
+      if (await checkConcept(variant.language as Language, variant.solution, version.conceptRule)) return {error:`La referencia de ${variant.language} no aplica el concepto solicitado.`};
       for (const test of variant.tests) {
         const entry = { ...test, input: test.input as Json, expected: test.expected as Json };
         const output = await runCode(variant.language as Language,runtime,variant.solution,test.input as Json,mode,variant.typeContract);
@@ -79,6 +83,7 @@ export async function publishExerciseVersion(versionId: string) {
         if (initial.status === "runtime" || initial.status === "timeout" || initial.error) return {error:`La plantilla de ${variant.language} falla en el caso ${test.order+1}. Debe ejecutarse ${mode === "PROGRAM" ? "sin errores" : "y devolver un valor JSON aunque aún no resuelva el problema"}.`};
         starterSolved &&= initial.passed;
       }
+      if (starterSolved && version.conceptRule) starterSolved = !(await checkConcept(variant.language as Language, variant.starter, version.conceptRule));
       if (starterSolved !== (version.activityType === "OBSERVATION")) return {error: version.activityType === "OBSERVATION" ? `La plantilla de observación de ${variant.language} debe estar completa.` : `La plantilla de ${variant.language} ya resuelve todos los casos. Retira parte de la solución.`};
     }
     await db.$transaction([
@@ -128,7 +133,7 @@ export async function prepareCatalogRevision(input: unknown) {
         hints: data.hints, level: data.level, minutes: data.minutes,
         objective: data.objective, prerequisites: data.prerequisites,
         practiceGoals: data.practiceGoals, prerequisiteSlugs: data.prerequisiteSlugs, activityType: data.activityType,
-        runtimeMode: data.runtimeMode,
+        runtimeMode: data.runtimeMode, conceptRule: data.conceptRule,
         complexity: data.complexity, commonErrors: data.commonErrors,
         variants: { create: languages.map(language => ({
           language, ...data[language], tests: { create: data.tests.map((test, order) => ({

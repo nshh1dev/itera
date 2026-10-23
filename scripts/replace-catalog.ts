@@ -8,6 +8,7 @@ import { availableRuntime, runCode } from "../src/server/execution/piston";
 import { judge, judgeProgram } from "../src/server/execution/judge";
 import { languages, levelNames, type Json } from "../src/lib/types";
 import { functionBatch } from "../prisma/logic-validation";
+import { checkConcept } from "../src/server/execution/concepts";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 async function main() {
@@ -50,6 +51,7 @@ async function main() {
     for (const entry of entries.filter(entry => entry.version.runtimeMode === "PROGRAM")) {
       const variant = entry.version.variants.find(v => v.language === language)!;
       let starterSolved = true;
+      if (await checkConcept(language, variant.solution, entry.version.conceptRule)) throw new Error(`${entry.slug} (${language}): la referencia no satisface el concepto.`);
       // Los casos de salida fija repetidos verifican el mismo comportamiento.
       const cases = [...new Map(variant.tests.map(test => [JSON.stringify([test.input, test.expected]), test])).values()];
       for (const test of cases) {
@@ -60,6 +62,7 @@ async function main() {
         if (["runtime", "timeout"].includes(initial.status) || initial.error) throw new Error(`${entry.slug} (${language}): plantilla inválida.`);
         starterSolved &&= initial.passed;
       }
+      if (starterSolved && entry.version.conceptRule) starterSolved = !(await checkConcept(language, variant.starter, entry.version.conceptRule));
       if (starterSolved) throw new Error(`${entry.slug} (${language}): la plantilla ya resuelve todos sus casos.`);
       console.log(`Programa validado en ${language}: ${entry.slug}.`);
     }

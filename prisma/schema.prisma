@@ -180,6 +180,7 @@ model ExerciseVersion {
   prerequisiteSlugs String[] @default([])
   activityType String @default("PRACTICE")
   runtimeMode  RuntimeMode @default(FUNCTION)
+  conceptRule  String   @default("")
   complexity   String   @default("")
   commonErrors String[] @default([])
   constraints  String[]

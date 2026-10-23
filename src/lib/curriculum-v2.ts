@@ -13,7 +13,7 @@ export const curriculumSlug = (key: string) => `logica-${key}`;
 export const curriculumUnits: CurriculumUnit[] = [
   {
     path: "desde-cero", level: "INITIATION", slug: "instrucciones", title: "1. Instrucciones y salida",
-    theory: "Un programa ejecuta instrucciones de arriba abajo. El texto se escribe entre comillas; una expresión numérica se calcula antes de mostrarla. Cada impresión termina una línea. Predice la salida antes de ejecutar. En estos primeros pasos se comprueba la salida, no cómo has escrito cada instrucción.",
+    theory: "Un programa ejecuta instrucciones de arriba abajo. El texto se escribe entre comillas; una expresión numérica se calcula antes de mostrarla. Cada impresión termina una línea. Predice la salida antes de ejecutar. Para mostrar una operación como texto, en lugar de calcularla, escríbela entre comillas.",
     readiness: ["Puedo predecir el orden de la salida.", "Distingo texto y cálculo."],
     examples: { python: 'print("Inicio")\nprint(3 + 6)', javascript: 'console.log("Inicio");\nconsole.log(3 + 6);', typescript: 'console.log("Inicio");\nconsole.log(3 + 6);' },
     steps: [step("saludo", "Muestra un saludo", "imprime-un-saludo"), step("dos-lineas", "Escribe dos líneas", "imprime-dos-lineas"), step("orden-mensaje", "Corrige el orden de un mensaje", "ordena-las-instrucciones"), step("texto-calculo", "Distingue texto y cálculo", "numero-y-texto")],
@@ -27,7 +27,7 @@ export const curriculumUnits: CurriculumUnit[] = [
   },
   {
     path: "desde-cero", level: "INITIATION", slug: "operaciones", title: "3. Operaciones",
-    theory: "La suma, resta y multiplicación transforman números. Los paréntesis indican qué calcular primero: no es lo mismo sumar un recargo a cada unidad que al total. Para practicar operaciones sin introducir todavía funciones, estos programas usan datos preparados. La comprobación ve el resultado; no puede demostrar que hayas utilizado la operación pedida.",
+    theory: "La suma, resta y multiplicación transforman números. Los paréntesis indican qué calcular primero: no es lo mismo sumar un recargo a cada unidad que al total. Guarda los datos en variables y utiliza esos valores en la operación. Puedes mostrar el cálculo directamente o guardar antes su resultado en otra variable.",
     readiness: ["Puedo traducir un cálculo a operaciones.", "Puedo justificar el uso de paréntesis."],
     examples: { python: 'precio = 3\nunidades = 4\nprint(precio * unidades)', javascript: 'const precio = 3;\nconst unidades = 4;\nconsole.log(precio * unidades);', typescript: 'const precio: number = 3;\nconst unidades: number = 4;\nconsole.log(precio * unidades);' },
     steps: [step("suma-cantidades", "Suma dos cantidades"), step("cambio", "Calcula el cambio"), step("precio-unidades", "Calcula un precio por unidades"), step("parentesis", "Corrige una fórmula con paréntesis", "respeta-los-parentesis")],

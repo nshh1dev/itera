@@ -35,6 +35,7 @@
     "db:seed:users": "tsx scripts/dev-users.ts",
     "content:paths": "tsx scripts/learning-paths.ts",
     "content:metadata": "tsx scripts/content-metadata.ts",
+    "content:audit": "tsx scripts/audit-learning-content.ts",
     "content:revisions": "tsx scripts/content-revisions.ts",
     "content:replace": "tsx --conditions=react-server scripts/replace-catalog.ts",
     "db:studio": "prisma studio",

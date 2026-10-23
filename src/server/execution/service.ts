@@ -3,9 +3,10 @@ import { db } from "@/server/db";
 import { judge, judgeProgram } from "./judge";
 import { availableRuntime, runCode, RunnerUnavailable } from "./piston";
 import type { Json, Language, RuntimeMode, TestResult } from "@/lib/types";
+import { checkConcept } from "./concepts";
 
 export async function evaluateSubmission(id: string) {
-  const submission = await db.submission.findUnique({ where: { id }, include: { variant: { include: { tests: { orderBy: { order: "asc" } }, version: { select: { exerciseId: true, runtimeMode: true } } } } } });
+  const submission = await db.submission.findUnique({ where: { id }, include: { variant: { include: { tests: { orderBy: { order: "asc" } }, version: { select: { exerciseId: true, runtimeMode: true, conceptRule: true } } } } } });
   if (!submission || submission.status !== "RUNNING") return;
   const { variant } = submission;
   const mode = variant.version.runtimeMode as RuntimeMode;
@@ -20,9 +21,10 @@ export async function evaluateSubmission(id: string) {
       results.push(mode === "PROGRAM" ? judgeProgram(output, entry) : judge(output, entry));
     }
     const passedCount = results.filter(r => r.passed).length;
-    const passed = passedCount === tests.length;
+    const conceptMessage = passedCount === tests.length && submission.mode === "submit" ? await checkConcept(variant.language as Language, submission.code, variant.version.conceptRule) : null;
+    const passed = passedCount === tests.length && !conceptMessage;
     await db.$transaction(async tx => {
-      const finalized = await tx.submission.updateMany({ where: { id, status: "RUNNING" }, data: { status: passed ? "PASSED" : "FAILED", passedCount, totalCount: tests.length, results, finishedAt: new Date() } });
+      const finalized = await tx.submission.updateMany({ where: { id, status: "RUNNING" }, data: { status: passed ? "PASSED" : "FAILED", passedCount, totalCount: tests.length, results, message: conceptMessage, finishedAt: new Date() } });
       if (!finalized.count || submission.mode !== "submit" || submission.diagnosticItemId) return;
       const key = { userId: submission.userId, exerciseId: variant.version.exerciseId, language: variant.language };
       await tx.progress.upsert({ where: { userId_exerciseId_language: key },

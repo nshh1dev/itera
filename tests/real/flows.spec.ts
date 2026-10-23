@@ -61,9 +61,12 @@ test("el sandbox real aprueba Python y guarda el progreso",async({page})=>{
   await solve(page,"logica-dos-requisitos","python","def solve(data):\n    return data % 3 == 0 and data % 5 == 0\n");
   await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
   await expect(page.getByText("Un paso más. Ejercicio resuelto.")).toBeVisible({timeout:40000});
-  const caseCount = await db.testCase.count({ where: { variant: { language: "python", version: { published: true, exercise: { slug: "logica-dos-requisitos" } } } } });
+  const active = await db.exerciseVersion.findFirstOrThrow({ where: { published: true, exercise: { slug: "logica-dos-requisitos" } }, orderBy: { number: "desc" }, select: { variants: { where: { language: "python" }, select: { tests: { select: { visible: true } } } } } });
+  const cases = active.variants[0].tests;
+  const caseCount = cases.length;
+  const hiddenCount = cases.filter(test => !test.visible).length;
   await expect(page.getByText(`${caseCount} / ${caseCount} pruebas`)).toBeVisible();
-  await expect(page.getByText(`${caseCount - 2} de ${caseCount - 2} pruebas ocultas superadas`)).toBeVisible();
+  await expect(page.getByText(`${hiddenCount} de ${hiddenCount} pruebas ocultas superadas`)).toBeVisible();
   const user=await db.user.findUniqueOrThrow({where:{email}});
   const progress=await db.progress.findMany({where:{userId:user.id}});
   expect(progress).toHaveLength(1);
