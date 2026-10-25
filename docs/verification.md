@@ -1,5 +1,50 @@
 # Verificación local
 
+## Guardado editorial seguro: tercer bloque de la auditoría (25 de octubre de 2026)
+
+- El editor bloquea todos sus campos y controles durante guardar, validar/publicar
+  u ocultar. Un bloqueo imperativo evita también envíos repetidos y cambios antes del
+  siguiente render. Se retiró el `useTransition` que nunca iniciaba una transición.
+- El envío usa `onSubmit`, conservando la validación HTML. La primera prueba lenta
+  demostró que actualizar el bloqueo dentro de `form action` podía aplazar el render
+  hasta terminar la acción; el manejador de envío activa el bloqueo con prioridad normal.
+- Los cambios pendientes tienen estado explícito, confirmación al salir por enlaces
+  y protección `beforeunload`. Publicar u ocultar requiere resolver la copia de sesión
+  y guardar primero los cambios. La confirmación identifica el número de versión y
+  recuerda que el catálogo selecciona la publicada de mayor número.
+- Cada edición conserva una copia en `sessionStorage`, separada por administrador y
+  ficha. Al volver o recargar se elige recuperar, descargar o descartar explícitamente;
+  los campos quedan bloqueados hasta decidir para no sobrescribir otra copia pendiente.
+  Se conservan campos incompletos y JSON todavía inválido. Recuperar nunca modifica
+  identidad, versión, publicación ni datos remotos; sigue siendo necesario guardar.
+- La copia se retira tras un guardado confirmado, sin borrar una escritura posterior.
+  La navegación de historial se cubre mediante recuperación, no mediante un bloqueo
+  experimental de Next.js. `sessionStorage` no es un respaldo permanente: cerrar la
+  pestaña puede perderlo. El aviso nativo depende del navegador; hay descarga JSON
+  explícita y se avisa cuando el almacenamiento falla o la copia supera el presupuesto.
+- `npm test`: **203 aprobadas**, sin omisiones, con cinco nuevas comprobaciones de
+  contenido pendiente, recuperación incompleta, identidad remota y copias dañadas.
+  Tipos, lint focalizado y build de producción aprobados. Sin cambios de esquema,
+  dependencias, acciones de autorización ni evaluación.
+- Chromium contra `next start`: **7 recorridos, repetidos dos veces: 14 aprobados**
+  en la confirmación final. Comprueban respuesta lenta con todos los controles
+  bloqueados, instantánea guardada, fallo de red y reintento, salida cancelada/aceptada,
+  recarga, historial con contenido remoto actualizado, confirmación de versión,
+  almacenamiento denegado, descarga y descarte cancelado/confirmado sin tocar otra clave.
+- Además del fallo inicial de bloqueo, una comprobación ampliada detectó que el
+  diálogo no devolvía el foco a su activador; se conservó el botón de apertura y se
+  verificó el retorno con Escape. Las pasadas fallidas no se contaron como aprobadas.
+- Revisión visual acotada de escritorio claro y móvil oscuro (390 px), teclado y
+  movimiento reducido. Sin desbordamiento horizontal; detector sin hallazgos.
+  No equivale a una auditoría exhaustiva de lectores de pantalla o zoom.
+- Cada pasada utilizó una copia temporal de PostgreSQL y contenido/cuentas temporales.
+  Las copias se eliminaron y la base original no recibió migraciones ni cambios.
+  Next y PostgreSQL quedaron detenidos. Persisten los avisos conocidos de Better Auth
+  sobre IP local y el origen deliberadamente inválido de una prueba negativa.
+- No se ejecutaron la suite E2E completa ni publicación real en Piston. Los recorridos
+  verifican la elección de versión y el bloqueo de publicación pendiente, no la validez
+  de referencias en el sandbox. Las demás fases de la auditoría continúan pendientes.
+
 ## Recuperación explícita de borradores: segundo bloque de la auditoría (25 de octubre de 2026)
 
 - Práctica y diagnóstico comparan cualquier copia local distinta cuya base remota
