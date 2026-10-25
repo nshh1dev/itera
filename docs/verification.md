@@ -1,5 +1,37 @@
 # Verificación local
 
+## Autoguardado recuperable: primer bloque de la auditoría (25 de octubre de 2026)
+
+- `saveDraft` diferencia errores temporales de infraestructura, conflictos reales,
+  sesión caducada, entrada inválida y ejercicio no disponible. Mantiene identidad
+  de sesión y concurrencia optimista; no modifica esquema ni dependencias.
+- El espacio de práctica reintenta fallos temporales con espera creciente hasta
+  30 segundos y restablece el intervalo habitual tras guardar. El aviso de
+  sincronización se limpia sin borrar avisos independientes del almacenamiento local.
+- `npm test`: **189 aprobadas**, sin omisiones. Incluye nueve nuevas comprobaciones
+  de clasificación, reintentos, recuperación, revisiones obsoletas y creación duplicada.
+  Las pruebas usan dobles en las fronteras de autenticación y base, no datos reales.
+  Tras el ajuste final de mensajes se repitieron las suites de autoguardado y
+  autorización: **15 aprobadas**, además del build.
+- Tipos (`tsc --noEmit --incremental false`), lint focalizado y build de producción
+  aprobados. La suite emite avisos de Better Auth sobre IP local y el origen inválido
+  de una prueba negativa; no representan una aprobación de escenarios no ejecutados.
+- Navegador Chromium contra `next start`: **3 recorridos focalizados repetidos
+  dos veces, 6 aprobados** en la confirmación final.
+  Verifican dos fallos de red antes de guardar automáticamente la edición más reciente,
+  limpieza del aviso sin recargar, conservación local ante un conflicto real y
+  persistencia del aviso de almacenamiento lleno tras recuperar la sincronización.
+  La primera pasada falló por un selector de alerta que también encontraba el
+  anunciador de Next.js; se acotó al panel del editor antes de repetir ambos recorridos.
+- La base nativa estaba detenida y pendiente de dos migraciones. Se inició con
+  autorización y cada pasada usó una copia temporal con nombre aleatorio: solo esas
+  copias recibieron migraciones y usuarios de prueba, y se eliminaron al terminar.
+  La base original no se migró ni se alteró; PostgreSQL volvió a quedar detenido.
+  Docker/WSL permaneció apagado y no se inició Piston.
+- No se ejecutó la suite E2E completa ni el sandbox real. Esta entrega no modifica
+  evaluación ni aislamiento. La recuperación comparada de borradores, la idempotencia
+  del cliente y las restantes fases de la auditoría siguen pendientes.
+
 ## Dashboard centrado en la siguiente práctica (23 de octubre de 2026)
 
 - Cambio acotado a Inicio y sus reglas de recomendación/presentación; sin

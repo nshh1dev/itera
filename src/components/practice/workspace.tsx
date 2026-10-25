@@ -10,6 +10,7 @@ import { languageNames, levelNames } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { exerciseHref } from "@/lib/learning-paths";
 import { uniqueHelp } from "@/lib/learning-help";
+import { draftSaveFeedback, temporaryDraftFailure } from "@/lib/draft-sync";
 import { saveDraft, recordHint, revealSolution, rememberPractice } from "@/server/actions";
 import { Button } from "@/components/ui/button";
 import { MotionReveal } from "@/components/motion-reveal";
@@ -82,6 +83,7 @@ function WorkspaceReady(props: Props) {
   const [saveTick, setSaveTick] = useState(0);
   const [saveState, setSaveState] = useState(props.userId ? code === props.initialCode ? "Guardado" : "Pendiente de sincronizar" : "En este navegador");
   const [saveError, setSaveError] = useState("");
+  const [syncError, setSyncError] = useState("");
   const [mobileTab, setMobileTab] = useState("statement");
   const [layout] = useState(readLayout);
   const [simple, setSimple] = useState(layout.simple);
@@ -108,6 +110,7 @@ function WorkspaceReady(props: Props) {
   const [solution, setSolution] = useState<{ code?: string; explanation?: string; error?: string } | null>(null);
   const [solutionBusy, setSolutionBusy] = useState(false);
   const busy = posting || !!activeId;
+  const saveNotice = [saveError, syncError].filter(Boolean).join(" ");
 
   useEffect(() => {
     if (props.userId) void rememberPractice({ variantId: props.variantId, language: props.language, pathSlug: props.pathSlug }).catch(() => setSaveError("No se pudo guardar dónde continuar. Tu código se conserva por separado."));
@@ -142,13 +145,19 @@ function WorkspaceReady(props: Props) {
       saving.current = true; setSaveState("Guardando…");
       try {
         const saved = await saveDraft({ variantId: props.variantId, code, revision: revision.current });
+        const feedback = draftSaveFeedback(saved, retryDelay.current);
+        conflict.current = feedback.blocked; retryDelay.current = feedback.delay;
+        setSyncError(feedback.error);
         if ("revision" in saved && saved.revision !== undefined) {
-          revision.current = saved.revision; lastSaved.current = code; retryDelay.current = 900;
+          revision.current = saved.revision; lastSaved.current = code;
           setSaveState(codeRef.current === code ? "Guardado" : "Pendiente de sincronizar");
           try { localStorage.setItem(storageKey, JSON.stringify({ code: codeRef.current, revision: revision.current })); }
           catch { setSaveError("El código está en la base de datos, pero no se pudo actualizar la copia del navegador."); }
-        } else { setSaveError(saved.error ?? "No se pudo guardar."); setSaveState("Copia local"); conflict.current = true; }
-      } catch { retryDelay.current = Math.min(retryDelay.current * 2, 30000); setSaveState("Copia local"); setSaveError("Sin conexión con la base de datos. Conservamos una copia en este navegador."); }
+        } else { setSaveState("Copia local"); }
+      } catch {
+        const feedback = draftSaveFeedback(temporaryDraftFailure, retryDelay.current);
+        retryDelay.current = feedback.delay; setSaveState("Copia local"); setSyncError(feedback.error);
+      }
       finally { saving.current = false; setSaveTick(t => t + 1); }
     }, retryDelay.current);
     return () => clearTimeout(timer);
@@ -206,7 +215,7 @@ function WorkspaceReady(props: Props) {
       </div>
     }>
     <main id="main-content" className="workspace-main">
-      <p className="sr-only" role="status">Borrador: {saveError || saveState}</p>
+      <p className="sr-only" role="status">Borrador: {saveNotice || saveState}</p>
       <LayoutGroup id="workspace-sections"><div className="workspace-mobile-tabs" role="group" aria-label="Secciones del ejercicio">{[{id:"statement",name:"Enunciado"},{id:"code",name:"Código"},{id:"results",name:"Resultados"}].map(tab=><button className="relative isolate" key={tab.id} onClick={()=>setMobileTab(tab.id)} aria-pressed={mobileTab === tab.id} aria-controls={`workspace-${tab.id}`}>{mobileTab === tab.id && <Selection id="workspace-selection" className="bg-control shadow-control" />}{tab.name}</button>)}</div></LayoutGroup>
       <div ref={grid} className="workspace-grid" style={{"--statement-width":`${width}%`} as React.CSSProperties}>
         <section id="workspace-statement" className={cn("workspace-statement px-5 py-6 sm:px-7 min-[1200px]:block", mobileTab !== "statement" && "hidden")} aria-label="Enunciado">
@@ -233,7 +242,7 @@ function WorkspaceReady(props: Props) {
         <div ref={editorColumn} className="workspace-editor-column min-w-0" style={{"--results-height":`${resultsHeight}px`} as React.CSSProperties}>
           <div ref={codePanel} id="workspace-code" tabIndex={-1} aria-label="Tu código" className={cn("workspace-code",mobileTab !== "code" && "hidden")}>
             <div className="workspace-toolbar flex min-h-12 shrink-0 flex-wrap items-center gap-2 px-4 py-1"><Code2 className="size-4 text-muted-foreground" /><span className="mr-2 hidden text-sm font-medium sm:inline">Tu solución</span><label className="sr-only" htmlFor="workspace-language">Lenguaje del ejercicio</label><select id="workspace-language" value={props.language} onChange={event=>router.push(exerciseHref(props.slug, event.target.value as Language, props.pathSlug))} className="min-h-11 rounded-md bg-surface-secondary px-2 text-xs font-medium md:min-h-8" disabled={busy}>{props.availableLanguages.map(language => <option key={language} value={language}>{languageNames[language]}</option>)}</select><span className="ml-auto flex items-center gap-1.5 text-xs text-muted-foreground">{saveState === "Guardado" && <Check className="size-3" />}{saveState}</span><EditorOptions fontSize={fontSize} onFontSize={setFontSize} code={code} onReset={()=>updateCode(props.starter)} /></div>
-            {saveError && <p role="alert" className="border-b bg-surface px-4 py-3 text-xs leading-6">{saveError}</p>}
+            {saveNotice && <p role="alert" className="border-b bg-surface px-4 py-3 text-xs leading-6">{saveNotice}</p>}
             <div className="editor-region">{simple ? <textarea aria-label={`Editor sencillo de ${languageNames[props.language]}`} className="h-full w-full resize-none bg-editor-background px-5 py-5 font-mono leading-7 focus-visible:-outline-offset-2" style={{fontSize}} value={code} onChange={event=>updateCode(event.target.value)} onKeyDown={event=>{if(event.key === "Enter" && (event.ctrlKey || event.metaKey) && !event.nativeEvent.isComposing){event.preventDefault();if(!event.repeat && code.trim()) void execute(event.shiftKey ? "submit" : "examples");}}} spellCheck={false} autoCapitalize="off" autoCorrect="off" /> : <CodeEditor code={code} language={props.language} onChange={updateCode} fontSize={fontSize} onRun={()=>execute("examples")} onSubmit={()=>execute("submit")} />}</div>
             <div className="workspace-editor-footer flex shrink-0 flex-wrap items-center gap-2 px-4 py-1"><Button variant="ghost" size="sm" className="text-xs" aria-pressed={simple} onClick={()=>setSimple(!simple)}>{simple ? "Usar editor avanzado" : "Editor sencillo"}</Button><Disclosure className="ml-auto text-xs text-muted-foreground" title="Atajos de teclado" triggerClassName="text-xs md:min-h-8"><p className="max-w-sm pb-3 leading-6">Ctrl / ⌘ + Enter: ejecutar ejemplos.<br />Ctrl / ⌘ + Shift + Enter: comprobar solución.{!simple && <><br />Ctrl + M: permitir que Tab salga del editor.</>}</p></Disclosure></div>
           </div>

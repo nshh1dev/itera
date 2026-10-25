@@ -5,6 +5,7 @@ import { currentUser, requireUser } from "./auth";
 import { db } from "./db";
 import { draftSchema, preferenceSchema, languageSchema } from "@/lib/validation";
 import { z } from "zod";
+import { temporaryDraftFailure, type DraftSaveResult } from "@/lib/draft-sync";
 
 export async function savePreferences(input: unknown) {
   const user = await requireUser();
@@ -20,25 +21,32 @@ export async function savePreferences(input: unknown) {
   return { success: true };
 }
 
-export async function saveDraft(input: unknown) {
-  const user = await currentUser();
-  if (!user) return { error: "Inicia sesión para sincronizar tu borrador.", kind: "auth" as const };
-  const parsed = draftSchema.safeParse(input);
-  if (!parsed.success) return { error: "El borrador no es válido.", kind: "invalid" as const };
-  const { variantId, code, revision } = parsed.data;
-  const variant = await db.exerciseVariant.findFirst({ where: { id: variantId, version: { published: true, exercise: { published: true } } }, select: { id: true } });
-  if (!variant) return { error: "El ejercicio ya no está disponible.", kind: "invalid" as const };
+export async function saveDraft(input: unknown): Promise<DraftSaveResult> {
   try {
+    const user = await currentUser();
+    if (!user) return { error: "Inicia sesión para sincronizar tu borrador.", kind: "auth" };
+    const parsed = draftSchema.safeParse(input);
+    if (!parsed.success) return { error: "El borrador no es válido.", kind: "invalid" };
+    const { variantId, code, revision } = parsed.data;
+    const variant = await db.exerciseVariant.findFirst({ where: { id: variantId, version: { published: true, exercise: { published: true } } }, select: { id: true } });
+    if (!variant) return { error: "El ejercicio ya no está disponible. Copia tu código antes de salir.", kind: "unavailable" };
     if (revision === 0) {
-      const draft = await db.draft.create({ data: { userId: user.id, variantId, code } });
-      return { revision: draft.revision };
+      try {
+        const draft = await db.draft.create({ data: { userId: user.id, variantId, code } });
+        return { revision: draft.revision };
+      } catch (error) {
+        // Solo una colisión de la clave única confirma un borrador concurrente.
+        // Una caída de la base no debe bloquear los reintentos del navegador.
+        if (typeof error === "object" && error !== null && "code" in error && error.code === "P2002") {
+          return { error: "Ya existe un borrador guardado. Copia tu código y recarga para recuperar la última versión.", kind: "conflict" };
+        }
+        throw error;
+      }
     }
     const updated = await db.draft.updateMany({ where: { userId: user.id, variantId, revision }, data: { code, revision: { increment: 1 } } });
-    if (!updated.count) return { error: "Este borrador cambió en otra pestaña. Copia tu código y recarga para recuperar la última versión.", kind: "conflict" as const };
+    if (!updated.count) return { error: "Este borrador cambió en otra pestaña. Copia tu código y recarga para recuperar la última versión.", kind: "conflict" };
     return { revision: revision + 1 };
-  } catch {
-    return { error: "No se pudo sincronizar. Tu copia local sigue disponible; si abriste otra pestaña, copia tu código antes de recargar.", kind: "conflict" as const };
-  }
+  } catch { return temporaryDraftFailure; }
 }
 
 export async function recordHint(variantId: string, index: number) {
