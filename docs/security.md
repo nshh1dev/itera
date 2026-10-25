@@ -1,5 +1,69 @@
 # Seguridad local
 
+## Estado final de la revisión local (25 de octubre de 2026)
+
+**Revisión cerrada. Los dos pasos finales están completados: autorización de
+diagnósticos y consolidación de este estado. No quedan tareas programadas dentro
+del alcance local acordado.** Esto no certifica ausencia de vulnerabilidades ni
+convierte Itera en un servicio apto para Internet.
+
+| Área | Estado vigente y evidencia |
+| --- | --- |
+| Secretos y dependencias | Historial revisado sin secretos reales encontrados; actualizaciones y auditorías de dependencias documentadas en las primeras entregas. No se ha ejecutado una nueva auditoría de dependencias en el cierre. |
+| Autenticación | Límites locales, política de nuevas contraseñas y recuperación comprobados. Cabeceras, cookies, recuperación y revocación verificadas en Chromium. |
+| Privacidad HTTP | Cabeceras básicas, `no-referrer`, permisos de dispositivos y `no-store` de autenticación comprobados; no se añadió HSTS al HTTP local ni CSP sin validar sus integraciones. |
+| Intentos y borradores | Pruebas de código y cinco repeticiones reales de acceso cruzado entre cuentas aprobadas. Concurrencia optimista conservada. |
+| Diagnósticos | Revisados lectura, inicio, guardado, finalización y reserva de ejecución. Nuevas pruebas con fronteras simuladas aprobadas; detalles en la undécima entrega. |
+| Respaldos | Creación exclusiva y limpieza ante fallos probadas; restauración real de 22 tablas aprobada. Dumps sin cifrado automático: conservarlos en almacenamiento externo cifrado. |
+| Piston | Límites declarados aplicados y sondas reales aprobadas. Sigue privilegiado y sin presupuesto global Docker de memoria/CPU/PIDs; no se certifican escapes ni comportamiento bajo carga. |
+| ACL de Windows | **Omitido por decisión del usuario**, no resuelto. No se modificaron permisos; persiste el riesgo de acceso local a secretos, correo y respaldos. |
+| Publicación en Internet | **Fuera de alcance.** Exigiría HTTPS, orígenes/proxy explícitos, recuperación privada al titular, privilegios mínimos de base, límites distribuidos y reevaluar el aislamiento de Piston. No desplegar asumiendo que esta revisión lo cubre. |
+
+### Límites del cierre
+
+- Las pruebas nuevas de diagnósticos ejecutan la página, acciones y endpoint reales
+  con dobles de sesión/base/runtime. No verifican PostgreSQL, cookies, transporte
+  de Server Actions o Piston reales en ese flujo. No se presenta esa prueba E2E
+  omitida como aprobada ni se abre automáticamente otra entrega para ella.
+- Las sondas de Piston y la restauración tienen el alcance limitado descrito en
+  sus entregas; no garantizan aislamiento absoluto ni recuperación de roles,
+  secuencias, otros esquemas o acceso de una app restaurada.
+- No se iniciaron servicios para el cierre ni se cambiaron datos, permisos o
+  dependencias. Se conserva el trabajo local ajeno.
+
+## Undécima entrega: diagnósticos y cierre del alcance
+
+- Revisadas `src/server/learning-actions.ts`, la página de diagnóstico y la reserva
+  en `POST /api/executions`. Los filtros ya vinculan diagnóstico/ítem a la sesión;
+  la reserva revalida propietario, variante y estado dentro del bloqueo compartido
+  con la finalización. No se encontró una omisión que requiriera cambiar producción.
+- `tests/diagnostic-authorization.test.ts`: siete escenarios y su contenedor
+  comprueban lectura ajena/inexistente rechazada, lectura propia con casos visibles,
+  `userId` falsificado, revisión obsoleta y diagnóstico cerrado, finalización ajena,
+  espera de evaluaciones e idempotencia al finalizar, y rechazo de ejecución con
+  ítem ajeno, variante incorrecta o diagnóstico cerrado antes de reservar/programar.
+- También simulan cierre entre la comprobación inicial y la reserva transaccional:
+  no se crea envío. El caso autorizado reserva con el usuario de sesión y programa
+  la evaluación sin ejecutarla. Se comprueban el perfil propio al iniciar y rechazo
+  de invitado, entrada inválida y origen no permitido.
+- Primera carga de la prueba falló por resolución de la ruta codificada de la
+  página; tipos detectó una autorreferencia del doble de base. Ambos defectos de
+  la prueba se corrigieron, sin cambios de aplicación. Prueba focalizada: ocho
+  aprobadas, ninguna omitida.
+- Verificación del cierre: `npm test` **180 aprobadas, ninguna omitida**;
+  `npm run typecheck` aprobado; lint sin errores y los 97 avisos locales previos.
+  No se repitió build porque solo cambian pruebas y documentación. No se ejecutó
+  E2E de diagnósticos ni se inició ningún servicio; WSL se comprobó apagado.
+- Se consolidó la tabla vigente y se separaron omisiones y trabajo para Internet.
+  **No hay un nuevo siguiente paso dentro de esta revisión.**
+
+## Historial de entregas anteriores
+
+Las entradas siguientes conservan lo que se verificó y quedó pendiente **en ese
+momento**. Sus apartados «Siguiente paso» y «Pendientes» son históricos, no una
+lista de tareas activa. El estado vigente es exclusivamente el resumen de cierre
+anterior; las entregas posteriores resuelven o reclasifican esos puntos.
+
 ## Décima entrega: autorización real con dos cuentas (25 de octubre de 2026)
 
 - Con autorización expresa se inició WSL/Docker y la app de producción. Se reutilizó
@@ -333,7 +397,7 @@ No se añaden servicios ni dependencias.
   alcance aprobado no autoriza iniciarlos. La prueba de autenticación usa el
   handler real de Better Auth en memoria, sin servidor ni base de datos.
 
-### Pendientes fuera de la primera entrega
+### Pendientes históricos fuera de la primera entrega
 
 - Restringir las ACL de Windows de secretos y datos privados, previa autorización.
 - Verificar el aislamiento real y los límites globales de Piston, previa
