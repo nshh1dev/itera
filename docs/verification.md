@@ -1,5 +1,51 @@
 # Verificación local
 
+## Recuperación de ejecuciones: primer bloque de la fase 2 (25 de octubre de 2026)
+
+- Práctica y diagnóstico comparten seguimiento de ejecuciones. Antes del POST se
+  persisten clave idempotente, código, modo, variante e ítem diagnóstico cuando existe.
+  Una respuesta incierta se recupera enviando exactamente esa instantánea y clave,
+  nunca el contenido actualizado del editor. Las claves locales separan cuenta,
+  variante y contexto. Se conservan los ids del formato anterior de práctica.
+- Tras recuperar el id solo se consulta ese intento. Un fallo de red, JSON incompleto,
+  sesión caducada o error HTTP de consulta no habilita otro envío. Los reintentos
+  esperan progresivamente hasta 30 segundos y no abandonan por contar 90/100 consultas.
+  El estado RUNNING remoto sigue siendo la autoridad, sin cambiar su caducidad.
+- Un rechazo explícito del POST inicial libera la instantánea y permite corregir o
+  volver a intentar. Si ya hubo respuesta incierta o recarga sin id, incluso un rechazo
+  posterior conserva el seguimiento: la primera petición podría seguir reservándose.
+  No se incorpora un descarte que permita duplicar ese trabajo incierto.
+- Si no se puede leer o escribir el seguimiento antes del envío, no se envía código y
+  se indica cómo reintentar. Si falla persistir el id aceptado, permanece en memoria y
+  se continúa consultando; la instantánea previa permite recuperar la misma clave tras
+  recargar. Si falla limpiar, el resultado sigue visible y recargar consulta el mismo id.
+  La limpieza no retira un seguimiento distinto escrito posteriormente.
+- Los avisos pendientes y de almacenamiento se muestran sin ocultar el resultado ni
+  quedar aplazados por `aria-busy` en su región viva. La edición del borrador continúa
+  disponible, pero no genera otra evaluación mientras la anterior está pendiente.
+- `npm test`: **218 aprobadas**, sin omisiones; incluye **15 pruebas nuevas** del
+  seguimiento. La primera pasada focalizada detectó que el literal JSON `null` podía
+  confundirse con un id antiguo; se corrigió y la confirmación general aprobó.
+- `npm run typecheck` y build aprobados. Lint completo sin errores: permanecen los
+  **97 avisos preexistentes** de herramientas locales; lint focalizado sin avisos.
+- Chromium contra producción: **4 recorridos repetidos dos veces: 8 aprobados**.
+  POST y consultas usan endpoints reales y una copia temporal de PostgreSQL; Piston
+  se sustituye por un doble HTTP en 2001 que **no ejecuta código**. Se descarta la
+  respuesta después de que el servidor acepte el POST, se edita, recarga y recupera;
+  la base confirma una única reserva con código original tanto en práctica como en
+  diagnóstico. También se prueban consultas fallidas, escritura del id denegada,
+  persistencia previa denegada, rechazo explícito y posterior reintento válido.
+- Revisión acotada de escritorio claro y móvil oscuro (390 px), con movimiento
+  reducido y sin desbordamiento horizontal. Detector sin hallazgos. No se ha realizado
+  una auditoría exhaustiva con lectores de pantalla o zoom.
+- Las copias temporales se migraron y eliminaron; la base original no se modificó.
+  Next, el doble HTTP y PostgreSQL quedaron detenidos. Persisten los avisos conocidos
+  de Better Auth sobre IP local y el origen inválido deliberado de una prueba negativa.
+- Sin cambios de esquema, dependencias, autorización ni reserva/finalización remota.
+  No se ejecutaron la suite E2E completa ni Piston real. La medición de evaluaciones
+  secuenciales frente a los 120 segundos y la detención del trabajo caducado siguen
+  pendientes: esta entrega no da por completada toda la fase 2.
+
 ## Guardado editorial seguro: tercer bloque de la auditoría (25 de octubre de 2026)
 
 - El editor bloquea todos sus campos y controles durante guardar, validar/publicar

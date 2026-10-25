@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { memo, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowLeft, ArrowRight, ChevronLeft, Play, Check, Lightbulb, Code2, Clock3, ChevronRight, BookOpen, GripVertical, GripHorizontal } from "lucide-react";
-import type { ExecutionResult, Language, Level, RuntimeMode } from "@/lib/types";
+import type { Language, Level, RuntimeMode } from "@/lib/types";
 import { activityNames, type ActivityType } from "@/lib/types";
 import { languageNames, levelNames } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -31,6 +31,7 @@ import { LayoutGroup } from "motion/react";
 import { useDraftRecovery } from "./use-draft-recovery";
 import { DraftRecovery } from "./draft-recovery";
 import type { DraftCopy } from "@/lib/draft-recovery";
+import { useExecution } from "./use-execution";
 
 const CodeEditor = dynamic(() => import("./code-editor"), { ssr: false, loading: () => <div className="flex h-full items-center justify-center text-sm text-muted-foreground">Preparando tu editor…</div> });
 const subscribe = () => () => {};
@@ -98,16 +99,14 @@ function WorkspaceReady(props: Props) {
   const [focusCodeRequest, setFocusCodeRequest] = useState(0);
   const grid = useRef<HTMLDivElement>(null);
   const editorColumn = useRef<HTMLDivElement>(null);
-  const [posting, setPosting] = useState(false);
-  const postingRef = useRef(false);
-  const [activeId, setActiveId] = useState<string | null>(() => { try { return localStorage.getItem(executionKey); } catch { return null; } });
-  const [result, setResult] = useState<ExecutionResult | null>(null);
-  const [error, setError] = useState("");
-  const [executedCode, setExecutedCode] = useState<string | null>(null);
+  const execution = useExecution({ key: executionKey, variantId: props.variantId });
+  const { result, busy } = execution;
+  const error = busy ? "" : execution.error;
+  const executionNotice = [busy ? execution.error : "", execution.storageError].filter(Boolean).join(" ");
+  const [executedCode, setExecutedCode] = useState<string | null>(execution.pending?.request?.code ?? null);
   const [hintCount, setHintCount] = useState(0);
   const [solution, setSolution] = useState<{ code?: string; explanation?: string; error?: string } | null>(null);
   const [solutionBusy, setSolutionBusy] = useState(false);
-  const busy = posting || !!activeId;
   const saveNotice = [saveError, syncError, recovery.error].filter(Boolean).join(" ");
 
   useEffect(() => {
@@ -168,41 +167,11 @@ function WorkspaceReady(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code, saveTick, props.userId, props.variantId, storageKey, recovery.pending]);
 
-  useEffect(() => {
-    if (!activeId) return;
-    let stopped = false;
-    let timer: ReturnType<typeof setTimeout>;
-    let count = 0;
-    async function poll() {
-      try {
-        const response = await fetch(`/api/executions/${encodeURIComponent(activeId!)}`, { cache: "no-store", signal: AbortSignal.timeout(8000) });
-        const payload = await response.json();
-        if (stopped) return;
-        if (!response.ok) throw new Error(payload.error || "No pudimos consultar el resultado.");
-        if (payload.status !== "RUNNING") {
-          setResult(payload); setActiveId(null); localStorage.removeItem(executionKey); router.refresh(); return;
-        }
-        if (++count > 90) throw new Error("La evaluación sigue pendiente. Recarga para consultar el resultado.");
-        timer = setTimeout(poll, Math.min(800 + count * 100, 2000));
-      } catch (error) {
-        if (!stopped) { setError(error instanceof Error ? error.message : "Se perdió la conexión."); setActiveId(null); }
-      }
-    }
-    timer = setTimeout(poll, 300);
-    return () => { stopped = true; clearTimeout(timer); };
-  }, [activeId, executionKey, router]);
-
-  async function execute(mode: "examples" | "submit") {
-    if (postingRef.current || activeId || recovery.pending) return;
+  function execute(mode: "examples" | "submit") {
+    if (busy || recovery.pending) return;
     if (!props.userId) { preserveGuestCode(); router.push(`/iniciar-sesion?volver=${encodeURIComponent(exerciseHref(props.slug, props.language, props.pathSlug))}`); return; }
-    postingRef.current = true; setPosting(true); setError(""); setResult(null); setMobileTab("results"); setResultsCollapsed(false); setExecutedCode(codeRef.current);
-    try {
-      const response = await fetch("/api/executions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ variantId: props.variantId, code: codeRef.current, mode, idempotencyKey: crypto.randomUUID() }), signal: AbortSignal.timeout(15000) });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "No se pudo iniciar la ejecución.");
-      setActiveId(payload.id); localStorage.setItem(executionKey, payload.id);
-    } catch (error) { setError(error instanceof Error ? error.message : "No se pudo conectar con el ejecutor."); }
-    finally { postingRef.current = false; setPosting(false); }
+    setMobileTab("results"); setResultsCollapsed(false);
+    if (execution.start(codeRef.current, mode)) setExecutedCode(codeRef.current);
   }
 
   return <AppShell user={props.user} workspace header={
@@ -259,7 +228,7 @@ function WorkspaceReady(props: Props) {
             <Button aria-describedby="execution-help" className="min-w-0 flex-1 whitespace-normal px-2 text-xs [&_svg]:hidden min-[380px]:[&_svg]:block sm:flex-none sm:px-3" loading={busy} disabled={recovery.pending || !code.trim()} onClick={()=>execute("submit")}><Check data-icon="inline-start" />Comprobar solución</Button>
           </div>
           {!resultsCollapsed && <div role="separator" aria-label="Ajustar altura de resultados" aria-orientation="horizontal" aria-valuenow={resultsHeight} aria-valuemin={140} aria-valuemax={400} aria-valuetext={`${resultsHeight} píxeles`} tabIndex={0} className="panel-resizer hidden h-[7px] shrink-0 cursor-row-resize items-center justify-center min-[1200px]:flex" onKeyDown={event=>{if(event.key==="ArrowUp"||event.key==="ArrowDown"){event.preventDefault();resultSize.step(event.key==="ArrowUp"?20:-20);}}} onPointerDown={event=>event.currentTarget.setPointerCapture(event.pointerId)} onPointerMove={event=>{if(event.currentTarget.hasPointerCapture(event.pointerId)&&editorColumn.current){const rect=editorColumn.current.getBoundingClientRect();resultSize.move(rect.bottom-event.clientY);}}} onPointerUp={event=>{resultSize.finish();event.currentTarget.releasePointerCapture(event.pointerId);}} onLostPointerCapture={resultSize.finish} onPointerCancel={resultSize.finish}><GripHorizontal className="size-3 text-muted-foreground" /></div>}
-          <div id="workspace-results" data-collapsed={resultsCollapsed} className={cn("workspace-results min-[1200px]:block",mobileTab !== "results" && "hidden")}><Results result={result} busy={busy} error={error} nextHref={props.nextHref ?? (props.pathSlug ? `/rutas/${encodeURIComponent(props.pathSlug)}?lenguaje=${props.language}` : undefined)} nextLabel={props.pathSlug ? props.nextHref ? "Siguiente ejercicio de la ruta" : "Volver a la ruta" : "Practicar un ejercicio relacionado"} collapsed={resultsCollapsed} onToggle={toggleResults} runtimeMode={props.runtimeMode} recentSubmissions={props.recentSubmissions} />{executedCode !== null && executedCode !== code && (result || error) && <p className={cn("px-5 pb-4 text-xs text-muted-foreground", resultsCollapsed && "min-[1200px]:hidden")}>Has editado el código desde la última ejecución. Vuelve a comprobarlo.</p>}</div>
+          <div id="workspace-results" data-collapsed={resultsCollapsed} className={cn("workspace-results min-[1200px]:block",mobileTab !== "results" && "hidden")}><Results result={result} busy={busy} error={error} notice={executionNotice} nextHref={props.nextHref ?? (props.pathSlug ? `/rutas/${encodeURIComponent(props.pathSlug)}?lenguaje=${props.language}` : undefined)} nextLabel={props.pathSlug ? props.nextHref ? "Siguiente ejercicio de la ruta" : "Volver a la ruta" : "Practicar un ejercicio relacionado"} collapsed={resultsCollapsed} onToggle={toggleResults} runtimeMode={props.runtimeMode} recentSubmissions={props.recentSubmissions} />{executedCode !== null && executedCode !== code && (result || error) && <p className={cn("px-5 pb-4 text-xs text-muted-foreground", resultsCollapsed && "min-[1200px]:hidden")}>Has editado el código desde la última ejecución. Vuelve a comprobarlo.</p>}</div>
         </div>
       </div>
     </main>

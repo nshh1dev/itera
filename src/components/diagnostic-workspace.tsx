@@ -13,6 +13,7 @@ import { OnboardingProgress } from "./onboarding-progress";
 import { useDraftRecovery } from "./practice/use-draft-recovery";
 import { DraftRecovery } from "./practice/draft-recovery";
 import type { DraftCopy } from "@/lib/draft-recovery";
+import { useExecution } from "./practice/use-execution";
 
 const CodeEditor = dynamic(() => import("./practice/code-editor"), { ssr: false, loading: () => <p className="p-5 text-sm text-muted-foreground">Preparando tu editor local…</p> });
 const subscribe = () => () => {};
@@ -39,12 +40,12 @@ function DiagnosticEditor({ id, userId, language, backHref, item, index, onNavig
   const pending = useRef<Promise<boolean> | null>(null);
   const conflict = useRef(false);
   const [saveMessage, setSaveMessage] = useState("Copia del diagnóstico independiente de tus ejercicios.");
-  const [result, setResult] = useState<ExecutionResult | null>(item.result);
-  const [activeId, setActiveId] = useState(item.result?.status === "RUNNING" ? item.result.id : null);
+  const execution = useExecution({ key: `itera:diagnostic-execution:${userId}:${item.id}:${item.variantId}`, variantId: item.variantId, diagnosticItemId: item.id, initialResult: item.result });
+  const { result } = execution;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const busyRef = useRef(false);
-  const blocked = busy || !!activeId;
+  const blocked = busy || execution.busy;
   const [simple, setSimple] = useState(() => { try { return JSON.parse(localStorage.getItem("itera:workspace") ?? "null")?.simple === true; } catch { return false; } });
   const [fontSize] = useState(() => {
     try {
@@ -99,35 +100,12 @@ function DiagnosticEditor({ id, userId, language, backHref, item, index, onNavig
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code, recovery.pending]);
 
-  useEffect(() => {
-    if (!activeId) return;
-    let stopped = false;
-    let timer: ReturnType<typeof setTimeout>;
-    let count = 0;
-    async function poll() {
-      try {
-        const response = await fetch(`/api/executions/${activeId}`, { cache: "no-store", signal: AbortSignal.timeout(8000) });
-        const payload = await response.json();
-        if (stopped) return;
-        if (!response.ok) throw new Error(payload.error ?? "No se pudo consultar la evaluación.");
-        if (payload.status !== "RUNNING") { setResult(payload); setActiveId(null); return; }
-        if (++count > 100) throw new Error("La evaluación sigue pendiente. Recarga para consultar el resultado.");
-        timer = setTimeout(poll, 1000);
-      } catch (failure) { if (!stopped) { setError(failure instanceof Error ? failure.message : "Se perdió la conexión."); setActiveId(null); } }
-    }
-    timer = setTimeout(poll, 400);
-    return () => { stopped = true; clearTimeout(timer); };
-  }, [activeId]);
-
   async function execute(mode: "examples" | "submit") {
-    if (busyRef.current || activeId) return;
+    if (busyRef.current || execution.busy) return;
     busyRef.current = true; setBusy(true); setError("");
     try {
       if (!await save()) { setError("Guarda o recupera tu borrador antes de evaluar."); return; }
-      const response = await fetch("/api/executions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ variantId: item.variantId, diagnosticItemId: item.id, code: codeRef.current, mode, idempotencyKey: crypto.randomUUID() }), signal: AbortSignal.timeout(15000) });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error ?? "No se pudo iniciar la evaluación.");
-      setResult(null); setActiveId(payload.id);
+      execution.start(codeRef.current, mode);
     } catch (failure) { setError(failure instanceof Error ? failure.message : "No se pudo conectar con el ejecutor."); }
     finally { busyRef.current = false; setBusy(false); }
   }
@@ -137,7 +115,7 @@ function DiagnosticEditor({ id, userId, language, backHref, item, index, onNavig
     else setError("No se pudo sincronizar. Copia tu código antes de recargar.");
   }
   async function finish() {
-    if (busyRef.current || activeId) return;
+    if (busyRef.current || execution.busy) return;
     if (recovery.pending) { setError("Compara y recupera tu borrador antes de terminar el diagnóstico."); return; }
     busyRef.current = true; setBusy(true); setError("");
     try {
@@ -155,7 +133,7 @@ function DiagnosticEditor({ id, userId, language, backHref, item, index, onNavig
     <div className="min-w-0 overflow-hidden rounded-xl bg-editor-background"><div className="flex flex-wrap items-center justify-between gap-2 bg-surface px-4 py-2"><span className="text-sm">{languageNames[language]}</span><Button variant="ghost" size="sm" onClick={toggleSimple} aria-pressed={simple}>Editor sencillo</Button></div>
       <DraftRecovery pending={recovery.pending} copies={recovery.copies} current={{ code, revision: displayRevision, source: "local" }} onChoose={recoverCode} />
       {recovery.error && <p role="alert" className="bg-surface px-4 py-3 text-sm leading-6">{recovery.error}</p>}
-      <div className="h-[360px]">{simple ? <textarea aria-label="Código del diagnóstico" readOnly={recovery.pending} className="h-full w-full resize-none bg-editor-background p-4 font-mono leading-6" style={{ fontSize }} value={code} onChange={event => update(event.target.value)} spellCheck={false} /> : <CodeEditor code={code} readOnly={recovery.pending} onChange={update} language={language} fontSize={fontSize} onRun={() => void execute("examples")} onSubmit={() => void execute("submit")} />}</div><div className="flex flex-wrap gap-2 bg-surface p-3"><Button variant="outline" disabled={blocked || recovery.pending} onClick={() => execute("examples")}>Probar ejemplos</Button><Button loading={blocked} disabled={recovery.pending} onClick={() => execute("submit")}>Evaluar reto</Button></div><Results result={result} busy={blocked} error={error} runtimeMode={item.runtimeMode} diagnostic /></div></div>
-    <p role="status" className="mt-4 text-sm leading-6 text-muted-foreground">{saveMessage}</p><div className="mt-7 flex flex-wrap items-center gap-4"><Button variant="outline" loading={busy} disabled={!!activeId} onClick={finish}>{index >= 1 ? "Ver mi recomendación" : "Terminar sin continuar"}</Button><p className="text-sm text-muted-foreground">Los retos sin evaluar no cuentan como fallos.</p></div>
+      <div className="h-[360px]">{simple ? <textarea aria-label="Código del diagnóstico" readOnly={recovery.pending} className="h-full w-full resize-none bg-editor-background p-4 font-mono leading-6" style={{ fontSize }} value={code} onChange={event => update(event.target.value)} spellCheck={false} /> : <CodeEditor code={code} readOnly={recovery.pending} onChange={update} language={language} fontSize={fontSize} onRun={() => void execute("examples")} onSubmit={() => void execute("submit")} />}</div><div className="flex flex-wrap gap-2 bg-surface p-3"><Button variant="outline" disabled={blocked || recovery.pending} onClick={() => execute("examples")}>Probar ejemplos</Button><Button loading={blocked} disabled={recovery.pending} onClick={() => execute("submit")}>Evaluar reto</Button></div><Results result={result} busy={blocked} error={[error, execution.busy ? "" : execution.error].filter(Boolean).join(" ")} notice={[execution.busy ? execution.error : "", execution.storageError].filter(Boolean).join(" ")} runtimeMode={item.runtimeMode} diagnostic /></div></div>
+    <p role="status" className="mt-4 text-sm leading-6 text-muted-foreground">{saveMessage}</p><div className="mt-7 flex flex-wrap items-center gap-4"><Button variant="outline" loading={busy} disabled={execution.busy} onClick={finish}>{index >= 1 ? "Ver mi recomendación" : "Terminar sin continuar"}</Button><p className="text-sm text-muted-foreground">Los retos sin evaluar no cuentan como fallos.</p></div>
   </div>;
 }

@@ -11,7 +11,7 @@ import { Disclosure } from "@/components/arc/disclosure";
 import { executionFeedback } from "@/lib/execution-feedback";
 import { ActivityList, type Activity } from "@/components/activity-list";
 
-export const Results = memo(function Results({ result, busy, error, nextHref, nextLabel = "Practicar un ejercicio relacionado", collapsed = false, onToggle, runtimeMode = "FUNCTION", recentSubmissions, diagnostic = false }: { result: ExecutionResult | null; busy: boolean; error: string; nextHref?: string; nextLabel?: string; collapsed?: boolean; onToggle?: () => void; runtimeMode?: RuntimeMode; recentSubmissions?: Activity[]; diagnostic?: boolean }) {
+export const Results = memo(function Results({ result, busy, error, notice, nextHref, nextLabel = "Practicar un ejercicio relacionado", collapsed = false, onToggle, runtimeMode = "FUNCTION", recentSubmissions, diagnostic = false }: { result: ExecutionResult | null; busy: boolean; error: string; notice?: string; nextHref?: string; nextLabel?: string; collapsed?: boolean; onToggle?: () => void; runtimeMode?: RuntimeMode; recentSubmissions?: Activity[]; diagnostic?: boolean }) {
   const contentId = useId();
   return <section aria-label="Resultados de ejecución">
     <div className="results-toolbar flex h-[42px] items-center gap-2 px-4 text-xs font-medium">
@@ -19,7 +19,8 @@ export const Results = memo(function Results({ result, busy, error, nextHref, ne
       <span className="ml-auto font-normal text-muted-foreground">{busy ? "Evaluando…" : error ? "No se pudo ejecutar" : result ? `${result.passedCount} / ${result.totalCount} pruebas` : "Sin ejecuciones"}</span>
       {onToggle && <Button variant="ghost" size="icon" className="hidden min-[1200px]:inline-flex" aria-label={collapsed ? "Expandir resultados" : "Contraer resultados"} aria-expanded={!collapsed} aria-controls={contentId} title={collapsed ? "Expandir resultados" : "Contraer resultados"} onClick={onToggle}>{collapsed ? <ChevronUp /> : <ChevronDown />}</Button>}
     </div>
-    <div id={contentId} className={cn("p-4", collapsed && "min-[1200px]:hidden")} aria-busy={busy}>
+    <div id={contentId} className={cn("p-4", collapsed && "min-[1200px]:hidden")}>
+      {notice && <p role="status" className="mb-3 text-sm leading-6">{notice}</p>}
       <p role="status" className="sr-only">{busy ? "Evaluando tu solución." : error ? "No se pudo ejecutar el programa." : result ? `${result.status === "ERROR" ? "La evaluación se interrumpió." : result.status === "PASSED" ? result.mode === "submit" ? diagnostic ? "Reto de diagnóstico superado. No concede progreso." : "Ejercicio resuelto. Progreso guardado." : "Los ejemplos funcionan." : "Revisa tu solución."} ${result.passedCount} de ${result.totalCount} pruebas superadas.` : ""}</p>
       <MotionRegion motionKey={busy ? "busy" : error || (result ? `${result.status}:${result.mode}:${result.passedCount}` : "empty")}>
       {busy ? <div className="flex items-center gap-3 py-4"><Loader2 className="size-5 shrink-0 arc-spin text-primary" aria-hidden="true" /><p className="text-sm font-medium">Probando tu idea…</p></div>
