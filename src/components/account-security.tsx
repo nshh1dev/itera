@@ -4,6 +4,7 @@ import { useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { passwordChangeSchema } from "@/lib/account-validation";
+import { passwordPolicyMessage } from "@/lib/password-policy";
 import { changeAccountEmail, deactivateAccount } from "@/server/account-actions";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
@@ -33,6 +34,7 @@ export function AccountSecurity({ email, section = "account" }: { email: string;
         const parsed = passwordChangeSchema.safeParse(Object.fromEntries(data));
         if (!parsed.success) { setError(parsed.error.issues[0]?.message ?? "Revisa la nueva contraseña."); return; }
         const result = await authClient.changePassword({ currentPassword: parsed.data.currentPassword, newPassword: parsed.data.newPassword, revokeOtherSessions: true });
+        if (result.error?.code === "WEAK_PASSWORD") { setError(passwordPolicyMessage); return; }
         if (result.error) { setError("No se pudo cambiar la contraseña. Comprueba la contraseña actual y que la nueva tenga entre 10 y 128 caracteres, o vuelve a iniciar sesión."); return; }
         setMessage("Contraseña actualizada. Las otras sesiones se han cerrado.");
       } else if (mode === "email") {

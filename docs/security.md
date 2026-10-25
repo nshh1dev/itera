@@ -1,5 +1,41 @@
 # Seguridad local
 
+## Tercera entrega: nuevas contraseñas (25 de octubre de 2026)
+
+- Política compartida por servidor y formularios: entre 10 y 128 caracteres,
+  rechazo de una lista local acotada de claves comunes y sus sufijos numéricos,
+  secuencias ascendentes/descendentes conocidas y bloques repetidos de hasta
+  cuatro unidades UTF-16. También detecta variantes de mayúsculas, acentos,
+  caracteres de ancho completo y separadores intercalados.
+- La normalización solo sirve para reconocer esos patrones. No recorta ni cambia
+  la contraseña enviada al hash. Se aceptan frases, espacios, Unicode y claves
+  generadas sin imponer tipos de caracteres. No es un medidor de entropía ni una
+  consulta a contraseñas filtradas; que una clave pase no garantiza que sea segura.
+- El hook de Better Auth valida registro, cambio y recuperación aun en llamadas
+  HTTP directas. Los formularios muestran el motivo mediante los avisos existentes,
+  sin cambios de composición, colores o controles.
+- No se aplica la nueva regla al inicio de sesión ni a la contraseña actual:
+  las cuentas existentes siguen pudiendo entrar y cambiar su clave. Se conservan
+  el hash scrypt, los controles de sesión y la recuperación local.
+- `npm test`: 154 pruebas aprobadas, seis nuevas. Los tres flujos usan el handler
+  real de Better Auth con un adaptador en memoria, sin servidor ni PostgreSQL.
+  Se comprueba rechazo sin crear cuentas o cambiar hashes, acceso con una clave
+  histórica y que una recuperación rechazada no consuma el token. La recuperación
+  válida sigue revocando sesiones y no permite reutilizar ese token.
+- `npm run typecheck`, `npm run build` y lint: aprobados; lint conserva los 97
+  avisos ajenos de herramientas locales. Se reutiliza la auditoría de dependencias
+  de la segunda entrega, pues no cambió el manifiesto, lockfile ni la instalación.
+- No se iniciaron servicios ni se ejecutaron E2E o revisión visual en navegador.
+  El detector mecánico solo señaló el tamaño preexistente del título del acceso;
+  no se modificó. La prueba en memoria no certifica la integración con PostgreSQL.
+- Se conservan las ACL y los cambios locales ajenos. Docker requiere reconstrucción
+  manual para recibir esta entrega.
+
+**Siguiente paso:** revisar los límites globales y preparar pruebas de aislamiento
+de Piston. Ejecutarlas contra el sandbox real requiere autorización para iniciar
+el entorno. Corregir los permisos de Windows sigue pendiente de autorización
+separada; ninguna de estas entregas sustituye esas dos verificaciones.
+
 ## Segunda entrega: dependencia transitiva (25 de octubre de 2026)
 
 - `fast-uri` pasa de 3.1.8 a 3.1.9, versión corregida compatible con el rango
@@ -17,7 +53,7 @@
   modificaron permisos locales. La imagen Docker existente requiere reconstrucción
   manual para recibir ambas entregas.
 
-**Siguiente paso de solo código:** rechazar contraseñas comunes y patrones
+**Siguiente paso de aquella entrega (resuelto en la tercera):** rechazar contraseñas comunes y patrones
 triviales en registro, cambio y recuperación, con validación del servidor y
 pruebas de los tres flujos; sin servicios externos ni reglas arbitrarias de símbolos.
 Las ACL y la comprobación real del sandbox siguen requiriendo autorización aparte.
@@ -65,8 +101,8 @@ No se añaden servicios ni dependencias.
 - Restringir las ACL de Windows de secretos y datos privados, previa autorización.
 - Verificar el aislamiento real y los límites globales de Piston, previa
   autorización para iniciar el entorno. No se certifica el sandbox con estas pruebas.
-- Revisar la política de contraseñas y la protección de respaldos. El aviso de
-  `fast-uri` quedó resuelto en la segunda entrega.
+- Revisar la protección de respaldos. El aviso de `fast-uri` quedó resuelto en
+  la segunda entrega y la política de nuevas contraseñas en la tercera.
 - Antes de publicar: HTTPS, orígenes del entorno, recuperación entregada al
   titular, usuario PostgreSQL de privilegios mínimos y frontera explícita de proxy.
   El contador local compartido no sustituye un diseño de límites para Internet.

@@ -9,6 +9,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { db } from "./db";
 import { localAuthIpAddress } from "@/lib/auth-security";
+import { assertNewPasswordPolicy } from "./password-policy";
 
 export const auth = betterAuth({
   appName: "Itera",
@@ -35,6 +36,7 @@ export const auth = betterAuth({
     } } },
   },
   hooks: { before: createAuthMiddleware(async ctx => {
+    assertNewPasswordPolicy(ctx.path, ctx.body);
     if (ctx.path === "/sign-up/email") {
       const name = typeof ctx.body?.name === "string" ? ctx.body.name.trim() : "";
       if (name.length < 2 || name.length > 60) throw new APIError("BAD_REQUEST", { message: "El nombre debe tener entre 2 y 60 caracteres." });

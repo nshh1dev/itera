@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { newPasswordIssue } from "./password-policy";
 
 const currentPassword = z.string().min(1, "Introduce tu contraseña actual.").max(128, "La contraseña actual no puede superar los 128 caracteres.");
 export const emailChangeSchema = z.object({
@@ -7,7 +8,10 @@ export const emailChangeSchema = z.object({
 });
 export const passwordChangeSchema = z.object({
   currentPassword,
-  newPassword: z.string().min(10, "La nueva contraseña debe tener al menos 10 caracteres.").max(128, "La nueva contraseña no puede superar los 128 caracteres."),
+  newPassword: z.string().superRefine((value, ctx) => {
+    const message = newPasswordIssue(value);
+    if (message) ctx.addIssue({ code: "custom", message });
+  }),
   confirmation: z.string(),
 }).refine(value => value.newPassword === value.confirmation, { message: "Las contraseñas no coinciden.", path: ["confirmation"] })
   .refine(value => value.currentPassword !== value.newPassword, { message: "Elige una contraseña diferente a la actual.", path: ["newPassword"] });

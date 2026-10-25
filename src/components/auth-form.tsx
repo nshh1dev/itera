@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ArrowRight, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { safeReturnTo } from "@/lib/utils";
+import { newPasswordIssue, passwordPolicyMessage } from "@/lib/password-policy";
 import { Button } from "./ui/button";
 import { OnboardingProgress } from "./onboarding-progress";
 
@@ -27,6 +28,10 @@ export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "re
     const email = String(data.get("email") || "").trim().toLowerCase();
     const password = String(data.get("password") || "");
     try {
+      if (register || reset) {
+        const issue = newPasswordIssue(password);
+        if (issue) throw new Error(issue);
+      }
       if (forgot) {
         const result = await authClient.requestPasswordReset({ email, redirectTo: `${window.location.origin}/restablecer-contrasena?volver=${encodeURIComponent(returnTo)}` });
         if (result.error) throw new Error("No se pudo solicitar el enlace. Vuelve a intentarlo en un momento.");
@@ -36,10 +41,12 @@ export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "re
         const token = search.get("token");
         if (!token) throw new Error("El enlace no es válido. Solicita uno nuevo.");
         const result = await authClient.resetPassword({ newPassword: password, token });
+        if (result.error?.code === "WEAK_PASSWORD") throw new Error(passwordPolicyMessage);
         if (result.error) throw new Error("El enlace expiró o no es válido. Solicita uno nuevo.");
         setSuccess(true); return;
       }
       const result = register ? await authClient.signUp.email({ email, password, name: String(data.get("name") || "").trim() }) : await authClient.signIn.email({ email, password });
+      if (result.error?.code === "WEAK_PASSWORD") throw new Error(passwordPolicyMessage);
       if (result.error?.status === 429) throw new Error("Has realizado varios intentos seguidos. Espera un momento antes de volver a intentarlo.");
       if (result.error?.code === "ACCOUNT_DISABLED") throw new Error("Esta cuenta está desactivada. Contacta con un administrador para reactivarla.");
       if (result.error) throw new Error(register ? "No pudimos crear la cuenta. Comprueba el correo y usa una contraseña de al menos 10 caracteres; si ya tienes cuenta, inicia sesión." : "El correo o la contraseña no coinciden. Revisa los datos e inténtalo de nuevo.");
