@@ -28,6 +28,9 @@ import { usePanelSize } from "./use-panel-size";
 import { Disclosure } from "@/components/arc/disclosure";
 import { Selection } from "@/components/arc/selection";
 import { LayoutGroup } from "motion/react";
+import { useDraftRecovery } from "./use-draft-recovery";
+import { DraftRecovery } from "./draft-recovery";
+import type { DraftCopy } from "@/lib/draft-recovery";
 
 const CodeEditor = dynamic(() => import("./code-editor"), { ssr: false, loading: () => <div className="flex h-full items-center justify-center text-sm text-muted-foreground">Preparando tu editor…</div> });
 const subscribe = () => () => {};
@@ -43,7 +46,6 @@ function readLayout() {
   } catch { return fallback; }
 }
 type Props = { userId?: string; user: ShellUser | null; slug: string; title: string; category: string; level: Level; minutes: number; statement: string; objective: string; prerequisites: string[]; practiceGoals: string[]; previousExercises: PreviousExercise[]; activityType: ActivityType; constraints: string[]; hints: string[]; complexity: string; commonErrors: string[]; recentSubmissions: Activity[]; language: Language; availableLanguages: Language[]; lesson?: Lesson; runtimeMode: RuntimeMode; variantId: string; starter: string; initialCode: string; revision: number; examples: PublicExample[]; nextHref?: string; previousHref?: string; position: number; total: number; pathSlug?: string };
-type LocalDraft = { code: string; revision: number };
 
 export function Workspace(props: Props) {
   const hydrated = useSyncExternalStore(subscribe, () => true, () => false);
@@ -57,7 +59,7 @@ export function Workspace(props: Props) {
       </div>
     </main>
   </AppShell>;
-  return <WorkspaceReady key={props.variantId} {...props} />;
+  return <WorkspaceReady key={`${props.userId ?? "guest"}:${props.variantId}`} {...props} />;
 }
 
 function WorkspaceReady(props: Props) {
@@ -67,21 +69,17 @@ function WorkspaceReady(props: Props) {
   const storageKey = `itera:draft:${props.userId ?? "guest"}:${props.variantId}`;
   const executionKey = `itera:execution:${props.userId ?? "guest"}:${props.variantId}`;
   const transferKey = `itera:transfer:${props.variantId}`;
-  const [code, setCode] = useState(() => {
-    if (props.userId && props.revision === 0) {
-      try { const transferred = sessionStorage.getItem(transferKey); if (transferred !== null && transferred.length <= 30000) return transferred; } catch {}
-    }
-    try { const saved: LocalDraft = JSON.parse(localStorage.getItem(storageKey) ?? "null"); if (saved && typeof saved.code === "string" && saved.code.length <= 30000 && saved.revision >= props.revision) return saved.code; } catch {}
-    return props.initialCode;
-  });
+  const recovery = useDraftRecovery(storageKey, { code: props.initialCode, revision: props.revision }, !!props.userId, transferKey);
+  const [code, setCode] = useState(recovery.initialCode);
   const codeRef = useRef(code);
   const revision = useRef(props.revision);
+  const [displayRevision, setDisplayRevision] = useState(props.revision);
   const lastSaved = useRef(props.initialCode);
   const saving = useRef(false);
   const conflict = useRef(false);
   const retryDelay = useRef(900);
   const [saveTick, setSaveTick] = useState(0);
-  const [saveState, setSaveState] = useState(props.userId ? code === props.initialCode ? "Guardado" : "Pendiente de sincronizar" : "En este navegador");
+  const [saveState, setSaveState] = useState(recovery.pending ? "Pendiente de recuperar" : props.userId ? code === props.initialCode ? "Guardado" : "Pendiente de sincronizar" : "En este navegador");
   const [saveError, setSaveError] = useState("");
   const [syncError, setSyncError] = useState("");
   const [mobileTab, setMobileTab] = useState("statement");
@@ -110,13 +108,12 @@ function WorkspaceReady(props: Props) {
   const [solution, setSolution] = useState<{ code?: string; explanation?: string; error?: string } | null>(null);
   const [solutionBusy, setSolutionBusy] = useState(false);
   const busy = posting || !!activeId;
-  const saveNotice = [saveError, syncError].filter(Boolean).join(" ");
+  const saveNotice = [saveError, syncError, recovery.error].filter(Boolean).join(" ");
 
   useEffect(() => {
     if (props.userId) void rememberPractice({ variantId: props.variantId, language: props.language, pathSlug: props.pathSlug }).catch(() => setSaveError("No se pudo guardar dónde continuar. Tu código se conserva por separado."));
   }, [props.userId, props.variantId, props.language, props.pathSlug]);
 
-  useEffect(() => { if (props.userId) { try { sessionStorage.removeItem(transferKey); } catch {} } }, [props.userId, transferKey]);
   useEffect(() => { try { localStorage.setItem(settingsKey, JSON.stringify({ simple, fontSize, width: savedWidth, resultsHeight: savedResultsHeight })); } catch {} }, [simple, fontSize, savedWidth, savedResultsHeight]);
   useEffect(() => {
     if (focusCodeRequest && mobileTab === "code") {
@@ -131,15 +128,21 @@ function WorkspaceReady(props: Props) {
   }
 
   function updateCode(value: string) {
+    if (recovery.pending) return;
     if (value.length > 30000) { setSaveError("El editor admite hasta 30 000 caracteres."); return; }
     codeRef.current = value; setCode(value);
-    try { localStorage.setItem(storageKey, JSON.stringify({ code: value, revision: revision.current })); }
-    catch { setSaveError("El navegador no pudo guardar la copia local. Copia tu código antes de cerrar."); }
+    recovery.persist(value, revision.current, lastSaved.current);
     if (props.userId && !conflict.current) setSaveState("Pendiente de sincronizar");
   }
 
+  function recoverCode(copy: DraftCopy) {
+    recovery.resolve(copy, { code: codeRef.current, revision: revision.current }, lastSaved.current);
+    codeRef.current = copy.code; setCode(copy.code);
+    setSaveState(props.userId ? copy.code === lastSaved.current ? "Guardado" : "Pendiente de sincronizar" : "En este navegador");
+  }
+
   useEffect(() => {
-    if (!props.userId || conflict.current || code === lastSaved.current) return;
+    if (!props.userId || recovery.pending || conflict.current || code === lastSaved.current) return;
     const timer = setTimeout(async () => {
       if (saving.current) return;
       saving.current = true; setSaveState("Guardando…");
@@ -150,9 +153,9 @@ function WorkspaceReady(props: Props) {
         setSyncError(feedback.error);
         if ("revision" in saved && saved.revision !== undefined) {
           revision.current = saved.revision; lastSaved.current = code;
+          setDisplayRevision(saved.revision);
           setSaveState(codeRef.current === code ? "Guardado" : "Pendiente de sincronizar");
-          try { localStorage.setItem(storageKey, JSON.stringify({ code: codeRef.current, revision: revision.current })); }
-          catch { setSaveError("El código está en la base de datos, pero no se pudo actualizar la copia del navegador."); }
+          recovery.persist(codeRef.current, revision.current, lastSaved.current);
         } else { setSaveState("Copia local"); }
       } catch {
         const feedback = draftSaveFeedback(temporaryDraftFailure, retryDelay.current);
@@ -161,7 +164,9 @@ function WorkspaceReady(props: Props) {
       finally { saving.current = false; setSaveTick(t => t + 1); }
     }, retryDelay.current);
     return () => clearTimeout(timer);
-  }, [code, saveTick, props.userId, props.variantId, storageKey]);
+    // persist lee las alternativas del navegador en cada escritura.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [code, saveTick, props.userId, props.variantId, storageKey, recovery.pending]);
 
   useEffect(() => {
     if (!activeId) return;
@@ -188,7 +193,7 @@ function WorkspaceReady(props: Props) {
   }, [activeId, executionKey, router]);
 
   async function execute(mode: "examples" | "submit") {
-    if (postingRef.current || activeId) return;
+    if (postingRef.current || activeId || recovery.pending) return;
     if (!props.userId) { preserveGuestCode(); router.push(`/iniciar-sesion?volver=${encodeURIComponent(exerciseHref(props.slug, props.language, props.pathSlug))}`); return; }
     postingRef.current = true; setPosting(true); setError(""); setResult(null); setMobileTab("results"); setResultsCollapsed(false); setExecutedCode(codeRef.current);
     try {
@@ -216,6 +221,7 @@ function WorkspaceReady(props: Props) {
     }>
     <main id="main-content" className="workspace-main">
       <p className="sr-only" role="status">Borrador: {saveNotice || saveState}</p>
+      {recovery.pending && <p role="status" className="bg-surface px-4 py-2 text-sm min-[1200px]:hidden">Hay copias de código pendientes de comparar. Abre la sección Código para elegir cuál continuar.</p>}
       <LayoutGroup id="workspace-sections"><div className="workspace-mobile-tabs" role="group" aria-label="Secciones del ejercicio">{[{id:"statement",name:"Enunciado"},{id:"code",name:"Código"},{id:"results",name:"Resultados"}].map(tab=><button className="relative isolate" key={tab.id} onClick={()=>setMobileTab(tab.id)} aria-pressed={mobileTab === tab.id} aria-controls={`workspace-${tab.id}`}>{mobileTab === tab.id && <Selection id="workspace-selection" className="bg-control shadow-control" />}{tab.name}</button>)}</div></LayoutGroup>
       <div ref={grid} className="workspace-grid" style={{"--statement-width":`${width}%`} as React.CSSProperties}>
         <section id="workspace-statement" className={cn("workspace-statement px-5 py-6 sm:px-7 min-[1200px]:block", mobileTab !== "statement" && "hidden")} aria-label="Enunciado">
@@ -243,13 +249,14 @@ function WorkspaceReady(props: Props) {
           <div ref={codePanel} id="workspace-code" tabIndex={-1} aria-label="Tu código" className={cn("workspace-code",mobileTab !== "code" && "hidden")}>
             <div className="workspace-toolbar flex min-h-12 shrink-0 flex-wrap items-center gap-2 px-4 py-1"><Code2 className="size-4 text-muted-foreground" /><span className="mr-2 hidden text-sm font-medium sm:inline">Tu solución</span><label className="sr-only" htmlFor="workspace-language">Lenguaje del ejercicio</label><select id="workspace-language" value={props.language} onChange={event=>router.push(exerciseHref(props.slug, event.target.value as Language, props.pathSlug))} className="min-h-11 rounded-md bg-surface-secondary px-2 text-xs font-medium md:min-h-8" disabled={busy}>{props.availableLanguages.map(language => <option key={language} value={language}>{languageNames[language]}</option>)}</select><span className="ml-auto flex items-center gap-1.5 text-xs text-muted-foreground">{saveState === "Guardado" && <Check className="size-3" />}{saveState}</span><EditorOptions fontSize={fontSize} onFontSize={setFontSize} code={code} onReset={()=>updateCode(props.starter)} /></div>
             {saveNotice && <p role="alert" className="border-b bg-surface px-4 py-3 text-xs leading-6">{saveNotice}</p>}
-            <div className="editor-region">{simple ? <textarea aria-label={`Editor sencillo de ${languageNames[props.language]}`} className="h-full w-full resize-none bg-editor-background px-5 py-5 font-mono leading-7 focus-visible:-outline-offset-2" style={{fontSize}} value={code} onChange={event=>updateCode(event.target.value)} onKeyDown={event=>{if(event.key === "Enter" && (event.ctrlKey || event.metaKey) && !event.nativeEvent.isComposing){event.preventDefault();if(!event.repeat && code.trim()) void execute(event.shiftKey ? "submit" : "examples");}}} spellCheck={false} autoCapitalize="off" autoCorrect="off" /> : <CodeEditor code={code} language={props.language} onChange={updateCode} fontSize={fontSize} onRun={()=>execute("examples")} onSubmit={()=>execute("submit")} />}</div>
+            <DraftRecovery pending={recovery.pending} copies={recovery.copies} current={{ code, revision: displayRevision, source: "local" }} onChoose={recoverCode} />
+            <div className="editor-region">{simple ? <textarea aria-label={`Editor sencillo de ${languageNames[props.language]}`} readOnly={recovery.pending} className="h-full w-full resize-none bg-editor-background px-5 py-5 font-mono leading-7 focus-visible:-outline-offset-2" style={{fontSize}} value={code} onChange={event=>updateCode(event.target.value)} onKeyDown={event=>{if(event.key === "Enter" && (event.ctrlKey || event.metaKey) && !event.nativeEvent.isComposing){event.preventDefault();if(!event.repeat && code.trim()) void execute(event.shiftKey ? "submit" : "examples");}}} spellCheck={false} autoCapitalize="off" autoCorrect="off" /> : <CodeEditor code={code} readOnly={recovery.pending} language={props.language} onChange={updateCode} fontSize={fontSize} onRun={()=>execute("examples")} onSubmit={()=>execute("submit")} />}</div>
             <div className="workspace-editor-footer flex shrink-0 flex-wrap items-center gap-2 px-4 py-1"><Button variant="ghost" size="sm" className="text-xs" aria-pressed={simple} onClick={()=>setSimple(!simple)}>{simple ? "Usar editor avanzado" : "Editor sencillo"}</Button><Disclosure className="ml-auto text-xs text-muted-foreground" title="Atajos de teclado" triggerClassName="text-xs md:min-h-8"><p className="max-w-sm pb-3 leading-6">Ctrl / ⌘ + Enter: ejecutar ejemplos.<br />Ctrl / ⌘ + Shift + Enter: comprobar solución.{!simple && <><br />Ctrl + M: permitir que Tab salga del editor.</>}</p></Disclosure></div>
           </div>
           <div className={cn("workspace-actions flex shrink-0 flex-wrap items-center justify-end gap-2 px-4 py-3 min-[1200px]:flex",mobileTab === "statement" && "hidden")}>
             <p id="execution-help" className="w-full text-xs leading-6 text-muted-foreground">Solo una comprobación con todas las pruebas superadas marca el ejercicio como resuelto.{!props.userId && " Para ejecutar, inicia sesión. Tu código queda en este navegador."}</p>
-            <Button aria-describedby="execution-help" className="min-w-0 flex-1 whitespace-normal px-2 text-xs [&_svg]:hidden min-[380px]:[&_svg]:block sm:flex-none sm:px-3" variant="outline" disabled={busy || !code.trim()} onClick={()=>execute("examples")}><Play data-icon="inline-start" />Ejecutar ejemplos</Button>
-            <Button aria-describedby="execution-help" className="min-w-0 flex-1 whitespace-normal px-2 text-xs [&_svg]:hidden min-[380px]:[&_svg]:block sm:flex-none sm:px-3" loading={busy} disabled={!code.trim()} onClick={()=>execute("submit")}><Check data-icon="inline-start" />Comprobar solución</Button>
+            <Button aria-describedby="execution-help" className="min-w-0 flex-1 whitespace-normal px-2 text-xs [&_svg]:hidden min-[380px]:[&_svg]:block sm:flex-none sm:px-3" variant="outline" disabled={busy || recovery.pending || !code.trim()} onClick={()=>execute("examples")}><Play data-icon="inline-start" />Ejecutar ejemplos</Button>
+            <Button aria-describedby="execution-help" className="min-w-0 flex-1 whitespace-normal px-2 text-xs [&_svg]:hidden min-[380px]:[&_svg]:block sm:flex-none sm:px-3" loading={busy} disabled={recovery.pending || !code.trim()} onClick={()=>execute("submit")}><Check data-icon="inline-start" />Comprobar solución</Button>
           </div>
           {!resultsCollapsed && <div role="separator" aria-label="Ajustar altura de resultados" aria-orientation="horizontal" aria-valuenow={resultsHeight} aria-valuemin={140} aria-valuemax={400} aria-valuetext={`${resultsHeight} píxeles`} tabIndex={0} className="panel-resizer hidden h-[7px] shrink-0 cursor-row-resize items-center justify-center min-[1200px]:flex" onKeyDown={event=>{if(event.key==="ArrowUp"||event.key==="ArrowDown"){event.preventDefault();resultSize.step(event.key==="ArrowUp"?20:-20);}}} onPointerDown={event=>event.currentTarget.setPointerCapture(event.pointerId)} onPointerMove={event=>{if(event.currentTarget.hasPointerCapture(event.pointerId)&&editorColumn.current){const rect=editorColumn.current.getBoundingClientRect();resultSize.move(rect.bottom-event.clientY);}}} onPointerUp={event=>{resultSize.finish();event.currentTarget.releasePointerCapture(event.pointerId);}} onLostPointerCapture={resultSize.finish} onPointerCancel={resultSize.finish}><GripHorizontal className="size-3 text-muted-foreground" /></div>}
           <div id="workspace-results" data-collapsed={resultsCollapsed} className={cn("workspace-results min-[1200px]:block",mobileTab !== "results" && "hidden")}><Results result={result} busy={busy} error={error} nextHref={props.nextHref ?? (props.pathSlug ? `/rutas/${encodeURIComponent(props.pathSlug)}?lenguaje=${props.language}` : undefined)} nextLabel={props.pathSlug ? props.nextHref ? "Siguiente ejercicio de la ruta" : "Volver a la ruta" : "Practicar un ejercicio relacionado"} collapsed={resultsCollapsed} onToggle={toggleResults} runtimeMode={props.runtimeMode} recentSubmissions={props.recentSubmissions} />{executedCode !== null && executedCode !== code && (result || error) && <p className={cn("px-5 pb-4 text-xs text-muted-foreground", resultsCollapsed && "min-[1200px]:hidden")}>Has editado el código desde la última ejecución. Vuelve a comprobarlo.</p>}</div>

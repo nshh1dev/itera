@@ -1,5 +1,47 @@
 # Verificación local
 
+## Recuperación explícita de borradores: segundo bloque de la auditoría (25 de octubre de 2026)
+
+- Práctica y diagnóstico comparan cualquier copia local distinta cuya base remota
+  no pueda confirmarse, independientemente de su revisión. Hasta elegir una copia,
+  no se permite editar ni sincronizar ese código. La recuperación usa siempre la
+  revisión del servidor, nunca la de una copia antigua.
+- Se pueden comparar los textos completos, copiarlos y descargar las alternativas
+  como JSON. Elegir, editar o sincronizar conserva las otras copias en el registro
+  local del mismo usuario y variante/ítem. No se truncan alternativas; si el navegador
+  no puede almacenarlas, permanecen en memoria y se pide descargarlas antes de salir.
+- Los borradores locales antiguos siguen siendo legibles. Los nuevos documentan
+  su código remoto de base, para retomar automáticamente una edición pendiente solo
+  cuando esa base y revisión siguen intactas. La transferencia de invitado se retira
+  de la sesión únicamente tras conservar el borrador local con éxito.
+- Las pestañas no sustituyen el código abierto ni adoptan revisiones entre sí:
+  archivan contenido desplazado y mantienen la concurrencia optimista del servidor.
+  No cambian autenticación, esquema, dependencias, progreso ni ejecución.
+- `npm test`: **198 aprobadas**, sin omisiones, incluidas nueve nuevas pruebas de
+  recuperación, revisiones menores/iguales/mayores, copias vacías, base confirmada,
+  transferencias, alternativas y datos locales dañados.
+  Tras el ajuste final se repitieron recuperación, autoguardado y autorización
+  diagnóstica: **26 aprobadas**; el build y los recorridos usan la interfaz final.
+- Tipos, lint focalizado de los archivos afectados y build de producción aprobados.
+  Detector mecánico de la interfaz: sin hallazgos. Se mantienen los avisos conocidos
+  de Better Auth sobre IP local y la prueba negativa de origen no permitido.
+- Chromium contra `next start`: **12 recorridos focalizados aprobados**. Incluyen
+  los tres de autoguardado previo, elección local/remota, descarga y conservación tras
+  edición/recarga, diagnóstico independiente, pestañas y sesiones aisladas, transferencia
+  sin tocar otras claves, lectura denegada, cuota llena y cierre de una pestaña sin
+  conexión cuya edición fue desplazada. No requieren Piston ni evalúan código.
+- La primera pasada no completó los recorridos: los nombres accesibles compuestos
+  con texto oculto no coincidían con los selectores de elección y agotaron el plazo.
+  Se añadieron etiquetas explícitas y la pasada completa posterior aprobó. El proceso
+  de aplicación temporal que quedó tras el límite del lanzador se identificó y detuvo;
+  las dos copias temporales de la base se eliminaron, sin migrar la original.
+- Revisión visual acotada de escritorio claro (1440 × 1000) y móvil oscuro
+  (390 × 844), sin desbordamiento horizontal. Se comprobó elección por teclado,
+  retorno del foco y movimiento reducido en el diálogo. Capturas locales, no publicadas.
+- No se ejecutaron la suite E2E completa, Piston real ni una auditoría exhaustiva
+  de zoom/lectores de pantalla. PostgreSQL volvió a quedar detenido y la aplicación
+  de pruebas terminó. El guardado editorial y las demás fases continúan pendientes.
+
 ## Autoguardado recuperable: primer bloque de la auditoría (25 de octubre de 2026)
 
 - `saveDraft` diferencia errores temporales de infraestructura, conflictos reales,
