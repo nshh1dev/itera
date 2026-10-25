@@ -1,6 +1,30 @@
-# Seguridad local: primera entrega (25 de octubre de 2026)
+# Seguridad local
 
-## Cambios verificados
+## Segunda entrega: dependencia transitiva (25 de octubre de 2026)
+
+- `fast-uri` pasa de 3.1.8 a 3.1.9, versión corregida compatible con el rango
+  `^3.0.1` requerido por Ajv en la cadena de herramientas de Prisma.
+- Solo cambia esa entrada de `package-lock.json`: sin overrides nuevos, cambios
+  de versión de Prisma ni dependencias directas adicionales.
+- `npm audit --ignore-scripts --package-lock-only --json`: aprobado, sin
+  vulnerabilidades conocidas, incluidas las dependencias de desarrollo. Esto
+  no certifica que la aplicación carezca de vulnerabilidades propias.
+- `npm test`: 148 pruebas aprobadas; `npm run typecheck` y `npm run build`:
+  aprobados. El build regenera Prisma sin conectar a PostgreSQL ni migrar datos.
+- Se reutiliza el lint de la primera entrega: no cambió ningún archivo de código
+  ni la cadena ESLint. Se conservan sus 97 avisos de herramientas locales ajenas.
+- No se ejecutaron E2E ni pruebas de Piston ni se iniciaron servicios. No se
+  modificaron permisos locales. La imagen Docker existente requiere reconstrucción
+  manual para recibir ambas entregas.
+
+**Siguiente paso de solo código:** rechazar contraseñas comunes y patrones
+triviales en registro, cambio y recuperación, con validación del servidor y
+pruebas de los tres flujos; sin servicios externos ni reglas arbitrarias de símbolos.
+Las ACL y la comprobación real del sandbox siguen requiriendo autorización aparte.
+
+## Primera entrega (25 de octubre de 2026)
+
+### Cambios verificados
 
 - Next.js y `eslint-config-next` pasan de 16.4.0 a 16.4.3. El lockfile queda
   actualizado sin cambiar las demás dependencias directas. Se corrige, entre
@@ -21,7 +45,7 @@
 No se cambian cookies, CSRF, permisos, roles, esquema ni evaluación del progreso.
 No se añaden servicios ni dependencias.
 
-## Comprobaciones
+### Comprobaciones
 
 - `npm test`: 148 pruebas aprobadas, incluidas siete nuevas de seguridad.
 - `npm run typecheck`: aprobado.
@@ -36,12 +60,13 @@ No se añaden servicios ni dependencias.
   alcance aprobado no autoriza iniciarlos. La prueba de autenticación usa el
   handler real de Better Auth en memoria, sin servidor ni base de datos.
 
-## Pendientes fuera de esta entrega
+### Pendientes fuera de la primera entrega
 
 - Restringir las ACL de Windows de secretos y datos privados, previa autorización.
 - Verificar el aislamiento real y los límites globales de Piston, previa
   autorización para iniciar el entorno. No se certifica el sandbox con estas pruebas.
-- Revisar `fast-uri`, la política de contraseñas y la protección de respaldos.
+- Revisar la política de contraseñas y la protección de respaldos. El aviso de
+  `fast-uri` quedó resuelto en la segunda entrega.
 - Antes de publicar: HTTPS, orígenes del entorno, recuperación entregada al
   titular, usuario PostgreSQL de privilegios mínimos y frontera explícita de proxy.
   El contador local compartido no sustituye un diseño de límites para Internet.
