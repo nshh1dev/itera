@@ -1,5 +1,32 @@
 # Seguridad local
 
+## Novena entrega: regresión de autorización entre cuentas (25 de octubre de 2026)
+
+- Revisados el endpoint de consulta de intentos, el historial por ejercicio y el
+  guardado de borradores: ya usan la identidad de sesión para sus filtros o altas.
+  No se encontró una omisión de autorización en esos puntos ni se cambió código
+  de producción, dependencias, interfaz o permisos de Windows.
+- `tests/user-authorization.test.ts` importa el handler y las acciones reales,
+  sustituyendo sesión, base y reconciliación por dobles mediante hooks de Node.
+  Los hooks se retiran en `finally` y no se inicia ningún servicio.
+- Cinco escenarios comprueban: intento ajeno indistinguible de uno inexistente
+  (404), acceso del propietario con `no-store`, historial que ignora `userId`
+  falsificado y selecciona solo el resumen, rechazo de revisiones de borradores
+  ajenos sin devolver su contenido, creación/actualización con identidad propia
+  y concurrencia optimista, y ausencia de consultas/escrituras sin sesión o con
+  entradas inválidas. Las aserciones del filtro de actualización se hacen fuera
+  del doble para que el `catch` de la acción no pueda ocultar un fallo de prueba.
+- Verificación: prueba focalizada aprobada; suite general **172 pruebas aprobadas**
+  (incluye el contenedor y cinco subpruebas nuevos), tipos aprobados y lint sin
+  errores, con los 97 avisos previos de herramientas locales. No se repitió build:
+  solo se añadieron pruebas y documentación, sin cambios de producción.
+- Límite: estas pruebas verifican los filtros y respuestas del código real con
+  dobles, no el aislamiento efectivo de PostgreSQL, las cookies ni el transporte
+  de Server Actions. No se ejecutaron E2E ni se inició Docker/WSL/Next.
+
+**Siguiente paso:** verificar estos accesos cruzados con dos cuentas temporales
+en PostgreSQL y navegador reales, acordando antes el arranque del entorno.
+
 ## Octava entrega: privacidad HTTP verificada en navegador (25 de octubre de 2026)
 
 - Autorización expresa para iniciar WSL/Docker, reconstruir la app y verificar
