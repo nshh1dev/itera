@@ -1,5 +1,41 @@
 # Seguridad local
 
+## Décima entrega: autorización real con dos cuentas (25 de octubre de 2026)
+
+- Con autorización expresa se inició WSL/Docker y la app de producción. Se reutilizó
+  la imagen ya actualizada: los SHA-256 de acciones, catálogo y consulta de intentos
+  dentro del contenedor coinciden con el código local. No se cambió producción ni
+  se ejecutaron seed, migraciones o cambios de permisos.
+- `tests/docker/user-authorization.spec.ts` usa dos sesiones aisladas de Chromium,
+  dos cuentas y un ejercicio aleatorios. El endpoint devuelve 200 y `no-store` al
+  propietario, 404 indistinguible de un ID inexistente a otra cuenta y 401 al invitado.
+  También se comprobó el acceso cruzado en sentido inverso.
+- El historial y el autoguardado se capturan desde peticiones normales de la
+  interfaz. Sus Server Actions se reenvían con las cookies de la otra sesión y un
+  `userId` falsificado: el historial solo devuelve intentos propios y omite detalles
+  de casos; una revisión ajena produce conflicto sin revelar ni modificar código.
+- Crear/actualizar con identidad falsificada solo escribe para el usuario de sesión;
+  una revisión obsoleta conserva el borrador y el guardado anónimo se rechaza.
+  Se verificaron código y revisiones en PostgreSQL tras las peticiones manipuladas.
+  Después de borrar las copias locales de esos contextos, HTML y editor recargados
+  solo contienen el borrador propio. No se concede progreso.
+- El recorrido inicial aprobó; tras ampliar la comprobación inversa, **cinco
+  repeticiones completas aprobaron, ninguna omitida**, sin reiniciar la app entre
+  ellas. Los accesos respetan `Retry-After`. Tipos y lint aprobados, con los 97 avisos
+  locales previos. Se reutiliza la suite general reciente de 172 pruebas: no cambió
+  su código ni producción. No se repitió build ni la suite editorial completa.
+- Limpieza final comprobada por SQL: cero usuarios y ejercicios del prefijo temporal
+  `authorization-`; las relaciones de sus intentos/borradores se eliminan en cascada.
+  El lanzador retiró el puerto 55434 (`PortBindings={}`). App, base y Piston se
+  detuvieron, la tarea manual quedó sin ejecución ni disparadores y WSL apagado.
+- Límites: los intentos son fixtures sintéticos guardados en PostgreSQL real, no
+  evaluaciones nuevas de Piston. Se acredita autorización de estas rutas/acciones,
+  no aislamiento del ejecutor ni todos los endpoints de la aplicación. Las trazas
+  de fallo pueden contener datos temporales y deben mantenerse privadas.
+
+**Siguiente paso:** ampliar la revisión y las pruebas de autorización a diagnósticos
+(lectura, borradores e identificadores usados al ejecutar), empezando sin servicios.
+
 ## Novena entrega: regresión de autorización entre cuentas (25 de octubre de 2026)
 
 - Revisados el endpoint de consulta de intentos, el historial por ejercicio y el

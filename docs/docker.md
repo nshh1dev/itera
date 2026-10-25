@@ -218,4 +218,17 @@ Respeta los límites reales de autenticación mediante `Retry-After`. Las trazas
 capturas de fallos pueden contener datos de la cuenta temporal o el enlace de
 recuperación: son privadas, quedan fuera de Git y no deben adjuntarse sin revisión.
 
+Para comprobar autorización entre dos cuentas en PostgreSQL y Chromium reales:
+
+```powershell
+npm.cmd run docker:test:e2e -- tests/docker/user-authorization.spec.ts --repeat-each=5
+```
+
+Este recorrido crea dos cuentas y un ejercicio temporales, con intentos sintéticos
+en la base real; no evalúa programas ni acredita Piston. Usa sesiones separadas y
+reenvía Server Actions capturadas de la interfaz con propietario/revisión
+manipulados. Comprueba lectura de intentos e historial, borradores propios y ajenos,
+rechazo de invitado y concurrencia optimista. Cierra los contextos antes de eliminar
+solo sus fixtures en `finally`; no ejecuta seed ni migraciones.
+
 Si se interrumpe el proceso a la fuerza, ejecutar `npm run docker:up` para retirar de nuevo ese puerto temporal.
