@@ -204,4 +204,18 @@ npm.cmd run docker:test:e2e
 
 El script publica PostgreSQL temporalmente en **127.0.0.1:55434**, ejecuta la secuencia real completa contra la base Docker y retira el puerto en `finally`. No inicia un servidor Next nativo. Las pruebas crean y limpian cuentas y ejercicios temporales. Las suites con doble HTTP siguen siendo distintas y no acreditan aislamiento.
 
+Para comprobar únicamente cabeceras, registro, acceso y recuperación local, con
+los mismos requisitos y el entorno ya activo:
+
+```powershell
+npm.cmd run docker:test:e2e -- tests/docker/http-security.spec.ts --repeat-each=2
+```
+
+Los argumentos se pasan a Playwright; sin argumentos sigue ejecutándose la suite
+Docker completa. El recorrido acotado crea una cuenta aleatoria, consulta su correo
+en el volumen de la app y elimina únicamente esa cuenta, sus tokens y sus mensajes.
+Respeta los límites reales de autenticación mediante `Retry-After`. Las trazas y
+capturas de fallos pueden contener datos de la cuenta temporal o el enlace de
+recuperación: son privadas, quedan fuera de Git y no deben adjuntarse sin revisión.
+
 Si se interrumpe el proceso a la fuerza, ejecutar `npm run docker:up` para retirar de nuevo ese puerto temporal.

@@ -1,5 +1,44 @@
 # Seguridad local
 
+## Octava entrega: privacidad HTTP verificada en navegador (25 de octubre de 2026)
+
+- Autorización expresa para iniciar WSL/Docker, reconstruir la app y verificar
+  cabeceras/acceso/recuperación con cuentas temporales. ACL de Windows fuera de
+  alcance. Se reconstruyó y recreó la app de producción, sin seed ni migraciones.
+- Nuevo recorrido Docker en Chromium: `tests/docker/http-security.spec.ts`,
+  integrado en la configuración Docker pero no en la suite nativa con doble HTTP.
+  Comprobó cabeceras recibidas, capacidades de cámara/micrófono/geolocalización
+  denegadas y ausencia real de `Referer` en una petición local del navegador.
+- Registro y acceso funcionaron con cookies HttpOnly/SameSite=Lax y `no-store`.
+  La interfaz rechazó una clave común; el enlace de recuperación se leyó de su
+  archivo real en el volumen de la app. Restablecer revocó las sesiones anteriores,
+  la clave antigua recibió 401, la nueva permitió entrar y el token reutilizado
+  recibió 400. Las respuestas sensibles conservaron `no-store`.
+- Primera ejecución con dos pruebas: falló un selector ambiguo por el anunciador
+  de Next. La siguiente detectó un fallo de extracción en la propia prueba: el
+  correo temporal empezaba por `http-` y se confundía con una URL. Ambos corregidos,
+  sin cambios en la app. El recorrido completo aprobó y luego se repitió dos veces:
+  **4 ejecuciones aprobadas, ninguna omitida**, sin reiniciar la app entre ellas.
+  Los reintentos por 429 respetan `Retry-After`, sin desactivar el limitador.
+- La limpieza y consultas finales confirmaron cero usuarios y correos del prefijo
+  temporal `http-security-` restantes. El puerto PostgreSQL temporal 55434 se retiró
+  y `PortBindings` quedó vacío; app/base/Piston se detuvieron y WSL quedó apagado.
+  No se borraron datos existentes ni se cambiaron permisos.
+- El lanzador `docker:test:e2e` ahora reenvía argumentos a Playwright para poder
+  seleccionar este archivo y sus repeticiones, manteniendo `finally` para retirar
+  el puerto. Uso en [docker.md](docker.md#actualización-y-verificación).
+- `npm test`: **166 aprobadas**, incluida una nueva con procesos sintéticos que
+  verifica el reenvío de argumentos y la retirada del puerto cuando Playwright
+  falla. Tipos y lint aprobados; lint conserva los 97 avisos locales previos.
+  Build Docker aprobado; `npm ci` informó cero vulnerabilidades y un aviso previo
+  de obsolescencia de ESLint, sin actualizar dependencias en esta entrega.
+- No se ejecutó la suite completa editorial o
+  de ejecución: no es necesaria para este cambio de pruebas/cabeceras y conserva
+  las verificaciones anteriores, sin presentarlas como resultados nuevos.
+
+**Siguiente paso:** reforzar las pruebas de autorización entre cuentas en consultas
+de intentos y borradores, sin reabrir la tarea de ACL omitida por el usuario.
+
 ## Séptima entrega: privacidad HTTP (25 de octubre de 2026)
 
 - Por indicación del usuario se omite la tarea de ACL de Windows. No se modifican

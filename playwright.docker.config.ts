@@ -10,6 +10,6 @@ process.env.PISTON_URL = "http://127.0.0.1:2000";
 export default defineConfig({
   ...real,
   testDir: "tests",
-  testMatch: ["real/**/*.spec.ts", "e2e/account.spec.ts", "e2e/motion.spec.ts"],
+  testMatch: ["real/**/*.spec.ts", "docker/**/*.spec.ts", "e2e/account.spec.ts", "e2e/motion.spec.ts"],
   webServer: undefined,
 });
