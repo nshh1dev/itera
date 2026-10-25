@@ -1,5 +1,38 @@
 # Seguridad local
 
+## Séptima entrega: privacidad HTTP (25 de octubre de 2026)
+
+- Por indicación del usuario se omite la tarea de ACL de Windows. No se modifican
+  permisos ni se inicia ningún servicio; el riesgo local sigue pendiente.
+- `Referrer-Policy: no-referrer` evita enviar la URL de origen en `Referer`, incluso
+  entre rutas de Itera. Reduce la circulación de consultas sensibles, como tokens
+  de recuperación; no borra historial, logs existentes ni direcciones visitadas.
+- `Permissions-Policy: camera=(), microphone=(), geolocation=()` deshabilita esas
+  capacidades en navegadores compatibles. No hay usos de esas APIs en la app.
+  Se conservan `nosniff`, `X-Frame-Options: DENY` y la ausencia de `X-Powered-By`.
+- El handler público GET/POST de Better Auth marca sus respuestas devueltas como
+  `Cache-Control: no-store`, incluidos errores y redirecciones. No depende de que
+  cada endpoint lo haga individualmente; no cambia cuerpos, estados ni cookies.
+  No cubre errores generados por Next antes de ejecutar el handler ni sustituye
+  autenticación, comprobación de origen o revocación de sesiones.
+- Cuatro pruebas nuevas comprueban configuración, respuestas con varias cookies,
+  redirecciones inmutables y errores, además del handler real Better Auth en
+  memoria para GET, registro y peticiones inválidas. El origen no permitido sigue
+  recibiendo 403; su log `Invalid origin` es esperado en esa prueba negativa.
+  No se usa PostgreSQL.
+- `npm test`: **165 aprobadas**. Tipos y build aprobados; el manifiesto generado
+  contiene las nuevas cabeceras. Lint sin errores y 97 avisos previos en herramientas
+  locales ajenas. E2E y navegador no ejecutados: no se inició Next/Docker/WSL.
+- No se añade HSTS a HTTP local ni una CSP sin validar Monaco, workers y Next.
+  Las cabeceras no son un remedio para XSS o para permisos de archivos demasiado
+  amplios. La imagen Docker existente debe reconstruirse y recrearse manualmente
+  para aplicar el cambio. Se conservan los cambios locales ajenos.
+
+**Siguiente paso:** comprobar estas cabeceras y los flujos de acceso/recuperación
+en el servidor y navegador reales, con autorización de arranque, para validar la
+integración más allá del handler en memoria. La tarea de ACL queda omitida por
+decisión del usuario, no resuelta.
+
 ## Sexta entrega: comprobación real autorizada (25 de octubre de 2026)
 
 - Autorización expresa para iniciar WSL/Docker y servicios necesarios, recrear
