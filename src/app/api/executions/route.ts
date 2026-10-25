@@ -5,6 +5,7 @@ import { executionSchema } from "@/lib/validation";
 import { availableRuntime, RunnerUnavailable } from "@/server/execution/piston";
 import { evaluateSubmission, expireInterruptedSubmissions } from "@/server/execution/service";
 import type { Language } from "@/lib/types";
+import { readLimitedJson, RequestBodyTooLarge } from "@/lib/request-body";
 
 export const runtime = "nodejs";
 
@@ -14,10 +15,12 @@ export async function POST(request: Request) {
   if (!origin || !["http://localhost:3000", "http://127.0.0.1:3000"].includes(origin)) return NextResponse.json({ error: "Origen no permitido." }, { status: 403 });
   const user = await currentUser();
   if (!user) return NextResponse.json({ error: "Inicia sesión para ejecutar y guardar tu progreso." }, { status: 401 });
-  if (Number(request.headers.get("content-length")) > 40000) return NextResponse.json({ error: "El programa es demasiado grande." }, { status: 413 });
   let body;
-  try { const text = await request.text(); if (text.length > 40000) return NextResponse.json({ error: "El programa es demasiado grande." }, { status: 413 }); body = JSON.parse(text); }
-  catch { return NextResponse.json({ error: "Solicitud inválida." }, { status: 400 }); }
+  try { body = await readLimitedJson(request, 40000); }
+  catch (error) {
+    if (error instanceof RequestBodyTooLarge) return NextResponse.json({ error: "El programa es demasiado grande." }, { status: 413 });
+    return NextResponse.json({ error: "Solicitud inválida." }, { status: 400 });
+  }
   const parsed = executionSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Revisa el programa y vuelve a intentarlo (máximo 30 000 caracteres)." }, { status: 400 });
   const input = parsed.data;

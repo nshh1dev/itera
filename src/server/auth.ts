@@ -8,6 +8,7 @@ import { cache } from "react";
 import { mkdir, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { db } from "./db";
+import { localAuthIpAddress } from "@/lib/auth-security";
 
 export const auth = betterAuth({
   appName: "Itera",
@@ -15,6 +16,7 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   database: prismaAdapter(db, { provider: "postgresql" }),
   trustedOrigins: ["http://127.0.0.1:3000", "http://localhost:3000"],
+  advanced: { ipAddress: localAuthIpAddress },
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 10,
