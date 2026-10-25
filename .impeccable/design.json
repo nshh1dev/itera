@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-17T00:00:00.000Z",
+  "generatedAt": "2026-10-25T07:11:33.489Z",
   "title": "Design System: Itera",
   "extensions": {
     "colorMeta": {
@@ -82,12 +82,16 @@
       { "name": "landing-demo", "value": "0 16px 48px #0000000C", "purpose": "Única sombra ambiental: el objeto apoyado de la portada." }
     ],
     "motion": [
-      { "name": "response", "value": "120ms", "purpose": "Cambio de color y respuesta al pulsar." },
-      { "name": "disclosure", "value": "200ms", "purpose": "Desplegables, pestañas, progreso y cambio de tema." },
-      { "name": "navigation", "value": "200ms", "purpose": "Entrada de estado al cambiar de zona." },
-      { "name": "panel-open", "value": "320ms", "purpose": "Apertura de un panel desde su control de origen." },
-      { "name": "panel-close", "value": "220ms", "purpose": "Cierre de panel y fundido del fondo." },
-      { "name": "ease", "value": "cubic-bezier(.2, .8, .2, 1)", "purpose": "Curva compartida entre CSS y Web Animations." }
+      { "name": "instant", "value": "120ms", "purpose": "UIArc: salida breve de etiquetas; motion-tokens.ts." },
+      { "name": "fast", "value": "160ms", "purpose": "UIArc: respuesta CSS y entrada de etiquetas." },
+      { "name": "exit", "value": "180ms", "purpose": "Duración de salida del vocabulario UIArc." },
+      { "name": "standard", "value": "240ms", "purpose": "UIArc: despliegues CSS complementarios." },
+      { "name": "considered", "value": "480ms", "purpose": "Duración considerada del vocabulario UIArc." },
+      { "name": "snappy", "value": "spring: visualDuration=0.26s, bounce=0.12", "purpose": "Pulsación de botones a escala 0.97; sin escala en movimiento reducido." },
+      { "name": "smooth", "value": "spring: visualDuration=0.4s, bounce=0", "purpose": "Paneles UIArc; no es una transición CSS de duración fija." },
+      { "name": "morph", "value": "spring: visualDuration=0.42s, bounce=0.16", "purpose": "Indicadores compartidos de selección." },
+      { "name": "ease-standard", "value": "cubic-bezier(.22, 1, .36, 1)", "purpose": "Curva estándar UIArc de motion-tokens.ts y motion.css; sustituye Web Animations." },
+      { "name": "reduced-motion", "value": "0ms", "purpose": "Sin desplazamiento, escala ni bucles; los snippets CSS son muestras estáticas, no reproducen el motor Motion." }
     ],
     "breakpoints": [
       { "name": "sm", "value": "640px" },
@@ -102,9 +106,9 @@
       "name": "Botón primario",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "La acción que ejecuta el envío o confirma un cambio.",
+      "description": "La acción que ejecuta el envío o confirma un cambio. Muestra CSS estática: el resorte real y las etiquetas animadas pertenecen a UIArc.",
       "html": "<button class=\"ds-btn-primary\">Ejecutar</button>",
-      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 8px 16px; border: 0; border-radius: 12px; background: var(--primary, #0071E3); color: var(--primary-foreground, #fff); font-family: inherit; font-size: 14px; font-weight: 500; line-height: 1.6; box-shadow: 0 1px 2px #0000000A, inset 0 1px 0 #FFFFFF26; transition: filter 150ms, scale 120ms; cursor: pointer; } .ds-btn-primary:hover { filter: brightness(0.95); } .ds-btn-primary:active { scale: 0.98; filter: brightness(0.9); } .ds-btn-primary:focus-visible { outline: 2px solid var(--ring, #0071E3); outline-offset: 3px; }"
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 16px; border: 0; border-radius: 12px; background: var(--primary, #0071E3); color: var(--primary-foreground, #fff); font-family: inherit; font-size: 14px; font-weight: 500; line-height: 1.6; box-shadow: var(--elevation-control, 0 1px 2px #0000000A); transition: background-color 160ms cubic-bezier(.22, 1, .36, 1), color 160ms cubic-bezier(.22, 1, .36, 1); cursor: pointer; } .ds-btn-primary:hover { filter: brightness(0.95); } .ds-btn-primary:active { scale: 0.97; filter: brightness(0.95); } .ds-btn-primary:focus-visible { outline: 2px solid var(--ring, #0071E3); outline-offset: 3px; } @media (min-width: 768px) { .ds-btn-primary { min-height: 40px; } } @media (prefers-reduced-motion: reduce) { .ds-btn-primary { transition: none; } .ds-btn-primary:active { scale: none; } }"
     },
     {
       "name": "Botón fantasma",

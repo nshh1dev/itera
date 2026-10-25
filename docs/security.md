@@ -1,5 +1,39 @@
 # Seguridad local
 
+## Cuarta entrega: límites declarados y sondas de Piston (25 de octubre de 2026)
+
+- Compose explicita compilación (8 s de pared/CPU), descriptores (2048) y tamaño
+  de archivo (10.000.000 bytes nominales). Mantiene red deshabilitada, memoria,
+  salida, procesos y concurrencia existentes; no cambia el modo privilegiado.
+- Nueva suite optativa `npm run test:runner:security`, con cinco sondas acotadas
+  enviadas por el adaptador real: red, rutas/variables privadas, separación de
+  archivos entre trabajos, límite efectivo de archivo y exceso finito de salida.
+  Sin `ITERA_RUNNER_SECURITY=1` no contacta el ejecutor; con ella, los fallos de
+  infraestructura no se omiten. Uso, alcance y carencias en
+  [runner-security.md](runner-security.md).
+- No se añaden dependencias ni presupuestos globales de contenedor sin medición.
+  Cuatro trabajos no constituyen un techo global de memoria, el límite de archivo
+  no es una cuota de disco y estas sondas no certifican ausencia de escapes.
+- Metadatos de Impeccable actualizados al movimiento UIArc y muestra estática del
+  botón corregida (escala 0.97, tamaños adaptables y movimiento reducido).
+  `DESIGN.md` y la interfaz no cambian. `impeccable doctor --json`: sin hallazgos.
+- `npm test`: 155 pruebas aprobadas, incluida una nueva de declaraciones Compose.
+  Tipos aprobados; lint sin errores y los 97 avisos locales previos.
+  La suite nueva se cargó con **cinco omisiones**, no cinco aprobados: todavía
+  no hay autorización para ejecutarla contra Piston.
+- No se repitió el build de la tercera entrega: no cambia código de la app,
+  dependencias ni su compilación. No se ejecutaron E2E ni sondas reales; no se
+  iniciaron servicios, Docker o WSL, ni se modificaron permisos de Windows.
+  Compose no se validó mediante Docker para evitar activar WSL; su comprobación
+  automatizada es estática, no un análisis completo de YAML/Compose.
+- Para aplicar Compose hay que recrear Piston manualmente; reconstruir solamente
+  la aplicación no aplica sus nuevos valores.
+
+**Siguiente paso:** con autorización operativa, aplicar la configuración y ejecutar
+las sondas contra Piston, inspeccionando imagen, montajes y cgroups efectivos.
+Sin iniciar servicios, la siguiente revisión posible es la protección de respaldos.
+Las ACL de Windows siguen pendientes de autorización independiente.
+
 ## Tercera entrega: nuevas contraseñas (25 de octubre de 2026)
 
 - Política compartida por servidor y formularios: entre 10 y 128 caracteres,
@@ -31,7 +65,7 @@
 - Se conservan las ACL y los cambios locales ajenos. Docker requiere reconstrucción
   manual para recibir esta entrega.
 
-**Siguiente paso:** revisar los límites globales y preparar pruebas de aislamiento
+**Siguiente paso de aquella entrega (preparado en la cuarta):** revisar los límites globales y preparar pruebas de aislamiento
 de Piston. Ejecutarlas contra el sandbox real requiere autorización para iniciar
 el entorno. Corregir los permisos de Windows sigue pendiente de autorización
 separada; ninguna de estas entregas sustituye esas dos verificaciones.
