@@ -3,11 +3,12 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import pg from "pg";
+import { createPgBackup } from "./backup-file.mjs";
 
 const args = ["compose", "--env-file", ".local/docker.env", "-f", "compose.yaml", "-f", "compose.app.yaml"];
-function docker(command, input) {
+function docker(command, input, outputFd) {
   const win = process.platform === "win32";
-  const result = spawnSync(win ? "wsl.exe" : "docker", win ? ["-d", "Ubuntu-24.04", "-u", "root", "--exec", "docker", ...args, ...command] : [...args, ...command], { input, maxBuffer: 256 * 1024 * 1024 });
+  const result = spawnSync(win ? "wsl.exe" : "docker", win ? ["-d", "Ubuntu-24.04", "-u", "root", "--exec", "docker", ...args, ...command] : [...args, ...command], { input, maxBuffer: 256 * 1024 * 1024, ...(outputFd === undefined ? {} : { stdio: ["pipe", outputFd, "pipe"] }) });
   if (result.status !== 0) throw new Error(result.stderr?.toString() || result.error?.message || "Falló Docker.");
   return result.stdout;
 }
@@ -15,11 +16,11 @@ function sql(query) {
   return docker(["exec", "-T", "-e", "PGOPTIONS=-c timezone=UTC", "database", "psql", "-U", "itera", "-d", "itera", "-At", "-v", "ON_ERROR_STOP=1", "-c", query]).toString().trim();
 }
 const action = process.argv[2];
-mkdirSync(".local/backups", { recursive: true });
-const file = resolve(process.argv[3] || `.local/backups/itera-${Date.now()}.dump`);
 if (!["backup", "restore", "import-local", "verify-local"].includes(action)) throw new Error("Uso: node scripts/docker-data.mjs backup|restore|import-local|verify-local [archivo.dump]");
+mkdirSync(".local/backups", { recursive: true, mode: 0o700 });
+const file = resolve(process.argv[3] || `.local/backups/itera-${Date.now()}.dump`);
 if (action === "backup") {
-  writeFileSync(file, docker(["exec", "-T", "database", "pg_dump", "-U", "itera", "-d", "itera", "-Fc", "--no-owner", "--no-privileges"]), { flag: "wx", mode: 0o600 });
+  createPgBackup(file, fd => docker(["exec", "-T", "database", "pg_dump", "-U", "itera", "-d", "itera", "-Fc", "--no-owner", "--no-privileges"], undefined, fd));
   console.log(`Respaldo Docker guardado en ${file}`);
 } else {
   const count = sql("SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE'");
@@ -41,9 +42,10 @@ if (action === "backup") {
       const query = tables.map(t => `SELECT '${t.replaceAll("'", "''")}' AS name, count(*)::text AS count, md5(coalesce(string_agg(md5(row_to_json(t)::text), '' ORDER BY md5(row_to_json(t)::text)), '')) AS hash FROM public.${quote(t)} t`).join(" UNION ALL ");
       if (!query) throw new Error("La base original no tiene tablas.");
       source = { query, rows: (await client.query(query)).rows };
-      if (action === "import-local" && existsSync(file)) throw new Error("El archivo de respaldo ya existe; usa otro nombre.");
-      const result = action === "verify-local" ? { status: 0 } : spawnSync(bin, ["-Fc", "--no-owner", "--no-privileges", "-f", file], { env: { ...process.env, PGHOST: url.hostname, PGPORT: url.port || "5432", PGUSER: decodeURIComponent(url.username), PGPASSWORD: decodeURIComponent(url.password), PGDATABASE: decodeURIComponent(url.pathname.slice(1)) }, stdio: "inherit" });
-      if (result.status !== 0) throw new Error("Falló el respaldo del origen.");
+      if (action === "import-local") createPgBackup(file, fd => {
+        const result = spawnSync(bin, ["-Fc", "--no-owner", "--no-privileges"], { env: { ...process.env, PGHOST: url.hostname, PGPORT: url.port || "5432", PGUSER: decodeURIComponent(url.username), PGPASSWORD: decodeURIComponent(url.password), PGDATABASE: decodeURIComponent(url.pathname.slice(1)) }, stdio: ["ignore", fd, "pipe"] });
+        if (result.status !== 0) throw new Error("Falló el respaldo del origen.");
+      });
       if (action === "import-local") console.log(`Respaldo original conservado en ${file}`);
     }
     if (action !== "verify-local") docker(["exec", "-T", "database", "pg_restore", "-U", "itera", "-d", "itera", "--no-owner", "--no-privileges", "--exit-on-error", "--single-transaction"], readFileSync(file));

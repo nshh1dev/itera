@@ -110,6 +110,38 @@ docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml 
 
 Guarda los respaldos fuera de Git y cópialos a otro dispositivo de forma privada. Contienen datos personales. Guarda también `.local/docker.env` para conservar el secreto de autenticación. Los archivos de recuperación de contraseña viven en el volumen `local-mail`; se consultan mediante `exec app ls .local/mail` y se copian con Compose `cp` si se necesitan.
 
+`pg_dump -Fc` comprime, **no cifra**. El respaldo contiene correos, hashes de
+contraseñas, progreso y posiblemente sesiones o tokens. Usa almacenamiento cifrado
+y acceso limitado para la copia externa; no lo adjuntes a incidencias ni lo subas
+a repositorios. Conserva los secretos de configuración de forma privada y separada
+del dump cuando sea posible. No hace falta copiar los enlaces temporales de
+recuperación para restaurar el progreso; evita conservarlos sin necesidad.
+
+Los comandos Node `backup` e `import-local` reservan el archivo exclusivamente y
+no sobrescriben una ruta existente. Escriben directamente al descriptor, sin
+redirección binaria de PowerShell ni acumular todo el dump en memoria. Si el
+productor falla o no entrega una cabecera `PGDMP` con contenido, eliminan su copia
+parcial y no anuncian éxito. Esa cabecera **no valida todo el archivo** ni sustituye
+una restauración de prueba en una base vacía. Un cierre forzado o corte de energía
+puede dejar un archivo incompleto: conserva las copias anteriores y usa un nombre
+nuevo al reintentar. La restauración actual sigue leyendo el dump en memoria;
+el envoltorio Docker mantiene `maxBuffer` de 256 MiB para la salida capturada.
+
+Los archivos nuevos solicitan modo `0600` y el directorio nuevo `0700` en sistemas
+POSIX. Esto no restringe las ACL heredadas de Windows ni modifica las de archivos
+existentes. Su corrección sigue siendo una operación independiente autorizada.
+El directorio debe ser de confianza: la creación exclusiva no impide que otra
+persona con acceso de modificación borre o sustituya posteriormente el archivo.
+Usa la extensión `.dump`: Git y el contexto Docker excluyen ese formato y sus
+informes `*.dump.*.verification.json`, incluso fuera de `.local`; no cubren nombres
+arbitrarios ni sustituyen el control de acceso. El procedimiento manual con Compose
+`cp` de arriba no incorpora las garantías de creación exclusiva y limpieza de Node.
+
+Mantén al menos una copia anterior fuera del equipo, revisa periódicamente la
+retención y comprueba la restauración antes de depender del respaldo. No se elimina
+ninguna copia automáticamente. No restaures dumps de procedencia no confiable:
+pueden contener instrucciones SQL que se ejecutarán con el usuario de destino.
+
 Para restaurar, prepara **una base vacía** en otro equipo o volumen y ejecuta:
 
 ```powershell

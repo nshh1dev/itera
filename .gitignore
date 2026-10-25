@@ -13,6 +13,7 @@ public/monaco/
 *.tsbuildinfo
 *.log
 *.dump
+*.dump.*.verification.json
 .DS_Store
 Thumbs.db
 .idea/

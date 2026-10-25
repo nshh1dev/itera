@@ -1,5 +1,37 @@
 # Seguridad local
 
+## Quinta entrega: protección de respaldos (25 de octubre de 2026)
+
+- `backup` e `import-local` comparten creación exclusiva del archivo: `pg_dump`
+  escribe en un descriptor reservado con `wx+` y modo solicitado `0600`, sin
+  reabrir/truncar la ruta después de una comprobación de existencia.
+- Ambas exportaciones escriben directamente al archivo, sin acumular el dump en
+  el búfer de Node. Se sincroniza antes de anunciar éxito; fallos del productor,
+  salida vacía o cabecera incorrecta eliminan la copia parcial de esa operación.
+  No se borran respaldos previos. Una interrupción forzada puede dejar un parcial;
+  la cabecera solo detecta errores básicos, no acredita integridad/restaurabilidad.
+- Los informes `*.dump.*.verification.json` quedan excluidos de Git y Docker,
+  igual que los `.dump`. Los directorios nuevos solicitan modo POSIX `0700`;
+  no se cambian ACL de Windows ni permisos existentes.
+- [La guía Docker](docker.md#respaldo-y-restauración) aclara que el dump no está
+  cifrado y puede contener datos personales, hashes y tokens; recomienda copia
+  externa cifrada, conservación privada de secretos, retención y restauración de
+  prueba. Se documentan los límites del método manual y los nombres personalizados.
+- Verificación: seis pruebas nuevas con archivos sintéticos y un proceso Node,
+  sin Docker, PostgreSQL ni datos reales. Comprueban exclusividad, bytes binarios,
+  limpieza/reintento y rechazo de salida inválida, además de las exclusiones.
+  `npm test`: 161 pruebas aprobadas; `node --check scripts/docker-data.mjs` y tipos:
+  aprobados. Lint sin errores; conserva los 97 avisos locales ajenos.
+- No se repitió el build: no cambian la aplicación Next, dependencias ni su
+  compilación. No se ejecutaron E2E ni una copia/restauración con PostgreSQL real.
+- No se cifran ni trasladan respaldos existentes y no se inicia ningún servicio.
+  La exportación/restauración real sigue pendiente de autorización operativa.
+
+**Siguiente paso:** verificar restauración y aislamiento de Piston en el entorno
+real con autorización, y restringir las ACL de secretos/respaldos con permiso
+separado. Las tareas pendientes requieren esas comprobaciones; más cambios de
+código no las sustituyen.
+
 ## Cuarta entrega: límites declarados y sondas de Piston (25 de octubre de 2026)
 
 - Compose explicita compilación (8 s de pared/CPU), descriptores (2048) y tamaño

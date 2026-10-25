@@ -14,6 +14,7 @@ coverage
 *.tsbuildinfo
 *.log
 **/*.dump
+**/*.dump.*.verification.json
 skills-lock.json
 **/.env*
 **/node_modules
