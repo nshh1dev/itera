@@ -25,6 +25,7 @@
     "test:e2e:real": "playwright test -c playwright.real.config.ts",
     "test:runner": "tsx --conditions=react-server --test tests/real-runner.integration.ts",
     "test:runner:security": "tsx --conditions=react-server --test tests/runner-security.integration.ts",
+    "test:backup:real": "tsx --test tests/backup-restore.integration.ts",
     "test:admin": "tsx --conditions=react-server --test tests/account-administration.integration.ts",
     "test:dev-users": "tsx --test tests/dev-users.integration.ts",
     "setup": "node scripts/setup.mjs",

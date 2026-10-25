@@ -150,6 +150,37 @@ node scripts/docker-data.mjs restore ruta/al/respaldo.dump
 
 Sin Node en el host: copia el archivo con Compose `cp` a `database:/tmp/itera.dump` y ejecuta `pg_restore -U itera -d itera --no-owner --no-privileges --exit-on-error --single-transaction /tmp/itera.dump` dentro del servicio. No restaura sobre una instalación en uso. Nunca utilices `down -v` ni elimines volúmenes para apagar el proyecto.
 
+### Comprobación real de restauración
+
+Con autorización operativa, Docker/base preparados y sin escrituras de la app,
+desde PowerShell en el host con Node y dependencias:
+
+```powershell
+$env:ITERA_BACKUP_RESTORE = "1"
+npm.cmd run test:backup:real
+Remove-Item Env:ITERA_BACKUP_RESTORE
+```
+
+No inicia servicios por sí misma, pero consultar Docker puede activar WSL. Sin la
+variable la prueba se omite sin contactar la base. Con ella, utiliza el exportador
+real para conservar un dump nuevo en `.local/backups/restore-check-*.dump`, analiza
+su índice y restaura transaccionalmente en una base nueva
+`itera_restore_check_<identificador aleatorio>`, creada desde `template0` en el
+mismo servidor PostgreSQL. Necesita permiso para crear/eliminar esa base temporal.
+Nunca llama a `pg_restore` sobre `itera` ni elimina una base preexistente.
+
+Compara nombres, recuentos y huellas de filas de todas las tablas públicas entre
+origen previo, restauración y origen posterior, sin imprimir filas ni huellas. Si
+hay diferencias o falla una operación, la prueba falla. El `finally` elimina solo
+la base temporal que consiguió crear; conserva el dump. Un cierre forzado puede
+dejar la base temporal y el respaldo: revisa la ejecución antes de eliminarlos,
+sin borrar ni resetear la base de uso diario.
+
+El respaldo contiene datos reales y **no está cifrado**; protégelo igual que las
+otras copias. Esta prueba no valida roles/permisos del clúster, secuencias o datos
+de otros esquemas, recuperación en otra versión mayor ni el arranque de la app
+restaurada. `--no-owner --no-privileges` conserva el contrato actual de importación.
+
 ## Actualización y verificación
 
 Con el entorno activo y un respaldo reciente:

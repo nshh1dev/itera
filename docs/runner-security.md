@@ -65,6 +65,31 @@ son independientes de E2E y no usan su doble HTTP.
 - El límite de archivo no es una cuota total de disco. Los timeouts HTTP y la
   caducidad lógica de envíos no garantizan cancelar trabajos ya aceptados.
 
-**Estado:** suite preparada, no ejecutada contra Piston. No se inició Docker/WSL,
-Next ni PostgreSQL y no se certifica aislamiento real. Recrear manualmente Piston
-es necesario para aplicar cambios de Compose; reconstruir solo la app no basta.
+## Verificación autorizada: 25 de octubre de 2026
+
+- Se inició WSL/Docker manualmente y se recreó Piston con Compose. La aplicación
+  Next permaneció detenida. La base Docker se inició únicamente para la prueba de
+  restauración separada; no se migró ni se sustituyó.
+- `test:runner:security`: **5 aprobadas, ninguna omitida**. `test:runner`:
+  **8 aprobadas, ninguna omitida**, con el subconjunto predeterminado de referencias
+  Python, JavaScript y TypeScript, no el catálogo completo.
+- El primer intento de `test:runner` omitió siete pruebas por la interrupción de
+  WSL sin sesión mantenida. Se activó manualmente la tarea `Docker-WSL` existente
+  (sin cambiar sus disparadores) y se repitió la suite completa correctamente.
+- `docker inspect` confirmó el digest fijado en Compose, `privileged=true` y
+  únicamente el volumen de paquetes montado, sin directorio del proyecto ni
+  socket Docker. `docker info`: cgroups v2, controlador systemd.
+- Se cargó el configurador de la imagen con su dependencia `nocamel` y se
+  verificaron los valores: red deshabilitada, salida 65536, procesos 64,
+  descriptores 2048, archivo 10000000, compilación pared/CPU 8000 ms, ejecución
+  pared 12000/CPU 10000 ms, memoria por etapa 268435456 y concurrencia 4.
+- La configuración global del contenedor sigue sin techo Docker de memoria,
+  CPU o PIDs (`Memory=0`, `NanoCpus=0`, `PidsLimit` sin valor). No se añadieron
+  presupuestos a ciegas ni se ejecutaron bombas o pruebas de agotamiento.
+- Al terminar se detuvieron base/Piston y la tarea manual; Ubuntu-24.04 quedó
+  apagado, como al inicio. No se cambiaron permisos de Windows.
+
+**Interpretación:** se comprobaron estas sondas y los valores cargados en esta
+instalación. No se certifica ausencia de escapes ni eficacia de todos los límites
+bajo carga, y permanecen los límites de alcance indicados arriba. Los cambios
+futuros de Compose requieren recrear Piston; reconstruir solo la app no basta.

@@ -1,5 +1,41 @@
 # Seguridad local
 
+## Sexta entrega: comprobación real autorizada (25 de octubre de 2026)
+
+- Autorización expresa para iniciar WSL/Docker y servicios necesarios, recrear
+  Piston y restaurar en una base temporal sin sobrescribir la base de uso diario.
+  No incluye cambiar ACL de Windows. Next permaneció detenido.
+- Cinco sondas reales de Piston aprobadas, ninguna omitida; ocho pruebas del
+  ejecutor real aprobadas, ninguna omitida, tras mantener WSL con su tarea manual.
+  Imagen, montajes, cgroups y configuración cargada revisados; evidencia y límites
+  en [runner-security.md](runner-security.md#verificación-autorizada-25-de-octubre-de-2026).
+  Siguen `privileged=true` y la ausencia de techo global de recursos del contenedor.
+- Nueva prueba optativa `npm run test:backup:real`, habilitada exclusivamente con
+  `ITERA_BACKUP_RESTORE=1`: usa el exportador de respaldos real y una base nueva
+  de nombre aleatorio; compara las tablas públicas sin imprimir filas ni huellas.
+  No restaura ni escribe datos de prueba en la base principal.
+- Restauración real aprobada: **22 tablas públicas**, mismos nombres, recuentos
+  y huellas entre origen previo, copia restaurada y origen posterior. `pg_restore`
+  terminó sin errores en una transacción y la base temporal fue eliminada;
+  consulta posterior confirmó cero bases `itera_restore_check_*` restantes.
+- Se conserva el respaldo real
+  `.local/backups/restore-check-1792912914779-54b937ddd60e434e99a8060344323303.dump`,
+  ignorado por Git/Docker y sin cifrar. No se publican sus datos ni credenciales.
+  No se probaron otros esquemas, secuencias, roles, otra versión mayor ni el
+  inicio de sesión de una app restaurada. Uso en [docker.md](docker.md#comprobación-real-de-restauración).
+- `npm test`: 161 aprobadas; tipos aprobados y lint sin errores, con los 97 avisos
+  locales previos. Se comprobó también la protección de la nueva prueba sin su
+  variable: una omisión intencionada, sin contactar Docker. No se repitió build
+  porque no cambian código de Next ni dependencias; E2E no ejecutado.
+- Los servicios iniciados y la tarea se detuvieron al terminar; WSL quedó apagado.
+  No se recreó la app ni se reconstruyó su imagen, no se modificaron ACL y se
+  conservaron los cambios locales ajenos.
+
+**Siguiente paso:** acordar la restricción de ACL de Windows sobre secretos y
+respaldos, identificando antes los usuarios que deben conservar acceso. Para un
+futuro servicio público hace falta diseñar otra frontera operativa del ejecutor;
+estas pruebas locales no habilitan por sí solas un despliegue online.
+
 ## Quinta entrega: protección de respaldos (25 de octubre de 2026)
 
 - `backup` e `import-local` comparten creación exclusiva del archivo: `pg_dump`
