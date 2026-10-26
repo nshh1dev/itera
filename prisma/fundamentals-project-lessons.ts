@@ -1,17 +1,13 @@
 import type { SeedExercise } from "./content";
 import type { Json, Language } from "../src/lib/types";
+import type { ProjectDefinition, ProjectFile } from "../src/lib/project";
 
-// Contrato estructural idéntico al acordado con plataforma. No contiene soluciones.
-// Al integrar, SeedExercise incorpora estos campos aditivos desde prisma/content.ts.
-type ProjectFile = { path: string; content: string; readOnly?: boolean };
-type ProjectDefinition = { version: 1; entrypoint: string; files: ProjectFile[]; testEntrypoint?: string; previousStep?: string };
-export type ProjectLesson = Omit<SeedExercise, "tests"> & {
+export type ProjectLesson = SeedExercise & {
   projects: Record<Language, ProjectDefinition>;
   projectSolutions: Record<Language, ProjectFile[]>;
-  tests: (SeedExercise["tests"][number] & { expectedFiles?: ProjectFile[] })[];
 };
 // Expectativas editoriales literales: no se derivan ejecutando la referencia
-// ni serializando su retorno. El contrato compartido solo admite rutas nuevas.
+// ni serializando su retorno. Estas actividades producen rutas nuevas.
 const producedFiles: Record<string, { path: string; contents: string[] }> = {
   "escribe-archivo": { path: "resultado.txt", contents: ["Hola Ada", "Hola", "Hola!"] },
   "guarda-recupera": { path: "guardado.json", contents: ["[1,2]", "[]", "[-3,0,3]"] },
@@ -19,6 +15,27 @@ const producedFiles: Record<string, { path: string; contents: string[] }> = {
   "inventario-persistente": { path: "guardado.json", contents: ['{"pan":1,"sal":3}', '{"pan":2}', '{"pan":3}'] },
   "agenda-almacenamiento": { path: "guardado.json", contents: ['[{"titulo":"leer","hecha":true}]', '[{"titulo":"leer","hecha":false}]', '[{"titulo":"leer","hecha":false},{"titulo":"andar","hecha":false}]'] },
   "agenda-regresion": { path: "guardado.json", contents: ['[{"titulo":"leer","hecha":true}]', '[{"titulo":"leer","hecha":false}]', '[{"titulo":"leer","hecha":false},{"titulo":"andar","hecha":false}]', '[{"titulo":"leer","hecha":true}]', '[{"titulo":"leer","hecha":false},{"titulo":"andar","hecha":true}]'] },
+};
+// Segunda solve([]), en otro proceso sobre el mismo directorio del caso.
+// Son expectativas independientes del primer retorno y de los artefactos.
+const persistentResults: Record<string, Json[]> = {
+  "inventario-persistente": [
+    { stock: { pan: 1, sal: 3 }, rechazados: 0 },
+    { stock: { pan: 2 }, rechazados: 0 },
+    { stock: { pan: 3 }, rechazados: 0 },
+  ],
+  "agenda-almacenamiento": [
+    [{ titulo: "leer", hecha: true }],
+    [{ titulo: "leer", hecha: false }],
+    [{ titulo: "leer", hecha: false }, { titulo: "andar", hecha: false }],
+  ],
+  "agenda-regresion": [
+    [{ titulo: "leer", hecha: true }],
+    [{ titulo: "leer", hecha: false }],
+    [{ titulo: "leer", hecha: false }, { titulo: "andar", hecha: false }],
+    [{ titulo: "leer", hecha: true }],
+    [{ titulo: "leer", hecha: false }, { titulo: "andar", hecha: true }],
+  ],
 };
 export const fundamentalsProjectLessons = new Map<string, ProjectLesson>();
 type Code = { python: string; javascript: string; typescript: string };
@@ -32,7 +49,9 @@ type ProjectOptions = {
 const extensions: Record<Language, string> = { python: "py", javascript: "js", typescript: "ts" };
 export function projectLesson(d: ProjectOptions) {
   const produced = producedFiles[d.key];
+  const persistence = persistentResults[d.key];
   if (produced && produced.contents.length !== d.cases.length) throw new Error(`Faltan expectativas de archivo: ${d.key}`);
+  if (persistence && persistence.length !== d.cases.length) throw new Error(`Faltan expectativas de persistencia: ${d.key}`);
   const signature = `export function solve(data: ${d.input}): ${d.output}`;
   const wrap = (language: Language, body: string) => {
     if (language === "python") return `def solve(data):\n${body.split("\n").map(line => `    ${line}`).join("\n")}\n`;
@@ -67,7 +86,7 @@ export function projectLesson(d: ProjectOptions) {
       solved.push({ path: `pruebas.${ext}`, content: d.ownTests[language] });
     }
     files.push(...(d.resources ?? [])); solved.push(...(d.resources ?? []));
-    projects[language] = { version: 1, entrypoint: `main.${ext}`, files, ...(d.ownTests ? { testEntrypoint: `pruebas.${ext}` } : {}), ...(d.previous ? { previousStep: `logica-${d.previous}` } : {}) };
+    projects[language] = { version: 1, entrypoint: `main.${ext}`, files, ...(persistence ? { verifyPersistence: true } : {}), ...(d.ownTests ? { testEntrypoint: `pruebas.${ext}` } : {}), ...(d.previous ? { previousStep: `logica-${d.previous}` } : {}) };
     projectSolutions[language] = solved;
   }
   const explanation = `${d.theory}\n\nPlan: separa las operaciones, comprueba la entrada, ejecuta el recorrido y devuelve el resultado calculado. Abre cada archivo de la solución para seguir la transferencia de datos. Las pruebas oficiales evalúan resultados independientes: no certifican organización interna ni calidad de una suite por un contador que imprima el programa.`;
@@ -79,16 +98,23 @@ export function projectLesson(d: ProjectOptions) {
     hints: d.hints, explanation, explanations: { python: explanation, javascript: explanation, typescript: explanation },
     python: solutions.python, javascript: solutions.javascript, typescript: solutions.typescript, starters,
     typescriptContract: `const __iteraContract: (data: ${d.input}) => ${d.output} = solve;`,
-    projects, projectSolutions, tests: d.cases.map(([input, expected], i) => ({ input, expected, visible: i < 2, ...(produced ? { expectedFiles: [{ path: produced.path, content: produced.contents[i] }] } : {}) })),
+    projects, projectSolutions, tests: d.cases.map(([input, expected], i) => ({ input, expected, visible: i < 2, ...(produced ? { expectedFiles: [{ path: produced.path, content: produced.contents[i] }] } : {}), ...(persistence ? { expectedPersistence: persistence[i] } : {}) })),
     complexity: "Cuenta los elementos recorridos, las copias y el tamaño del texto leído o escrito; leer todo un archivo requiere memoria proporcional a su contenido.",
     commonErrors: ["Confundir una ruta local de módulo con un paquete externo.", "Suponer que el disco se conserva entre envíos.", "Escribir un archivo sin volver a abrirlo para verificar sus datos."],
   };
   if (produced) {
     const format = produced.path.endsWith(".json") ? " JSON UTF-8 compacto, sin espacios de separación ni salto final. Python: json.dump(datos, archivo, ensure_ascii=False, separators=(',', ':')); Node: JSON.stringify(datos). Conserva el orden de las listas y de inserción de las claves: stock inicial antes de productos nuevos; en tareas, titulo antes de hecha." : " Texto UTF-8 exacto, sin añadir salto final.";
     e.statement += `\n\nArchivo evaluado: ${produced.path}, que debe crearse durante esta ejecución y no forma parte de la plantilla.${format} Los recursos iniciales no se modifican: carga el recurso y guarda una instantánea nueva. Se comprueba el contenido del archivo además del valor devuelto; devolver el resultado sin escribir no basta.`;
-    e.explanation += `\n\nPersistencia comprobada: crea y reabre ${produced.path}.${format} Después del guardado se consulta el archivo producido, sin sobrescribir recursos iniciales. Esto verifica un solo proceso, no dos procesos secuenciales.`;
+    e.explanation += `\n\nArchivo comprobado: crea y reabre ${produced.path}.${format} Después del guardado se consulta el archivo producido, sin sobrescribir recursos iniciales.${persistence ? " Además se comprueba la segunda llamada en un proceso nuevo, como se detalla en el contrato." : " Esta actividad verifica un solo proceso, no dos procesos secuenciales."}`;
     e.explanations = { python: e.explanation, javascript: e.explanation, typescript: e.explanation };
     e.constraints.push(`Genera ${produced.path} con el formato indicado; no lo añadas como recurso inicial.`);
+  }
+  if (persistence) {
+    const secondCall = "Cada caso ejecuta primero solve con sus comandos y luego solve([]) en un proceso nuevo sobre el mismo directorio, sin reconstruir los recursos. cargar() debe preferir guardado.json cuando existe y recurrir a estado.json solo antes del primer guardado. La segunda llamada recupera el estado final desde el archivo, no desde variables globales; conserva guardado.json con el mismo contenido exacto después de ambas llamadas. En inventario devuelve el mismo stock y rechazados: 0, porque la segunda entrada no contiene movimientos; en agenda devuelve las mismas tareas finales. El disco se reinicia para el siguiente caso y no se conserva entre envíos.";
+    e.statement += `\n\nPersistencia entre procesos: ${secondCall}`;
+    e.explanation += `\n\n${secondCall}`;
+    e.explanations = { python: e.explanation, javascript: e.explanation, typescript: e.explanation };
+    e.constraints.push("La segunda solve([]) debe recuperar el estado en otro proceso; no basta una variable global ni recargar siempre el recurso inicial.");
   }
   // La explicación contrasta lenguajes: no reemplazar JavaScript por TypeScript
   // al adaptar el enunciado, porque cambiaría el significado de CommonJS.
@@ -197,6 +223,8 @@ const invInput = "{ producto: string; cambio: number }[]";
 const invOutput = "{ stock: Record<string, number>; rechazados: number }";
 const invCases: [Json, Json][] = [[[ {producto:"pan",cambio:3},{producto:"pan",cambio:-4},{producto:"pan",cambio:-1}],{stock:{pan:2},rechazados:1}],[[],{stock:{},rechazados:0}],[[{producto:"sal",cambio:-1},{producto:"pan",cambio:0}],{stock:{pan:0},rechazados:1}]];
 projectLesson({key:"inventario-modular",problem:"Inventario persistente, hito 1: organiza reglas y adaptador. Empieza con stock vacío. Procesa movimientos con producto pan o sal y cambio entero. Rechaza los que dejarían existencias negativas; devuelve {stock, rechazados}. La función aplicar de reglas modifica stock intencionalmente. Este proyecto no reemplaza la actividad histórica inventario, que solo consolida movimientos.",input:invInput,output:invOutput,code:{python:"from reglas import aplicar\nstock = {}\nrechazados = aplicar(stock, data)\nreturn {'stock': stock, 'rechazados': rechazados}",javascript:"const { aplicar } = require('./reglas');\nconst stock = {};\nconst rechazados = aplicar(stock, data);\nreturn { stock, rechazados };",typescript:"const { aplicar } = require('./reglas') as { aplicar: (stock: Record<string, number>, movimientos: {producto:string;cambio:number}[]) => number };\nconst stock: Record<string, number> = {};\nconst rechazados = aplicar(stock, data);\nreturn { stock, rechazados };"},helpers:[{name:"reglas",code:inventoryRule,starter:inventoryStarter,editable:true}],cases:invCases,hints:["El módulo de reglas recibe el stock, no lo obtiene de una global.","Comprueba la existencia resultante antes de mutar.","Devuelve el número de rechazos y consulta stock en main."],theory:"Los mapas representan cantidades por producto. El contrato de aplicar declara una mutación intencional: el adaptador conserva la referencia y consulta el estado final. No confundas este proyecto con sumar cambios sin validar existencias."});
+// La segunda llamada nace sin memoria del primer proceso: la prioridad de
+// guardado.json es necesaria también antes de procesar la nueva entrada vacía.
 const storage: Code = {
   python:"import json\ndef guardar(datos):\n    with open('guardado.json', 'w', encoding='utf-8') as archivo:\n        json.dump(datos, archivo, ensure_ascii=False, separators=(',', ':'))\ndef cargar():\n    try:\n        with open('guardado.json', encoding='utf-8') as archivo:\n            return json.load(archivo)\n    except FileNotFoundError:\n        with open('estado.json', encoding='utf-8') as archivo:\n            return json.load(archivo)\n",
   javascript:"const fs = require('fs');\nfunction guardar(datos) { fs.writeFileSync('guardado.json', JSON.stringify(datos), 'utf8'); }\nfunction cargar() { const ruta = fs.existsSync('guardado.json') ? 'guardado.json' : 'estado.json'; return JSON.parse(fs.readFileSync(ruta, 'utf8')); }\nmodule.exports = { guardar, cargar };\n",
@@ -221,7 +249,7 @@ projectLesson({
   cases: [[[ { producto: "pan", cambio: -1 }, { producto: "sal", cambio: 3 }], { stock: { pan: 1, sal: 3 }, rechazados: 0 }], [[], { stock: { pan: 2 }, rechazados: 0 }], [[{ producto: "pan", cambio: -3 }, { producto: "pan", cambio: 1 }], { stock: { pan: 3 }, rechazados: 1 }]],
   hints: ["No empieces con stock vacío: carga el preparado.", "Reutiliza aplicar sin lectura de archivos dentro de reglas.", "Guarda y vuelve a cargar antes de devolver."],
   ownTests: inventoryTests,
-  theory: `${fileTheory} La reapertura comprueba persistencia dentro de una ejecución. Dos procesos secuenciales necesitan el conductor fijo de la plataforma: este hito no afirma comprobar ese aislamiento por sí solo. La copia del hito anterior es explícita; conserva el original y el recurso inicial de este hito. En TypeScript cargar<T>() es una función preparada con un parámetro de tipo: T representa la estructura guardada y se deduce de la anotación del consumidor. No valida datos desconocidos: aquí solo recupera el recurso controlado y lo escrito por este proyecto.`,
+  theory: `${fileTheory} Una reapertura dentro del mismo proceso no basta para demostrar persistencia entre procesos: este hito exige recuperar la instantánea con solve([]) en un proceso nuevo. Los rechazos pertenecen a los movimientos de cada llamada, no al stock guardado. La copia del hito anterior es explícita; conserva el original y el recurso inicial de este hito. En TypeScript cargar<T>() es una función preparada con un parámetro de tipo: T representa la estructura guardada y se deduce de la anotación del consumidor. No valida datos desconocidos: aquí solo recupera el recurso controlado y lo escrito por este proyecto.`,
 });
 
 const agendaRule: Code = {
@@ -238,7 +266,7 @@ const agendaMain: Code = {python:"from reglas import aplicar\nreturn aplicar([],
 projectLesson({key:"agenda-operaciones",problem:"Agenda, hito 1: diseña crear y completar. Empieza sin tareas. Recibe comandos {accion, titulo}; crear añade una tarea pendiente al final, completar marca las tareas de ese título. Completar un título inexistente no hace nada. Devuelve las tareas en orden de creación. Los títulos al crear son no vacíos y únicos; acciones desconocidas se ignoran.",input:agendaInput,output:agendaOutput,code:agendaMain,helpers:agendaHelpers,cases:[[[{accion:"crear",titulo:"leer"},{accion:"completar",titulo:"leer"}],[{titulo:"leer",hecha:true}]],[[],[]],[[{accion:"completar",titulo:"nada"},{accion:"crear",titulo:"andar"}],[{titulo:"andar",hecha:false}]]],hints:["Define una ficha de tarea y un recorrido de comandos.","Completar no debe crear tareas nuevas.","Conserva el orden; solo cambia hecha cuando coincide el título."],theory:"Este proyecto reúne funciones, registros, recorridos y módulos. Primero diseña el contrato de operaciones sin disco, para probar reglas independientemente del almacenamiento. El acceso libre permite empezar aquí con una plantilla propia."});
 const agendaPersistent: Code = {python:"from reglas import aplicar\nfrom almacenamiento import cargar, guardar\ntareas = aplicar(cargar(), data)\nguardar(tareas)\nreturn cargar()",javascript:"const { aplicar } = require('./reglas');\nconst { cargar, guardar } = require('./almacenamiento');\nguardar(aplicar(cargar(), data));\nreturn cargar();",typescript:"type Tarea = {titulo:string;hecha:boolean};\nconst { aplicar } = require('./reglas') as { aplicar: (tareas: Tarea[], comandos: {accion:string;titulo:string}[]) => Tarea[] };\nconst { cargar, guardar } = require('./almacenamiento') as { cargar: () => Tarea[]; guardar: (datos: Tarea[]) => void };\nguardar(aplicar(cargar(), data));\nreturn cargar();"};
 const agendaPersistCases: [Json,Json][] = [[[ {accion:"completar",titulo:"leer"}], [{titulo:"leer",hecha:true}]],[[],[{titulo:"leer",hecha:false}]],[[{accion:"crear",titulo:"andar"},{accion:"completar",titulo:"ausente"}],[{titulo:"leer",hecha:false},{titulo:"andar",hecha:false}]]];
-projectLesson({key:"agenda-almacenamiento",previous:"agenda-operaciones",problem:"Agenda, hito 2: incorpora almacenamiento. Conserva las operaciones y comienza cargando estado.json, con leer pendiente. Aplica comandos, guarda y reabre. Devuelve las tareas recuperadas sin perder las anteriores. No reinicies la lista a vacío en main.",input:agendaInput,output:agendaOutput,code:agendaPersistent,helpers:[...agendaHelpers,{name:"almacenamiento",code:storage,editable:true}],resources:agendaInitial,cases:agendaPersistCases,hints:["La entrada del módulo de reglas procede de cargar.","Guardar reemplaza el archivo con la lista completa.","Devuelve cargar() después de guardar."],theory:`${fileTheory} La frontera entre reglas y disco permite comprobar cada parte. Continúa mediante una copia explícita del hito anterior, sin sobrescribir el original. Este hito tiene plantilla independiente y empieza siempre con el recurso preparado.`});
+projectLesson({key:"agenda-almacenamiento",previous:"agenda-operaciones",problem:"Agenda, hito 2: incorpora almacenamiento. Conserva las operaciones y comienza cargando estado.json, con leer pendiente, solo si aún no existe guardado.json. Aplica comandos, guarda y reabre la instantánea. Devuelve las tareas recuperadas sin perder las anteriores. No reinicies la lista a vacío en main.",input:agendaInput,output:agendaOutput,code:agendaPersistent,helpers:[...agendaHelpers,{name:"almacenamiento",code:storage,editable:true}],resources:agendaInitial,cases:agendaPersistCases,hints:["La entrada del módulo de reglas procede de cargar.","Guardar reemplaza guardado.json con la lista completa, sin modificar estado.json.","Devuelve cargar() después de guardar; la segunda llamada recupera esa instantánea."],theory:`${fileTheory} La frontera entre reglas y disco permite comprobar cada parte. Continúa mediante una copia explícita del hito anterior, sin sobrescribir el original. Cada caso nuevo empieza con el recurso preparado, pero la segunda llamada de ese caso recibe la instantánea creada por la primera, en un proceso distinto.`});
 const agendaTests: Code = {
   python:"from reglas import aplicar\nassert aplicar([], [{'accion': 'completar', 'titulo': 'ausente'}]) == []\nassert aplicar([{'titulo': 'leer', 'hecha': False}], []) == [{'titulo': 'leer', 'hecha': False}]\nassert aplicar([], [{'accion': 'crear', 'titulo': 'andar'}]) == [{'titulo': 'andar', 'hecha': False}]\n",
   javascript:"const assert = require('node:assert/strict');\nconst { aplicar } = require('./reglas');\nassert.deepEqual(aplicar([], [{accion:'completar',titulo:'ausente'}]), []);\nassert.deepEqual(aplicar([{titulo:'leer',hecha:false}], []), [{titulo:'leer',hecha:false}]);\nassert.deepEqual(aplicar([], [{accion:'crear',titulo:'andar'}]), [{titulo:'andar',hecha:false}]);\n",
