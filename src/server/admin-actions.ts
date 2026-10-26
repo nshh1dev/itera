@@ -13,7 +13,7 @@ import { prerequisiteIssue } from "@/lib/curriculum";
 import { languages } from "@/lib/types";
 import { checkConcept } from "./execution/concepts";
 import { editorialTestsIssue } from "@/lib/editorial-tests";
-import { validateExpectedProjectFiles, validateProjectDefinition, validateProjectSolution } from "@/lib/project";
+import { validateExpectedProjectFiles, validateProjectDefinition, validateProjectPersistence, validateProjectSolution } from "@/lib/project";
 import { reportOperationalFailure } from "./operational-failure";
 
 async function checkPrerequisites(slug: string, slugs: string[]) {
@@ -47,7 +47,7 @@ export async function saveExercise(input: unknown) {
         practiceGoals:data.practiceGoals, prerequisiteSlugs:data.prerequisiteSlugs, activityType:data.activityType,
         runtimeMode:data.runtimeMode, conceptRule:data.conceptRule,
         complexity:data.complexity, commonErrors:data.commonErrors,
-        variants:{create:languages.map(language=>({language,...data[language],...(data.projects?.[language] ? {project:data.projects[language] as Prisma.InputJsonValue,solutionFiles:data.projectSolutions?.[language] as Prisma.InputJsonValue} : {}),tests:{create:data.tests.map((test,order)=>({input:test.input===null?Prisma.JsonNull:test.input,expected:test.expected===null?Prisma.JsonNull:test.expected,expectedFiles:test.expectedFiles as Prisma.InputJsonValue|undefined,visible:test.visible,explanation:test.explanation,order}))}}))},
+         variants:{create:languages.map(language=>({language,...data[language],...(data.projects?.[language] ? {project:data.projects[language] as Prisma.InputJsonValue,solutionFiles:data.projectSolutions?.[language] as Prisma.InputJsonValue} : {}),tests:{create:data.tests.map((test,order)=>({input:test.input===null?Prisma.JsonNull:test.input,expected:test.expected===null?Prisma.JsonNull:test.expected,expectedFiles:test.expectedFiles as Prisma.InputJsonValue|undefined,expectedPersistence:test.expectedPersistence===undefined?undefined:test.expectedPersistence===null?Prisma.JsonNull:test.expectedPersistence as Prisma.InputJsonValue,visible:test.visible,explanation:test.explanation,order}))}}))},
       } });
       // La categoría pertenece a la identidad editorial; el contenido publicado sigue inmutable.
       if (!exercise.published) await tx.exercise.update({where:{id:exercise.id},data:{category:data.category}});
@@ -91,8 +91,10 @@ export async function publishExerciseVersion(versionId: string) {
       let starterSolved = true;
       if (await checkConcept(variant.language as Language, variant.solution, version.conceptRule)) return {error:`La referencia de ${variant.language} no aplica el concepto solicitado.`};
       for (const test of variant.tests) {
+        const expectedPersistence = project?.verifyPersistence ? test.expectedPersistence as unknown as Json : undefined;
+        if (project) validateProjectPersistence(project, mode, test.input, expectedPersistence);
         const expectedFiles = project && test.expectedFiles ? validateExpectedProjectFiles(project, test.expectedFiles) : undefined;
-        const entry = { ...test, input: test.input as Json, expected: test.expected as Json, expectedFiles };
+        const entry = { ...test, input: test.input as Json, expected: test.expected as Json, expectedFiles, expectedPersistence };
         const output = await runCode(variant.language as Language,runtime,variant.solution,test.input as Json,mode,variant.typeContract,project ? { definition: project, files: projectSolution! } : undefined);
         const verdict = project ? judgeProject(output, entry, mode) : evaluate(output, entry);
         if (!verdict.passed) return {error:`La solución de referencia de ${variant.language} no supera el caso ${test.order+1}. Revisa el contenido y guarda una nueva versión.`};
@@ -128,7 +130,7 @@ export async function prepareCatalogRevision(input: unknown) {
   if (!source) return { error: "Este ejercicio no tiene una revisión didáctica del catálogo." };
   const content = seedVersionContent(source);
   const variant = (language: string) => content.variants.find(item => item.language === language)!;
-  const validated = schema.safeParse({ ...source, python: variant("python"), javascript: variant("javascript"), typescript: variant("typescript"), tests: content.variants[0].tests });
+  const validated = schema.safeParse({ ...source, python: variant("python"), javascript: variant("javascript"), typescript: variant("typescript"), tests: content.variants[0].tests.map(test => ({ ...test, ...(test.expectedPersistence === Prisma.JsonNull ? { expectedPersistence: null } : {}) })) });
   if (!validated.success) return { error: "La revisión del catálogo no supera la validación editorial. No se ha guardado nada." };
   const data = validated.data;
   try {
@@ -155,7 +157,7 @@ export async function prepareCatalogRevision(input: unknown) {
         complexity: data.complexity, commonErrors: data.commonErrors,
         variants: { create: languages.map(language => ({
           language, ...data[language], ...(data.projects?.[language] ? { project: data.projects[language] as Prisma.InputJsonValue, solutionFiles: data.projectSolutions?.[language] as Prisma.InputJsonValue } : {}), tests: { create: data.tests.map((test, order) => ({
-            order, visible: test.visible, explanation: test.explanation, input: test.input === null ? Prisma.JsonNull : test.input, expected: test.expected === null ? Prisma.JsonNull : test.expected, expectedFiles: test.expectedFiles as Prisma.InputJsonValue|undefined,
+            order, visible: test.visible, explanation: test.explanation, input: test.input === null ? Prisma.JsonNull : test.input, expected: test.expected === null ? Prisma.JsonNull : test.expected, expectedFiles: test.expectedFiles as Prisma.InputJsonValue|undefined, expectedPersistence: test.expectedPersistence === undefined ? undefined : test.expectedPersistence === null ? Prisma.JsonNull : test.expectedPersistence as Prisma.InputJsonValue,
           })) },
         })) },
       } });

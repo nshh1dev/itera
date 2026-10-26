@@ -9,6 +9,13 @@ su camino histórico.
 
 `ProjectDefinition` versión 1 publica un `entrypoint`, archivos planos (incluidos
 recursos preparados), un `testEntrypoint` opcional y `previousStep` orientativo.
+Opcionalmente `verifyPersistence: true` activa una segunda invocación `solve([])`
+en un proceso hijo limpio dentro del mismo sandbox y directorio de archivos. Se
+admite solo en FUNCTION y para casos cuya entrada oficial sea un array; cada caso
+debe definir `expectedPersistence` (incluido JSON null si ese es el resultado).
+El juez compara por separado el retorno principal, el retorno del segundo proceso
+y los archivos finales. Esta convención es explícita, no se supone para los demás
+proyectos; no conserva estado entre casos/envíos.
 Los nombres admiten letras ASCII, dígitos, punto, guion y guion bajo; se reservan
 `submission.*` y `__itera*`. El máximo es 20 archivos, 64 KiB por archivo y
 256 KiB por manifiesto/instantánea. Los archivos `readOnly` se comparan con la
@@ -21,11 +28,15 @@ driver fijo vive en `__itera_runner.*`, y TypeScript compila los módulos dentro
 Piston con `--strict --noEmitOnError` y CommonJS. El código enviado nunca se
 compila ni ejecuta en Next.
 
-Los archivos presentes que no pertenecen a la instantánea de entrada se recogen
-dentro del sandbox. Se limitan a 20 archivos y 32 KiB de texto total; el
+Los archivos nuevos y los recursos de datos editables cambiados respecto a la
+instantánea se recogen dentro del sandbox. Código, recursos `readOnly`, symlinks y
+archivos internos quedan fuera. Se limitan a 20 archivos, 32 KiB por archivo y
+32 KiB totales tanto en validación editorial como en captura; las entradas de
+archivo conservan sus límites independientes de hasta 64 KiB. El
 conductor emite un marcador estructurado y `judgeProject` compara el valor/salida
 y los artefactos en el servidor web. `expectedFiles` es editorial por caso y no
-puede colisionar con rutas de entrada. Los casos ocultos no persisten ni devuelven
+puede referirse a código ni a recursos de solo lectura; puede describir un recurso
+editable existente o un archivo de datos nuevo. Los casos ocultos no persisten ni devuelven
 entrada, expectativa, archivos reales, logs o errores.
 
 La acción «Ejecutar mis pruebas» ejecuta solamente el `testEntrypoint` público,
@@ -43,13 +54,13 @@ sin aplicarlas y permite copiar explícitamente archivos coincidentes de
 ## Límites aún no verificados
 
 - `tests/real-runner.integration.ts` cubre módulos, recursos, reapertura,
-  artefactos y aserciones con Piston real cuando está disponible. En el entorno de
+  artefactos, aserciones y el segundo proceso de persistencia con Piston real cuando está disponible. En el entorno de
   esta entrega Piston no respondió; esas pruebas se omitieron, no se consideran
   aprobadas. No se inició ningún servicio.
 - No se aplicó la migración ni se activó contenido; requieren autorización y una
   base preparada.
-- No existe un protocolo editorial para declarar varios procesos de alumno como
-  pasos; el programa o la función se ejecuta por caso en un entorno limpio. No se
-  promete persistencia entre casos o envíos.
+- `verifyPersistence` cubre solo la convención declarada de dos llamadas FUNCTION
+  `solve(entrada)` y `solve([])` dentro de un mismo caso. No modela pipelines
+  generales ni promete persistencia entre casos o envíos.
 - E2E y build no se ejecutaron. La suite unitaria no sustituye la comprobación
   integrada de publicación, UI y runtime real.

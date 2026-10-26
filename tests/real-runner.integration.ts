@@ -182,6 +182,39 @@ test("el runner real TypeScript resuelve imports del proyecto y aserciones de No
   assert.equal(judgeOwnTests(ownTests).passed, true, detail(ownTests));
 });
 
+test("verifyPersistence ejecuta solve([]) en otro proceso y comprueba recursos editados en Python y JavaScript", only, async () => {
+  for (const language of ["python", "javascript"] as const) {
+    const runtime = await availableRuntime(language);
+    const definition: ProjectDefinition = language === "python" ? {
+      version: 1, entrypoint: "main.py", verifyPersistence: true, files: [
+        { path: "main.py", content: "import json\ndef solve(data):\n    with open('store.json', encoding='utf-8') as file: state = json.load(file)\n    state['items'].extend(data)\n    with open('store.json', 'w', encoding='utf-8') as file: json.dump(state, file, ensure_ascii=False, separators=(',', ':'))\n    return {'count': len(state['items'])}" },
+        { path: "store.json", content: "{\"items\":[]}" },
+      ],
+    } : {
+      version: 1, entrypoint: "main.js", verifyPersistence: true, files: [
+        { path: "main.js", content: "const fs = require('fs');\nfunction solve(data) { const state = JSON.parse(fs.readFileSync('store.json', 'utf8')); state.items.push(...data); fs.writeFileSync('store.json', JSON.stringify(state)); return {count:state.items.length}; }\nmodule.exports = solve;" },
+        { path: "store.json", content: "{\"items\":[]}" },
+      ],
+    };
+    const expectedFiles = [{ path: "store.json", content: "{\"items\":[5]}" }];
+    const fixture = { input: [5], expected: { count: 1 }, expectedPersistence: { count: 1 }, expectedFiles, visible: true, order: 0 };
+    const output = await runCode(language, runtime, "", fixture.input, "FUNCTION", "", { definition, files: definition.files });
+    assert.equal(judgeProject(output, fixture, "FUNCTION").passed, true, `${language}: ${detail(output)}`);
+  }
+});
+
+test("verifyPersistence TypeScript compila imports y evalúa el segundo proceso sobre el archivo cambiado", typescriptOnly, async () => {
+  const runtime = await availableRuntime("typescript");
+  const definition: ProjectDefinition = { version: 1, entrypoint: "main.ts", verifyPersistence: true, files: [
+    { path: "main.ts", content: "import { cargar, guardar } from './store';\nexport function solve(data: number[]): {count:number} { const state = cargar(); state.items.push(...data); guardar(state); return {count:state.items.length}; }" },
+    { path: "store.ts", content: "import fs = require('fs');\ntype State = {items:number[]};\nexport function cargar(): State { return JSON.parse(fs.readFileSync('store.json','utf8')) as State; }\nexport function guardar(state: State): void { fs.writeFileSync('store.json',JSON.stringify(state),'utf8'); }" },
+    { path: "store.json", content: "{\"items\":[]}" },
+  ] };
+  const fixture = { input: [5], expected: { count: 1 }, expectedPersistence: { count: 1 }, expectedFiles: [{ path: "store.json", content: "{\"items\":[5]}" }], visible: true, order: 0 };
+  const output = await runCode("typescript", runtime, "", fixture.input, "FUNCTION", "const __iteraContract: (data: number[]) => {count:number} = solve;", { definition, files: definition.files });
+  assert.equal(judgeProject(output, fixture, "FUNCTION").passed, true, detail(output));
+});
+
 test("las referencias TypeScript pasan en el runtime real", typescriptOnly, async () => {
   const runtime = await availableRuntime("typescript");
   const selected = process.env.ITERA_RUNNER_ALL ? [...exercises, ...logicExercises] : [...exercises.filter(exercise => ["lee-y-saluda", "valor-o-respaldo", "suma-de-dos-numeros", "presupuesto-de-merienda"].includes(exercise.slug)), ...logicExercises.filter(exercise => ["logica-lee-suma", "logica-monticulo-extrae", "logica-planifica-tareas"].includes(exercise.slug))];

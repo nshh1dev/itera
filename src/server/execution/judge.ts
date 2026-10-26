@@ -2,7 +2,7 @@ import { isDeepStrictEqual } from "node:util";
 import type { Json, TestResult } from "@/lib/types";
 
 export type RunOutput = { stdout: string; stderr: string; code: number | null; signal?: string | null; status?: string | null };
-export type JudgeTest = { input: Json; expected: Json; expectedFiles?: { path: string; content: string }[] | null; visible: boolean; order: number };
+export type JudgeTest = { input: Json; expected: Json; expectedFiles?: { path: string; content: string }[] | null; expectedPersistence?: Json; visible: boolean; order: number };
 
 const normalize = (text: string) => text.replace(/\r\n?/g, "\n");
 // Forma canónica de una salida de texto: fin de línea uniforme, sin espacios al
@@ -85,7 +85,7 @@ export function judgeProject(output: RunOutput, test: JudgeTest, mode: "FUNCTION
   const lines = output.stdout.replace(/\r\n?/g, "\n").trimEnd().split("\n");
   const marker = lines.at(-1) ?? "";
   const prefix = "__ITERA_PROJECT__";
-  let payload: { kind?: unknown; value?: unknown; stdout?: unknown; stderr?: unknown; code?: unknown; timeout?: unknown; files?: unknown };
+  let payload: { kind?: unknown; value?: unknown; persistence?: unknown; stdout?: unknown; stderr?: unknown; code?: unknown; timeout?: unknown; files?: unknown };
   try {
     if (!marker.startsWith(prefix)) throw new Error();
     payload = JSON.parse(marker.slice(prefix.length)) as typeof payload;
@@ -112,8 +112,10 @@ export function judgeProject(output: RunOutput, test: JudgeTest, mode: "FUNCTION
     base.passed = actual === canonical(String(test.expected ?? "")) && isDeepStrictEqual(files, expectedFiles);
     if (test.visible) { base.actual = actual; base.output = typeof payload.stdout === "string" ? payload.stdout : ""; base.actualFiles = files; }
   } else {
-    base.passed = isDeepStrictEqual(payload.value, test.expected) && isDeepStrictEqual(files, expectedFiles);
+    const persistencePassed = test.expectedPersistence === undefined || isDeepStrictEqual(payload.persistence, test.expectedPersistence);
+    base.passed = isDeepStrictEqual(payload.value, test.expected) && isDeepStrictEqual(files, expectedFiles) && persistencePassed;
     if (test.visible) { base.actual = payload.value as Json; base.actualFiles = files; const logs = lines.slice(0, -1).join("\n"); if (logs) base.output = logs; }
+    if (!persistencePassed && test.visible) base.error = "El resultado del segundo proceso no coincide con la persistencia esperada.";
   }
   base.status = base.passed ? "passed" : "wrong";
   return base;

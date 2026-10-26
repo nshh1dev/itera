@@ -11,6 +11,19 @@ test("FUNCTION compara el valor y los archivos reales generados fuera del sandbo
   assert.deepEqual(result.actualFiles, expectedFiles);
 });
 
+test("FUNCTION con persistencia compara explícitamente el resultado del segundo proceso", () => {
+  const output = { stdout: marker({ kind: "function", value: { guardado: true }, persistence: { registros: 2 }, files: [{ path: "store.json", content: "{\"registros\":2}" }] }), stderr: "", code: 0 };
+  const expected = { input: [1, 2], expected: { guardado: true }, expectedPersistence: { registros: 2 }, expectedFiles: [{ path: "store.json", content: "{\"registros\":2}" }], visible: true, order: 0 };
+  assert.equal(judgeProject(output, expected, "FUNCTION").passed, true);
+  const mismatch = judgeProject({ ...output, stdout: marker({ kind: "function", value: { guardado: true }, persistence: { registros: 1 }, files: expected.expectedFiles }) }, expected, "FUNCTION");
+  assert.equal(mismatch.status, "wrong");
+  assert.match(mismatch.error ?? "", /segundo proceso/);
+  const hidden = judgeProject({ ...output, stdout: marker({ kind: "function", value: { guardado: true }, persistence: { privado: true }, files: [] }) }, { ...expected, visible: false }, "FUNCTION");
+  assert.equal(hidden.status, "wrong");
+  assert.equal("expectedPersistence" in hidden, false);
+  assert.equal("actualFiles" in hidden, false);
+});
+
 test("los artefactos diferentes fallan y los casos ocultos no exponen contenidos", () => {
   const expectedFiles = [{ path: "secreto.txt", content: "esperado" }];
   const output = { stdout: marker({ kind: "function", value: 1, files: [{ path: "secreto.txt", content: "real" }] }), stderr: "", code: 0 };

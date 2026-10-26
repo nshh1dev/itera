@@ -6,7 +6,7 @@ import type { Json, Language, RuntimeMode, TestResult } from "@/lib/types";
 import { checkConcept } from "./concepts";
 import { minimumSubmissionBudgetMs, submissionBudgetMs } from "@/lib/execution-limits";
 import { reportOperationalFailure, type OperationalPhase } from "@/server/operational-failure";
-import { validateExpectedProjectFiles, validateProjectDefinition, validateProjectSnapshot } from "@/lib/project";
+import { validateExpectedProjectFiles, validateProjectDefinition, validateProjectPersistence, validateProjectSnapshot } from "@/lib/project";
 
 const interrupted = { status: "ERROR" as const, message: "La evaluación se interrumpió. No cuenta como un resultado incorrecto; puedes volver a intentarlo." };
 
@@ -18,9 +18,10 @@ export async function evaluateSubmission(id: string) {
   if (!submission || submission.status !== "RUNNING") return;
   const { variant } = submission;
   const mode = variant.version.runtimeMode as RuntimeMode;
+  const verifyPersistence = !!(variant.project && typeof variant.project === "object" && !Array.isArray(variant.project) && (variant.project as { verifyPersistence?: unknown }).verifyPersistence === true);
   let project: ReturnType<typeof validateProjectDefinition> | undefined;
   let projectFiles: ReturnType<typeof validateProjectSnapshot> | undefined;
-  const budget = submissionBudgetMs({ language: variant.language, totalCount: submission.totalCount, mode: submission.mode, conceptRule: variant.version.conceptRule });
+  const budget = submissionBudgetMs({ language: variant.language, totalCount: submission.totalCount, mode: submission.mode, conceptRule: variant.version.conceptRule, verifyPersistence });
   const deadline = submission.createdAt.getTime() + budget;
   let phase: OperationalPhase = "execution.state";
   async function expireOwn() {
@@ -53,9 +54,12 @@ export async function evaluateSubmission(id: string) {
       // caso si la reconciliación ya finalizó o caducó este intento.
       if (!await canContinue()) return;
       phase = "execution.case";
-      const output = await runCode(variant.language as Language, runtime, submission.code, test.input as Json, mode, variant.typeContract, project ? { definition: project, files: projectFiles!, ...(submission.mode === "tests" ? { purpose: "tests" as const } : {}) } : undefined);
+      const storedPersistence = "expectedPersistence" in test ? test.expectedPersistence : undefined;
+      const expectedPersistence = project?.verifyPersistence ? storedPersistence as unknown as Json : undefined;
+      if (project && submission.mode !== "tests") validateProjectPersistence(project, mode, test.input, expectedPersistence);
       const expectedFiles = project && "expectedFiles" in test && test.expectedFiles ? validateExpectedProjectFiles(project, test.expectedFiles) : undefined;
-      const entry = { ...test, input: test.input as Json, expected: test.expected as Json, expectedFiles };
+      const output = await runCode(variant.language as Language, runtime, submission.code, test.input as Json, mode, variant.typeContract, project ? { definition: project, files: projectFiles!, ...(submission.mode === "tests" ? { purpose: "tests" as const } : {}) } : undefined);
+      const entry = { ...test, input: test.input as Json, expected: test.expected as Json, expectedFiles, expectedPersistence };
       results.push(submission.mode === "tests" ? judgeOwnTests(output) : project ? judgeProject(output, entry, mode) : mode === "PROGRAM" ? judgeProgram(output, entry) : judge(output, entry));
     }
     const passedCount = results.filter(r => r.passed).length;
@@ -90,8 +94,12 @@ export async function evaluateSubmission(id: string) {
 export async function expireInterruptedSubmissions() {
   try {
     const now = Date.now();
-    const candidates = await db.submission.findMany({ where: { status: "RUNNING", createdAt: { lte: new Date(now - minimumSubmissionBudgetMs) } }, select: { id: true, createdAt: true, totalCount: true, mode: true, variant: { select: { language: true, version: { select: { conceptRule: true } } } } } });
-    const expired = candidates.filter(candidate => now >= candidate.createdAt.getTime() + submissionBudgetMs({ language: candidate.variant.language, totalCount: candidate.totalCount, mode: candidate.mode, conceptRule: candidate.variant.version.conceptRule }));
+    const candidates = await db.submission.findMany({ where: { status: "RUNNING", createdAt: { lte: new Date(now - minimumSubmissionBudgetMs) } }, select: { id: true, createdAt: true, totalCount: true, mode: true, variant: { select: { language: true, project: true, version: { select: { conceptRule: true } } } } } });
+    const expired = candidates.filter(candidate => {
+      const project = candidate.variant.project;
+      const verifyPersistence = !!(project && typeof project === "object" && !Array.isArray(project) && (project as { verifyPersistence?: unknown }).verifyPersistence === true);
+      return now >= candidate.createdAt.getTime() + submissionBudgetMs({ language: candidate.variant.language, totalCount: candidate.totalCount, mode: candidate.mode, conceptRule: candidate.variant.version.conceptRule, verifyPersistence });
+    });
     if (expired.length) await db.submission.updateMany({ where: { id: { in: expired.map(candidate => candidate.id) }, status: "RUNNING" }, data: { ...interrupted, finishedAt: new Date() } });
   } catch (error) {
     reportOperationalFailure("execution.reconcile");

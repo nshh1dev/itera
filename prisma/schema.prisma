@@ -218,6 +218,7 @@ model TestCase {
   input     Json
   expected  Json
   expectedFiles Json?
+  expectedPersistence Json?
   explanation String @default("")
   visible   Boolean @default(false)
   order     Int
