@@ -75,6 +75,16 @@ Los 18 proyectos usan `FUNCTION`, no un modo nuevo. Python define `solve`, JS ex
 
 Los campos de solución y plantilla del archivo principal se derivan de los mismos datos editoriales por compatibilidad, no se editan como fuentes independientes. Los tres proyectos integradores tienen siete hitos, cada uno con identidad, casos, requisitos y plantilla propia. `previousStep` orienta una copia explícita sin modificar el original; no es un prerrequisito que cierre el acceso.
 
+### Evaluación de archivos producidos
+
+Seis actividades declaran `expectedFiles: [{path, content}]` en todos sus casos: `escribe-archivo`, `guarda-recupera`, `actualiza-persistidos`, `inventario-persistente`, `agenda-almacenamiento` y `agenda-regresion`. Son **20 expectativas editoriales independientes** (12 visibles y ocho ocultas), compartidas por los tres lenguajes. Los literales esperados no se obtienen ejecutando la referencia ni serializando su retorno.
+
+El contrato de plataforma solo permite evaluar **archivos nuevos**, nunca rutas del manifiesto inicial ni archivos `readOnly`. Por eso `historial.json` y `estado.json` se conservan como recursos iniciales de solo lectura; las actualizaciones crean `guardado.json`. En inventario y agenda, `cargar` lee primero esa instantánea si ya existe y, antes del primer guardado, usa `estado.json`. La actividad de texto crea `resultado.txt`. Ninguno de esos archivos de salida se prepara en el manifiesto público.
+
+Las expectativas comparan UTF-8 exacto. Para el JSON acotado de estas actividades se enseña una representación determinista: sin espacios de separación ni salto final; Python `json.dump(datos, archivo, ensure_ascii=False, separators=(',', ':'))`, JS/TS `JSON.stringify(datos)`. Se conservan el orden de listas y la inserción de claves: stock inicial antes de productos nuevos, y `titulo` antes de `hecha` en tareas. Los contratos explicitan ese formato; no se finge una comparación JSON semántica de archivos. Este formato no es una receta universal de canonicalización de JSON arbitrario.
+
+Las pruebas locales abren los archivos reales y comparan sus contenidos, además del retorno; comprueban que los recursos iniciales sigan intactos y que un resultado correcto con archivo ausente o alterado sea rechazado. Esto comprueba contenido final y reapertura de las referencias en un proceso, **no demuestra dos procesos, durabilidad ante fallos ni cada decisión interna de una solución alternativa**. La integración debe conservar `expectedFiles` en versiones/casos y filtrar los ocultos mediante la plataforma de Luna; los manifiestos públicos siguen sin incluir esas expectativas.
+
 Cada actividad variable tiene al menos tres entradas distintas, dos visibles y las restantes ocultas. Las respuestas se escriben como datos independientes, no se calculan ejecutando la referencia. Las plantillas son ejecutables y no pasan todos los casos. Los fragmentos deliberadamente defectuosos se explican en el enunciado; no se admite una excepción deliberada en la plantilla oficial. Los fallos lógicos, como contar cero entre positivos, sí se permiten y terminan normalmente.
 
 ## Límites y activación
