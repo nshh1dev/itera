@@ -1,10 +1,26 @@
 import type { ExecutionResult } from "./types";
+import { normalizeProjectPath, projectLimits, type ProjectFile } from "./project";
 
 type Context = { variantId: string; diagnosticItemId?: string };
-export type ExecutionRequest = Context & { code: string; mode: "examples" | "submit"; idempotencyKey: string };
+export type ExecutionRequest = Context & ({ code: string; files?: never } | { files: ProjectFile[]; code?: never }) & { mode: "examples" | "submit" | "tests"; idempotencyKey: string };
 type PendingExecution = { version: 1; request?: ExecutionRequest; id?: string; uncertain?: boolean };
 type Storage = Pick<globalThis.Storage, "getItem" | "setItem" | "removeItem">;
 type State = { pending: PendingExecution | null; result: ExecutionResult | null; error: string; storageError: string; completed: number };
+
+function validProjectFiles(files: unknown): files is ProjectFile[] {
+  if (!Array.isArray(files) || files.length === 0 || files.length > projectLimits.files) return false;
+  const paths = new Set<string>();
+  let total = 0;
+  for (const file of files) {
+    if (!file || typeof file.path !== "string" || typeof file.content !== "string" || (file.readOnly !== undefined && typeof file.readOnly !== "boolean")) return false;
+    const path = normalizeProjectPath(file.path);
+    if (!path || paths.has(path)) return false;
+    paths.add(path);
+    const size = new TextEncoder().encode(file.content).byteLength;
+    if (size > projectLimits.fileBytes || (total += size) > projectLimits.totalBytes) return false;
+  }
+  return true;
+}
 
 export function readPendingExecution(raw: string | null, context: Context): PendingExecution | null {
   if (!raw) return null;
@@ -14,7 +30,9 @@ export function readPendingExecution(raw: string | null, context: Context): Pend
     const value = JSON.parse(raw) as PendingExecution;
     if (value.version !== 1 || (value.id !== undefined && (typeof value.id !== "string" || !/^[\w-]{1,100}$/.test(value.id)))) return null;
     const request = value.request;
-    if (request && (request.variantId !== context.variantId || request.diagnosticItemId !== context.diagnosticItemId || typeof request.code !== "string" || !request.code.length || request.code.length > 30000 || !["examples", "submit"].includes(request.mode) || typeof request.idempotencyKey !== "string" || !/^[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}$/i.test(request.idempotencyKey))) return null;
+    const validFiles = validProjectFiles(request?.files);
+    const validCode = typeof request?.code === "string" && request.code.length > 0 && request.code.length <= 30000;
+    if (request && (request.variantId !== context.variantId || request.diagnosticItemId !== context.diagnosticItemId || validCode === validFiles || (request.mode === "tests" && !validFiles) || !["examples", "submit", "tests"].includes(request.mode) || typeof request.idempotencyKey !== "string" || !/^[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}$/i.test(request.idempotencyKey))) return null;
     return request || value.id ? { version: 1, request, id: value.id, uncertain: !!request && !value.id } : null;
   } catch { return null; }
 }
@@ -55,7 +73,7 @@ export function createExecutionTracker(options: Context & { key: string; storage
     subscribe(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
     getSnapshot: () => state,
     getDelay: () => failures ? Math.min(1000 * 2 ** Math.min(failures - 1, 5), 30000) : 1000,
-    start(code: string, mode: "examples" | "submit") {
+    start(code: string, mode: "examples" | "submit" | "tests", files?: ProjectFile[]) {
       if (state.pending || inFlight) return false;
       // Releer antes de reservar evita ignorar un intento abierto en otra pestaña.
       try {
@@ -64,7 +82,8 @@ export function createExecutionTracker(options: Context & { key: string; storage
         if (existing) { update({ pending: existing, error: "Recuperando el intento pendiente, sin enviar el código actual." }); return false; }
         if (raw) { update({ error: "El seguimiento anterior no es válido. Revisa los intentos recientes antes de iniciar otro." }); return false; }
       } catch { update({ error: "No se ha enviado el programa: habilita el almacenamiento del navegador y vuelve a intentarlo." }); return false; }
-      const pending: PendingExecution = { version: 1, request: { variantId: options.variantId, ...(options.diagnosticItemId ? { diagnosticItemId: options.diagnosticItemId } : {}), code, mode, idempotencyKey: crypto.randomUUID() } };
+      if (files ? code.length > 0 || !validProjectFiles(files) : !code.trim() || mode === "tests") { update({ error: "La instantánea del intento no es válida." }); return false; }
+      const pending: PendingExecution = { version: 1, request: { variantId: options.variantId, ...(options.diagnosticItemId ? { diagnosticItemId: options.diagnosticItemId } : {}), ...(files ? { files: files.map(file => ({ ...file })) } : { code }), mode, idempotencyKey: crypto.randomUUID() } };
       // Si no podemos persistir ANTES del POST, no creamos un intento irrecuperable.
       if (!persist(pending)) { update({ error: "No se ha enviado el programa. Habilita el almacenamiento y vuelve a intentarlo." }); return false; }
       failures = 0; update({ pending, result: null, error: "" }); return true;

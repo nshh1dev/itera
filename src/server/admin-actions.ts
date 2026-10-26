@@ -6,13 +6,14 @@ import { db } from "./db";
 import { Prisma } from "@/generated/prisma/client";
 import type { Json, Language, RuntimeMode } from "@/lib/types";
 import { availableRuntime, runCode, RunnerUnavailable } from "./execution/piston";
-import { judge, judgeProgram } from "./execution/judge";
+import { judge, judgeProgram, judgeProject } from "./execution/judge";
 import { catalogRevision, catalogRevisionDecision, seedVersionContent } from "../../prisma/editorial-revision";
 import { editorialSchema as schema, publicationMetadataSchema } from "@/lib/editorial";
 import { prerequisiteIssue } from "@/lib/curriculum";
 import { languages } from "@/lib/types";
 import { checkConcept } from "./execution/concepts";
 import { editorialTestsIssue } from "@/lib/editorial-tests";
+import { validateExpectedProjectFiles, validateProjectDefinition, validateProjectSolution } from "@/lib/project";
 import { reportOperationalFailure } from "./operational-failure";
 
 async function checkPrerequisites(slug: string, slugs: string[]) {
@@ -46,7 +47,7 @@ export async function saveExercise(input: unknown) {
         practiceGoals:data.practiceGoals, prerequisiteSlugs:data.prerequisiteSlugs, activityType:data.activityType,
         runtimeMode:data.runtimeMode, conceptRule:data.conceptRule,
         complexity:data.complexity, commonErrors:data.commonErrors,
-        variants:{create:languages.map(language=>({language,...data[language],tests:{create:data.tests.map((test,order)=>({input:test.input===null?Prisma.JsonNull:test.input,expected:test.expected===null?Prisma.JsonNull:test.expected,visible:test.visible,explanation:test.explanation,order}))}}))},
+        variants:{create:languages.map(language=>({language,...data[language],...(data.projects?.[language] ? {project:data.projects[language] as Prisma.InputJsonValue,solutionFiles:data.projectSolutions?.[language] as Prisma.InputJsonValue} : {}),tests:{create:data.tests.map((test,order)=>({input:test.input===null?Prisma.JsonNull:test.input,expected:test.expected===null?Prisma.JsonNull:test.expected,expectedFiles:test.expectedFiles as Prisma.InputJsonValue|undefined,visible:test.visible,explanation:test.explanation,order}))}}))},
       } });
       // La categoría pertenece a la identidad editorial; el contenido publicado sigue inmutable.
       if (!exercise.published) await tx.exercise.update({where:{id:exercise.id},data:{category:data.category}});
@@ -75,16 +76,28 @@ export async function publishExerciseVersion(versionId: string) {
       if (version.conceptRule && (!fixed || version.activityType !== "GUIDED")) return {error:"La comprobación conceptual requiere una práctica guiada sin entrada."};
     }
     for (const variant of version.variants) {
+      let project: ReturnType<typeof validateProjectDefinition> | undefined;
+      let projectSolution: ReturnType<typeof validateProjectSolution> | undefined;
+      try {
+        if (variant.project) {
+          project = validateProjectDefinition(variant.project);
+          projectSolution = validateProjectSolution(project, variant.solutionFiles);
+        } else if (variant.solutionFiles) return { error: `La solución de proyecto de ${variant.language} no tiene manifiesto.` };
+      } catch (error) { return { error: `El proyecto de ${variant.language} no es válido: ${error instanceof Error ? error.message : "revisa sus archivos."}` }; }
+      if (project && version.conceptRule) return { error: `Los proyectos ${variant.language} todavía no admiten reglas conceptuales basadas en un solo archivo.` };
       const runtime = await availableRuntime(variant.language as Language);
       const mode = version.runtimeMode as RuntimeMode;
       const evaluate = mode === "PROGRAM" ? judgeProgram : judge;
       let starterSolved = true;
       if (await checkConcept(variant.language as Language, variant.solution, version.conceptRule)) return {error:`La referencia de ${variant.language} no aplica el concepto solicitado.`};
       for (const test of variant.tests) {
-        const entry = { ...test, input: test.input as Json, expected: test.expected as Json };
-        const output = await runCode(variant.language as Language,runtime,variant.solution,test.input as Json,mode,variant.typeContract);
-        if (!evaluate(output, entry).passed) return {error:`La solución de referencia de ${variant.language} no supera el caso ${test.order+1}. Revisa el contenido y guarda una nueva versión.`};
-        const initial = evaluate(await runCode(variant.language as Language, runtime, variant.starter, test.input as Json, mode, variant.typeContract), { ...entry, visible: true });
+        const expectedFiles = project && test.expectedFiles ? validateExpectedProjectFiles(project, test.expectedFiles) : undefined;
+        const entry = { ...test, input: test.input as Json, expected: test.expected as Json, expectedFiles };
+        const output = await runCode(variant.language as Language,runtime,variant.solution,test.input as Json,mode,variant.typeContract,project ? { definition: project, files: projectSolution! } : undefined);
+        const verdict = project ? judgeProject(output, entry, mode) : evaluate(output, entry);
+        if (!verdict.passed) return {error:`La solución de referencia de ${variant.language} no supera el caso ${test.order+1}. Revisa el contenido y guarda una nueva versión.`};
+        const starterOutput = await runCode(variant.language as Language, runtime, variant.starter, test.input as Json, mode, variant.typeContract, project ? { definition: project, files: project.files } : undefined);
+        const initial = project ? judgeProject(starterOutput, { ...entry, visible: true }, mode) : evaluate(starterOutput, { ...entry, visible: true });
         if (initial.status === "runtime" || initial.status === "timeout" || initial.error) return {error:`La plantilla de ${variant.language} falla en el caso ${test.order+1}. Debe ejecutarse ${mode === "PROGRAM" ? "sin errores" : "y devolver un valor JSON aunque aún no resuelva el problema"}.`};
         starterSolved &&= initial.passed;
       }
@@ -141,8 +154,8 @@ export async function prepareCatalogRevision(input: unknown) {
         runtimeMode: data.runtimeMode, conceptRule: data.conceptRule,
         complexity: data.complexity, commonErrors: data.commonErrors,
         variants: { create: languages.map(language => ({
-          language, ...data[language], tests: { create: data.tests.map((test, order) => ({
-            order, visible: test.visible, explanation: test.explanation, input: test.input === null ? Prisma.JsonNull : test.input, expected: test.expected === null ? Prisma.JsonNull : test.expected,
+          language, ...data[language], ...(data.projects?.[language] ? { project: data.projects[language] as Prisma.InputJsonValue, solutionFiles: data.projectSolutions?.[language] as Prisma.InputJsonValue } : {}), tests: { create: data.tests.map((test, order) => ({
+            order, visible: test.visible, explanation: test.explanation, input: test.input === null ? Prisma.JsonNull : test.input, expected: test.expected === null ? Prisma.JsonNull : test.expected, expectedFiles: test.expectedFiles as Prisma.InputJsonValue|undefined,
           })) },
         })) },
       } });

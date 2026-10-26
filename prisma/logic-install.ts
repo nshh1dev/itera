@@ -27,7 +27,9 @@ function versionData(source: typeof logicExercises[number], number: number) {
   return { ...content, number, published: false, variants: { create: variants.map(variant => ({
     language: variant.language, starter: variant.starter, solution: variant.solution, explanation: variant.explanation,
     statement: variant.statement ?? "", typeContract: variant.typeContract ?? "",
-    tests: { create: variant.tests.map(test => ({ order: test.order, visible: test.visible, explanation: test.explanation ?? "", input: json(test.input), expected: json(test.expected) })) },
+    ...(variant.project ? { project: variant.project as Prisma.InputJsonValue } : {}),
+    ...(variant.solutionFiles ? { solutionFiles: variant.solutionFiles as Prisma.InputJsonValue } : {}),
+    tests: { create: variant.tests.map(test => ({ order: test.order, visible: test.visible, explanation: test.explanation ?? "", input: json(test.input), expected: json(test.expected), ...(test.expectedFiles ? { expectedFiles: test.expectedFiles as Prisma.InputJsonValue } : {}) })) },
   })) } };
 }
 

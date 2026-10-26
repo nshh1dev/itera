@@ -1,11 +1,12 @@
 import "server-only";
 import { db } from "@/server/db";
-import { judge, judgeProgram } from "./judge";
+import { judge, judgeOwnTests, judgeProgram, judgeProject } from "./judge";
 import { availableRuntime, runCode, RunnerUnavailable } from "./piston";
 import type { Json, Language, RuntimeMode, TestResult } from "@/lib/types";
 import { checkConcept } from "./concepts";
 import { minimumSubmissionBudgetMs, submissionBudgetMs } from "@/lib/execution-limits";
 import { reportOperationalFailure, type OperationalPhase } from "@/server/operational-failure";
+import { validateExpectedProjectFiles, validateProjectDefinition, validateProjectSnapshot } from "@/lib/project";
 
 const interrupted = { status: "ERROR" as const, message: "La evaluación se interrumpió. No cuenta como un resultado incorrecto; puedes volver a intentarlo." };
 
@@ -17,6 +18,8 @@ export async function evaluateSubmission(id: string) {
   if (!submission || submission.status !== "RUNNING") return;
   const { variant } = submission;
   const mode = variant.version.runtimeMode as RuntimeMode;
+  let project: ReturnType<typeof validateProjectDefinition> | undefined;
+  let projectFiles: ReturnType<typeof validateProjectSnapshot> | undefined;
   const budget = submissionBudgetMs({ language: variant.language, totalCount: submission.totalCount, mode: submission.mode, conceptRule: variant.version.conceptRule });
   const deadline = submission.createdAt.getTime() + budget;
   let phase: OperationalPhase = "execution.state";
@@ -34,29 +37,36 @@ export async function evaluateSubmission(id: string) {
   }
   try {
     if (!await canContinue()) return;
+    project = variant.project ? validateProjectDefinition(variant.project) : undefined;
+    projectFiles = project && submission.files ? validateProjectSnapshot(project, submission.files) : undefined;
+    if ((project && !projectFiles) || (!project && submission.files)) throw new Error("La instantánea del proyecto no es válida.");
     phase = "execution.runtime";
     const runtime = await availableRuntime(variant.language as Language);
-    const tests = variant.tests.filter(test => submission.mode === "submit" || test.visible);
+    const tests = submission.mode === "tests"
+      ? [{ order: 0, input: "" as Json, expected: "El archivo de pruebas termina correctamente" as Json, visible: true }]
+      : variant.tests.filter(test => submission.mode === "submit" || test.visible);
     if (!tests.length) throw new RunnerUnavailable("Este ejercicio todavía no tiene pruebas configuradas.");
+    if (submission.mode === "tests" && (!project || !project.testEntrypoint)) throw new RunnerUnavailable("Este proyecto no tiene pruebas propias disponibles.");
     const results: TestResult[] = [];
     for (const test of tests) {
       // Un trabajo en vuelo conserva su límite de Piston; no lanzar el siguiente
       // caso si la reconciliación ya finalizó o caducó este intento.
       if (!await canContinue()) return;
       phase = "execution.case";
-      const output = await runCode(variant.language as Language, runtime, submission.code, test.input as Json, mode, variant.typeContract);
-      const entry = { ...test, input: test.input as Json, expected: test.expected as Json };
-      results.push(mode === "PROGRAM" ? judgeProgram(output, entry) : judge(output, entry));
+      const output = await runCode(variant.language as Language, runtime, submission.code, test.input as Json, mode, variant.typeContract, project ? { definition: project, files: projectFiles!, ...(submission.mode === "tests" ? { purpose: "tests" as const } : {}) } : undefined);
+      const expectedFiles = project && "expectedFiles" in test && test.expectedFiles ? validateExpectedProjectFiles(project, test.expectedFiles) : undefined;
+      const entry = { ...test, input: test.input as Json, expected: test.expected as Json, expectedFiles };
+      results.push(submission.mode === "tests" ? judgeOwnTests(output) : project ? judgeProject(output, entry, mode) : mode === "PROGRAM" ? judgeProgram(output, entry) : judge(output, entry));
     }
     const passedCount = results.filter(r => r.passed).length;
     if (!await canContinue()) return;
     phase = "execution.concept";
-    const conceptMessage = passedCount === tests.length && submission.mode === "submit" ? await checkConcept(variant.language as Language, submission.code, variant.version.conceptRule) : null;
+    const conceptMessage = passedCount === tests.length && submission.mode === "submit" && !project ? await checkConcept(variant.language as Language, submission.code, variant.version.conceptRule) : null;
     const passed = passedCount === tests.length && !conceptMessage;
     if (!await canContinue()) return;
     phase = "execution.finalize";
     const completed = await db.$transaction(async tx => {
-      const finalized = await tx.submission.updateMany({ where: { id, status: "RUNNING", createdAt: { gt: new Date(Date.now() - budget) } }, data: { status: passed ? "PASSED" : "FAILED", passedCount, totalCount: tests.length, results, message: conceptMessage, finishedAt: new Date() } });
+      const finalized = await tx.submission.updateMany({ where: { id, status: "RUNNING", createdAt: { gt: new Date(Date.now() - budget) } }, data: { status: passed ? "PASSED" : "FAILED", passedCount, totalCount: tests.length, results, message: submission.mode === "tests" ? "El resultado solo describe el cierre del archivo de pruebas; no certifica su cobertura ni concede progreso." : conceptMessage, finishedAt: new Date() } });
       if (!finalized.count) return false;
       if (submission.mode !== "submit" || submission.diagnosticItemId) return true;
       const key = { userId: submission.userId, exerciseId: variant.version.exerciseId, language: variant.language };
