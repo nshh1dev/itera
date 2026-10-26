@@ -1,4 +1,5 @@
 import type { Level } from "./types";
+import { fundamentalsUnits } from "./fundamentals-curriculum";
 
 // Identidades nuevas: el prefijo separa el progreso del catálogo histórico.
 export type CurriculumStep = { key: string; title: string; source?: string };
@@ -10,7 +11,7 @@ export type CurriculumUnit = {
 const step = (key: string, title: string, source?: string): CurriculumStep => ({ key, title, source });
 export const curriculumSlug = (key: string) => `logica-${key}`;
 
-export const curriculumUnits: CurriculumUnit[] = [
+const originalUnits: CurriculumUnit[] = [
   {
     path: "desde-cero", level: "INITIATION", slug: "instrucciones", title: "1. Instrucciones y salida",
     theory: "Un programa ejecuta instrucciones de arriba abajo. El texto se escribe entre comillas; una expresión numérica se calcula antes de mostrarla. Cada impresión termina una línea. Predice la salida antes de ejecutar. Para mostrar una operación como texto, en lugar de calcularla, escríbela entre comillas.",
@@ -111,7 +112,7 @@ export const curriculumUnits: CurriculumUnit[] = [
   },
   {
     path: "pensar-en-soluciones", level: "INTERMEDIATE", slug: "busqueda", title: "2. Búsqueda y ordenación",
-    theory: "La búsqueda lineal revisa elementos y cuesta O(n). La binaria necesita datos ordenados y descarta mitades: O(log n). Ordenar puede facilitar consultas posteriores, pero también cuesta trabajo. Inserción desplaza valores hasta colocar cada elemento. En JavaScript y TypeScript los números necesitan comparador numérico. Define criterios de desempate para obtener una respuesta determinista.",
+    theory: "La búsqueda lineal revisa elementos y cuesta O(n). La binaria necesita datos ordenados y descarta mitades: O(log n). Ordenar puede facilitar consultas posteriores, pero también cuesta trabajo. Inserción desplaza valores hasta colocar cada elemento. En JavaScript y TypeScript los números necesitan comparador numérico: (a, b) => a - b es una función breve que devuelve a - b; un resultado negativo sitúa a antes que b. Define criterios de desempate para obtener una respuesta determinista.",
     readiness: ["Puedo justificar cuándo utilizar búsqueda binaria.", "Puedo comparar un recorrido lineal con uno logarítmico."],
     examples: { python: 'ordenados = sorted([8, 2, 11])\nmedio = (izquierda + derecha) // 2', javascript: 'const ordenados = [8, 2, 11].sort((a, b) => a - b);\nconst medio = Math.floor((izquierda + derecha) / 2);', typescript: 'const ordenados: number[] = [8, 2, 11].sort((a, b) => a - b);\nconst medio: number = Math.floor((izquierda + derecha) / 2);' },
     steps: [step("busqueda-lineal", "Encuentra la primera coincidencia", "busqueda-lineal"), step("busqueda-binaria", "Busca mediante búsqueda binaria", "busqueda-binaria"), step("insercion-posicion", "Encuentra una posición de inserción"), step("ordena-insercion", "Ordena mediante inserción", "ordena-por-insercion"), step("ordena-registros", "Ordena registros por dos criterios"), step("combina", "Combina dos listas ordenadas", "combina-ordenadas")],
@@ -127,7 +128,7 @@ export const curriculumUnits: CurriculumUnit[] = [
     path: "pensar-en-soluciones", level: "INTERMEDIATE", slug: "matrices", title: "4. Matrices",
     theory: "Una matriz es una lista de filas: la posición [fila][columna] requiere dos índices. Comprueba dimensiones y no supongas que todas las matrices son cuadradas. Un recorrido de R filas y C columnas cuesta O(R × C). Define los límites antes de consultar vecinos y decide si se incluyen diagonales. La transpuesta intercambia filas y columnas.",
     readiness: ["Puedo distinguir posición, fila y columna.", "Puedo comprobar límites en dos dimensiones."],
-    examples: { python: 'matriz = [[2, 5], [1, 3]]\nfor fila in matriz:\n    print(sum(fila))', javascript: 'const matriz = [[2, 5], [1, 3]];\nfor (const fila of matriz) console.log(fila.reduce((a, b) => a + b, 0));', typescript: 'const matriz: number[][] = [[2, 5], [1, 3]];\nfor (const fila of matriz) console.log(fila.reduce((a, b) => a + b, 0));' },
+    examples: { python: 'matriz = [[2, 5], [1, 3]]\nfor fila in matriz:\n    total = 0\n    for valor in fila:\n        total += valor\n    print(total)', javascript: 'const matriz = [[2, 5], [1, 3]];\nfor (const fila of matriz) {\n  let total = 0;\n  for (const valor of fila) total += valor;\n  console.log(total);\n}', typescript: 'const matriz: number[][] = [[2, 5], [1, 3]];\nfor (const fila of matriz) {\n  let total = 0;\n  for (const valor of fila) total += valor;\n  console.log(total);\n}' },
     steps: [step("celda", "Consulta una celda"), step("filas", "Suma las filas", "matriz-suma-de-filas"), step("columnas", "Suma las columnas"), step("diagonales", "Recorre las diagonales"), step("transpuesta", "Transpone una matriz", "matriz-transpuesta"), step("vecinos", "Cuenta vecinos de cada celda")],
   },
   {
@@ -181,9 +182,28 @@ export const curriculumUnits: CurriculumUnit[] = [
   },
   {
     path: "un-paso-mas", level: "ADVANCED", slug: "integracion-avanzada", title: "6. Elige y defiende una solución",
-    theory: "Traduce el problema a estados, relaciones o intervalos antes de elegir una técnica. Busca trabajo repetido y contraejemplos. La búsqueda sobre la respuesta necesita una condición monótona: si una capacidad sirve, una mayor también. Compara corrección, tiempo y memoria. Estos cierres integran lo practicado; terminarlos no equivale a dominar todas las áreas de programación.",
+    theory: "Traduce el problema a estados, relaciones o intervalos antes de elegir una técnica. Busca trabajo repetido y contraejemplos. La búsqueda sobre la respuesta necesita una condición monótona: si una capacidad sirve, una mayor también. En Python key=lambda par: par[1] proporciona a sorted una función breve que elige el segundo valor como clave; equivale a definir una auxiliar con return par[1]. Compara corrección, tiempo y memoria. Estos cierres integran lo practicado; terminarlos no equivale a dominar todas las áreas de programación.",
     readiness: ["Puedo defender por qué mi solución funciona.", "Puedo comparar alternativas y encontrar un contraejemplo."],
     examples: { python: 'intervalos = sorted([[2, 4], [1, 3]], key=lambda par: par[1])', javascript: 'const intervalos = [[2, 4], [1, 3]].sort((a, b) => a[1] - b[1]);', typescript: 'const intervalos: [number, number][] = [[2, 4], [1, 3]];\nintervalos.sort((a, b) => a[1] - b[1]);' },
     steps: [step("islas", "Cuenta islas", "cuenta-islas"), step("laberinto", "Encuentra la salida más corta de un laberinto", "laberinto-camino-minimo"), step("capacidad", "Calcula una capacidad mínima", "capacidad-minima"), step("edicion", "Calcula la distancia de edición", "distancia-edicion"), step("subsecuencia-creciente", "Encuentra la subsecuencia creciente más larga", "subsecuencia-creciente"), step("planifica-tareas", "Planifica tareas con dependencias y duraciones")],
   },
 ];
+
+// Se conserva cada key/slug: mover un paso no recrea su identidad ni su progreso.
+const after: Record<string, CurriculumUnit[]> = {
+  funciones: [fundamentalsUnits.seguimiento],
+  "funciones-datos": [fundamentalsUnits.alcance, fundamentalsUnits.referencias, fundamentalsUnits.errores, fundamentalsUnits.pruebas],
+  "integracion-bases": [fundamentalsUnits.gastos],
+  mapas: [fundamentalsUnits.modulos, fundamentalsUnits.archivos, fundamentalsUnits.inventario],
+  matrices: [fundamentalsUnits.anidadas],
+  "integracion-intermedia": [fundamentalsUnits.agenda],
+};
+const positions = new Map<string, number>();
+export const curriculumUnits: CurriculumUnit[] = originalUnits.flatMap(unit => [
+  { ...unit, steps: unit.slug === "funciones-datos" ? unit.steps.filter(step => step.key !== "variable-local") : unit.steps },
+  ...(after[unit.slug] ?? []),
+]).map(unit => {
+  const position = (positions.get(unit.path) ?? 0) + 1;
+  positions.set(unit.path, position);
+  return { ...unit, title: `${position}. ${unit.title.replace(/^\d+\.\s*/, "")}` };
+});
