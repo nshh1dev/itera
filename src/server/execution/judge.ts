@@ -2,7 +2,7 @@ import { isDeepStrictEqual } from "node:util";
 import type { Json, TestResult } from "@/lib/types";
 
 export type RunOutput = { stdout: string; stderr: string; code: number | null; signal?: string | null; status?: string | null };
-export type JudgeTest = { input: Json; expected: Json; visible: boolean; order: number };
+export type JudgeTest = { input: Json; expected: Json; expectedFiles?: { path: string; content: string }[] | null; visible: boolean; order: number };
 
 const normalize = (text: string) => text.replace(/\r\n?/g, "\n");
 // Forma canónica de una salida de texto: fin de línea uniforme, sin espacios al
@@ -58,4 +58,63 @@ export function judgeProgram(output: RunOutput, test: JudgeTest): TestResult {
     if (test.visible) { result.actual = actual; result.output = normalize(output.stdout); }
   }
   return result;
+}
+
+/** Solo describe el cierre del archivo público de pruebas del alumno; no concede progreso. */
+export function judgeOwnTests(output: RunOutput): TestResult {
+  if (output.status === "TO") return { index: 1, visible: true, passed: false, status: "timeout", input: "", expected: "El archivo de pruebas termina correctamente", output: output.stdout.slice(0, 4000), error: "Las pruebas propias superaron el límite de ejecución." };
+  if (output.code === 0 && !output.signal && !output.status) return { index: 1, visible: true, passed: true, status: "passed", input: "", expected: "El archivo de pruebas termina correctamente", actual: "Finalizó con código 0", output: output.stdout.slice(0, 4000) };
+  const detail = `${output.stderr}\n${output.stdout}`.slice(0, 4000);
+  const assertion = /AssertionError|ERR_ASSERTION|FAIL:/i.test(detail);
+  return { index: 1, visible: true, passed: false, status: assertion ? "assertion" : "runtime", input: "", expected: "El archivo de pruebas termina correctamente", actual: output.code, output: output.stdout.slice(0, 4000), error: detail || "El archivo de pruebas terminó con un error." };
+}
+
+export function judgeProject(output: RunOutput, test: JudgeTest, mode: "FUNCTION" | "PROGRAM"): TestResult {
+  const base: TestResult = { index: test.order + 1, visible: test.visible, passed: false, status: "wrong" };
+  if (test.visible) { base.input = test.input; base.expected = test.expected; if (test.expectedFiles) base.expectedFiles = test.expectedFiles; }
+  if (output.status === "TO") {
+    base.status = "timeout";
+    if (test.visible) base.error = "El proyecto superó el límite de ejecución.";
+    return base;
+  }
+  if (output.code !== 0 || output.signal || output.status) {
+    base.status = "runtime";
+    if (test.visible) base.error = output.stderr.slice(0, 2500) || "El proyecto terminó con un error.";
+    return base;
+  }
+  const lines = output.stdout.replace(/\r\n?/g, "\n").trimEnd().split("\n");
+  const marker = lines.at(-1) ?? "";
+  const prefix = "__ITERA_PROJECT__";
+  let payload: { kind?: unknown; value?: unknown; stdout?: unknown; stderr?: unknown; code?: unknown; timeout?: unknown; files?: unknown };
+  try {
+    if (!marker.startsWith(prefix)) throw new Error();
+    payload = JSON.parse(marker.slice(prefix.length)) as typeof payload;
+    if (!payload || !Array.isArray(payload.files) || !payload.files.every(file => file && typeof file === "object" && typeof (file as {path?:unknown}).path === "string" && typeof (file as {content?:unknown}).content === "string")) throw new Error();
+  } catch {
+    base.status = "runtime";
+    if (test.visible) base.error = "El conductor del proyecto no pudo recoger su resultado.";
+    return base;
+  }
+  if (payload.timeout === true) {
+    base.status = "timeout";
+    if (test.visible) base.error = "El programa del proyecto superó el límite de ejecución.";
+    return base;
+  }
+  if (payload.kind !== mode.toLowerCase() || (mode === "PROGRAM" && (typeof payload.code !== "number" || payload.code !== 0))) {
+    base.status = "runtime";
+    if (test.visible) base.error = typeof payload.stderr === "string" ? payload.stderr.slice(0, 2500) : "El programa terminó con un error.";
+    return base;
+  }
+  const files = (payload.files as { path: string; content: string }[]).slice().sort((a, b) => a.path.localeCompare(b.path));
+  const expectedFiles = (test.expectedFiles ?? []).map(({ path, content }) => ({ path, content })).sort((a, b) => a.path.localeCompare(b.path));
+  if (mode === "PROGRAM") {
+    const actual = typeof payload.stdout === "string" ? canonical(payload.stdout) : "";
+    base.passed = actual === canonical(String(test.expected ?? "")) && isDeepStrictEqual(files, expectedFiles);
+    if (test.visible) { base.actual = actual; base.output = typeof payload.stdout === "string" ? payload.stdout : ""; base.actualFiles = files; }
+  } else {
+    base.passed = isDeepStrictEqual(payload.value, test.expected) && isDeepStrictEqual(files, expectedFiles);
+    if (test.visible) { base.actual = payload.value as Json; base.actualFiles = files; const logs = lines.slice(0, -1).join("\n"); if (logs) base.output = logs; }
+  }
+  base.status = base.passed ? "passed" : "wrong";
+  return base;
 }

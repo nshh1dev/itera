@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { normalizeProjectPath, projectDefinitionSchema, snapshotProjectFiles, validateProjectSolution } from "../src/lib/project";
+import { normalizeProjectPath, projectDefinitionSchema, snapshotProjectFiles, validateExpectedProjectFiles, validateProjectSolution, validateProjectSnapshot } from "../src/lib/project";
 
 const valid = {
   version: 1 as const,
@@ -38,9 +38,23 @@ test("solución editorial privada solo admite los archivos editables del manifie
     { path: "logic.py", content: "def solve(data): return data" },
     { path: "data.json", content: "{}", readOnly: true },
   ]);
-  assert.throws(() => validateProjectSolution(project, [...project.files]));
+  assert.deepEqual(validateProjectSolution(project, [...project.files]), project.files);
+  assert.throws(() => validateProjectSolution(project, [...project.files, project.files[1]]));
   assert.throws(() => validateProjectSolution(project, [
     { path: "logic.py", content: "x" },
     { path: "data.json", content: "changed" },
   ]));
+});
+
+test("snapshots completos preservan recursos de solo lectura y limitan rutas/tamaño", () => {
+  const project = { ...valid, files: [...valid.files, { path: "data.json", content: "{}", readOnly: true }] };
+  assert.deepEqual(validateProjectSnapshot(project, project.files), project.files);
+  assert.throws(() => validateProjectSnapshot(project, [{ ...project.files[0], content: "" }]));
+  assert.throws(() => validateProjectSnapshot(project, [...project.files, { path: "../escape.txt", content: "" }]));
+});
+
+test("los artefactos esperados no pueden colisionar con el código ni usar rutas internas", () => {
+  assert.deepEqual(validateExpectedProjectFiles(valid, [{ path: "result.json", content: "{}" }]), [{ path: "result.json", content: "{}" }]);
+  assert.throws(() => validateExpectedProjectFiles(valid, [{ path: "logic.py", content: "" }]));
+  assert.throws(() => validateExpectedProjectFiles(valid, [{ path: "__itera_runner.py", content: "" }]));
 });

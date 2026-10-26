@@ -6,6 +6,8 @@ import { draftSchema, languageSchema } from "@/lib/validation";
 import { z } from "zod";
 import { temporaryDraftFailure, type DraftSaveResult } from "@/lib/draft-sync";
 import { reportOperationalFailure } from "./operational-failure";
+import { Prisma } from "@/generated/prisma/client";
+import { validateProjectDefinition, validateProjectSnapshot, validateProjectSolution } from "@/lib/project";
 
 export async function saveDraft(input: unknown): Promise<DraftSaveResult> {
   try {
@@ -13,12 +15,19 @@ export async function saveDraft(input: unknown): Promise<DraftSaveResult> {
     if (!user) return { error: "Inicia sesión para sincronizar tu borrador.", kind: "auth" };
     const parsed = draftSchema.safeParse(input);
     if (!parsed.success) return { error: "El borrador no es válido.", kind: "invalid" };
-    const { variantId, code, revision } = parsed.data;
-    const variant = await db.exerciseVariant.findFirst({ where: { id: variantId, version: { published: true, exercise: { published: true } } }, select: { id: true } });
+    const { variantId, code, files, revision } = parsed.data;
+    const variant = await db.exerciseVariant.findFirst({ where: { id: variantId, version: { published: true, exercise: { published: true } } }, select: { id: true, project: true } });
     if (!variant) return { error: "El ejercicio ya no está disponible. Copia tu código antes de salir.", kind: "unavailable" };
+    let projectFiles: ReturnType<typeof validateProjectSnapshot> | undefined;
+    if (variant.project) {
+      if (!files) return { error: "Este proyecto requiere guardar todos sus archivos.", kind: "invalid" };
+      try { projectFiles = validateProjectSnapshot(validateProjectDefinition(variant.project), files); }
+      catch { return { error: "Los archivos del proyecto no son válidos. Conserva tu copia local y recarga.", kind: "invalid" }; }
+    } else if (files || code === undefined) return { error: "Este ejercicio requiere un único archivo de código.", kind: "invalid" };
+    const draftData = projectFiles ? { code: "", files: projectFiles as Prisma.InputJsonValue } : { code: code! };
     if (revision === 0) {
       try {
-        const draft = await db.draft.create({ data: { userId: user.id, variantId, code } });
+        const draft = await db.draft.create({ data: { userId: user.id, variantId, ...draftData } });
         return { revision: draft.revision };
       } catch (error) {
         // Solo una colisión de la clave única confirma un borrador concurrente.
@@ -29,7 +38,7 @@ export async function saveDraft(input: unknown): Promise<DraftSaveResult> {
         throw error;
       }
     }
-    const updated = await db.draft.updateMany({ where: { userId: user.id, variantId, revision }, data: { code, revision: { increment: 1 } } });
+    const updated = await db.draft.updateMany({ where: { userId: user.id, variantId, revision }, data: { ...draftData, revision: { increment: 1 } } });
     if (!updated.count) return { error: "Este borrador cambió en otra pestaña. Copia tu código y recarga para recuperar la última versión.", kind: "conflict" };
     return { revision: revision + 1 };
   } catch { reportOperationalFailure("draft.save"); return temporaryDraftFailure; }
@@ -49,10 +58,16 @@ export async function revealSolution(variantId: string) {
   const user = await currentUser();
   if (!user) return { error: "Inicia sesión para consultar la solución y registrar tu aprendizaje." };
   if (!z.string().min(1).max(100).safeParse(variantId).success) return { error: "Ejercicio inválido." };
-  const variant = await db.exerciseVariant.findFirst({ where: { id: variantId, version: { published: true, exercise: { published: true } } }, select: { solution: true, explanation: true, language: true, version: { select: { exerciseId: true } } } });
+  const variant = await db.exerciseVariant.findFirst({ where: { id: variantId, version: { published: true, exercise: { published: true } } }, select: { solution: true, solutionFiles: true, project: true, explanation: true, language: true, version: { select: { exerciseId: true } } } });
   if (!variant) return { error: "No encontramos esta solución." };
   const key = { userId: user.id, exerciseId: variant.version.exerciseId, language: variant.language, kind: "solution" };
   await db.helpUsage.upsert({ where: { userId_exerciseId_language_kind: key }, create: key, update: {} });
+  if (variant.solutionFiles) {
+    try {
+      if (!variant.project) throw new Error();
+      return { files: validateProjectSolution(validateProjectDefinition(variant.project), variant.solutionFiles), explanation: variant.explanation };
+    } catch { return { error: "La solución del proyecto no está disponible. Contacta con el equipo editorial." }; }
+  }
   return { code: variant.solution, explanation: variant.explanation };
 }
 

@@ -37,6 +37,7 @@ export const projectDefinitionSchema = z.object({
       context.addIssue({ code: "custom", path: ["files", index, "path"], message: "La ruta debe ser relativa, plana y segura." });
       continue;
     }
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/.test(file.path)) context.addIssue({ code: "custom", path: ["files", index, "path"], message: "Usa nombres planos con letras, números, punto, guion o guion bajo." });
     if (paths.has(normalized)) context.addIssue({ code: "custom", path: ["files", index, "path"], message: "La ruta está duplicada." });
     paths.add(normalized);
     const bytes = new TextEncoder().encode(file.content).byteLength;
@@ -53,6 +54,7 @@ export function normalizeProjectPath(path: string): string | null {
   if (!path || path.includes("\\") || path.startsWith("/") || /^[a-zA-Z]:/.test(path) || path.includes("\0")) return null;
   const parts = path.split("/");
   if (parts.length !== 1 || parts.some(part => !part || part === "." || part === "..")) return null;
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/.test(path)) return null;
   if (/^submission(?:\.|$)|^__itera/i.test(path)) return null;
   return path.toLowerCase();
 }
@@ -65,12 +67,18 @@ export function validateProjectDefinition(value: unknown): ProjectDefinition {
 export function validateProjectSolution(project: ProjectDefinition, value: unknown): ProjectFile[] {
   const files = z.array(projectFileSchema).min(1).max(projectLimits.files).parse(value);
   const templatePaths = new Set(project.files.map(file => normalizeProjectPath(file.path)));
+  const seenPaths = new Set<string>();
   const solutionPaths = new Set<string>();
   let totalBytes = 0;
   for (const file of files) {
     const path = normalizeProjectPath(file.path);
-    if (!path || !templatePaths.has(path) || solutionPaths.has(path)) throw new Error("La solución debe contener archivos únicos definidos por el proyecto.");
-    if (project.files.find(template => normalizeProjectPath(template.path) === path)?.readOnly) throw new Error("La solución no puede cambiar archivos de solo lectura.");
+    const template = path ? project.files.find(candidate => normalizeProjectPath(candidate.path) === path) : undefined;
+    if (!path || !templatePaths.has(path) || seenPaths.has(path) || !template) throw new Error("La solución debe contener archivos únicos definidos por el proyecto.");
+    seenPaths.add(path);
+    if (template.readOnly) {
+      if (file.content !== template.content) throw new Error("La solución no puede cambiar archivos de solo lectura.");
+      continue;
+    }
     solutionPaths.add(path);
     const bytes = new TextEncoder().encode(file.content).byteLength;
     if (bytes > projectLimits.fileBytes || (totalBytes += bytes) > projectLimits.totalBytes) throw new Error("La solución supera el tamaño permitido.");
@@ -83,6 +91,40 @@ export function validateProjectSolution(project: ProjectDefinition, value: unkno
     if (!solution) throw new Error("La solución no incluye todos los archivos editables.");
     return { path: template.path, content: solution.content };
   });
+}
+
+/** Valida una instantánea completa recibida del navegador contra el manifiesto publicado. */
+export function validateProjectSnapshot(project: ProjectDefinition, value: unknown): ProjectFile[] {
+  const files = z.array(projectFileSchema).min(1).max(projectLimits.files).parse(value);
+  const byPath = new Map<string, ProjectFile>();
+  let totalBytes = 0;
+  for (const file of files) {
+    const path = normalizeProjectPath(file.path);
+    if (!path || byPath.has(path)) throw new Error("El borrador contiene rutas inválidas o duplicadas.");
+    const template = project.files.find(candidate => normalizeProjectPath(candidate.path) === path);
+    if (!template || template.path !== file.path) throw new Error("El borrador contiene un archivo ajeno al proyecto.");
+    if (template.readOnly && template.content !== file.content) throw new Error("No se puede modificar un archivo de solo lectura.");
+    const bytes = new TextEncoder().encode(file.content).byteLength;
+    if (bytes > projectLimits.fileBytes || (totalBytes += bytes) > projectLimits.totalBytes) throw new Error("El proyecto supera el tamaño permitido.");
+    byPath.set(path, { path: template.path, content: file.content, ...(template.readOnly ? { readOnly: true } : {}) });
+  }
+  if (byPath.size !== project.files.length || project.files.some(file => !byPath.has(normalizeProjectPath(file.path) ?? ""))) throw new Error("El borrador debe conservar todos los archivos del proyecto.");
+  return project.files.map(file => byPath.get(normalizeProjectPath(file.path)!)!);
+}
+
+export function validateExpectedProjectFiles(project: ProjectDefinition, value: unknown): ProjectFile[] {
+  const files = z.array(projectFileSchema).max(projectLimits.files).parse(value);
+  const sourcePaths = new Set(project.files.map(file => normalizeProjectPath(file.path)));
+  const paths = new Set<string>();
+  let total = 0;
+  for (const file of files) {
+    const path = normalizeProjectPath(file.path);
+    if (!path || paths.has(path) || sourcePaths.has(path) || file.readOnly) throw new Error("Los artefactos esperados deben usar rutas nuevas y únicas.");
+    paths.add(path);
+    const bytes = new TextEncoder().encode(file.content).byteLength;
+    if (bytes > projectLimits.fileBytes || (total += bytes) > projectLimits.totalBytes) throw new Error("Los artefactos esperados exceden el tamaño permitido.");
+  }
+  return files.map(file => ({ path: file.path, content: file.content }));
 }
 
 export function projectFilesForLanguage(projects: Partial<Record<Language, ProjectDefinition>> | null | undefined, language: Language): readonly ProjectFile[] {

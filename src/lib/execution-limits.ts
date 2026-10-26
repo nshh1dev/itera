@@ -1,9 +1,10 @@
 import type { Language } from "./types";
+import { projectLimits } from "./project";
 
 export const maximumExecutionCodeLength = 30000;
 // JSON puede representar cada unidad UTF-16 con seis bytes (\\uXXXX). Reservar
 // además identificadores, modo y contexto; seguir limitando el transporte real.
-export const maximumExecutionBodyBytes = maximumExecutionCodeLength * 6 + 4096;
+export const maximumExecutionBodyBytes = projectLimits.totalBytes * 6 + 16_384;
 
 export const runtimeLookupTimeoutMs = 2500;
 export const minimumSubmissionBudgetMs = 120000;

@@ -39,7 +39,7 @@ const levelOverrides: Record<string, Level> = {
 export type SeedExercise = {
   slug: string; title: string; description: string; category: string; level: Level; minutes: number;
   statement: string; constraints: string[]; hints: string[]; python: string; javascript: string; typescript?: string; explanation: string;
-  tests: { input: Json; expected: Json; explanation?: string; visible?: boolean }[];
+  tests: { input: Json; expected: Json; expectedFiles?: ProjectFile[]; explanation?: string; visible?: boolean }[];
   starters?: { python: string; javascript: string; typescript?: string };
   objective?: string; prerequisites?: string[];
   practiceGoals?: string[]; prerequisiteSlugs?: string[]; activityType?: ActivityType;
