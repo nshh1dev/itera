@@ -8,6 +8,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { postAuth } from "./auth-request";
 import { openSimpleEditor } from "../workspace";
 import type { ExecutionRequest } from "../../src/lib/execution-tracker";
+import { maximumExecutionBodyBytes } from "../../src/lib/execution-limits";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 const exerciseUrl = "/ejercicios/logica-dos-parametros?lenguaje=python";
@@ -36,6 +37,27 @@ test.beforeAll(async () => {
   await new Promise<void>((resolve, reject) => { piston.once("error", reject); piston.listen(2001, "127.0.0.1", resolve); });
 });
 test.afterAll(async () => { await db.$disconnect(); if (piston?.listening) await new Promise<void>(resolve => piston.close(() => resolve())); });
+
+test("el endpoint acepta 30000 unidades de código Unicode y separa exceso de código de transporte", async ({ page, account }) => {
+  const headers = { origin: "http://127.0.0.1:3000", "content-type": "application/json" };
+  const code = "#" + "á漢🙂\\\n".repeat(5000).slice(0, 29999);
+  expect(code.length).toBe(30000);
+  const body = { variantId: account.variantId, code, mode: "examples", idempotencyKey: randomUUID() };
+  // Fuerza la expansión máxima de Unicode y barras/saltos; no ejecuta código real.
+  const encoded = JSON.stringify(body).replace(/[á漢]/g, char => `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`);
+  expect(Buffer.byteLength(encoded)).toBeGreaterThan(40000);
+  const accepted = await page.request.post("/api/executions", { headers, data: encoded });
+  expect(accepted.status()).toBe(202);
+  const { id } = await accepted.json();
+  await expect.poll(async () => (await db.submission.findUniqueOrThrow({ where: { id } })).status).not.toBe("RUNNING");
+  expect((await db.submission.findUniqueOrThrow({ where: { id } })).code).toBe(code);
+  expect((await page.request.post("/api/executions", { headers, data: { ...body, code: code + "a", idempotencyKey: randomUUID() } })).status()).toBe(400);
+  const excessive = await page.request.post("/api/executions", { headers, data: JSON.stringify(body).padEnd(maximumExecutionBodyBytes + 1, " ") });
+  expect(excessive.status()).toBe(413);
+  expect(await excessive.json()).toEqual({ error: "El cuerpo de la solicitud es demasiado grande." });
+  expect(await db.submission.count({ where: { userId: account.userId } })).toBe(1);
+  expect(await db.progress.count({ where: { userId: account.userId } })).toBe(0);
+});
 
 async function uncertainConnection(page: Page) {
   const network = { loseResponse: true, failQueries: true, bodies: [] as ExecutionRequest[] };

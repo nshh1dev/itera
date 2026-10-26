@@ -31,6 +31,40 @@ const test = base.extend<{ entry: { userId: string; slug: string; id: string } }
 });
 test.afterAll(async () => { await db.$disconnect(); });
 
+test("guardar rechaza casos repetidos o contradictorios sin crear una versión", async ({ page, entry }) => {
+  await page.goto(`/admin/ejercicios/${entry.slug}`);
+  await page.getByRole("tab", { name: "Pruebas", exact: true }).click();
+  const sample = { input: { a: 1, b: 2 }, expected: 3, visible: true };
+  for (const [tests, message] of [
+    [[sample, sample, { ...sample, visible: false }], "tres entradas distintas"],
+    [[sample, { ...sample, expected: 99 }, { ...sample, visible: false }], "contradictorios"],
+  ] as const) {
+    await page.getByLabel("Casos de prueba en JSON").fill(JSON.stringify(tests));
+    await page.getByRole("button", { name: "Guardar versión", exact: true }).click();
+    await expect(page.getByRole("status").filter({ hasText: message })).toBeVisible();
+    expect(await db.exerciseVersion.count({ where: { exerciseId: entry.id } })).toBe(1);
+  }
+});
+
+test("publicar comprueba todas las variantes antes de consultar Piston", async ({ page, entry }) => {
+  const version = await db.exerciseVersion.findFirstOrThrow({ where: { exerciseId: entry.id }, include: { variants: { include: { tests: true } } } });
+  for (const variant of version.variants) {
+    const original = variant.tests.map(test => ({ input: test.input as Prisma.InputJsonValue, expected: test.expected as Prisma.InputJsonValue, visible: test.visible, order: test.order }));
+    for (const contradictory of [false, true]) {
+      await db.testCase.deleteMany({ where: { variantId: variant.id } });
+      await db.testCase.createMany({ data: [0, 1, 2].map(order => ({ variantId: variant.id, input: { a: 1, b: 2 }, expected: contradictory && order === 1 ? 99 : 3, visible: order === 0, order })) });
+      await page.goto(`/admin/ejercicios/${entry.slug}`);
+      await page.getByRole("button", { name: "Validar y publicar", exact: true }).click();
+      await page.getByRole("dialog").getByRole("button", { name: "Validar y publicar", exact: true }).click();
+      await expect(page.getByRole("status").filter({ hasText: `${variant.language}:` })).toContainText(contradictory ? "contradictorios" : "tres entradas distintas");
+      expect((await db.exerciseVersion.findUniqueOrThrow({ where: { id: version.id } })).published).toBe(false);
+    }
+    await db.testCase.deleteMany({ where: { variantId: variant.id } });
+    await db.testCase.createMany({ data: original.map(test => ({ ...test, variantId: variant.id })) });
+  }
+  expect(await db.auditLog.count({ where: { userId: entry.userId, action: "exercise.version.published" } })).toBe(0);
+});
+
 test("una respuesta de guardado lenta bloquea campos y entrega exactamente la instantánea enviada", async ({ page, entry }) => {
   await page.goto(`/admin/ejercicios/${entry.slug}`);
   const title = "Título guardado sin perder ediciones";

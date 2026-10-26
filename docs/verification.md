@@ -1,5 +1,44 @@
 # Verificación local
 
+## Transporte de código y pruebas editoriales: bloques 3.3 y 3.4 (26 de octubre de 2026)
+
+- El cuerpo HTTP admite 184.096 bytes: seis por cada una de las 30.000 unidades
+  UTF-16 del código, más 4.096 para metadatos. Se mantienen lectura acotada real,
+  cancelación y rechazo 413 incluso sin longitud declarada o con longitud falsa.
+  El mensaje 413 identifica el cuerpo, no atribuye necesariamente el exceso al código.
+- La ejecución limita explícitamente `String.length`, igual que editor, recuperación
+  de borradores y seguimiento. Esta versión de Zod cuenta puntos Unicode con `.max()`:
+  el primer ensayo HTTP aceptó 30.001 unidades con emojis; se corrigió la discrepancia
+  y se amplió la regresión de límite/exceso para cada representación de caracteres.
+- Guardado y validación del catálogo usan `editorialTestsIssue` a través del esquema;
+  publicación usa la misma función sobre cada variante persistida antes de llamar a
+  Piston. Exige entradas distintas, no solo cantidad de casos; detecta contradicciones
+  estructurales sin distinguir orden de propiedades JSON. Conserva tipos y arreglos
+  ordenados, la excepción de PROGRAM sin entrada y duplicados compatibles históricos.
+  Para resultados PROGRAM, aplica la normalización de texto del juez. No cambia casos
+  persistidos ni endurece retrospectivamente la evaluación de envíos históricos.
+- Catálogo nuevo e histórico compatibles en sus tres variantes, comprobados después
+  de la normalización editorial real (`seedVersionContent`). No se cambió su contenido.
+- `npm test`: **248 aprobadas**, sin omisiones. Diez nuevas pruebas de transporte y
+  calidad editorial, además de ampliar límite/exceso Unicode. Se ajustó una expectativa
+  previa que aceptaba tres entradas idénticas en FUNCTION: ahora usa tres distintas
+  para seguir comprobando el contrato de tipos sin infringir la nueva diversidad.
+  Tipos, lint focalizado sin avisos y build aprobados. Lint completo no repetido;
+  permanece la evidencia anterior de 97 avisos en herramientas locales sin cambios.
+- `editorial-safety.spec.ts` y `execution-recovery.spec.ts`: **21 recorridos repetidos
+  dos veces, 42 aprobados** contra producción y PostgreSQL temporal. Nuevos recorridos
+  verifican rechazo de guardado sin crear versión, rechazo de publicación para cada
+  lenguaje (duplicados/contradicciones), aceptación HTTP de 30.000 unidades Unicode,
+  persistencia exacta del código y rechazos 400/413 sin otro envío ni progreso.
+- Ensayos anteriores fallaron por un selector nuevo que buscaba `alert` en lugar de
+  `status` y por la discrepancia Unicode descrita. Se corrigieron y repitieron ambos
+  archivos completos; esas pasadas parciales no se cuentan como aprobadas.
+- Las tres copias de PostgreSQL se migraron y eliminaron; la base original no recibió
+  escrituras ni migraciones. Servicios de prueba detenidos; Docker/Piston real no
+  iniciados. El doble HTTP en 2001 no ejecuta código ni valida aislamiento o duración.
+  No se ejecutaron la suite E2E completa ni publicación válida con Piston real. Los
+  avisos locales de Better Auth y la prueba negativa de origen son los ya documentados.
+
 ## Estados editoriales y diagnósticos inconclusos: bloques 3.1 y 3.2 (26 de octubre de 2026)
 
 - La ficha administrativa recibe por separado publicación de la versión y visibilidad

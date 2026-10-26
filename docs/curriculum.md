@@ -21,6 +21,16 @@ Los cierres son `logica-merienda`, `logica-saldo`, `logica-inventario` y `logica
 
 ## Revisión y conservación del catálogo
 
+- Guardado, preparación/activación del catálogo y publicación comparten las reglas
+  de `editorial-tests.ts`: de uno a diez casos, algún ejemplo visible y, con entrada,
+  al menos tres entradas distintas y alguna prueba oculta. En JSON, el orden de
+  propiedades no distingue entradas; los tipos y el orden de los arreglos sí.
+  Una misma entrada no admite resultados contradictorios. Los programas sin entrada
+  (`PROGRAM` con todos los `input` vacíos) no necesitan tres casos ni casos ocultos.
+  Se conservan duplicados históricos compatibles, pero no cuentan como diversidad.
+  Las salidas de texto usan la equivalencia del juez (finales de línea y espacios
+  finales); no se modifican casos, versiones ni envíos guardados. La publicación
+  revisa las tres variantes antes de consultar runtimes o ejecutar referencias.
 - Las identidades nuevas usan el prefijo `logica-`. No heredan completados, borradores ni intentos de las anteriores. Los registros históricos se conservan vinculados a sus variantes originales.
 - `prisma/logic-lessons.ts` contiene los contratos nuevos; `logic-content.ts` compone el catálogo. Cuando el objetivo y el contrato coinciden se reutilizan referencias algorítmicas ya verificadas del catálogo histórico; se asignan nuevas identidades, títulos, nivel y prerrequisitos. No se afirma que todos los algoritmos sean nuevos.
 - La teoría tiene ejemplos adaptados a los tres lenguajes. Los contratos comunes se mantienen y las particularidades sintácticas se explican por variante. TypeScript tiene firmas explícitas comprobadas en modo estricto.

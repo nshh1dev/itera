@@ -6,6 +6,7 @@ import { availableRuntime, RunnerUnavailable } from "@/server/execution/piston";
 import { evaluateSubmission, expireInterruptedSubmissions } from "@/server/execution/service";
 import type { Language } from "@/lib/types";
 import { readLimitedJson, RequestBodyTooLarge } from "@/lib/request-body";
+import { maximumExecutionBodyBytes } from "@/lib/execution-limits";
 
 export const runtime = "nodejs";
 
@@ -16,9 +17,9 @@ export async function POST(request: Request) {
   const user = await currentUser();
   if (!user) return NextResponse.json({ error: "Inicia sesión para ejecutar y guardar tu progreso." }, { status: 401 });
   let body;
-  try { body = await readLimitedJson(request, 40000); }
+  try { body = await readLimitedJson(request, maximumExecutionBodyBytes); }
   catch (error) {
-    if (error instanceof RequestBodyTooLarge) return NextResponse.json({ error: "El programa es demasiado grande." }, { status: 413 });
+    if (error instanceof RequestBodyTooLarge) return NextResponse.json({ error: "El cuerpo de la solicitud es demasiado grande." }, { status: 413 });
     return NextResponse.json({ error: "Solicitud inválida." }, { status: 400 });
   }
   const parsed = executionSchema.safeParse(body);

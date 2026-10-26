@@ -373,11 +373,14 @@ Las ACL y la comprobación real del sandbox siguen requiriendo autorización apa
   con `disableIpTracking`, porque eso podría omitir el limitador. En producción,
   Better Auth puede advertir que usa un contador compartido al no resolver una IP;
   ese comportamiento es intencionado para esta instalación exclusivamente local.
-- El endpoint de ejecución lee como máximo 40.000 bytes antes de rechazar el
+- El endpoint de ejecución lee como máximo 184.096 bytes antes de rechazar el
   cuerpo con 413, sin depender de `Content-Length`. Cancela el flujo al exceder
   el límite y conserva 400 para JSON o UTF-8 inválido. El límite del código sigue
-  siendo de 30.000 caracteres; un cuerpo con caracteres multibyte puede alcanzar
-  antes el límite HTTP de bytes, como ya ocurría con una longitud declarada.
+  siendo de 30.000 unidades UTF-16 (`String.length`), como en el editor y las
+  copias recuperables. El presupuesto reserva seis bytes por unidad para escapes
+  JSON y 4.096 para metadatos; Unicode válido y escapes no agotan antes el límite.
+  El código que excede su límite recibe 400; un cuerpo con bytes sobrantes recibe
+  413 aunque contenga código corto. Valores compartidos en `execution-limits.ts`.
 
 No se cambian cookies, CSRF, permisos, roles, esquema ni evaluación del progreso.
 No se añaden servicios ni dependencias.

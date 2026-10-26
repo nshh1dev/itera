@@ -1,5 +1,10 @@
 import type { Language } from "./types";
 
+export const maximumExecutionCodeLength = 30000;
+// JSON puede representar cada unidad UTF-16 con seis bytes (\\uXXXX). Reservar
+// además identificadores, modo y contexto; seguir limitando el transporte real.
+export const maximumExecutionBodyBytes = maximumExecutionCodeLength * 6 + 4096;
+
 export const runtimeLookupTimeoutMs = 2500;
 export const minimumSubmissionBudgetMs = 120000;
 export const executionRequestTimeoutMs = (language: Language) => language === "typescript" ? 25000 : 12000;

@@ -12,6 +12,7 @@ import { editorialSchema as schema, publicationMetadataSchema } from "@/lib/edit
 import { prerequisiteIssue } from "@/lib/curriculum";
 import { languages } from "@/lib/types";
 import { checkConcept } from "./execution/concepts";
+import { editorialTestsIssue } from "@/lib/editorial-tests";
 
 async function checkPrerequisites(slug: string, slugs: string[]) {
   if (!slugs.length) return;
@@ -67,9 +68,12 @@ export async function publishExerciseVersion(versionId: string) {
     if (issue) return { error: issue };
     for (const variant of version.variants) {
       if (variant.language === "typescript" && version.runtimeMode === "FUNCTION" && !variant.typeContract.trim()) return {error:"Define el contrato de tipos de TypeScript antes de publicar esta función."};
+      const issue = editorialTestsIssue(variant.tests.map(test => ({ ...test, input: test.input as Json, expected: test.expected as Json })), version.runtimeMode);
+      if (issue) return { error: `${variant.language}: ${issue}` };
       const fixed = version.runtimeMode === "PROGRAM" && variant.tests.every(test => test.input === "");
-      if (!variant.tests.some(t=>t.visible) || (!fixed && (variant.tests.length < 3 || !variant.tests.some(t=>!t.visible)))) return {error:"Incluye ejemplos visibles y, cuando hay entrada, al menos tres pruebas con alguna oculta."};
       if (version.conceptRule && (!fixed || version.activityType !== "GUIDED")) return {error:"La comprobación conceptual requiere una práctica guiada sin entrada."};
+    }
+    for (const variant of version.variants) {
       const runtime = await availableRuntime(variant.language as Language);
       const mode = version.runtimeMode as RuntimeMode;
       const evaluate = mode === "PROGRAM" ? judgeProgram : judge;

@@ -1,10 +1,13 @@
 import { z } from "zod";
 import { languages, levels } from "./types";
+import { maximumExecutionCodeLength } from "./execution-limits";
 
 export const languageSchema = z.enum(languages);
 export const executionSchema = z.object({
   variantId: z.string().min(1).max(100),
-  code: z.string().min(1, "Escribe una solución antes de ejecutarla.").max(30000),
+  // El editor y las copias recuperables limitan String.length (unidades UTF-16).
+  // Zod cuenta puntos Unicode: .max() no expresa ese mismo contrato.
+  code: z.string().min(1, "Escribe una solución antes de ejecutarla.").refine(code => code.length <= maximumExecutionCodeLength, "El código admite como máximo 30 000 caracteres."),
   mode: z.enum(["examples", "submit"]),
   idempotencyKey: z.uuid(),
   diagnosticItemId: z.string().min(1).max(100).optional(),

@@ -82,5 +82,5 @@ test("el modo programa exige entradas y salidas de texto", () => {
   assert.equal(editorialSchema.safeParse(programa).success, true);
   const numeric = { ...programa, tests: [{ input: 1, expected: 1, visible: true, explanation: "" }, { input: 1, expected: 1, visible: true, explanation: "" }, { input: 1, expected: 1, visible: false, explanation: "" }] };
   assert.equal(editorialSchema.safeParse(numeric).success, false);
-  assert.equal(editorialSchema.safeParse({ ...programa, runtimeMode: "FUNCTION" }).success, true);
+  assert.equal(editorialSchema.safeParse({ ...programa, runtimeMode: "FUNCTION", tests: numeric.tests.map((test, index) => ({ ...test, input: index })) }).success, true);
 });
