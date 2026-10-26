@@ -12,6 +12,7 @@ import { languages, languageNames, levelNames } from "@/lib/types";
 import { learningPaths } from "@/lib/learning-paths";
 import { Disclosure } from "@/components/arc/disclosure";
 import { activePathExercise } from "@/lib/practice-navigation";
+import { PathCompletion, PathReview } from "@/components/path-review";
 
 export default async function PathPage({ params, searchParams }: { params: Promise<{slug:string}>; searchParams: Promise<{lenguaje?:string}> }) {
   const {slug} = await params;
@@ -27,7 +28,7 @@ export default async function PathPage({ params, searchParams }: { params: Promi
   const definition = learningPaths.find(path => path.slug === slug);
   const next = definition ? learningPaths.find(path => path.order > definition.order) : undefined;
   const nextExercise = activePathExercise(exercises);
-  const firstIntegration = exercises.find(exercise => exercise.activityType === "INTEGRATION");
+  const completed = Boolean(user) && modules.length > 0 && exercises.length > 0 && exercises.every(exercise => exercise.solved);
   return <div className="page-container">
     <Link href={`/rutas?lenguaje=${language}`} className="text-link text-xs"><ArrowLeft className="size-3.5" aria-hidden="true" />Todas las rutas</Link>
     <h1 className="page-title mt-5">{path.title}</h1>
@@ -36,6 +37,7 @@ export default async function PathPage({ params, searchParams }: { params: Promi
     <nav aria-label="Lenguaje de la ruta" className="segmented-control mt-5 flex-wrap">{languages.map(lang => <Link key={lang} href={`?lenguaje=${lang}`} aria-current={language === lang ? "page" : undefined} className="segment">{languageNames[lang]}</Link>)}</nav>
     <Disclosure title="Sobre esta ruta" className="mt-3 max-w-prose"><p className="pb-3 text-sm leading-6 text-muted-foreground">Los mismos retos y el mismo orden en Python, JavaScript y TypeScript. Cambia la sintaxis, no el problema. El progreso se guarda por lenguaje y todas las etapas tienen acceso libre. {language === "typescript" ? "Puedes empezar sin conocer JavaScript: los tipos se presentan gradualmente." : "Las ayudas disminuyen a medida que practicas."}</p></Disclosure>
     {nextExercise && <section className="surface-panel mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-surface p-5" aria-label="Siguiente ejercicio de la ruta"><div><h2 className="text-sm font-semibold">{nextExercise.started ? "Retoma tu práctica" : "Tu siguiente paso"}</h2><p className="mt-2 text-sm text-muted-foreground">Ejercicio {exercises.findIndex(exercise => exercise.id === nextExercise.id) + 1} de {exercises.length}{nextExercise.started ? " · En curso" : ""}</p></div><Button asChild><Link aria-description={nextExercise.title} href={`/ejercicios/${nextExercise.slug}?lenguaje=${language}&ruta=${encodeURIComponent(slug)}`}>Abrir ejercicio<ArrowRight aria-hidden="true" /></Link></Button></section>}
+    {completed && <PathCompletion language={language} count={exercises.length} />}
     <p className="mt-6 mb-3 px-3 text-xs text-muted-foreground">{exercises.filter(e => e.solved).length} de {exercises.length} completados · Sin prisa, sin bloqueos</p>
     <div className="route-content mt-6">
     {modules.map(module => {
@@ -49,12 +51,7 @@ export default async function PathPage({ params, searchParams }: { params: Promi
       </Disclosure>;
     })}
     {exercises.filter(exercise => !modules.some(module => module.slugs.includes(exercise.slug))).map(exercise => <ExerciseRow key={exercise.id} exercise={exercise} language={language} pathSlug={slug} />)}
-    {modules.length > 0 && <section className="mt-10 rounded-xl bg-surface p-5 wrap-anywhere" aria-labelledby="path-readiness">
-      <h2 id="path-readiness" className="text-lg font-semibold">Pon en práctica lo aprendido</h2>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">Intenta resolver los desafíos integradores sin consultar la solución y explica por qué funciona tu código. Completarlos registra práctica, no demuestra por sí solo dominio.</p>
-      {firstIntegration ? <Link className="text-link mt-4 text-sm" href={`/ejercicios/${firstIntegration.slug}?lenguaje=${language}&ruta=${encodeURIComponent(slug)}`}>Abrir primer integrador<ArrowRight className="size-4" aria-hidden="true" /></Link> : <p className="mt-4 text-sm text-muted-foreground">Esta ruta todavía no tiene desafíos integradores publicados. Puedes repasar sus ejercicios.</p>}
-      {next ? <Link className="text-link mt-5" href={`/rutas/${next.slug}?lenguaje=${language}`}>Continuar con {next.title}</Link> : <p className="mt-5 text-sm text-muted-foreground">Vuelve a los retos con otra estrategia y compara su corrección y coste.</p>}
-    </section>}
+    {modules.length > 0 && <PathReview pathSlug={slug} language={language} modules={modules} exercises={exercises} next={next} />}
     </div>
   </div>;
 }

@@ -2,14 +2,15 @@
 
 ## Prioridades vigentes — 26 de octubre de 2026
 
-- Terminar las mejoras de fiabilidad y aprendizaje: cierre/repaso de rutas con
-  `readiness` y verificación global de teclado, temas, móvil, movimiento reducido
-  y zoom al 200 %.
+- Completar la verificación global de teclado, temas, móvil, movimiento reducido
+  y zoom real al 200 %. Las comprobaciones de componentes no sustituyen el
+  recorrido completo de la aplicación.
 - Medir duración efectiva con Piston real. Los últimos cambios de caducidad se
   comprobaron con reloj simulado y doble HTTP; no dar por repetidas las pruebas
   históricas del ejecutor. Docker solo se inicia con autorización.
-- Validar con principiantes reales la dificultad, las dudas y la retirada de ayuda;
-  la participación humana no se sustituye por pruebas automatizadas.
+- Validar con principiantes reales la dificultad, las dudas y la retirada de ayuda.
+  El [protocolo está preparado](beginner-validation.md), pero no se han realizado
+  sesiones; la participación humana no se sustituye por pruebas automatizadas.
 - Mantener pendientes de decisión las protecciones de `main`, licencia y ampliaciones
   de infraestructura. El workflow existe, pero no se afirma aquí que sus ejecuciones
   remotas o comprobaciones obligatorias estén verificadas.
@@ -19,7 +20,8 @@ La recuperación de borradores, el seguimiento idempotente, la separación de es
 editoriales y los diagnósticos inconclusos ya se corrigieron. La carga de Inicio
 comparte metadatos sin compartir progreso entre lenguajes. La primera diferencia
 textual de PROGRAM ya está implementada: solo usa datos visibles y respeta la
-normalización del evaluador. Las verificaciones actuales
+normalización del evaluador. Las rutas curriculares ya ofrecen cierre por lenguaje
+y repaso basado en `readiness`, sin acreditar autoevaluaciones. Las verificaciones actuales
 y sus límites se registran en [verification.md](verification.md); el plan de trabajo
 temporal se conserva localmente hasta terminar la implementación.
 

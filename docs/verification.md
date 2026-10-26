@@ -1,5 +1,47 @@
 # Verificación local
 
+## Cierre de rutas y preparación de validación humana (26 de octubre de 2026)
+
+- Las rutas curriculares muestran «Ruta completada en [lenguaje]» cuando la cuenta
+  tiene todos sus ejercicios publicados completados en ese lenguaje y el conjunto
+  no está vacío. La cifra corresponde al catálogo publicado, como el resumen de
+  Inicio; no cuenta ejercicios retirados ni exige completar otros lenguajes.
+  El cierre distingue práctica de dominio y enlaza al repaso existente en la página.
+  Rutas personalizadas sin módulos mantienen su comportamiento anterior.
+- `PathReview` reutiliza los criterios `readiness` de cada módulo y ofrece un
+  ejercicio de repaso publicado: el primer integrador del módulo, o el último
+  ejercicio disponible en su orden curricular. Si faltan ejercicios, lo explica
+  sin enlaces rotos. Conserva el primer integrador de la ruta, el acceso libre a la
+  siguiente y una propuesta de repaso para la última. No escribe progreso, añade
+  casillas acreditadas, modifica evaluaciones ni cambia contenido editorial.
+- `tests/path-review.test.ts` cubre las cuatro rutas y los tres lenguajes, criterios,
+  orden y disponibilidad de enlaces, integrador preferente, módulos vacíos, última
+  ruta y escape de HTML. La página completa se renderiza con dobles de sesión,
+  catálogo y base: cuenta/lenguaje independientes, catálogo parcialmente publicado,
+  práctica pendiente, invitados, conjunto vacío y ruta personalizada. Los dobles
+  solo ofrecen lecturas y se comprueba que las entradas no se mutan.
+- **19 pruebas focalizadas** aprobadas; suite completa: **280 aprobadas, sin
+  omisiones**. Tipos y build aprobados. El primer lint detectó el nombre local
+  `module` en un bucle de prueba (regla de Next): se cambió a `unit`; lint completo
+  repetido sin errores ni avisos. El detector mecánico no emitió hallazgos.
+- Chromium: componentes hidratados con datos sintéticos y CSS/fuentes del build,
+  sin iniciar Next ni consultar una API. Ambos temas a **1440, 390 y 320 px**:
+  resumen y criterios visibles, ancla al repaso, apertura por Tab/Enter, foco visible,
+  siete enlaces de módulo y continuación con el lenguaje conservado. Sin errores
+  JavaScript ni desbordamiento horizontal de página. Con movimiento reducido y
+  texto raíz al **200 %** en 320 px no hay recortes en párrafos, criterios o títulos.
+  Inspección visual acotada, sin rediseñar otras superficies; capturas locales en
+  `.local/screenshots/path-review-*`.
+- [beginner-validation.md](beginner-validation.md) prepara dos recorridos, pautas
+  de ayuda, tareas según conocimientos previos, notas mínimas anonimizadas y límites
+  para interpretar dudas y tiempos. **No se realizaron sesiones con personas**, ni
+  se atribuyen resultados educativos a las pruebas automatizadas o datos sintéticos.
+- Límites: no se ejecutan E2E ni Piston real y no se inician Next, PostgreSQL, Docker
+  o WSL. El montaje de componentes no valida integración HTTP/sesión real; ampliar
+  el texto raíz no equivale a zoom real del navegador. Siguen pendientes la revisión
+  global de interacción, la medición de duración con Piston y las observaciones
+  humanas. El plan temporal se conserva hasta resolver o aplazar esos pendientes.
+
 ## Primera diferencia textual de PROGRAM — fase 5 parcial (26 de octubre de 2026)
 
 - `firstTextDifference` en `src/lib/json-diff.ts` explica la primera diferencia de
