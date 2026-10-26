@@ -1,5 +1,49 @@
 # Verificación local
 
+## Caducidad y detención de evaluaciones: segundo bloque de la fase 2 (26 de octubre de 2026)
+
+- Se confirmó la incompatibilidad entre los 120 segundos globales y los límites ya
+  permitidos: hasta diez casos editoriales secuenciales, con 25 segundos HTTP por caso
+  TypeScript (12 en Python/JavaScript), más consulta del runtime y posible análisis
+  conceptual. Esto prueba la insuficiencia del presupuesto, no una medición real de Piston.
+- Una regresión con reloj simulado reproduce diez casos TypeScript de 15 segundos:
+  el reconciliador antiguo caduca el intento antes de terminar. También se reprodujeron
+  casos adicionales tras finalizar y progreso concedido al finalizar fuera de plazo
+  cuando ninguna consulta había reconciliado aún el intento. Las pruebas iniciales
+  fallaron; no se cuentan como aprobadas. Se corrigió además un error de tipado del doble.
+- `execution-limits.ts` comparte los tiempos HTTP con el adaptador y calcula el
+  presupuesto total: consulta inicial + casos secuenciales + consulta/parser conceptual
+  si corresponde + 30 segundos de margen, con mínimo de dos minutos. Diez casos
+  TypeScript sin concepto disponen de 282,5 segundos; con concepto, 310 segundos.
+  Se conserva el número real de casos históricos, sin truncarlo a diez. Los límites
+  de CPU, memoria, compilación y ejecución de cada proceso no se modifican.
+- La reconciliación selecciona solo metadatos de candidatos RUNNING con al menos dos
+  minutos y aplica el mismo presupuesto antes de marcar ERROR. El evaluador comprueba
+  plazo y estado antes de iniciar runtime, cada caso, análisis conceptual y finalización.
+  La actualización atómica final exige RUNNING y estar dentro del plazo; si ya caducó,
+  no incrementa intentos ni concede progreso, aunque aún no haya reconciliación externa.
+- No se cancelan procesos que ya estaban en vuelo: conservan sus límites de Piston.
+  Se detiene el trabajo restante en la siguiente frontera; no hay trabajador persistente,
+  heartbeat, migración ni cambios de concurrencia o reserva idempotente.
+- `npm test`: **231 aprobadas**, sin omisiones; incluye **13 comprobaciones nuevas**
+  (presupuestos y ciclo de evaluación, incluidos sus subcasos). Tipos, lint focalizado
+  y build de producción aprobados. Se reutiliza el resultado de lint completo de la
+  entrega anterior para sus 97 avisos de herramientas locales, sin cambios en ellas.
+- `tests/e2e/execution-recovery.spec.ts`: **5 recorridos repetidos dos veces, 10 aprobados**
+  contra producción, endpoints reales y copia temporal de PostgreSQL. La nueva prueba
+  conserva un TypeScript de diez casos a los 150 segundos, caduca simultáneamente el
+  Python corto y después caduca el TypeScript realmente interrumpido, sin progreso.
+  Los cuatro recorridos anteriores siguen comprobando recuperación sin reservas duplicadas.
+- El servidor de Piston de esos recorridos es un **doble HTTP que no ejecuta código**.
+  `npm run test:runner`: **1 aprobada (ejecutor ausente), 7 omitidas** por Piston detenido.
+  No valida el sandbox ni su duración efectiva. Docker/WSL permaneció apagado. Medir
+  evaluaciones secuenciales reales sigue pendiente y no se presenta esta fase como
+  validada íntegramente con Piston real.
+- Las copias temporales y sus datos se eliminaron; la base original no se modificó.
+  Next, PostgreSQL y el doble quedaron detenidos. No se ejecutó la suite E2E completa.
+  Sin cambios visuales; no se repitió una auditoría visual. Permanecen los avisos
+  conocidos de Better Auth sobre IP y el origen inválido deliberado de la prueba negativa.
+
 ## Recuperación de ejecuciones: primer bloque de la fase 2 (25 de octubre de 2026)
 
 - Práctica y diagnóstico comparten seguimiento de ejecuciones. Antes del POST se

@@ -5,6 +5,7 @@ import type { RunOutput } from "./judge";
 import { languageNames } from "@/lib/types";
 import { executionFiles, executionInput, executionOutput } from "./harness";
 import { pistonOrigin } from "@/lib/piston-url.mjs";
+import { runtimeLookupTimeoutMs, executionRequestTimeoutMs } from "@/lib/execution-limits";
 
 export class RunnerUnavailable extends Error {
   constructor(message = "El ejecutor local no está disponible. Inicia Docker y Piston, y ejecuta npm run runner:setup. Tu código sigue guardado.") { super(message); }
@@ -21,7 +22,7 @@ const outputSchema = z.object({ stdout: z.string().max(65536), stderr: z.string(
 
 export async function availableRuntime(language: Language) {
   try {
-    const response = await fetch(`${baseUrl()}/api/v2/runtimes`, { cache: "no-store", signal: AbortSignal.timeout(2500) });
+    const response = await fetch(`${baseUrl()}/api/v2/runtimes`, { cache: "no-store", signal: AbortSignal.timeout(runtimeLookupTimeoutMs) });
     if (!response.ok) throw new RunnerUnavailable();
     const runtimes = runtimeSchema.parse(await response.json());
     const names = language === "typescript" ? ["typescript", "ts"] : language === "javascript" ? ["javascript", "js", "node"] : ["python", "python3"];
@@ -36,7 +37,7 @@ export async function runCode(language: Language, runtime: {language:string;vers
   const stdin = executionInput(input, mode);
   try {
     const response = await fetch(`${baseUrl()}/api/v2/execute`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, signal: AbortSignal.timeout(language === "typescript" ? 25000 : 12000),
+      method: "POST", headers: { "Content-Type": "application/json" }, signal: AbortSignal.timeout(executionRequestTimeoutMs(language)),
       body: JSON.stringify({ ...runtime, files, stdin, run_timeout: language === "typescript" ? 12000 : 3000, run_cpu_time: language === "typescript" ? 10000 : 3000, compile_timeout: 8000, run_memory_limit: 268435456, compile_memory_limit: 268435456 }),
     });
     if (!response.ok) throw new RunnerUnavailable("Piston no pudo evaluar el programa. Comprueba los lenguajes instalados y vuelve a intentarlo.");

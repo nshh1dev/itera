@@ -68,7 +68,9 @@ Los diagnósticos comparten los límites globales y por persona de ejecución.
 Reservar y terminar un diagnóstico usan el mismo bloqueo breve de reservas para
 evitar que se acepten envíos después de cerrarlo. La ejecución ocurre fuera de ese
 bloqueo. No hay trabajador persistente; se conserva la reconciliación de intentos
-interrumpidos a los dos minutos.
+interrumpidos según el lenguaje, el número de casos y la comprobación conceptual,
+con un mínimo de dos minutos. `src/lib/execution-limits.ts` comparte el presupuesto
+entre evaluador y endpoints; no se lanzan más casos tras finalizar o caducar.
 
 Catálogo, actividad, historial de práctica, archivo y estadísticas administrativas
 excluyen los envíos diagnósticos. Abrir el editor diagnóstico no escribe en

@@ -153,3 +153,19 @@ test("sin persistencia previa no envía; un rechazo explícito permite corregir 
   await expect.poll(() => db.submission.count({ where: { userId: account.userId } })).toBe(1);
   await expect(page.getByRole("button", { name: "Ejecutar ejemplos", exact: true })).toBeEnabled();
 });
+
+test("la reconciliación real conserva TypeScript con presupuesto pendiente y caduca los interrumpidos", async ({ page, account }) => {
+  const variant = await db.exerciseVariant.findUniqueOrThrow({ where: { id: account.variantId }, select: { version: { select: { variants: { where: { language: "typescript" }, select: { id: true } } } } } });
+  const common = { userId: account.userId, mode: "submit", code: "No se ejecuta: registro temporal de reconciliación", createdAt: new Date(Date.now() - 150000) };
+  const long = await db.submission.create({ data: { ...common, variantId: variant.version.variants[0].id, totalCount: 10, idempotencyKey: randomUUID() } });
+  const short = await db.submission.create({ data: { ...common, variantId: account.variantId, totalCount: 3, idempotencyKey: randomUUID() } });
+  const running = await page.request.get(`/api/executions/${long.id}`);
+  expect(running.ok()).toBe(true);
+  expect((await running.json()).status).toBe("RUNNING");
+  expect((await db.submission.findUniqueOrThrow({ where: { id: short.id } })).status).toBe("ERROR");
+  await db.submission.update({ where: { id: long.id }, data: { createdAt: new Date(Date.now() - 600000) } });
+  const expired = await page.request.get(`/api/executions/${long.id}`);
+  expect(expired.ok()).toBe(true);
+  expect(await expired.json()).toMatchObject({ status: "ERROR", results: [], message: "La evaluación se interrumpió. No cuenta como un resultado incorrecto; puedes volver a intentarlo." });
+  expect(await db.progress.count({ where: { userId: account.userId } })).toBe(0);
+});

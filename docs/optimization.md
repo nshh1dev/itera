@@ -164,5 +164,5 @@ Con autorización para servidores temporales y PostgreSQL preparado:
    `npm run test:e2e:real` y `npm run test:runner`, que requieren Piston y
    Docker reales. Mantener el archivo serial `flows.spec.ts` completo.
 6. Solo si aparece un coste relevante, optimizar la reconciliación del GET de
-   ejecuciones. Preservar caducidad a dos minutos, reserva global, idempotencia y
+   ejecuciones. Preservar el presupuesto de caducidad por lenguaje/casos, reserva global, idempotencia y
    actualización atómica del progreso. No introducir índices o cachés sin datos.
