@@ -26,9 +26,11 @@ ediciones pendientes. No se añaden exportación ni restauración de datos.
 - `Progress`: sigue siendo el progreso real por usuario, ejercicio y lenguaje.
   Cambiar preferencias o terminar un diagnóstico no escribe en esta tabla.
 
-La recomendación utiliza el último diagnóstico concluyente del lenguaje solo si
-coincide con la declaración actual. En ausencia de diagnóstico utiliza el nivel
-declarado; sin declaración propone Iniciación. Todas las rutas permanecen abiertas.
+La recomendación utiliza el último diagnóstico terminado del lenguaje, ordenado por
+fecha de finalización, solo si coincide con la declaración actual. Si es inconcluso,
+conserva el nivel declarado y muestra su razón; no rescata una sugerencia anterior.
+En ausencia de diagnóstico utiliza el nivel declarado; sin declaración propone
+Iniciación. Todas las rutas permanecen abiertas.
 El dashboard prioriza la actividad pendiente del lenguaje preferido, luego su
 continuidad habitual; sin actividad propone la ruta del perfil. El progreso de
 otros lenguajes permanece disponible desde Progreso.

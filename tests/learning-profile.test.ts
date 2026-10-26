@@ -10,6 +10,8 @@ import { Results } from "../src/components/practice/results";
 import { executionSchema } from "../src/lib/validation";
 import { randomUUID } from "node:crypto";
 import { OnboardingProgress } from "../src/components/onboarding-progress";
+import { StartingPoint } from "../src/components/starting-point";
+import { learningPaths } from "../src/lib/learning-paths";
 
 test("cada diagnóstico reutiliza tres ejercicios reales con variantes en los tres lenguajes", () => {
   for (const level of levels) {
@@ -49,6 +51,13 @@ test("cambiar el nivel declarado deja de aplicar un diagnóstico de otra declara
   assert.equal(effectiveLevel(undefined), "INITIATION");
   assert.equal(effectiveLevel("BEGINNER", { declaredLevel: "BEGINNER", suggestedLevel: "INTERMEDIATE" }), "INTERMEDIATE");
   assert.equal(effectiveLevel("INITIATION", { declaredLevel: "BEGINNER", suggestedLevel: "INTERMEDIATE" }), "INITIATION");
+});
+
+test("el punto de partida distingue un diagnóstico inconcluso de no haberlo hecho", () => {
+  const summary = { language: "python" as const, declaredLevel: "BEGINNER" as const, suggestedLevel: null, reason: "Conservamos tu nivel declarado.", path: learningPaths[1], diagnosticDate: "2026-10-26T00:00:00.000Z" };
+  const inconclusive = renderToStaticMarkup(createElement(StartingPoint, { summary }));
+  assert.match(inconclusive, /Sin resultado concluyente/); assert.doesNotMatch(inconclusive, /Sin diagnóstico/);
+  assert.match(renderToStaticMarkup(createElement(StartingPoint, { summary: { ...summary, diagnosticDate: null } })), /Sin diagnóstico/);
 });
 
 const exercise = (id: string, extra: Partial<ExerciseCard> = {}): ExerciseCard => ({ id, slug: id, title: id, description: "", category: "Fundamentos", level: "INITIATION", order: 0, minutes: 5, runtimeMode: "FUNCTION", solved: false, started: false, solvedOther: false, ...extra });

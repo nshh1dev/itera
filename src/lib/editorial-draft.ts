@@ -1,7 +1,7 @@
 import type { EditorialData } from "@/components/admin-editor";
 
 export function editorialHasChanges(data: EditorialData, initial: EditorialData) {
-  const content = (value: EditorialData) => JSON.stringify({ ...value, id: undefined, versionId: undefined, versionNumber: undefined, published: undefined });
+  const content = (value: EditorialData) => JSON.stringify({ ...value, id: undefined, versionId: undefined, versionNumber: undefined, published: undefined, exercisePublished: undefined });
   return content(data) !== content(initial);
 }
 

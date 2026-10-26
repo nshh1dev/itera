@@ -7,7 +7,7 @@ import type { Language } from "@/lib/types";
 export async function getLearningSummary(userId: string, language: Language) {
   const [profile, diagnostic] = await Promise.all([
     db.learningProfile.findUnique({ where: { userId_language: { userId, language } } }),
-    db.diagnostic.findFirst({ where: { userId, language, finishedAt: { not: null }, suggestedLevel: { not: null } }, orderBy: [{ createdAt: "desc" }, { id: "desc" }] }),
+    db.diagnostic.findFirst({ where: { userId, language, finishedAt: { not: null } }, orderBy: [{ finishedAt: "desc" }, { createdAt: "desc" }, { id: "desc" }] }),
   ]);
   const level = effectiveLevel(profile?.declaredLevel, diagnostic);
   const applicable = diagnostic?.declaredLevel === profile?.declaredLevel ? diagnostic : null;

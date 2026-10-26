@@ -8,6 +8,7 @@ const initial: EditorialData = { id: "ejercicio", versionId: "version-2", versio
 
 test("los cambios pendientes dependen del contenido, no de los estados devueltos por el servidor", () => {
   assert.equal(editorialHasChanges({ ...initial, published: false, versionNumber: 3 }, initial), false);
+  assert.equal(editorialHasChanges({ ...initial, exercisePublished: false }, { ...initial, exercisePublished: true }), false);
   assert.equal(editorialHasChanges({ ...initial, title: "Nuevo título" }, initial), true);
   assert.equal(editorialHasChanges({ ...initial, python: { ...variant, starter: "Otro código" } }, initial), true);
 });
@@ -21,13 +22,14 @@ test("recupera contenido editorial incompleto sin exigir que ya se pueda publica
 });
 
 test("una copia local nunca cambia la identidad, la versión ni la publicación remotas", () => {
-  const edited = { ...initial, id: "ajeno", versionId: "version-999", versionNumber: 999, slug: "ajeno", published: false, role: "ADMIN", title: "Mi edición" };
-  const result = readEditorialDraft(JSON.stringify(edited), initial);
+  const edited = { ...initial, id: "ajeno", versionId: "version-999", versionNumber: 999, slug: "ajeno", published: false, exercisePublished: false, role: "ADMIN", title: "Mi edición" };
+  const result = readEditorialDraft(JSON.stringify(edited), { ...initial, exercisePublished: true });
   assert.equal(result?.id, initial.id);
   assert.equal(result?.versionId, initial.versionId);
   assert.equal(result?.versionNumber, initial.versionNumber);
   assert.equal(result?.slug, initial.slug);
   assert.equal(result?.published, initial.published);
+  assert.equal(result?.exercisePublished, true);
   assert.equal(result?.title, edited.title);
   assert.equal(result && "role" in result, false);
 });

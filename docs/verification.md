@@ -1,5 +1,43 @@
 # Verificación local
 
+## Estados editoriales y diagnósticos inconclusos: bloques 3.1 y 3.2 (26 de octubre de 2026)
+
+- La ficha administrativa recibe por separado publicación de la versión y visibilidad
+  del ejercicio. El encabezado refleja la versión; categoría y opción de ocultar siguen
+  dependiendo de la visibilidad, en coherencia con el guardado del servidor. El listado
+  muestra ambos estados por separado, también para una versión publicada ya oculta.
+- Un borrador nuevo de un ejercicio visible ya no se anuncia como publicado. Ocultar
+  desde ese borrador conserva las dos versiones y su publicación. Los cambios remotos
+  de visibilidad/publicación no generan cambios editoriales pendientes ni se restauran
+  desde una copia de sesión. No se cambian las reglas de publicación o selección pública.
+- El resumen consulta el último diagnóstico terminado del lenguaje, no el último con
+  sugerencia. Se ordena por finalización, con desempate por creación e id; el historial
+  usa el mismo orden. Un resultado inconcluso conserva el nivel declarado y muestra su
+  razón, sin rescatar una orientación anterior. La interfaz distingue «Sin resultado
+  concluyente» de «Sin diagnóstico». Cambiar la declaración invalida la recomendación
+  y la razón anteriores, sin modificar diagnósticos históricos ni progreso.
+- Antes del cambio, las regresiones reprodujeron la selección de la sugerencia antigua
+  y el orden por creación en lugar de finalización. Ambas fallaron inicialmente y
+  aprobaron después; las pasadas fallidas no se cuentan como aprobadas.
+- `npm test`: **238 aprobadas**, sin omisiones. Incluye siete comprobaciones nuevas
+  del resumen y su representación, y amplía la protección de metadatos de la copia
+  editorial. Tipos, lint focalizado y build aprobados. Se conserva la evidencia previa
+  de 97 avisos del lint completo en herramientas locales, que no se modificaron.
+- `tests/e2e/editorial-safety.spec.ts`: **13 recorridos repetidos dos veces: 26 aprobados**
+  contra producción y una copia temporal de PostgreSQL. Además de los siete anteriores,
+  comprueba las cuatro combinaciones de visibilidad/publicación en ficha y listado,
+  guardado de una versión nueva seguida de ocultado sin modificar las versiones, y
+  diagnóstico concluyente seguido de inconcluso y cambio de declaración sin progreso.
+- Revisión visual acotada de la ficha en escritorio claro y móvil oscuro (390 px),
+  con movimiento reducido y sin desbordamiento horizontal. Los recorridos anteriores
+  vuelven a verificar Escape y retorno de foco de la confirmación de publicación.
+  Detector sin hallazgos; no equivale a una auditoría completa de zoom/lectores de pantalla.
+- La base original no recibió cambios ni migraciones; la copia temporal se eliminó
+  y los servicios de prueba quedaron detenidos. Docker y Piston no se iniciaron.
+  No se ejecutaron la suite E2E completa ni publicación/evaluación real en Piston;
+  estos recorridos no publican y no validan el sandbox. Persisten los avisos conocidos
+  de Better Auth sobre IP local y origen inválido de la prueba negativa.
+
 ## Caducidad y detención de evaluaciones: segundo bloque de la fase 2 (26 de octubre de 2026)
 
 - Se confirmó la incompatibilidad entre los 120 segundos globales y los límites ya

@@ -35,7 +35,7 @@ export default async function AdminPage(){
       const version=e.versions[0];
       return <li key={e.id}><Link href={`/admin/ejercicios/${e.slug}`} className="list-entry flex-wrap items-center gap-4">
         <div className="min-w-0 flex-1 basis-48"><h2 className="break-words text-base font-medium">{version?.title??e.slug}</h2><p className="mt-1 text-xs text-muted-foreground">{e.category} · {version?levelNames[version.level]:"Sin versión"}</p></div>
-        <div className="flex flex-wrap items-center gap-3"><span className="text-xs text-muted-foreground">Versión {version?.number??0}</span><Badge variant="outline">{e.published?version?.published?"Publicado":"Nueva versión en borrador":"Oculto"}</Badge></div>
+        <div className="flex flex-wrap items-center gap-3"><span className="text-xs text-muted-foreground">Versión {version?.number??0}</span><Badge variant="outline">{e.published?"Visible en el catálogo":"Oculto del catálogo"}</Badge><Badge variant="outline">{version?.published?"Versión publicada":"Versión guardada en borrador"}</Badge></div>
         <ArrowRight className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
       </Link></li>;
     })}</ul> : <div className="empty-state"><h2 className="section-title">Prepara el primer ejercicio</h2><p className="text-sm text-muted-foreground">Añade un enunciado, las variantes y sus pruebas. Después podrás validarlo y publicarlo.</p><Button asChild><Link href="/admin/ejercicios/nuevo">Crear ejercicio</Link></Button></div>}
