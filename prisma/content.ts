@@ -15,6 +15,7 @@ import { intermediateExpansion } from "./intermediate-expansion";
 import { advancedExpansion } from "./advanced-expansion";
 import type { ActivityType } from "../src/lib/types";
 import type { RuntimeMode } from "../src/lib/types";
+import type { ProjectDefinition, ProjectFile } from "../src/lib/project";
 import { curriculumExpansion } from "./curriculum-expansion";
 import { typescriptVariant } from "./typescript-content";
 
@@ -48,6 +49,8 @@ export type SeedExercise = {
   complexity?: string; commonErrors?: string[];
   explanations?: { python: string; javascript: string; typescript?: string };
   statements?: { python: string; javascript: string; typescript: string };
+  projects?: Partial<Record<"python" | "javascript" | "typescript", ProjectDefinition>>;
+  projectSolutions?: Partial<Record<"python" | "javascript" | "typescript", ProjectFile[]>>;
 };
 
 const t = (input: Json, expected: Json) => ({ input, expected });
