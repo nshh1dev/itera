@@ -93,7 +93,7 @@ sujetas a revisión caso por caso con el responsable del proyecto.
 
 - Contenido fuente: 176 actividades del currículo común en cuatro rutas, con tres
   variantes por identidad, conservando las 136 identidades anteriores. La ampliación
-  no se ha activado ni verificado con servicios reales. Las referencias y plantillas se comprueban en la suite
+  se activó y validó con Piston real en la instalación Docker local. Las referencias y plantillas se comprueban en la suite
   editorial; el catálogo de 63 ejercicios pertenece a una etapa histórica.
 - Documentación: `README.md`, `docs/roadmap.md` con los criterios pedagógicos,
   `docs/curriculum.md`, `docs/ui-redesign.md` y `docs/motion.md`.

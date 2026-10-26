@@ -2,11 +2,11 @@
 
 ## Prioridades vigentes — 26 de octubre de 2026
 
-- Completar la validación real de la ampliación integrada a 176 actividades: alcance, referencias,
-  errores, pruebas, módulos, archivos y tres miniproyectos. Se conservan los 136
-  identificadores anteriores. Las verificaciones con servicios reales, la
-  migración aplicada y la activación del catálogo quedan pendientes: el usuario
-  autorizó únicamente comprobaciones sin servicios para esta entrega.
+- Mantener la ampliación a 176 actividades: alcance, referencias, errores,
+  pruebas, módulos, archivos y tres miniproyectos. Se conservan las 136 identidades
+  anteriores. Tras autorización operativa posterior se aplicaron las migraciones
+  y se activó el catálogo Docker con validación de referencias y plantillas de
+  los tres lenguajes en Piston. La base nativa permanece independiente e intacta.
 
 - Mantener las regresiones de teclado, temas, móvil, movimiento reducido y zoom
   real al 200 %. La revisión contra Next/PostgreSQL ya se realizó en Chromium;

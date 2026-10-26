@@ -35,12 +35,13 @@ export async function availableRuntime(language: Language) {
 }
 
 export async function runCode(language: Language, runtime: {language:string;version:string}, code: string, input: Json, mode: RuntimeMode = "FUNCTION", typeContract = "", project?: { definition: ProjectDefinition; files: readonly ProjectFile[]; purpose?: "tests" }): Promise<RunOutput> {
-  const files = project ? projectExecutionFiles(language, project.files, project.definition, project.purpose === "tests" ? "tests" : mode, typeContract) : executionFiles(language, code, mode, typeContract);
+  const builtFiles = project ? projectExecutionFiles(language, project.files, project.definition, project.purpose === "tests" ? "tests" : mode, typeContract) : executionFiles(language, code, mode, typeContract);
+  const files = project && language === "typescript" ? builtFiles.slice(0, 1) : builtFiles;
   const stdin = project?.purpose === "tests" ? "" : executionInput(input, mode);
   try {
     const response = await fetch(`${baseUrl()}/api/v2/execute`, {
       method: "POST", headers: { "Content-Type": "application/json" }, signal: AbortSignal.timeout(executionRequestTimeoutMs(language, !!project?.definition.verifyPersistence)),
-       body: JSON.stringify({ ...runtime, files, stdin, run_timeout: language === "typescript" || (project && mode === "PROGRAM") ? 12000 : project?.definition.verifyPersistence ? 20000 : 3000, run_cpu_time: language === "typescript" || (project && mode === "PROGRAM") || project?.definition.verifyPersistence ? 10000 : 3000, compile_timeout: 8000, run_memory_limit: 268435456, compile_memory_limit: 268435456 }),
+      body: JSON.stringify({ ...runtime, files, stdin, run_timeout: language === "typescript" || (project && mode === "PROGRAM") || project?.definition.verifyPersistence ? 12000 : 3000, run_cpu_time: language === "typescript" || (project && mode === "PROGRAM") || project?.definition.verifyPersistence ? 10000 : 3000, compile_timeout: 8000, run_memory_limit: 268435456, compile_memory_limit: 268435456 }),
     });
     if (!response.ok) throw new RunnerUnavailable("Piston no pudo evaluar el programa. Comprueba los lenguajes instalados y vuelve a intentarlo.");
     const payload = await response.json();

@@ -10,6 +10,7 @@ import { languages, levelNames, type Json } from "../src/lib/types";
 import { functionBatch } from "../prisma/logic-validation";
 import { checkConcept } from "../src/server/execution/concepts";
 import { validateExpectedProjectFiles, validateProjectDefinition, validateProjectPersistence, validateProjectSolution } from "../src/lib/project";
+import { projectStarterIssue } from "../src/lib/editorial-tests";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 async function main() {
@@ -39,6 +40,7 @@ async function main() {
       const project = validateProjectDefinition(entry.variant.project);
       const solutionFiles = validateProjectSolution(project, entry.variant.solutionFiles);
       if (entry.version.conceptRule) throw new Error(`${entry.slug} (${language}): los proyectos no admiten reglas conceptuales de un solo archivo.`);
+      const starterResults = [];
       for (const test of entry.variant.tests) {
         const expectedPersistence = project.verifyPersistence ? test.expectedPersistence as unknown as Json : undefined;
         validateProjectPersistence(project, entry.version.runtimeMode, test.input, expectedPersistence);
@@ -48,9 +50,11 @@ async function main() {
         if (!judgeProject(solution, fixture, entry.version.runtimeMode).passed) throw new Error(`${entry.slug} (${language}): solución de proyecto inválida. El catálogo activo se conserva.`);
         const starter = await runCode(language, runtimes[language], "", fixture.input, entry.version.runtimeMode, entry.variant.typeContract, { definition: project, files: project.files });
         const initial = judgeProject(starter, fixture, entry.version.runtimeMode);
-        if (["runtime", "timeout"].includes(initial.status) || initial.error) throw new Error(`${entry.slug} (${language}): la plantilla del proyecto no se ejecuta.`);
-        if (initial.passed) throw new Error(`${entry.slug} (${language}): la plantilla ya resuelve todos sus casos.`);
+        starterResults.push(initial);
       }
+      const starterIssue = projectStarterIssue(starterResults);
+      if (starterIssue === "runtime") throw new Error(`${entry.slug} (${language}): la plantilla del proyecto no se ejecuta (${starterResults.map(result => result.status).join(", ")}). El catálogo activo se conserva.`);
+      if (starterIssue === "solved") throw new Error(`${entry.slug} (${language}): la plantilla ya resuelve todos sus casos.`);
     }
     const functions = entries.filter(entry => entry.version.runtimeMode === "FUNCTION" && !entry.version.variants.some(variant => variant.project));
     for (let offset = 0; offset < functions.length; offset += 6) {
@@ -90,6 +94,6 @@ async function main() {
     }
   }
   await activateLogicCatalog(db, snapshot);
-  console.log("Catálogo nuevo activado: 136 ejercicios y cuatro rutas de acceso libre. Historial conservado; progreso nuevo independiente por lenguaje.");
+  console.log(`Catálogo nuevo activado: ${logicExercises.length} ejercicios y cuatro rutas de acceso libre. Historial conservado; progreso nuevo independiente por lenguaje.`);
 }
 main().catch(error => { console.error(error instanceof Error ? error.message : error); process.exitCode = 1; }).finally(() => db.$disconnect());

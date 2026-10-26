@@ -1,4 +1,11 @@
-import type { Json, RuntimeMode } from "./types";
+import type { Json, RuntimeMode, TestResult } from "./types";
+
+// Una plantilla puede acertar casos triviales, pero no resolver toda la suite.
+// Un diagnóstico de diferencia (incluida persistencia) no es un fallo operativo.
+export function projectStarterIssue(results: readonly TestResult[]): "runtime" | "solved" | null {
+  if (!results.length || results.some(result => result.status === "runtime" || result.status === "timeout")) return "runtime";
+  return results.every(result => result.passed) ? "solved" : null;
+}
 
 // JSON por estructura, no por el orden de las propiedades de un objeto.
 function canonicalJson(value: Json): string {

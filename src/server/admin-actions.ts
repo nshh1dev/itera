@@ -101,7 +101,7 @@ export async function publishExerciseVersion(versionId: string) {
         if (!verdict.passed) return {error:`La solución de referencia de ${variant.language} no supera el caso ${test.order+1}. Revisa el contenido y guarda una nueva versión.`};
         const starterOutput = await runCode(variant.language as Language, runtime, variant.starter, test.input as Json, mode, variant.typeContract, project ? { definition: project, files: project.files } : undefined);
         const initial = project ? judgeProject(starterOutput, { ...entry, visible: true }, mode) : evaluate(starterOutput, { ...entry, visible: true });
-        if (initial.status === "runtime" || initial.status === "timeout" || initial.error) return {error:`La plantilla de ${variant.language} falla en el caso ${test.order+1}. Debe ejecutarse ${mode === "PROGRAM" ? "sin errores" : "y devolver un valor JSON aunque aún no resuelva el problema"}.`};
+        if (initial.status === "runtime" || initial.status === "timeout" || (!project && initial.error)) return {error:`La plantilla de ${variant.language} falla en el caso ${test.order+1}. Debe ejecutarse ${mode === "PROGRAM" ? "sin errores" : "y devolver un valor JSON aunque aún no resuelva el problema"}.`};
         starterSolved &&= initial.passed;
       }
       if (starterSolved && version.conceptRule) starterSolved = !(await checkConcept(variant.language as Language, variant.starter, version.conceptRule));

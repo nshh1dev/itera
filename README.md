@@ -36,7 +36,7 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 
 Una instalación con el catálogo ya activado funciona sin Piston; el botón de ejecución informa si el sandbox está detenido. La primera activación valida las referencias en Piston antes de publicar. Nunca se ejecuta el código del usuario en Node o Python del servidor principal.
 
-**Ampliación de fundamentos:** el código añade migraciones aditivas para proyectos y persistencia. Antes de usar esta revisión con una base existente, respalda la base del modo elegido y aplica sus migraciones explícitamente; generar Prisma o compilar no las aplica. La activación de las 176 actividades y su verificación con servicios reales siguen pendientes en esta entrega. No resetear datos ni confundir la base nativa con Docker. Detalles: [currículo](docs/curriculum.md), [fundamentos](docs/fundamentos.md) y [ejecución de proyectos](docs/project-execution.md).
+**Ampliación de fundamentos:** el código añade migraciones aditivas para proyectos y persistencia. Antes de usar esta revisión con otra base existente, respalda la base del modo elegido y aplica sus migraciones explícitamente; generar Prisma o compilar no las aplica. La instalación Docker local ya tiene las migraciones y las 176 actividades activadas tras validar referencias y plantillas en Piston para los tres lenguajes. La base nativa es independiente y no se ha modificado. No resetear datos ni confundir ambas bases. Detalles: [currículo](docs/curriculum.md), [fundamentos](docs/fundamentos.md) y [ejecución de proyectos](docs/project-execution.md).
 
 ## Primer inicio en modo nativo
 

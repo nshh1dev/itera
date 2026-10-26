@@ -160,7 +160,7 @@ test("FUNCTION real importa módulos, reabre recursos y compara artefactos fuera
     const runtime = await availableRuntime(language);
     const project = projects[language];
     const definition = { ...project.definition, files: project.files, testEntrypoint: language === "python" ? "pruebas.py" : "pruebas.js" };
-    const fixture = { input: { value: 3 }, expected: 7, expectedFiles: [{ path: "result.json", content: "{\"result\":7}" }], visible: true, order: 0 };
+    const fixture = { input: { value: 3 }, expected: 7, expectedFiles: [{ path: "result.json", content: language === "python" ? '{"result": 7}' : '{"result":7}' }], visible: true, order: 0 };
     const result = await runCode(language, runtime, "", fixture.input, "FUNCTION", project.contract, { definition, files: project.files });
     assert.equal(judgeProject(result, fixture, "FUNCTION").passed, true, detail(result));
     const ownTests = await runCode(language, runtime, "", "", "FUNCTION", "", { definition, files: project.files, purpose: "tests" });

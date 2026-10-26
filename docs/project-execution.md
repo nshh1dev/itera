@@ -76,16 +76,71 @@ sin aplicarlas y permite copiar explícitamente archivos coincidentes de
   la simulación TypeScript para que no heredara `@types/node` del repositorio:
   el conductor conserva las declaraciones que necesita dentro de Piston.
 
-## Límites aún no verificados
+## Validación operativa de la ampliación
+
+Con autorización posterior del usuario, se preparó Docker y se verificó una
+restauración del respaldo en una base temporal: 22 tablas con los mismos recuentos
+y huellas, origen intacto y base temporal eliminada. Se conservaron los respaldos
+en `.local/backups/`, fuera de Git. Las dos migraciones aditivas ya se aplicaron a
+la base Docker (no a la base nativa).
+
+La preparación real de los 176 borradores aprobó idempotencia y rechazo de una
+instantánea obsoleta sin activación parcial. Después de migrar/preparar, los
+recuentos y huellas de 15 tablas de estudiantes coincidieron con los anteriores.
+
+Piston real detectó dos incompatibilidades que la simulación local no cubría:
+su runtime TypeScript añade extensiones a todos los archivos recibidos y el
+presupuesto solicitado de persistencia excedía el máximo configurado. El
+adaptador ahora envía solo el conductor TypeScript y materializa los archivos
+validados dentro del sandbox antes de compilar estrictamente; el presupuesto
+exterior respeta los 12 segundos del ejecutor. Las cuatro regresiones reales
+de módulos, artefactos y persistencia aprobaron tras corregirlo.
+
+La plantilla editorial se evalúa por la suite completa: puede acertar un caso
+trivial sin resolver todos. Una diferencia de persistencia no se confunde con
+un fallo operativo. La suite local posterior aprobó 342 pruebas.
+
+Después se validaron referencias y plantillas de las 176 actividades en los
+tres lenguajes dentro de Piston, incluidos módulos, recursos y el segundo proceso
+de inventario/agenda. La primera validación se detuvo ante un fallo de
+una plantilla TypeScript mientras había compilaciones concurrentes, sin activar
+parcialmente el catálogo. La ejecución posterior completa, sin esa carga
+concurrente, aprobó y activó atómicamente las cuatro rutas; no se aisló la causa
+del fallo inicial. Se comprobaron 176
+actividades publicadas, 528 variantes y el orden de cada ruta, conservando los
+recuentos y huellas de las 15 tablas de estudiantes tras la activación.
+
+El cierre operativo aprobó las 12 pruebas de `npm run test:runner`, sin
+omisiones, y los 43 recorridos de `npm run docker:test:e2e` contra la aplicación
+compilada y Piston real. Las pruebas nuevas verifican proyectos completos en los
+tres lenguajes y publicación administrativa. Se corrigió una espera de la prueba
+que buscaba acciones del editor mientras estaba visible el enunciado móvil;
+la repetición completa aprobó sin fallos. También aprobaron las dos pruebas de
+zoom real al 200 %, en claro y oscuro, con Chromium y perfiles desechables.
+Tras los recorridos, las 15 tablas de estudiantes conservaron los mismos
+recuentos y huellas del respaldo inicial. Lint, tipos, build Docker y auditoría
+de contenido aprobaron; la auditoría de dependencias de producción no informó
+vulnerabilidades. Los avisos conocidos de Better Auth en pruebas y el aviso de
+actualización de npm no implicaron cambios de dependencias.
+
+## Alcance y límites
 
 - `tests/real-runner.integration.ts` cubre módulos, recursos, reapertura,
-  artefactos, aserciones y el segundo proceso de persistencia con Piston real cuando está disponible. En el entorno de
-  esta entrega Piston no respondió; esas pruebas se omitieron, no se consideran
-  aprobadas. No se inició ningún servicio.
-- No se aplicaron las migraciones ni se activó contenido; requieren autorización y una
-  base preparada.
+  artefactos, aserciones y el segundo proceso de persistencia con Piston real.
+  Las omisiones de la entrega inicial no cuentan como aprobaciones; la
+  validación operativa posterior debe distinguirse de aquella simulación.
+- `tests/real/projects.spec.ts` comprueba el editor multarchivo, guardado y
+  recarga, recursos protegidos, pruebas propias sin progreso, evaluación oficial
+  de persistencia en los tres lenguajes, copias entre pestañas y conservación de
+  campos privados al guardar/publicar desde administración. Crea cuentas y
+  contenido temporales y los elimina al finalizar cada prueba. En Docker se
+  ejecuta con `npm run docker:test:e2e -- tests/real/projects.spec.ts` sobre la
+  aplicación ya iniciada; no usar la base nativa como sustitución implícita.
+- La base nativa y la base Docker son independientes. Aplicar cambios a Docker
+  no actualiza la base nativa; no ejecutar reset ni duplicar la activación sin
+  elegir explícitamente el modo que se pretende usar.
 - `verifyPersistence` cubre solo la convención declarada de dos llamadas FUNCTION
   `solve(entrada)` y `solve([])` dentro de un mismo caso. No modela pipelines
   generales ni promete persistencia entre casos o envíos.
-- E2E no se ejecutó por la restricción de no iniciar servicios. La suite unitaria no sustituye la comprobación
-  integrada de publicación, UI y runtime real.
+- Estas comprobaciones corresponden a la instalación Docker local y sus runtimes
+  fijados; no certifican otros despliegues ni sustituyen una revisión pedagógica.

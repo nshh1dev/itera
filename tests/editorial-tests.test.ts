@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { editorialTestsIssue } from "../src/lib/editorial-tests";
+import { editorialTestsIssue, projectStarterIssue } from "../src/lib/editorial-tests";
+import { judgeProject } from "../src/server/execution/judge";
 import { exercises } from "../prisma/content";
 import { logicExercises } from "../prisma/logic-content";
 import { seedVersionContent } from "../prisma/editorial-revision";
@@ -8,6 +9,16 @@ import { editorialSchema } from "../src/lib/editorial";
 import type { Json } from "../src/lib/types";
 
 const cases = [1, 2, 3].map((input, index) => ({ input, expected: input, visible: index === 0 }));
+test("una plantilla de proyecto puede acertar vacío y fallar persistencia sin convertirse en error operativo", () => {
+  const output = { stdout: '__ITERA_PROJECT__{"kind":"function","value":[],"persistence":[],"files":[]}', stderr: "", code: 0 };
+  const empty = judgeProject(output, { input: [], expected: [], expectedPersistence: [], visible: true, order: 0 }, "FUNCTION");
+  const pending = judgeProject(output, { input: [1], expected: [1], expectedPersistence: [1], visible: true, order: 1 }, "FUNCTION");
+  assert.equal(empty.passed, true);
+  assert.ok(pending.error);
+  assert.equal(projectStarterIssue([empty, pending]), null);
+  assert.equal(projectStarterIssue([empty]), "solved");
+  assert.equal(projectStarterIssue([{ ...pending, status: "runtime" }]), "runtime");
+});
 test("los catálogos nuevo e histórico conservan entradas diversas o su excepción de salida fija", () => {
   for (const entry of [...exercises, ...logicExercises]) {
     const version = seedVersionContent(entry);
