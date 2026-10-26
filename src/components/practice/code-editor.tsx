@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Editor, { loader, type Monaco } from "@monaco-editor/react";
 import { useTheme } from "next-themes";
 import type { Language } from "@/lib/types";
@@ -46,18 +46,27 @@ function applyTheme(monaco: Monaco, dark: boolean) {
 export default function CodeEditor({ code, onChange, language, fontSize, onRun, onSubmit, readOnly = false, modelPath, projectFiles = [] }: { code: string; onChange: (value: string) => void; language: Language; fontSize: number; onRun: () => void; onSubmit: () => void; readOnly?: boolean; modelPath?: string; projectFiles?: ProjectFile[] }) {
   const { resolvedTheme } = useTheme();
   const monacoRef = useRef<Monaco | null>(null);
+  const [mountedMonaco, setMountedMonaco] = useState<Monaco | null>(null);
   const projectLibs = useRef<{ dispose(): void }[]>([]);
+  const modelFolder = modelPath?.split("/")[0];
   const callbacks = useRef({ onRun, onSubmit });
   useEffect(() => { callbacks.current = { onRun, onSubmit }; }, [onRun, onSubmit]);
   useEffect(() => { if (monacoRef.current) applyTheme(monacoRef.current, resolvedTheme === "dark"); }, [resolvedTheme]);
   useEffect(() => {
-    if (!monacoRef.current || language !== "typescript" || !modelPath) return;
+    if (!mountedMonaco || language !== "typescript" || !modelPath) return;
     projectLibs.current.forEach(lib => lib.dispose());
-    projectLibs.current = projectFiles.filter(file => file.path !== modelPath && file.path.toLowerCase().endsWith(".ts")).map(file =>
-      monacoRef.current!.typescript.typescriptDefaults.addExtraLib(file.content, `file:///itera/${modelPath.split("/")[0]}/${file.path}`),
+    projectLibs.current = projectFiles.filter(file => file.path !== modelPath.split("/").at(-1) && file.path.toLowerCase().endsWith(".ts")).map(file =>
+      mountedMonaco.typescript.typescriptDefaults.addExtraLib(file.content, `file:///itera/${modelPath.split("/")[0]}/${file.path}`),
     );
     return () => { projectLibs.current.forEach(lib => lib.dispose()); projectLibs.current = []; };
-  }, [language, modelPath, projectFiles]);
+  }, [mountedMonaco, language, modelPath, projectFiles]);
+  useEffect(() => {
+    if (!mountedMonaco || !modelFolder) return;
+    const prefix = `file:///itera/${encodeURIComponent(modelFolder)}/`;
+    return () => {
+      for (const model of mountedMonaco.editor.getModels()) if (model.uri.toString().startsWith(prefix)) model.dispose();
+    };
+  }, [mountedMonaco, modelFolder]);
   useEffect(() => {
     // next-themes puede aplicar la clase después de los efectos de React.
     // Observamos el cambio real de tokens para mantener editor e interfaz sincronizados.
@@ -67,7 +76,7 @@ export default function CodeEditor({ code, onChange, language, fontSize, onRun, 
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     return () => observer.disconnect();
   }, []);
-  return <Editor height="100%" language={language} value={code} path={modelPath ? `file:///itera/${modelPath.split("/").map(encodeURIComponent).join("/")}` : undefined} theme="itera" loading={<div className="flex h-full items-center justify-center text-sm text-muted-foreground">Preparando tu editor local…</div>}
+  return <Editor height="100%" language={language} value={code} path={modelPath ? `file:///itera/${modelPath.split("/").map(encodeURIComponent).join("/")}` : undefined} keepCurrentModel={!!modelPath} theme="itera" loading={<div className="flex h-full items-center justify-center text-sm text-muted-foreground">Preparando tu editor local…</div>}
     beforeMount={monaco => {
       monacoRef.current = monaco;
       applyTheme(monaco, resolvedTheme === "dark");
@@ -75,6 +84,7 @@ export default function CodeEditor({ code, onChange, language, fontSize, onRun, 
       monaco.typescript.typescriptDefaults.addExtraLib('declare module "fs" { export function readFileSync(path: string | number, encoding: "utf8"): string; export function writeFileSync(path: string, data: string, encoding?: "utf8"): void; export function existsSync(path: string): boolean; export function unlinkSync(path: string): void; export function readdirSync(path: string): string[]; } declare module "node:assert/strict" { export function equal(actual: unknown, expected: unknown, message?: string): void; export function deepEqual(actual: unknown, expected: unknown, message?: string): void; export function ok(value: unknown, message?: string): asserts value; } declare function require(name: string): any;', "file:///itera-node-fs.d.ts");
     }}
     onMount={(editor, monaco) => {
+      setMountedMonaco(monaco);
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => callbacks.current.onRun());
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => callbacks.current.onSubmit());
     }}

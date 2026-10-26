@@ -7,7 +7,7 @@ import { evaluateSubmission, expireInterruptedSubmissions } from "@/server/execu
 import type { Language } from "@/lib/types";
 import { readLimitedJson, RequestBodyTooLarge } from "@/lib/request-body";
 import { maximumExecutionBodyBytes } from "@/lib/execution-limits";
-import { isDeepStrictEqual } from "node:util";
+import { sameSubmissionFiles } from "@/lib/project-request";
 import { validateProjectDefinition, validateProjectSnapshot } from "@/lib/project";
 import { Prisma } from "@/generated/prisma/client";
 
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   const input = parsed.data;
   const existing = await db.submission.findUnique({ where: { userId_idempotencyKey: { userId: user.id, idempotencyKey: input.idempotencyKey } }, select: { id: true, variantId: true, code: true, files: true, mode: true, diagnosticItemId: true } });
   if (existing) {
-    if (existing.variantId !== input.variantId || existing.code !== (input.code ?? "") || !isDeepStrictEqual(existing.files, input.files ?? null) || existing.mode !== input.mode || existing.diagnosticItemId !== (input.diagnosticItemId ?? null)) return NextResponse.json({ error: "La clave del intento ya fue utilizada con otro programa." }, { status: 409 });
+    if (existing.variantId !== input.variantId || existing.code !== (input.code ?? "") || !sameSubmissionFiles(existing.files, input.files) || existing.mode !== input.mode || existing.diagnosticItemId !== (input.diagnosticItemId ?? null)) return NextResponse.json({ error: "La clave del intento ya fue utilizada con otro programa." }, { status: 409 });
     return NextResponse.json({ id: existing.id }, { status: 202 });
   }
   const diagnosticWhere = { id: input.diagnosticItemId, variantId: input.variantId, diagnostic: { userId: user.id, finishedAt: null } };
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     // Un bloqueo corto serializa las reservas. Nunca se mantiene durante la ejecución.
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(742901)`;
     const duplicate = await tx.submission.findUnique({ where: { userId_idempotencyKey: { userId: user.id, idempotencyKey: input.idempotencyKey } } });
-     if (duplicate) return duplicate.code === (input.code ?? "") && isDeepStrictEqual(duplicate.files, input.files ?? null) && duplicate.variantId === input.variantId && duplicate.mode === input.mode && duplicate.diagnosticItemId === (input.diagnosticItemId ?? null) ? { id: duplicate.id, created: false } : { error: "La clave del intento ya fue utilizada." };
+     if (duplicate) return duplicate.code === (input.code ?? "") && sameSubmissionFiles(duplicate.files, input.files) && duplicate.variantId === input.variantId && duplicate.mode === input.mode && duplicate.diagnosticItemId === (input.diagnosticItemId ?? null) ? { id: duplicate.id, created: false } : { error: "La clave del intento ya fue utilizada." };
     if (input.diagnosticItemId && !await tx.diagnosticItem.findFirst({ where: diagnosticWhere })) return { error: "El diagnóstico ya terminó. Vuelve a Aprendizaje." };
     const active = await tx.submission.count({ where: { status: "RUNNING" } });
     const userActive = await tx.submission.count({ where: { userId: user.id, status: "RUNNING" } });

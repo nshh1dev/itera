@@ -93,8 +93,12 @@ export async function getExerciseAttempts(input: unknown) {
   const entries = await db.submission.findMany({
     where: { userId: user.id, diagnosticItemId: null, variant: { language, version: { exerciseId, exercise: { published: true } } } },
     orderBy: [{ createdAt: "desc" }, { id: "desc" }], skip: page * 10, take: 11,
-    select: { id: true, code: true, status: true, mode: true, passedCount: true, totalCount: true, createdAt: true, variant: { select: { version: { select: { number: true } } } } },
+    select: { id: true, code: true, files: true, status: true, mode: true, passedCount: true, totalCount: true, createdAt: true, variant: { select: { project: true, version: { select: { number: true } } } } },
   });
   // El historial solo necesita el resultado global; nunca envía casos ocultos.
-  return { entries: entries.slice(0, 10).map(entry => ({ ...entry, createdAt: entry.createdAt.toISOString() })), more: entries.length > 10 };
+  return { entries: entries.slice(0, 10).map(entry => {
+    const { project, ...variant } = entry.variant;
+    const files = entry.files && project ? validateProjectSnapshot(validateProjectDefinition(project), entry.files) : undefined;
+    return { ...entry, files, variant, createdAt: entry.createdAt.toISOString() };
+  }), more: entries.length > 10 };
 }

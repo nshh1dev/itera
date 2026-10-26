@@ -88,6 +88,9 @@ test("el cierre de ruta depende del catálogo del usuario y lenguaje, sin escrib
       assert.match(html, /id="path-readiness"/);
       assert.match(html, /Continuar con Construye tus bases/);
       assert.doesNotMatch(html, /Siguiente ejercicio de la ruta/);
+      assert.doesNotMatch(html, /0 \/ 0/);
+      const published = new Set(catalog.map(entry => entry.slug));
+      for (const match of html.matchAll(/href="\/ejercicios\/([^?"#]+)/g)) assert.ok(published.has(decodeURIComponent(match[1])), `Enlace a actividad no publicada: ${match[1]}`);
     });
     await t.test("otros lenguajes y cuentas no heredan el cierre", async () => {
       for (const language of ["javascript", "typescript"]) {

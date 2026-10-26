@@ -5,6 +5,9 @@ import { registerHooks } from "node:module";
 test("intentos y borradores usan la identidad de sesión, nunca la enviada por el cliente", async t => {
   let user: { id: string } | null = { id: "cuenta-b" };
   let calls = 0;
+  let projectHistory = false;
+  const project = { version: 1, entrypoint: "main.js", files: [{ path: "main.js", content: "plantilla" }, { path: "reglas.js", content: "auxiliar" }] };
+  const submittedFiles = project.files.map(file => ({ ...file, content: `privado de A: ${file.path}` }));
   const updates: { userId: string; variantId: string; revision: number }[] = [];
   const drafts = [{ userId: "cuenta-a", variantId: "variante", code: "privado de A", revision: 3 }];
   const state = {
@@ -49,8 +52,8 @@ test("intentos y borradores usan la identidad de sesión, nunca la enviada por e
           assert.deepEqual(where.variant, { language: "javascript", version: { exerciseId: "ejercicio", exercise: { published: true } } });
           assert.equal(skip, 10);
           assert.equal(take, 11);
-          assert.deepEqual(Object.keys(select).sort(), ["id", "code", "status", "mode", "passedCount", "totalCount", "createdAt", "variant"].sort());
-          return where.userId === "cuenta-a" ? [{ id: "intento-a", code: "privado de A", createdAt: new Date(0), variant: { version: { number: 1 } } }] : [];
+          assert.deepEqual(Object.keys(select).sort(), ["id", "code", "files", "status", "mode", "passedCount", "totalCount", "createdAt", "variant"].sort());
+          return where.userId === "cuenta-a" ? [{ id: "intento-a", code: projectHistory ? "" : "privado de A", ...(projectHistory ? { files: submittedFiles } : {}), createdAt: new Date(0), variant: { version: { number: 1 }, ...(projectHistory ? { project } : {}) } }] : [];
         },
       },
     },
@@ -102,6 +105,19 @@ test("intentos y borradores usan la identidad de sesión, nunca la enviada por e
       assert.equal(own.headers.get("Cache-Control"), "no-store");
       assert.deepEqual((await own.json()).results, []);
       user = { id: "cuenta-b" };
+    });
+
+    await t.test("el historial multarchivo conserva la instantánea propia sin exponer el manifiesto ni casos", async () => {
+      projectHistory = true;
+      const input = { exerciseId: "ejercicio", language: "javascript", page: 1, userId: "cuenta-a" };
+      assert.deepEqual(await getExerciseAttempts(input), { entries: [], more: false });
+      user = { id: "cuenta-a" };
+      const own = await getExerciseAttempts(input);
+      assert.deepEqual(own.entries[0].files, submittedFiles);
+      assert.equal("project" in own.entries[0].variant, false);
+      assert.equal("results" in own.entries[0], false);
+      user = { id: "cuenta-b" };
+      projectHistory = false;
     });
 
     await t.test("historial ignora un userId falsificado y no selecciona resultados de casos", async () => {

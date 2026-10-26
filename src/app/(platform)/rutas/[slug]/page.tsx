@@ -42,6 +42,7 @@ export default async function PathPage({ params, searchParams }: { params: Promi
     <div className="route-content mt-6">
     {modules.map(module => {
       const entries = module.slugs.flatMap(slug => exercises.filter(exercise => exercise.slug === slug));
+      if (!entries.length) return null;
       const active = entries.some(exercise => exercise.id === nextExercise?.id);
       return <Disclosure key={`${language}-${module.slug}-${active}`} defaultOpen={active} className={`route-module rounded-xl${active ? " route-module-active" : ""}`} title={<span className="flex flex-1 flex-wrap items-center justify-between gap-2"><span>{module.title}{active && <span className="ml-2 text-xs font-normal text-primary-text">En curso</span>}</span><span className="text-xs font-normal tabular-nums text-muted-foreground">{entries.filter(exercise => exercise.solved).length} / {entries.length}</span></span>}>
         <section id={`module-${module.slug}`} aria-label={module.title}>

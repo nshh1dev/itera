@@ -1,9 +1,10 @@
 import { normalizeProjectPath, projectLimits, type ProjectFile } from "./project";
+import { parseStoredDraft } from "./draft-recovery";
 
 export type ProjectDraftSnapshot = { files: ProjectFile[]; revision: number };
 export type ProjectDraftCopy = ProjectDraftSnapshot & { source: "local" | "remote" | "guest" | "previous" };
 export type StoredProjectDraft = ProjectDraftSnapshot & { version: 2; baseFiles?: ProjectFile[]; copies?: ProjectDraftCopy[] };
-const maximumStoredCopies = 6;
+export const maximumStoredProjectCopies = 32;
 
 function validFiles(value: unknown): value is ProjectFile[] {
   if (!Array.isArray(value) || value.length === 0 || value.length > projectLimits.files) return false;
@@ -29,7 +30,7 @@ export function uniqueProjectCopies(copies: ProjectDraftCopy[]) {
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
-  }).slice(0, maximumStoredCopies);
+  });
 }
 
 export function parseStoredProjectDraft(raw: string | null, template: readonly ProjectFile[], entrypoint = template.find(file => !file.readOnly)?.path): StoredProjectDraft | null {
@@ -42,13 +43,13 @@ export function parseStoredProjectDraft(raw: string | null, template: readonly P
       const byPath = new Map(value.files.map(file => [file.path, file]));
       if (template.some(file => !byPath.has(file.path))) return null;
       if (template.some(file => file.readOnly && byPath.get(file.path)!.content !== file.content)) return null;
-      if (value.baseFiles !== undefined && (!validFiles(value.baseFiles) || !template.every(file => (value.baseFiles as ProjectFile[]).some(candidate => candidate.path === file.path)))) return null;
+      if (value.baseFiles !== undefined && (!validFiles(value.baseFiles) || value.baseFiles.length !== template.length || !template.every(file => (value.baseFiles as ProjectFile[]).some(candidate => candidate.path === file.path && (!file.readOnly || candidate.content === file.content))))) return null;
       if (value.copies !== undefined) {
-        if (!Array.isArray(value.copies) || value.copies.length > maximumStoredCopies) return null;
+        if (!Array.isArray(value.copies) || value.copies.length > maximumStoredProjectCopies) return null;
         for (const candidate of value.copies) {
           if (!candidate || typeof candidate !== "object") return null;
           const copy = candidate as ProjectDraftCopy;
-          if (!validFiles(copy.files) || !Number.isSafeInteger(copy.revision) || !["local", "remote", "guest", "previous"].includes(copy.source)) return null;
+          if (!validFiles(copy.files) || copy.files.length !== template.length || !Number.isSafeInteger(copy.revision) || copy.revision < 0 || !["local", "remote", "guest", "previous"].includes(copy.source)) return null;
           if (!template.every(file => copy.files.some(item => item.path === file.path && (!file.readOnly || item.content === file.content)))) return null;
         }
       }
@@ -56,18 +57,26 @@ export function parseStoredProjectDraft(raw: string | null, template: readonly P
         version: 2,
         revision: value.revision as number,
         files: template.map(file => ({ ...file, content: byPath.get(file.path)!.content })),
-        baseFiles: validFiles(value.baseFiles) ? value.baseFiles : undefined,
+        baseFiles: validFiles(value.baseFiles) ? template.map(file => ({ ...file, content: (value.baseFiles as ProjectFile[]).find(candidate => candidate.path === file.path)!.content })) : undefined,
         copies: Array.isArray(value.copies) ? uniqueProjectCopies((value.copies as ProjectDraftCopy[]).map(copy => ({ ...copy, files: template.map(file => ({ ...file, content: copy.files.find(candidate => candidate.path === file.path)!.content })) }))) : [],
       };
     }
     // Migra las copias antiguas de un solo archivo sin perder su código.
-    if (typeof value.code === "string" && value.code.length <= 30000 && Number.isSafeInteger(value.revision)) {
+    const legacy = value.version === undefined ? parseStoredDraft(raw) : null;
+    if (legacy) {
       const entry = template.find(file => file.path === entrypoint && !file.readOnly);
       if (!entry) return null;
-      return { version: 2, revision: value.revision as number, files: template.map(file => ({ ...file, content: file.path === entry.path ? value.code as string : file.content })) };
+      const migrate = (code: string) => template.map(file => ({ ...file, content: file.path === entry.path ? code : file.content }));
+      return { version: 2, revision: legacy.revision, files: migrate(legacy.code), ...(legacy.baseCode !== undefined ? { baseFiles: migrate(legacy.baseCode) } : {}), copies: legacy.copies?.map(copy => ({ files: migrate(copy.code), revision: copy.revision, source: copy.source })) };
     }
     return null;
   } catch { return null; }
+}
+
+/** Restaura siempre el archivo mostrado, no el contenido del main en otro modelo. */
+export function projectEditorSelection(files: readonly ProjectFile[], preferred: string) {
+  const file = files.find(file => file.path === preferred) ?? files[0];
+  return { path: file?.path ?? "", content: file?.content ?? "" };
 }
 
 export function prepareProjectDraftRecovery(remote: ProjectDraftSnapshot, local: StoredProjectDraft | null, guestRaw: string | null, template: readonly ProjectFile[], signedIn: boolean) {
