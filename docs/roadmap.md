@@ -2,9 +2,9 @@
 
 ## Prioridades vigentes — 26 de octubre de 2026
 
-- Completar la verificación global de teclado, temas, móvil, movimiento reducido
-  y zoom real al 200 %. Las comprobaciones de componentes no sustituyen el
-  recorrido completo de la aplicación.
+- Mantener las regresiones de teclado, temas, móvil, movimiento reducido y zoom
+  real al 200 %. La revisión contra Next/PostgreSQL ya se realizó en Chromium;
+  no constituye certificación WCAG ni prueba de todos los navegadores/dispositivos.
 - Medir duración efectiva con Piston real. Los últimos cambios de caducidad se
   comprobaron con reloj simulado y doble HTTP; no dar por repetidas las pruebas
   históricas del ejecutor. Docker solo se inicia con autorización.

@@ -99,12 +99,27 @@ test("volver de Configuración recupera el borrador del taller", async ({ page }
   const editor = page.getByRole("textbox", { name: "Editor sencillo de Python" });
   await editor.fill("# borrador conservado al navegar");
   await expect(page.getByText("Guardado", { exact: true })).toBeVisible();
+  await expect.poll(async () => (await db.draft.findFirst({ where: { user: { email }, variant: { language: "python", version: { exercise: { slug: "logica-dos-parametros" } } } }, select: { code: true } }))?.code).toBe("# borrador conservado al navegar");
   const settings = page.getByRole("link", { name: "Configuración", exact: true });
   await settings.focus(); await settings.press("Enter");
   await expect(page.getByRole("heading", { level: 1, name: "Configuración" })).toBeVisible();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.goBack();
+  await expect(editor).toBeVisible();
+  // Atrás puede restaurar props anteriores al guardado. La recuperación explícita
+  // conserva ambas copias; no exigir que la nueva política elija por el usuario.
+  if (await editor.getAttribute("readonly") !== null) {
+    await page.getByRole("button", { name: "Comparar borradores", exact: true }).click();
+    const recovery = page.getByRole("dialog", { name: "Elige qué código continuar" });
+    const local = recovery.getByRole("region", { name: /^Copia de este navegador/ }).filter({ has: page.getByRole("textbox", { name: /^Código: Copia de este navegador/ }) });
+    await expect(local.getByRole("textbox")).toHaveValue("# borrador conservado al navegar");
+    await local.getByRole("button", { name: /^Usar esta copia:/ }).click();
+    await expect(recovery).toHaveCount(0);
+  }
   await expect(editor).toHaveValue("# borrador conservado al navegar");
+  await page.reload();
+  await expect(editor).toHaveValue("# borrador conservado al navegar");
+  await expect(editor).toBeEditable();
 });
 
 test("cambiar a movimiento reducido durante una apertura termina el diálogo sin bloqueo", async ({ page }) => {

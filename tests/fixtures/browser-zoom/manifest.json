@@ -1,0 +1,7 @@
+{
+  "manifest_version": 3,
+  "name": "Itera E2E: zoom real",
+  "version": "1.0",
+  "permissions": ["tabs"],
+  "background": { "service_worker": "background.js" }
+}

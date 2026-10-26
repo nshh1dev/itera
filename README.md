@@ -189,6 +189,11 @@ Las pruebas E2E levantan su propia aplicación en el puerto 3000; detén antes c
 
 Los recorridos con doble HTTP también se pueden ejecutar contra `next start`, tras compilar, estableciendo `ITERA_E2E_PRODUCTION=1`. No publica un sitio ni ejecuta programas reales. Instrucciones para PowerShell y límites de la verificación: [docs/verification.md](docs/verification.md).
 
+La revisión de interacción incluye teclado, foco, temas, movimiento reducido y
+zoom real al 200 %. `browser-zoom.spec.ts` usa Chromium completo con una extensión
+local mínima en perfiles temporales, no tu navegador habitual. Preparación,
+recorridos y límites: [docs/browser-interaction.md](docs/browser-interaction.md).
+
 ## Arquitectura
 
 ```text

@@ -1,5 +1,63 @@
 # Verificación local
 
+## Interacción global, foco y zoom real al 200 % (26 de octubre de 2026)
+
+- Se reutilizan los archivos completos `interface`, `controls`, `motion`, `curriculum`
+  y `redesign`: **39 recorridos repetidos dos veces, 78 aprobaciones**, contra el
+  build de producción y PostgreSQL temporal. Cubren navegación y retorno del foco,
+  filtros, las cuatro rutas, cambios de tema de Monaco, dimensiones del taller,
+  conservación del código, Configuración, diálogos y movimiento reducido.
+- Se añade `browser-zoom.spec.ts`: **dos recorridos, claro/oscuro, repetidos dos
+  veces: cuatro aprobaciones en la última tanda**. Usa Chromium completo y una
+  extensión local mínima en perfiles desechables, no el perfil habitual. Se verifica
+  1440 px/DPR 1 antes de `chrome.tabs.setZoom(2)` y después anchos útiles de
+  **720, 390 y 320 px**, DPR 2 y raíz de 16 px. No confunde zoom real con ampliar
+  el texto o pinch zoom. Preparación y alcance: [browser-interaction.md](browser-interaction.md).
+- Con zoom se recorren portada, Inicio, catálogo, rutas/detalle, progreso sin sesión
+  y formularios de autenticación; se cambia de panel sin perder código en TypeScript.
+  Con una cuenta temporal se verifica cierre/repaso de ruta, independencia por
+  lenguaje, continuación libre, progreso sin incrementos por consultar, Inicio,
+  Progreso, Configuración y su diálogo de contraseña. La cuenta se promueve solo
+  en la copia para revisar índice administrativo, cuentas, detalle propio y editor.
+  Se comprueba reflujo sin desbordamiento de página, saltos por teclado, foco visible,
+  Escape y ausencia de errores JavaScript; no se envían programas a un ejecutor.
+- Fallo real localizado: el `Link` al ancla del repaso desplazaba la página pero no
+  trasladaba el punto de navegación del teclado. Ahora es un enlace nativo con
+  destino `tabIndex=-1` y margen de desplazamiento. La regresión exige foco en el
+  encabezado, su presencia en el viewport y que Tab continúe en «Repasar por módulo».
+  No se rediseñan pantallas ni se cambian progreso, evaluación o persistencia.
+- Ensayos no aprobados: la primera tanda tuvo **38/39** por una expectativa anterior
+  a la recuperación explícita al volver atrás con props en caché. Se adapta la prueba:
+  comprueba el borrador en base, el contenido local, su elección si hace falta y
+  la edición tras recargar, sin debilitar la conservación. Los primeros dos casos
+  de zoom detectaron el fallo de foco. En la tanda combinada siguiente aprobaron
+  78 y fallaron cuatro por intentar gestionar trazas manualmente además del runner;
+  se retiró esa duplicación y se reforzó la limpieza del perfil en `finally`.
+- La inspección detectó también capturas recortadas/vacías de Playwright con zoom
+  y desplazamiento. La evidencia nueva usa `Page.captureScreenshot` sin clips CSS,
+  comprueba el ancho PNG físico e incluye capturas del taller y repaso en ambos temas.
+  La última repetición de los dos casos con esta captura y las comprobaciones de
+  foco/viewport aprobó **4/4**. Se reutilizan las 78 aprobaciones de los otros archivos,
+  cuyo código no cambió. No se afirma que toda la suite E2E haya sido ejecutada.
+- Revisión visual acotada de Inicio, catálogo, ruta, Configuración y taller, en
+  escritorio/móvil y ambos temas; conserva la jerarquía de superficies y el espacio
+  del editor. Capturas locales `ui-*`, `motion-settings-*` y `global-zoom-*`; no se
+  publican imágenes ni datos de cuentas reales. El detector no emitió hallazgos.
+- `npm test`: **280 aprobadas, sin omisiones**. Lint completo sin errores ni avisos,
+  tipos y build aprobados; tipos no se ejecutó mientras se regeneraba Prisma ni
+  lint durante Playwright. Permanece el aviso conocido de Better Auth sobre el
+  cupo compartido cuando no hay IP confiable; no se cambian sus límites.
+- Se usaron **dos copias temporales**, migradas sin tocar la original. Ambas se
+  eliminaron tras comparar recuentos y huellas de **19 tablas originales**, incluidas
+  migraciones: idénticos. Cuentas temporales y perfiles de navegador retirados,
+  incluidos los cuatro perfiles del ensayo de trazas fallido. Next y PostgreSQL
+  detenidos y puertos 3000/2001/5434 sin escucha al terminar.
+- Límites: Chromium en Windows, no dispositivos físicos, Firefox/Safari, lectores
+  de pantalla, alto contraste del sistema ni auditoría automatizada de conformidad
+  WCAG. Docker/WSL/Piston no se iniciaron; no se midió duración real del ejecutor.
+  Las sesiones humanas tampoco se realizaron. Esos dos pendientes conservan el
+  plan temporal; no se declara la implementación completa ni se elimina el plan.
+
 ## Cierre de rutas y preparación de validación humana (26 de octubre de 2026)
 
 - Las rutas curriculares muestran «Ruta completada en [lenguaje]» cuando la cuenta

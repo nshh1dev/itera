@@ -21,6 +21,7 @@ test("el repaso de las cuatro rutas usa readiness y enlaza ejercicios publicados
       assert.ok(html.includes(exerciseHref(unit.slugs.at(-1)!, language, path.slug).replaceAll("&", "&amp;")));
     }
     assert.match(html, /solo una comprobación de solución superada guarda ese progreso/);
+    assert.match(html, /id="path-readiness" tabindex="-1"/);
     assert.doesNotMatch(html, /type="checkbox"|<form/);
     assert.equal(JSON.stringify(exercises), before);
   }

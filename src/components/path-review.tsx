@@ -9,14 +9,14 @@ export function PathCompletion({ language, count }: { language: Language; count:
   return <section className="surface-panel mt-6 rounded-xl bg-surface p-5 wrap-anywhere" aria-labelledby="path-completion">
     <h2 id="path-completion" className="text-lg font-semibold">Ruta completada en {languageNames[language]}</h2>
     <p className="mt-2 max-w-prose text-sm leading-6 text-muted-foreground">Has completado {count === 1 ? "el ejercicio publicado" : `los ${count} ejercicios publicados`} de esta ruta en {languageNames[language]}. Esto registra tu práctica, no demuestra por sí solo dominio. El progreso en los otros lenguajes es independiente.</p>
-    <Link className="text-link mt-4 text-sm" href="#path-readiness">Repasar lo aprendido<ArrowRight className="size-4" aria-hidden="true" /></Link>
+    <a className="text-link mt-4 text-sm" href="#path-readiness">Repasar lo aprendido<ArrowRight className="size-4" aria-hidden="true" /></a>
   </section>;
 }
 
 export function PathReview({ pathSlug, language, modules, exercises, next }: { pathSlug: string; language: Language; modules: LearningModule[]; exercises: ExerciseCard[]; next?: { slug: string; title: string } }) {
   const firstIntegration = exercises.find(exercise => exercise.activityType === "INTEGRATION");
   return <section className="mt-10 rounded-xl bg-surface p-5 wrap-anywhere" aria-labelledby="path-readiness">
-    <h2 id="path-readiness" className="text-lg font-semibold">Pon en práctica lo aprendido</h2>
+    <h2 id="path-readiness" tabIndex={-1} className="scroll-mt-20 text-lg font-semibold">Pon en práctica lo aprendido</h2>
     <p className="mt-2 max-w-prose text-sm leading-6 text-muted-foreground">Intenta resolver los desafíos integradores sin consultar la solución y explica por qué funciona tu código. Completarlos registra práctica, no demuestra por sí solo dominio.</p>
     <Disclosure title="Repasar por módulo" className="mt-4">
       <p className="max-w-prose text-sm leading-6 text-muted-foreground">Elige un criterio que todavía te cueste explicar. Abre su ejercicio, intenta resolverlo sin copiar y comprueba tu explicación con un ejemplo. Este repaso no marca ejercicios como completados: solo una comprobación de solución superada guarda ese progreso.</p>
