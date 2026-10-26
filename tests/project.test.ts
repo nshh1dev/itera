@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { normalizeProjectPath, projectDefinitionSchema, snapshotProjectFiles, validateExpectedProjectFiles, validateProjectSolution, validateProjectSnapshot } from "../src/lib/project";
+import { normalizeProjectPath, projectDefinitionSchema, snapshotProjectFiles, validateExpectedProjectFiles, validateProjectPersistence, validateProjectSolution, validateProjectSnapshot } from "../src/lib/project";
 
 const valid = {
   version: 1 as const,
@@ -11,6 +11,8 @@ const valid = {
 test("valida manifiestos versionados y punto de entrada", () => {
   assert.equal(projectDefinitionSchema.safeParse(valid).success, true);
   assert.equal(projectDefinitionSchema.safeParse({ ...valid, entrypoint: "missing.py" }).success, false);
+  assert.equal(projectDefinitionSchema.safeParse({ ...valid, entrypoint: "LOGIC.py" }).success, false);
+  assert.equal(projectDefinitionSchema.safeParse({ ...valid, testEntrypoint: "TEST.py", files: [...valid.files, { path: "test.py", content: "" }] }).success, false);
 });
 
 test("rechaza rutas peligrosas y colisiones sin distinguir mayúsculas", () => {
@@ -51,6 +53,39 @@ test("snapshots completos preservan recursos de solo lectura y limitan rutas/tam
   assert.deepEqual(validateProjectSnapshot(project, project.files), project.files);
   assert.throws(() => validateProjectSnapshot(project, [{ ...project.files[0], content: "" }]));
   assert.throws(() => validateProjectSnapshot(project, [...project.files, { path: "../escape.txt", content: "" }]));
+});
+
+test("expectedFiles permite modificar recursos editables, pero no código ni recursos protegidos", () => {
+  const project = { ...valid, files: [
+    ...valid.files,
+    { path: "store.json", content: "{}" },
+    { path: "seed.txt", content: "base", readOnly: true },
+  ] };
+  assert.deepEqual(validateExpectedProjectFiles(project, [{ path: "store.json", content: "{\"ok\":true}" }]), [{ path: "store.json", content: "{\"ok\":true}" }]);
+  assert.deepEqual(validateExpectedProjectFiles(project, [{ path: "result.json", content: "{}" }]), [{ path: "result.json", content: "{}" }]);
+  for (const file of [
+    { path: "seed.txt", content: "changed" },
+    { path: "main.py", content: "changed" },
+    { path: "script.js", content: "code" },
+    { path: "STORE.json", content: "wrong-case" },
+  ]) assert.throws(() => validateExpectedProjectFiles(project, [file]));
+});
+
+test("artefactos esperados comparten el límite de 32 KiB del runtime", () => {
+  assert.throws(() => validateExpectedProjectFiles(valid, [{ path: "large.txt", content: "x".repeat(32 * 1024 + 1) }]));
+  assert.throws(() => validateExpectedProjectFiles(valid, [{ path: "one.txt", content: "x".repeat(20 * 1024) }, { path: "two.txt", content: "x".repeat(13 * 1024) }]));
+  assert.throws(() => validateExpectedProjectFiles(valid, Array.from({ length: 21 }, (_, index) => ({ path: `f${index}.txt`, content: "" }))));
+});
+
+test("verifyPersistence requiere FUNCTION, entradas array y expectativa para cada caso", () => {
+  const persistent = { ...valid, verifyPersistence: true };
+  assert.equal(projectDefinitionSchema.safeParse(persistent).success, true);
+  assert.equal(projectDefinitionSchema.safeParse({ ...valid, verifyPersistence: "yes" }).success, false);
+  validateProjectPersistence(persistent, "FUNCTION", [], null);
+  assert.throws(() => validateProjectPersistence(persistent, "FUNCTION", {}, 1));
+  assert.throws(() => validateProjectPersistence(persistent, "PROGRAM", [], 1));
+  assert.throws(() => validateProjectPersistence(persistent, "FUNCTION", [], undefined));
+  assert.throws(() => validateProjectPersistence(valid, "FUNCTION", [], 1));
 });
 
 test("los artefactos esperados no pueden colisionar con el código ni usar rutas internas", () => {

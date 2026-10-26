@@ -20,7 +20,7 @@ function baseUrl() {
 }
 
 const runtimeSchema = z.array(z.object({ language: z.string(), version: z.string(), aliases: z.array(z.string()) }));
-const outputSchema = z.object({ stdout: z.string().max(65536), stderr: z.string().max(65536), code: z.number().nullable(), signal: z.string().nullable().optional(), status: z.string().nullable().optional() });
+const outputSchema = z.object({ stdout: z.string().max(262144), stderr: z.string().max(65536), code: z.number().nullable(), signal: z.string().nullable().optional(), status: z.string().nullable().optional() });
 
 export async function availableRuntime(language: Language) {
   try {
@@ -39,8 +39,8 @@ export async function runCode(language: Language, runtime: {language:string;vers
   const stdin = project?.purpose === "tests" ? "" : executionInput(input, mode);
   try {
     const response = await fetch(`${baseUrl()}/api/v2/execute`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, signal: AbortSignal.timeout(executionRequestTimeoutMs(language)),
-       body: JSON.stringify({ ...runtime, files, stdin, run_timeout: language === "typescript" || (project && mode === "PROGRAM") ? 12000 : 3000, run_cpu_time: language === "typescript" || (project && mode === "PROGRAM") ? 10000 : 3000, compile_timeout: 8000, run_memory_limit: 268435456, compile_memory_limit: 268435456 }),
+      method: "POST", headers: { "Content-Type": "application/json" }, signal: AbortSignal.timeout(executionRequestTimeoutMs(language, !!project?.definition.verifyPersistence)),
+       body: JSON.stringify({ ...runtime, files, stdin, run_timeout: language === "typescript" || (project && mode === "PROGRAM") ? 12000 : project?.definition.verifyPersistence ? 20000 : 3000, run_cpu_time: language === "typescript" || (project && mode === "PROGRAM") || project?.definition.verifyPersistence ? 10000 : 3000, compile_timeout: 8000, run_memory_limit: 268435456, compile_memory_limit: 268435456 }),
     });
     if (!response.ok) throw new RunnerUnavailable("Piston no pudo evaluar el programa. Comprueba los lenguajes instalados y vuelve a intentarlo.");
     const payload = await response.json();

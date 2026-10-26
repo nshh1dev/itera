@@ -31,6 +31,24 @@ test("el guardado y la preparación del catálogo usan la misma validación de p
     if (!parsed.success) assert.ok(parsed.error.issues.some(issue => issue.path[0] === "tests" && issue.message === editorialTestsIssue(tests, "FUNCTION")));
   }
 });
+
+test("verifyPersistence es opt-in, exige FUNCTION, entrada array y expectativa en los tres lenguajes", () => {
+  const entry = logicExercises.find(entry => entry.runtimeMode !== "PROGRAM")!;
+  const version = seedVersionContent(entry);
+  const variants = Object.fromEntries(version.variants.map(variant => [variant.language, variant]));
+  const projects = Object.fromEntries((['python', 'javascript', 'typescript'] as const).map(language => [language, {
+    version: 1 as const, entrypoint: `main.${language === 'python' ? 'py' : language === 'typescript' ? 'ts' : 'js'}`, verifyPersistence: true,
+    files: [{ path: `main.${language === 'python' ? 'py' : language === 'typescript' ? 'ts' : 'js'}`, content: "" }],
+  }]));
+  const projectSolutions = Object.fromEntries(Object.entries(projects).map(([language, project]) => [language, project.files]));
+  const persistentCases = [1, 2, 3].map((value, index) => ({ input: [value], expected: value, expectedPersistence: value + 1, visible: index === 0, explanation: "" }));
+  const base = { ...entry, ...version, ...variants, projects, projectSolutions, tests: persistentCases };
+  assert.equal(editorialSchema.safeParse(base).success, true);
+  assert.equal(editorialSchema.safeParse({ ...base, tests: persistentCases.map((test, index) => index === 1 ? { ...test, expectedPersistence: undefined } : test) }).success, false);
+  assert.equal(editorialSchema.safeParse({ ...base, tests: persistentCases.map(test => ({ ...test, input: 1 })) }).success, false);
+  assert.equal(editorialSchema.safeParse({ ...base, runtimeMode: "PROGRAM" }).success, false);
+  assert.equal(editorialSchema.safeParse({ ...base, projects: { ...projects, typescript: { ...projects.typescript, verifyPersistence: false } } }).success, false);
+});
 test("entradas JSON equivalentes no se distinguen por orden de propiedades", () => {
   const a = { input: { a: 1, b: { c: 2, d: 3 } }, expected: 4, visible: true };
   const b = { input: { b: { d: 3, c: 2 }, a: 1 }, expected: 4, visible: false };

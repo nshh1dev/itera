@@ -9,7 +9,7 @@ import { judge, judgeProgram, judgeProject } from "../src/server/execution/judge
 import { languages, levelNames, type Json } from "../src/lib/types";
 import { functionBatch } from "../prisma/logic-validation";
 import { checkConcept } from "../src/server/execution/concepts";
-import { validateExpectedProjectFiles, validateProjectDefinition, validateProjectSolution } from "../src/lib/project";
+import { validateExpectedProjectFiles, validateProjectDefinition, validateProjectPersistence, validateProjectSolution } from "../src/lib/project";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 async function main() {
@@ -40,8 +40,10 @@ async function main() {
       const solutionFiles = validateProjectSolution(project, entry.variant.solutionFiles);
       if (entry.version.conceptRule) throw new Error(`${entry.slug} (${language}): los proyectos no admiten reglas conceptuales de un solo archivo.`);
       for (const test of entry.variant.tests) {
+        const expectedPersistence = project.verifyPersistence ? test.expectedPersistence as unknown as Json : undefined;
+        validateProjectPersistence(project, entry.version.runtimeMode, test.input, expectedPersistence);
         const expectedFiles = test.expectedFiles ? validateExpectedProjectFiles(project, test.expectedFiles) : undefined;
-        const fixture = { ...test, input: test.input as Json, expected: test.expected as Json, expectedFiles, visible: true };
+        const fixture = { ...test, input: test.input as Json, expected: test.expected as Json, expectedFiles, expectedPersistence, visible: true };
         const solution = await runCode(language, runtimes[language], "", fixture.input, entry.version.runtimeMode, entry.variant.typeContract, { definition: project, files: solutionFiles });
         if (!judgeProject(solution, fixture, entry.version.runtimeMode).passed) throw new Error(`${entry.slug} (${language}): solución de proyecto inválida. El catálogo activo se conserva.`);
         const starter = await runCode(language, runtimes[language], "", fixture.input, entry.version.runtimeMode, entry.variant.typeContract, { definition: project, files: project.files });
