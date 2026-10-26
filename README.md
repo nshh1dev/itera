@@ -119,7 +119,7 @@ Los ejemplos no aprueban el ejercicio. **Comprobar solución** ejecuta todos los
 
 ## Correo y administración locales
 
-La recuperación de contraseña crea un archivo de texto en `.local/mail/` con un enlace de un solo uso. No se envía ningún correo real. En esta aplicación personal, registrar una cuenta no exige verificar el correo; no se marca como verificado artificialmente.
+La recuperación de contraseña crea un archivo de texto con un enlace de un solo uso. En modo nativo está en `.local/mail/` del proyecto; en Docker está en el volumen `local-mail`, no en esa carpeta del equipo. Consulta [cómo leerlo en Docker](docs/docker.md#recuperación-de-contraseña). Comprueba que la línea `Para:` sea tu correo antes de abrir el enlace; no lo compartas. No se envía ningún correo real. En esta aplicación personal, registrar una cuenta no exige verificar el correo; no se marca como verificado artificialmente.
 
 Tras registrarte, puedes convertir tu cuenta en administradora:
 

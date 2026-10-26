@@ -1,5 +1,45 @@
 # Verificación local
 
+## Recuperación según instalación: bloque 3.5 (26 de octubre de 2026)
+
+- Recuperación y Configuración → Seguridad comparten una ayuda desplegable: carpeta
+  `.local/mail/` para modo nativo y volumen `local-mail` para Docker. Reutiliza
+  `node scripts/docker.mjs exec -T app` para listar y leer archivos, con la app ya
+  iniciada. No crea herramientas, endpoints de correo, detección de instalación ni
+  arranque automático. README y guía Docker documentan los mismos pasos.
+- Se indica comprobar la línea `Para:` antes de abrir un enlace, no abrir sin más
+  el archivo más reciente; podría ser de otra persona. Sin acceso a los archivos,
+  se remite a quien mantiene la instalación. Se advierte no compartir enlaces o
+  capturas. El mensaje de solicitud sigue condicionado a que la cuenta exista.
+- No se modifican Better Auth, generación de archivos, tokens, límites de peticiones
+  ni autorización. La respuesta HTTP y el mensaje visible se compararon para correo
+  existente e inexistente: mismo estado 200, mismo JSON y mismo texto de confirmación.
+  Esto no constituye una auditoría temporal de enumeración de cuentas.
+- `npm test`: **250 aprobadas**, sin omisiones; dos pruebas nuevas de representación
+  y correspondencia de comandos/ruta con Compose y Dockerfile. Tipos, lint focalizado
+  sin avisos y build aprobados. No se repite lint completo; herramientas locales sin
+  cambios y avisos previos documentados. Detector: un aviso asesor del título de 2rem
+  ya existente en AuthForm, ajeno al cambio y compatible con la escala de títulos
+  descrita en DESIGN.md; no se cambia tipografía por esta corrección de instrucciones.
+- `password-recovery.spec.ts`: **dos recorridos completos aprobados en procesos de
+  servidor independientes**, sobre una copia temporal de PostgreSQL. Verifica ayuda
+  cerrada inicialmente, apertura por teclado y foco, comandos en ambos puntos de
+  entrada, solicitud para correo conocido/desconocido, lectura del enlace nativo,
+  cambio real de contraseña e inicio de sesión de vuelta a Configuración → Seguridad.
+- El primer ensayo con `--repeat-each=2` pasó una vez y obtuvo 429 al repetir por el
+  cupo real de recuperación. No se debilitó el limitador ni se cuenta esa pasada
+  como dos aprobadas; se repitió cada recorrido con un servidor nuevo. Better Auth
+  también registra el aviso esperado «User not found» para la cuenta inexistente;
+  ese detalle no aparece en la respuesta al navegador.
+- Revisión visual acotada de ayuda expandida en escritorio claro y móvil oscuro
+  de 390 px, con movimiento reducido, foco visible y sin desbordamiento horizontal.
+  No se realizó auditoría exhaustiva de lectores de pantalla o zoom.
+- Dos copias temporales migradas y eliminadas, cuentas y correos de prueba limpiados.
+  Base original sin escrituras ni migraciones; servicios de prueba detenidos.
+  Docker/WSL/Piston no se iniciaron: los comandos Docker se cotejaron estáticamente
+  con lanzador, volumen y directorio, pero no se ejecutaron en contenedor. No se
+  ejecutaron la suite E2E completa ni `test:docker:http-security`.
+
 ## Transporte de código y pruebas editoriales: bloques 3.3 y 3.4 (26 de octubre de 2026)
 
 - El cuerpo HTTP admite 184.096 bytes: seis por cada una de las 30.000 unidades

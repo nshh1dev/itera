@@ -8,6 +8,7 @@ import { safeReturnTo } from "@/lib/utils";
 import { newPasswordIssue, passwordPolicyMessage } from "@/lib/password-policy";
 import { Button } from "./ui/button";
 import { OnboardingProgress } from "./onboarding-progress";
+import { PasswordRecoveryHelp } from "./password-recovery-help";
 
 export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "reset" }) {
   const router = useRouter();
@@ -60,8 +61,8 @@ export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "re
   return <div className="w-full min-w-0 max-w-[420px]">
     {register && <OnboardingProgress step={1} />}
     <h1 className="text-[2rem] leading-tight font-semibold tracking-[-0.04em]">{register ? "Crear cuenta" : forgot ? "Recuperar cuenta" : reset ? "Cambiar contraseña" : "Iniciar sesión"}</h1>
-    {(register || forgot || reset) && <p className="mt-4 text-sm leading-6 text-muted-foreground">{register ? "Retoma tus borradores e intentos al entrar en esta instalación de Itera." : forgot ? "El enlace se guarda en la carpeta .local/mail del proyecto. No se envía por correo." : "Usa al menos 10 caracteres."}</p>}
-    {success ? <div className="mt-8 rounded-xl bg-surface p-5" role="status"><p className="text-sm font-medium">{reset ? "Tu contraseña fue actualizada." : "Solicitud recibida."}</p><p className="mt-2 text-base leading-7 text-muted-foreground">{reset ? "Ya puedes iniciar sesión con tu nueva contraseña." : <>Si el correo está registrado, abre el archivo más reciente de <code className="break-all font-mono">.local/mail</code> y sigue su enlace.</>}</p><Link href={loginHref} className="text-link mt-4">Volver a iniciar sesión <ArrowRight className="size-4" /></Link></div> : <form onSubmit={submit} className="mt-8 space-y-5" aria-describedby={error ? "auth-error" : undefined}>
+    {(register || forgot || reset) && <p className="mt-4 text-sm leading-6 text-muted-foreground">{register ? "Retoma tus borradores e intentos al entrar en esta instalación de Itera." : forgot ? "Solicita un enlace para elegir una nueva contraseña en esta instalación de Itera." : "Usa al menos 10 caracteres."}</p>}
+    {success ? <div className="mt-8 rounded-xl bg-surface p-5" role="status"><p className="text-sm font-medium">{reset ? "Tu contraseña fue actualizada." : "Solicitud recibida."}</p><p className="mt-2 text-base leading-7 text-muted-foreground">{reset ? "Ya puedes iniciar sesión con tu nueva contraseña." : "Si el correo está registrado, se habrá guardado un enlace. Consulta las instrucciones de esta página para encontrarlo."}</p><Link href={loginHref} className="text-link mt-4">Volver a iniciar sesión <ArrowRight className="size-4" /></Link></div> : <form onSubmit={submit} className="mt-8 space-y-5" aria-describedby={error ? "auth-error" : undefined}>
       {register && <div><label htmlFor="name" className="field-label">Tu nombre</label><input id="name" name="name" autoComplete="name" className="field" placeholder="¿Cómo te llamas?" required minLength={2} maxLength={60} /></div>}
       {!reset && <div><label htmlFor="email" className="field-label">Correo electrónico</label><input id="email" name="email" type="email" autoComplete="email" className="field" placeholder="tu@correo.com" required maxLength={254} /></div>}
       {!forgot && <div><div className="mb-2 flex items-center justify-between"><label htmlFor="password" className="text-sm font-medium">Contraseña</label>{!register && !reset && <Link href={`/recuperar-cuenta?volver=${encodeURIComponent(returnTo)}`} className="text-xs text-muted-foreground hover:text-primary-text">¿La olvidaste?</Link>}</div><div className="relative"><input id="password" name="password" type={visible ? "text" : "password"} autoComplete={register || reset ? "new-password" : "current-password"} className="field pr-12" placeholder={register || reset ? "Al menos 10 caracteres" : "Tu contraseña"} required minLength={register || reset ? 10 : 1} maxLength={128} /><button type="button" className="absolute top-0 right-0 flex size-11 items-center justify-center text-muted-foreground" aria-label={visible ? "Ocultar contraseña" : "Mostrar contraseña"} onClick={() => setVisible(!visible)}>{visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}</button></div></div>}
@@ -69,6 +70,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "re
       <Button className="w-full" loading={busy}>{register ? "Crear cuenta" : forgot ? "Crear enlace" : reset ? "Guardar contraseña" : "Iniciar sesión"}<ArrowRight /></Button>
       {!forgot && !reset && <p className="pt-2 text-center text-sm text-muted-foreground">{register ? "¿Ya tienes cuenta?" : "¿Es tu primera vez?"} <Link className="text-primary-text hover:underline" href={`${register ? "/iniciar-sesion" : "/registro"}?volver=${encodeURIComponent(returnTo)}`}>{register ? "Inicia sesión" : "Crea una cuenta"}</Link></p>}
     </form>}
+    {forgot && <PasswordRecoveryHelp />}
     {!success && <Link href={forgot || reset ? loginHref : returnTo} className="mt-9 inline-flex min-h-11 items-center gap-2 text-xs text-muted-foreground hover:text-foreground"><ArrowLeft className="size-3.5" />{forgot || reset ? "Volver a iniciar sesión" : returnTo.startsWith("/ejercicios/") ? "Volver al ejercicio" : "Volver a explorar"}</Link>}
   </div>;
 }

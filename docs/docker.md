@@ -108,7 +108,7 @@ docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml 
 docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml exec database rm /tmp/itera.dump
 ```
 
-Guarda los respaldos fuera de Git y cópialos a otro dispositivo de forma privada. Contienen datos personales. Guarda también `.local/docker.env` para conservar el secreto de autenticación. Los archivos de recuperación de contraseña viven en el volumen `local-mail`; se consultan mediante `exec app ls .local/mail` y se copian con Compose `cp` si se necesitan.
+Guarda los respaldos fuera de Git y cópialos a otro dispositivo de forma privada. Contienen datos personales. Guarda también `.local/docker.env` para conservar el secreto de autenticación. Los archivos de recuperación de contraseña viven en el volumen `local-mail`; consulta [cómo leerlos](#recuperación-de-contraseña).
 
 `pg_dump -Fc` comprime, **no cifra**. El respaldo contiene correos, hashes de
 contraseñas, progreso y posiblemente sesiones o tokens. Usa almacenamiento cifrado
@@ -180,6 +180,31 @@ El respaldo contiene datos reales y **no está cifrado**; protégelo igual que l
 otras copias. Esta prueba no valida roles/permisos del clúster, secuencias o datos
 de otros esquemas, recuperación en otra versión mayor ni el arranque de la app
 restaurada. `--no-owner --no-privileges` conserva el contrato actual de importación.
+
+## Recuperación de contraseña
+
+En `/recuperar-cuenta`, solicita el enlace con tu correo. La respuesta es la misma
+exista o no la cuenta. No se envía correo electrónico: si está registrada, el
+archivo queda en el volumen `local-mail`, montado en `/app/.local/mail` del
+contenedor. No se escribe en `.local/mail/` del proyecto de Windows.
+
+Con Itera ya iniciada, desde la raíz del proyecto:
+
+```powershell
+node scripts/docker.mjs exec -T app ls -t .local/mail
+node scripts/docker.mjs exec -T app cat .local/mail/ARCHIVO.txt
+```
+
+La lista muestra primero los archivos recientes. Sustituye `ARCHIVO.txt` por un
+nombre de esa lista. Comprueba que la línea `Para:` coincida con tu correo antes
+de abrir el enlace: el archivo más reciente podría ser de otra persona. Si no
+tienes acceso al proyecto o a Docker, pide ayuda a quien mantiene la instalación.
+El enlace permite cambiar la contraseña; no lo compartas ni adjuntes archivos o
+capturas con él. No es necesario copiarlo al equipo ni publicarlo por HTTP.
+
+En modo nativo, abre directamente `.local/mail/` del proyecto y comprueba el
+destinatario del archivo. La página de recuperación y Configuración → Seguridad
+incluyen las mismas instrucciones para ambos modos.
 
 ## Actualización y verificación
 
