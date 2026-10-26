@@ -2,6 +2,12 @@
 
 ## Prioridades vigentes — 26 de octubre de 2026
 
+- Completar la validación real de la ampliación integrada a 176 actividades: alcance, referencias,
+  errores, pruebas, módulos, archivos y tres miniproyectos. Se conservan los 136
+  identificadores anteriores. Las verificaciones con servicios reales, la
+  migración aplicada y la activación del catálogo quedan pendientes: el usuario
+  autorizó únicamente comprobaciones sin servicios para esta entrega.
+
 - Mantener las regresiones de teclado, temas, móvil, movimiento reducido y zoom
   real al 200 %. La revisión contra Next/PostgreSQL ya se realizó en Chromium;
   no constituye certificación WCAG ni prueba de todos los navegadores/dispositivos.
@@ -17,7 +23,8 @@
   de infraestructura. El workflow existe, pero no se afirma aquí que sus ejecuciones
   remotas o comprobaciones obligatorias estén verificadas.
 
-El currículo vigente tiene 136 ejercicios en cuatro rutas y tres lenguajes.
+El currículo anterior tenía 136 ejercicios; las fuentes ampliadas definen 176
+en cuatro rutas y tres lenguajes, sin implicar que estén publicados en la base local.
 La recuperación de borradores, el seguimiento idempotente, la separación de estados
 editoriales y los diagnósticos inconclusos ya se corrigieron. La carga de Inicio
 comparte metadatos sin compartir progreso entre lenguajes. La primera diferencia

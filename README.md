@@ -7,9 +7,9 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 ## Qué incluye
 
 - Landing, espacio personal, catálogo con filtros y cuatro rutas de aprendizaje.
-- 136 ejercicios de lógica en español: Iniciación (28), Principiante (36), Intermedio (36) y Avanzado (36).
+- Currículo fuente de 176 actividades en español: Iniciación (30), Principiante (57), Intermedio (53) y Avanzado (36). Una instalación existente conserva su catálogo publicado hasta validar y activar la ampliación.
 - Ruta **Desde cero**: instrucciones, valores, variables, entrada y operaciones antes de introducir funciones, con plantillas propias por lenguaje.
-- Ruta **Construye tus bases**: comparaciones, condiciones, listas, cadenas, rangos y acumuladores antes de combinarlos en retos.
+- Ruta **Construye tus bases**: condiciones, listas, cadenas, bucles, alcance, referencias, excepciones y pruebas antes de combinarlos en retos.
 - Los mismos ejercicios y el mismo orden en Python, JavaScript y TypeScript, con variantes propias y los mismos casos visibles y ocultos.
 - Módulos con teoría breve, ejemplos adaptados y retos de integración. Autoevaluación al terminar cada ruta, sin bloqueos.
 - Registro e inicio de sesión con correo y contraseña; recuperación en una bandeja de correo local.
@@ -18,6 +18,8 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 - Ejecución asíncrona, ejemplos, comprobación completa, resumen de la primera diferencia y progreso por lenguaje.
 - Pistas progresivas, coste orientativo, errores comunes y soluciones explicadas a petición.
 - Historial de intentos de cada ejercicio y búsqueda del catálogo sin distinguir acentos.
+- Proyectos con módulos y archivos reales dentro del ejecutor, y tres miniproyectos: gastos, inventario y agenda. Los archivos del programa no se conservan entre envíos.
+- Pruebas propias cuando el proyecto incluye un archivo de pruebas; no sustituyen los casos oficiales ni conceden progreso.
 - Administración con nuevas versiones, pruebas, validación de referencias y publicación.
 - Revisiones didácticas importables como borradores privados, sin sobrescribir el trabajo existente.
 - Temas claro/oscuro, fuentes locales Geist, navegación por teclado y adaptación móvil.
@@ -33,6 +35,8 @@ Aplicación personal, gratuita y sin servicios cloud. Las cuentas, los borradore
 - **Para ejecutar código y validar la primera activación del catálogo:** Docker con contenedores Linux, Docker Compose y cgroup v2. En Windows, Docker necesita un backend como WSL2.
 
 Una instalación con el catálogo ya activado funciona sin Piston; el botón de ejecución informa si el sandbox está detenido. La primera activación valida las referencias en Piston antes de publicar. Nunca se ejecuta el código del usuario en Node o Python del servidor principal.
+
+**Ampliación de fundamentos:** el código añade migraciones aditivas para proyectos y persistencia. Antes de usar esta revisión con una base existente, respalda la base del modo elegido y aplica sus migraciones explícitamente; generar Prisma o compilar no las aplica. La activación de las 176 actividades y su verificación con servicios reales siguen pendientes en esta entrega. No resetear datos ni confundir la base nativa con Docker. Detalles: [currículo](docs/curriculum.md), [fundamentos](docs/fundamentos.md) y [ejecución de proyectos](docs/project-execution.md).
 
 ## Primer inicio en modo nativo
 

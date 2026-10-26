@@ -58,12 +58,16 @@ sin bloquear ni conceder progreso.
 ## Capabilities and Constraints
 
 - Tres lenguajes: Python, JavaScript y TypeScript; niveles Iniciación,
-  Principiante, Intermedio y Avanzado. Comparten 136 ejercicios en idéntico orden.
+  Principiante, Intermedio y Avanzado. Las fuentes definen 176 actividades en
+  idéntico orden; la ampliación requiere migraciones, validación y activación explícitas.
 - Dos contratos de ejercicio. **Función:** se implementa `solve(data)` y se
   devuelve un valor JSON. **Programa:** se escribe el archivo completo y su salida
   estándar se compara con el texto esperado.
 - Catálogo con casos visibles y ocultos, historial de intentos y búsqueda que
   ignora acentos.
+- Proyectos multarchivo, módulos, lectura/escritura de archivos en el sandbox y
+  pruebas propias sin progreso. Tres miniproyectos integran las habilidades;
+  sus archivos no persisten entre envíos.
 - Cuatro rutas de aprendizaje con módulos, teoría breve, ejemplos por lenguaje,
   autoevaluación y orden editorial. Los cierres orientan: no bloquean ni conceden
   progreso.
@@ -75,7 +79,7 @@ sin bloquear ni conceder progreso.
 - Restricciones firmes: la interfaz y los ejercicios están en español; no hay IA,
   analítica externa ni servicios de pago; el código de quien aprende nunca se
   ejecuta en el proceso principal de la aplicación.
-- Alcance: lógica de programación y algoritmos. La IA sigue aplazada.
+- Alcance: fundamentos de programación, pequeños programas y algoritmos. La IA sigue aplazada.
   El currículo nuevo requiere validación completa en Piston antes de activarse.
 
 ## Brand Commitments
@@ -87,8 +91,9 @@ sujetas a revisión caso por caso con el responsable del proyecto.
 
 ## Evidence on Hand
 
-- Contenido real: 136 ejercicios del currículo común en cuatro rutas, con tres
-  variantes por identidad. Las referencias y plantillas se comprueban en la suite
+- Contenido fuente: 176 actividades del currículo común en cuatro rutas, con tres
+  variantes por identidad, conservando las 136 identidades anteriores. La ampliación
+  no se ha activado ni verificado con servicios reales. Las referencias y plantillas se comprueban en la suite
   editorial; el catálogo de 63 ejercicios pertenece a una etapa histórica.
 - Documentación: `README.md`, `docs/roadmap.md` con los criterios pedagógicos,
   `docs/curriculum.md`, `docs/ui-redesign.md` y `docs/motion.md`.

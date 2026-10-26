@@ -5,6 +5,13 @@ El soporte usa campos JSON aditivos en `ExerciseVariant`, `Draft`, `Submission` 
 `expectedFiles` en `NULL`; el conductor y el guardado de un solo archivo siguen
 su camino histórico.
 
+Las migraciones aditivas son `20261026120000_project_files` y
+`20261026130000_project_persistence`. Generar Prisma o compilar no las aplica.
+Antes de usar esta revisión con una base existente hay que respaldarla y aplicar
+las migraciones del modo de instalación elegido, sin resetear datos; consultar
+[Docker](docker.md) o el flujo nativo del [README](../README.md). La activación
+del currículo es otra operación explícita y requiere validar primero con Piston.
+
 ## Contrato y límites
 
 `ProjectDefinition` versión 1 publica un `entrypoint`, archivos planos (incluidos
@@ -51,16 +58,34 @@ versionada, migra el código antiguo a `entrypoint`, conserva copias incompatibl
 sin aplicarlas y permite copiar explícitamente archivos coincidentes de
 `previousStep` después de comparar las alternativas.
 
+## Administración y comprobaciones locales
+
+- La administración conserva manifiestos y soluciones privadas por lenguaje como
+  JSON, junto a `expectedFiles` y `expectedPersistence` de los casos. Guardar crea
+  otra versión, no degrada un proyecto a código de un archivo. El cuerpo editorial
+  tiene un máximo de 11 MiB y el transporte de acciones admite 12 MiB con margen
+  para la codificación. Las copias locales dependen de la cuota del navegador;
+  si falla su escritura, se ofrece descargar los cambios antes de salir.
+- Las referencias fijas del repositorio se comprueban localmente contra los
+  conductores y el juez, además de verificar archivos y procesos distintos.
+  Esta simulación no verifica Piston ni aislamiento. Solo el código fijo de esas
+  pruebas puede ejecutarse así; nunca los programas enviados por estudiantes.
+- Verificación integrada del 26 de octubre de 2026: `npm test` aprobó 341 pruebas,
+  sin fallos ni omisiones; lint sin avisos, typecheck, Prisma validate y build aprobados.
+  `content:audit` informó 176 actividades y ninguna alerta automática. Se corrigió
+  la simulación TypeScript para que no heredara `@types/node` del repositorio:
+  el conductor conserva las declaraciones que necesita dentro de Piston.
+
 ## Límites aún no verificados
 
 - `tests/real-runner.integration.ts` cubre módulos, recursos, reapertura,
   artefactos, aserciones y el segundo proceso de persistencia con Piston real cuando está disponible. En el entorno de
   esta entrega Piston no respondió; esas pruebas se omitieron, no se consideran
   aprobadas. No se inició ningún servicio.
-- No se aplicó la migración ni se activó contenido; requieren autorización y una
+- No se aplicaron las migraciones ni se activó contenido; requieren autorización y una
   base preparada.
 - `verifyPersistence` cubre solo la convención declarada de dos llamadas FUNCTION
   `solve(entrada)` y `solve([])` dentro de un mismo caso. No modela pipelines
   generales ni promete persistencia entre casos o envíos.
-- E2E y build no se ejecutaron. La suite unitaria no sustituye la comprobación
+- E2E no se ejecutó por la restricción de no iniciar servicios. La suite unitaria no sustituye la comprobación
   integrada de publicación, UI y runtime real.
