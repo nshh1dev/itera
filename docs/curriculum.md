@@ -54,7 +54,7 @@ La ruta inicial presenta inferencia y anotaciones simples; las funciones introdu
 4. En modo función añade el `typeContract` de la variante. Si falla la compilación, devuelve los diagnósticos y no ejecuta el archivo emitido.
 5. Solo después se ejecuta el JavaScript resultante con Node dentro del mismo sandbox y se aplica el juez correspondiente.
 
-El presupuesto exterior del conductor es de 12 segundos (10 de CPU); la compilación estricta tiene un plazo de 8 segundos y el programa del alumno conserva un plazo de 3 segundos. `compose.yaml` debe permitir el presupuesto exterior: después de actualizar la configuración, ejecutar `docker compose up -d piston` para recrear solo el ejecutor y conservar su volumen de paquetes. Un contenedor anterior con máximo de 3 segundos rechaza la solicitud antes de compilar.
+El presupuesto exterior del conductor es de 12 segundos (10 de CPU); la compilación estricta tiene un plazo de 8 segundos y el programa del alumno conserva un plazo de 3 segundos. `docker/compose.yaml` debe permitir el presupuesto exterior: después de actualizar la configuración, ejecutar `docker compose --project-directory . -f docker/compose.yaml up -d piston` desde la raíz para recrear solo el ejecutor y conservar su volumen de paquetes. Un contenedor anterior con máximo de 3 segundos rechaza la solicitud antes de compilar.
 
 Si el hijo alcanza su plazo, el conductor termina con el código reservado 124. El adaptador convierte ese resultado (`RE` en Piston) en `TO`, igual que un timeout nativo. Una salida correcta seguida de un bucle infinito no aprueba. Los demás errores, señales y fallos internos conservan su clasificación.
 
@@ -80,7 +80,7 @@ Después, con Docker/Piston y sus tres runtimes preparados:
 En el **modo Docker completo**, ejecuta primero `docker-iniciar` y usa `node scripts/docker.mjs exec -T app npm run content:replace -- --apply` para actuar sobre la base Docker. Al terminar puedes usar `docker-apagar`. La preparación de una instalación nueva está en [Docker completo](docker.md). Los comandos siguientes corresponden al modo nativo y actúan sobre su propia base; no mezclar ambos modos.
 
 ```sh
-docker compose up -d
+docker compose --project-directory . -f docker/compose.yaml up -d
 npm run runner:setup
 npm run content:replace -- --apply
 ```

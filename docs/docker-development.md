@@ -46,7 +46,7 @@ Nada arranca al iniciar Windows. Si ya hay un servidor nativo en 3000, cerrarlo 
 | --- | --- |
 | `src/`, `public/`, `scripts/`, `tests/` | Copiar altas/cambios al contenedor y retirar los archivos borrados; Next.js recarga lo que corresponde. |
 | `next.config.ts`, `tsconfig.json`, `postcss.config.mjs`, `prisma.config.ts` | Sincronizar y reiniciar la app. |
-| `package.json`, `package-lock.json`, `Dockerfile`, `.dockerignore`, `.npmrc` | Reconstruir y recrear **solo la app de desarrollo**. La primera instalación puede tardar. |
+| `package.json`, `package-lock.json`, `docker/Dockerfile`, `.dockerignore`, `.npmrc` | Reconstruir y recrear **solo la app de desarrollo**. La primera instalación puede tardar. |
 | `prisma/` | Sincronizar y avisar; no ejecutar migraciones ni regenerar el cliente automáticamente. |
 | Documentación y otros archivos fuera de la lista | No se sincronizan: no afectan a la aplicación en ejecución. |
 
@@ -57,10 +57,10 @@ Windows usa sondeo de contenido desde Node y copias mediante Docker: los eventos
 En Linux, con el proyecto y Docker preparados, puede utilizarse Compose Watch directamente:
 
 ```sh
-docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml -f compose.dev.yaml up --build --watch
+docker compose --project-directory . --env-file .local/docker.env -f docker/compose.yaml -f docker/compose.app.yaml -f docker/compose.dev.yaml up --build --watch
 ```
 
-Las reglas están en `compose.dev.yaml`. El comando anterior no es el flujo recomendado para archivos guardados desde Windows en D:. No se ha verificado otra plataforma como equivalente al entorno Windows/WSL probado.
+Las reglas están en `docker/compose.dev.yaml`. `--project-directory .` conserva las rutas de sincronización y el contexto de construcción en la raíz. El comando anterior no es el flujo recomendado para archivos guardados desde Windows en D:. No se ha verificado otra plataforma como equivalente al entorno Windows/WSL probado.
 
 ## Prisma y base de datos
 
@@ -105,6 +105,6 @@ La primera prueba crea una página temporal única, comprueba altas, cambios y r
 
 ### Verificación local y límites
 
-Verificado en Windows x64 + Ubuntu-24.04/WSL2: construcción de ambas imágenes, recarga en Chromium, reconstrucción automática al editar `Dockerfile`, reinicio de configuración, cambio de desarrollo a compilado y los ocho recorridos reales en cada modo. Typecheck y las 115 pruebas unitarias/editoriales aprobaron; lint mantiene 97 avisos de herramientas locales ajenas a esta entrega, sin errores.
+Verificado antes de reorganizar las rutas, en Windows x64 + Ubuntu-24.04/WSL2: construcción de ambas imágenes, recarga en Chromium, reconstrucción automática al editar el Dockerfile, reinicio de configuración, cambio de desarrollo a compilado y los ocho recorridos reales en cada modo. Typecheck y las 115 pruebas unitarias/editoriales aprobaron; lint mantenía 97 avisos de herramientas locales ajenas a aquella entrega, sin errores. Esto no equivale a repetir la verificación real tras mover las configuraciones.
 
 Durante los recorridos en desarrollo se observaron un aviso de sistema de archivos lento, mensajes de stream interrumpido al navegar y una discrepancia de hidratación de las fechas de `/progreso` (UTC del contenedor frente a la zona local del navegador). Los recorridos aprobaron, pero no verifican ausencia de errores de consola. El formato de fechas pertenece a la aplicación existente y no se cambia en esta tarea de infraestructura. Compose Watch nativo de Linux no se ensayó en una instalación independiente. Las cinco vulnerabilidades altas notificadas por `npm ci` en dependencias de desarrollo tampoco se corrigen aquí.

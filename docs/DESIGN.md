@@ -337,7 +337,7 @@ El movimiento compartido usa los componentes gratuitos de UIArc adaptados a
 Itera: pulsaciones breves, indicadores de selección continuos y paneles con
 resortes amortiguados. La portada prioriza la demo y acciones breves; las ayudas
 secundarias se despliegan bajo demanda. El contenido educativo no se recorta.
-Detalles de integración y límites de verificación en `docs/motion.md`.
+Detalles de integración y límites de verificación en [motion.md](motion.md).
 - **Secondary / Ghost / Outline:** secundario sobre bandeja terciaria, fantasma
   solo texto que gana fondo de selección, contorno de 1 px sobre control.
 

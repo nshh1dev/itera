@@ -10,7 +10,7 @@ $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoi
 $existing = Get-ScheduledTask -TaskName 'Docker-WSL' -ErrorAction SilentlyContinue
 if ($existing -and $existing.State -eq 'Running') { Stop-ScheduledTask -TaskName 'Docker-WSL' }
 Register-ScheduledTask -TaskName 'Docker-WSL' -Action $action -Principal $principal -Settings $settings -Description 'Docker WSL manual para Itera. Sin inicio automatico.' -Force | Out-Null
-$compose = 'docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml'
+$compose = 'docker compose --project-directory . --env-file .local/docker.env -f docker/compose.yaml -f docker/compose.app.yaml'
 $start = @"
 @echo off
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root\scripts\stop-docker-development.ps1"

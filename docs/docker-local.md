@@ -48,7 +48,7 @@ Con el entorno encendido, desde la raíz del proyecto:
 
 ```powershell
 node scripts/docker.mjs ps
-docker compose logs --tail=50 piston
+docker compose --project-directory . -f docker/compose.yaml logs --tail=50 piston
 node scripts/docker.mjs exec -T app npm run test:runner
 ```
 
@@ -60,7 +60,7 @@ Si falta un comando, reinicia la aplicación de terminal para que recoja el PATH
 & "$env:LOCALAPPDATA\DockerCLI\docker-iniciar.cmd"
 ```
 
-`docker compose stop` sin los dos archivos solo conoce Piston. Usa `docker-apagar` para el entorno completo. No elimines la distribución ni los volúmenes para apagar Docker.
+`docker compose --project-directory . -f docker/compose.yaml stop` solo conoce Piston. Usa `docker-apagar` para el entorno completo. No elimines la distribución ni los volúmenes para apagar Docker.
 
 ## Preparación y particularidades
 
@@ -72,7 +72,7 @@ cd D:\proyectos\itera
 node scripts/docker.mjs exec -T app npm run runner:setup
 ```
 
-En otro equipo se necesita un motor Docker con contenedores Linux, Compose y cgroup v2. Puede usarse Docker Engine dentro de WSL2 o Docker Desktop. Una CLI sola no ejecuta contenedores. Con el motor preparado, el comando estándar del repositorio es `docker compose up -d`.
+En otro equipo se necesita un motor Docker con contenedores Linux, Compose y cgroup v2. Puede usarse Docker Engine dentro de WSL2 o Docker Desktop. Una CLI sola no ejecuta contenedores. Con el motor preparado, iniciar Piston desde la raíz con `docker compose --project-directory . -f docker/compose.yaml up -d`.
 
 En esta instalación se desactivó `systemd-timesyncd` de Ubuntu para conservar la sincronización del entorno WSL/Windows: ambos mecanismos alternaban el reloj y provocaban falsos tiempos agotados. Es una corrección local observada, no un requisito general de Piston.
 

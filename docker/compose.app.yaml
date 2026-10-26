@@ -20,7 +20,9 @@ services:
     image: itera-local:docker
     labels:
       itera.mode: production
-    build: .
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
     restart: "no"
     init: true
     stop_grace_period: 45s

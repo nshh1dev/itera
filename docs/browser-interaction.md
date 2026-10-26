@@ -53,7 +53,7 @@ Con 3000 y 2001 libres, desde la raíz y tras `npm run build`:
 
 ```powershell
 $env:ITERA_E2E_PRODUCTION = "1"
-npx.cmd playwright test tests/e2e/interface.spec.ts tests/e2e/controls.spec.ts tests/e2e/motion.spec.ts tests/e2e/curriculum.spec.ts tests/e2e/redesign.spec.ts tests/e2e/browser-zoom.spec.ts
+npm.cmd run test:e2e -- tests/e2e/interface.spec.ts tests/e2e/controls.spec.ts tests/e2e/motion.spec.ts tests/e2e/curriculum.spec.ts tests/e2e/redesign.spec.ts tests/e2e/browser-zoom.spec.ts
 ```
 
 No ejecutar lint mientras se crean/eliminan resultados de Playwright. Estas pruebas

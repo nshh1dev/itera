@@ -24,7 +24,7 @@ anteriores permanecen en el historial de Git.
 
 ## Interfaz y verificación
 
-- [Producto](../PRODUCT.md), [sistema visual](../DESIGN.md),
+- [Producto](PRODUCT.md), [sistema visual](DESIGN.md),
   [decisiones de interfaz](ui-redesign.md) y [movimiento](motion.md).
 - [Rendimiento](optimization.md), [comprobaciones y límites](verification.md) y
   [teclado, foco y zoom real](browser-interaction.md).

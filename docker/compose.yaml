@@ -1,3 +1,4 @@
+# Ejecutar desde la raíz con --project-directory . para conservar el proyecto y sus volúmenes.
 services:
   piston:
     image: ghcr.io/engineer-man/piston@sha256:2f66b7456189c4d713aa986d98eccd0b6ee16d26c7ec5f21b30e942756fd127a

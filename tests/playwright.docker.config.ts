@@ -9,7 +9,7 @@ process.env.PISTON_URL = "http://127.0.0.1:2000";
 // automáticamente servidores de Windows. DATABASE_URL debe ser la de Docker.
 export default defineConfig({
   ...real,
-  testDir: "tests",
+  testDir: ".",
   testMatch: ["real/**/*.spec.ts", "docker/**/*.spec.ts", "e2e/account.spec.ts", "e2e/motion.spec.ts"],
   webServer: undefined,
 });

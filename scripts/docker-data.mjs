@@ -4,8 +4,9 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import pg from "pg";
 import { createPgBackup } from "./backup-file.mjs";
+import { composeArgs } from "./docker-command.mjs";
 
-const args = ["compose", "--env-file", ".local/docker.env", "-f", "compose.yaml", "-f", "compose.app.yaml"];
+const args = composeArgs([]);
 function docker(command, input, outputFd) {
   const win = process.platform === "win32";
   const result = spawnSync(win ? "wsl.exe" : "docker", win ? ["-d", "Ubuntu-24.04", "-u", "root", "--exec", "docker", ...args, ...command] : [...args, ...command], { input, maxBuffer: 256 * 1024 * 1024, ...(outputFd === undefined ? {} : { stdio: ["pipe", outputFd, "pipe"] }) });

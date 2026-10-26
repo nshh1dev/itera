@@ -67,7 +67,7 @@ test("el conductor TypeScript compila estrictamente dentro del sandbox antes de 
   assert.match(files[0].content, /'--strict', '--noEmitOnError'/);
   assert.match(files[0].content, /timeout: 8000/);
   assert.match(files[0].content, /timeout: 3000/);
-  const compose = readFileSync(new URL("../compose.yaml", import.meta.url), "utf8");
+  const compose = readFileSync(new URL("../docker/compose.yaml", import.meta.url), "utf8");
   assert.match(compose, /PISTON_RUN_TIMEOUT: "12000"/);
   assert.match(compose, /PISTON_RUN_CPU_TIME: "10000"/);
   assert.ok(files[0].content.indexOf("compiled.status !== 0") < files[0].content.indexOf("const executed"));

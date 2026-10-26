@@ -16,7 +16,7 @@ test("los comandos informativos usan el lanzador existente y la ruta del volumen
   const html = renderToStaticMarkup(createElement(PasswordRecoveryHelp));
   assert.ok(html.includes("node scripts/docker.mjs exec -T app ls -t .local/mail"));
   assert.ok(html.includes("node scripts/docker.mjs exec -T app cat .local/mail/ARCHIVO.txt"));
-  assert.match(readFileSync("compose.app.yaml", "utf8"), /local-mail:\/app\/\.local\/mail/);
-  assert.match(readFileSync("Dockerfile", "utf8"), /WORKDIR \/app/);
+  assert.match(readFileSync("docker/compose.app.yaml", "utf8"), /local-mail:\/app\/\.local\/mail/);
+  assert.match(readFileSync("docker/Dockerfile", "utf8"), /WORKDIR \/app/);
   assert.doesNotMatch(html, /docker compose up|docker-iniciar/);
 });

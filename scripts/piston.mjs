@@ -17,6 +17,6 @@ try {
   }
   console.log("Python, JavaScript y TypeScript listos en el ejecutor local.");
 } catch (error) {
-  console.error(`${error.message}\nInicia primero Docker/WSL2 y ejecuta docker compose up -d.`);
+  console.error(`${error.message}\nInicia primero Docker/WSL2 y ejecuta docker compose --project-directory . -f docker/compose.yaml up -d.`);
   process.exitCode = 1;
 }

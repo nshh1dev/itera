@@ -68,7 +68,7 @@ Si ya tienes una base propia, copia `.env.example` a `.env`, establece `DATABASE
 
 ### Inicios siguientes
 
-Estos pasos son solo para el modo nativo. Con el motor Docker activo, `docker compose up -d piston` inicia únicamente el ejecutor. Para el modo completo usa `docker-iniciar` y no el comando siguiente:
+Estos pasos son solo para el modo nativo. Con el motor Docker activo, `docker compose --project-directory . -f docker/compose.yaml up -d piston` inicia únicamente el ejecutor. Para el modo completo usa `docker-iniciar` y no el comando siguiente:
 
 ```sh
 npm run dev
@@ -96,14 +96,14 @@ La instalación local actual usa **Docker Engine, CLI y Compose dentro de Ubuntu
 En cualquier otro entorno con un motor Docker y Compose funcionando, la preparación general es:
 
 ```sh
-docker compose up -d
+docker compose --project-directory . -f docker/compose.yaml up -d
 npm run runner:setup
 npm run doctor
 ```
 
 La primera preparación descarga la imagen de Piston y los runtimes gratuitos de Python, Node y TypeScript. Después, los ejercicios se ejecutan localmente.
 
-Si ya tenías Piston instalado antes de incorporar TypeScript, repite `docker compose up -d piston` y `npm run runner:setup`: se actualiza el presupuesto de compilación y se conserva el volumen de runtimes. El programa del alumno sigue limitado a 3 segundos.
+Si ya tenías Piston instalado antes de incorporar TypeScript, repite `docker compose --project-directory . -f docker/compose.yaml up -d piston` y `npm run runner:setup`: se actualiza el presupuesto de compilación y se conserva el volumen de runtimes. El programa del alumno sigue limitado a 3 segundos.
 
 - Piston está expuesto únicamente en **127.0.0.1:2000**.
 - Usa Isolate y necesita el contenedor privilegiado definido por su instalación oficial, cgroup v2 y soporte de namespaces. No se monta la carpeta de Itera ni la base de datos dentro del ejecutor.
@@ -113,7 +113,7 @@ Si ya tenías Piston instalado antes de incorporar TypeScript, repite `docker co
 - Se permiten como máximo una evaluación activa por usuario y cuatro globales.
 - Si se interrumpe Next.js, los intentos pendientes se reconcilian al consultarlos o al iniciar otra ejecución, una vez agotado su presupuesto (mínimo dos minutos; depende del lenguaje, casos y comprobación conceptual). No se reanudan como un trabajador persistente ni conceden progreso tardío.
 
-El repositorio no llama a la API pública de Piston ni necesita una clave de terceros. `docker compose stop` detiene solo el sandbox; en este PC, usa `docker-apagar` para apagar también su entorno WSL y liberar sus recursos.
+El repositorio no llama a la API pública de Piston ni necesita una clave de terceros. `docker compose --project-directory . -f docker/compose.yaml stop` detiene solo el sandbox; en este PC, usa `docker-apagar` para apagar también su entorno WSL y liberar sus recursos.
 
 **Verificación del sandbox.** Con Docker y Piston activos (`docker-iniciar` en este PC), `npm run test:runner` ejecuta las soluciones de referencia dentro de Piston y `npm run test:e2e:real` recorre la aplicación completa con el ejecutor real. Las pruebas se omiten cuando el ejecutor no está disponible: eso no acredita su funcionamiento. Consulta el estado de cada entrega en [docs/verification.md](docs/verification.md). No hay ejecución simulada en la aplicación normal.
 
@@ -213,7 +213,9 @@ src/server/execution/    Adaptador Piston, evaluación y progreso
 src/lib/                 Tipos, validaciones y utilidades
 prisma/                  Esquema, migraciones y contenido original
 scripts/                 Preparación, diagnóstico y administración local
+docker/                  Dockerfile y configuraciones de Compose
 tests/                   Pruebas editoriales, de dominio y de navegador
+docs/                    Guías y decisiones de producto y diseño
 ```
 
 Stack: Next.js App Router, React, TypeScript, PostgreSQL, Prisma, Tailwind CSS, shadcn/ui, Better Auth y Monaco. Sin IA, Redis, servicios de pago ni analítica externa.
@@ -225,7 +227,7 @@ La paleta se centraliza en `src/app/globals.css`. Los componentes consumen token
 `.env`, `.local`, los binarios de Monaco, dependencias y builds están excluidos de Git. Se versionan código, lockfile, migraciones y el catálogo editorial; nunca sesiones, credenciales ni borradores.
 
 Las skills de agentes y los informes de herramientas de diseño no son necesarios
-para ejecutar Itera. Las decisiones útiles se conservan en `PRODUCT.md`, `DESIGN.md`
+para ejecutar Itera. Las decisiones útiles se conservan en `docs/PRODUCT.md`, `docs/DESIGN.md`
 y las guías de `docs/`, cuyo [índice](docs/README.md) agrupa la documentación vigente.
 Los diarios antiguos siguen disponibles en el historial de Git.
 

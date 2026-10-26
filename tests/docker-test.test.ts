@@ -18,8 +18,8 @@ test("el lanzador Docker reenvía filtros y retira el puerto incluso si Playwrig
     assert.equal(result.status, 23);
     const calls = readFileSync(join(directory, "calls.jsonl"), "utf8").trim().split("\n").map(line => JSON.parse(line));
     assert.deepEqual(calls, [
-      { tool: "docker", args: ["-f", "compose.verify.yaml", "up", "-d", "--wait", "database"] },
-      { tool: "playwright", args: ["test", "-c", "playwright.docker.config.ts", "tests/docker/http-security.spec.ts", "--repeat-each=2"] },
+      { tool: "docker", args: ["-f", "docker/compose.verify.yaml", "up", "-d", "--wait", "database"] },
+      { tool: "playwright", args: ["test", "-c", "tests/playwright.docker.config.ts", "tests/docker/http-security.spec.ts", "--repeat-each=2"] },
       { tool: "docker", args: ["up", "-d", "--wait", "database"] },
     ]);
   } finally { rmSync(directory, { recursive: true, force: true }); }

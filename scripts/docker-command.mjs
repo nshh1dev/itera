@@ -7,5 +7,5 @@ export function dockerCommand(args, platform = process.platform) {
 
 /** @param {string[]} args @param {boolean} [development] */
 export function composeArgs(args, development = false) {
-  return ["compose", "--env-file", ".local/docker.env", "-f", "compose.yaml", "-f", "compose.app.yaml", ...(development ? ["-f", "compose.dev.yaml"] : []), ...args];
+  return ["compose", "--project-directory", ".", "--env-file", ".local/docker.env", "-f", "docker/compose.yaml", "-f", "docker/compose.app.yaml", ...(development ? ["-f", "docker/compose.dev.yaml"] : []), ...args];
 }

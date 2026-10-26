@@ -2,7 +2,11 @@
 
 ## Alcance
 
-`compose.yaml` conserva Piston y sus paquetes. `compose.app.yaml` añade la aplicación Next.js/Node y PostgreSQL. El modo nativo sigue disponible, pero ambas aplicaciones no pueden ocupar 3000 a la vez. La base Docker y la base Windows son **copias independientes**: los cambios posteriores no se sincronizan.
+`docker/compose.yaml` conserva Piston y sus paquetes. `docker/compose.app.yaml` añade la aplicación Next.js/Node y PostgreSQL. Ejecutar desde la raíz con `--project-directory .`: mantiene el contexto, el nombre de proyecto y los volúmenes anteriores, sin crear otra instalación por mover los archivos. El Dockerfile reside en `docker/Dockerfile`; `.dockerignore` permanece en la raíz del contexto. El modo nativo sigue disponible, pero ambas aplicaciones no pueden ocupar 3000 a la vez. La base Docker y la base Windows son **copias independientes**: los cambios posteriores no se sincronizan.
+
+Si los lanzadores se instalaron antes de esta reorganización, actualizar sus rutas
+antes de utilizarlos. El instalador vigente es `scripts/install-docker-launchers.ps1`;
+no es necesario recrear volúmenes, migrar ni preparar de nuevo la base.
 
 Versiones fijadas: Node 24.16.0 y PostgreSQL 18.3 con digest de imagen, Piston con digest, dependencias mediante `package-lock.json`; preparación de Python 3.12.0, Node 20.11.1 y TypeScript 5.0.3. Las actualizaciones son explícitas: no cambiar versiones mayores de PostgreSQL sin migrar datos. Las herramientas de mantenimiento se conservan en la imagen para ejecutar Prisma, importaciones y pruebas sin instalar dependencias en el host.
 
@@ -38,16 +42,16 @@ Con Node instalado también sirve `npm run docker:configure`. Los secretos se gu
 Preparar imagen, base y ejecutor:
 
 ```powershell
-docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml build app
-docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml up -d --wait database piston
-docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml run --rm --no-deps app node scripts/docker-prepare.mjs
+docker compose --project-directory . --env-file .local/docker.env -f docker/compose.yaml -f docker/compose.app.yaml build app
+docker compose --project-directory . --env-file .local/docker.env -f docker/compose.yaml -f docker/compose.app.yaml up -d --wait database piston
+docker compose --project-directory . --env-file .local/docker.env -f docker/compose.yaml -f docker/compose.app.yaml run --rm --no-deps app node scripts/docker-prepare.mjs
 ```
 
 La preparación aplica migraciones, crea borradores sin publicarlos e instala los tres lenguajes. Para activar el currículo nuevo, explícitamente y con Piston funcionando:
 
 ```powershell
-docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml run --rm --no-deps app npm run content:replace -- --apply
-docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml up -d --wait
+docker compose --project-directory . --env-file .local/docker.env -f docker/compose.yaml -f docker/compose.app.yaml run --rm --no-deps app npm run content:replace -- --apply
+docker compose --project-directory . --env-file .local/docker.env -f docker/compose.yaml -f docker/compose.app.yaml up -d --wait
 ```
 
 Abrir **http://127.0.0.1:3000**. La primera validación del catálogo puede tardar varios minutos. No se ejecuta al arrancar ni se publica contenido implícitamente. Para promover una cuenta existente, ejecutar el script `admin` dentro de `app`.
@@ -103,9 +107,9 @@ npm.cmd run docker:backup
 Sin Node en el host, puede hacerse un respaldo dentro del contenedor y copiarlo sin redirección binaria de PowerShell:
 
 ```powershell
-docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml exec database pg_dump -U itera -d itera -Fc --no-owner --no-privileges -f /tmp/itera.dump
-docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml cp database:/tmp/itera.dump ./itera.dump
-docker compose --env-file .local/docker.env -f compose.yaml -f compose.app.yaml exec database rm /tmp/itera.dump
+docker compose --project-directory . --env-file .local/docker.env -f docker/compose.yaml -f docker/compose.app.yaml exec database pg_dump -U itera -d itera -Fc --no-owner --no-privileges -f /tmp/itera.dump
+docker compose --project-directory . --env-file .local/docker.env -f docker/compose.yaml -f docker/compose.app.yaml cp database:/tmp/itera.dump ./itera.dump
+docker compose --project-directory . --env-file .local/docker.env -f docker/compose.yaml -f docker/compose.app.yaml exec database rm /tmp/itera.dump
 ```
 
 Guarda los respaldos fuera de Git y cópialos a otro dispositivo de forma privada. Contienen datos personales. Guarda también `.local/docker.env` para conservar el secreto de autenticación. Los archivos de recuperación de contraseña viven en el volumen `local-mail`; consulta [cómo leerlos](#recuperación-de-contraseña).

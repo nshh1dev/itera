@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 test("Compose declara la frontera local y los límites de Piston", () => {
-  const compose = readFileSync(new URL("../compose.yaml", import.meta.url), "utf8");
+  const compose = readFileSync(new URL("../docker/compose.yaml", import.meta.url), "utf8");
   assert.match(compose, /127\.0\.0\.1:2000:2000/);
   assert.match(compose, /image: ghcr\.io\/engineer-man\/piston@sha256:[a-f0-9]{64}/);
   for (const [key, value] of Object.entries({

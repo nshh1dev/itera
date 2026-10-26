@@ -15,6 +15,12 @@ npm test
 `npm run build` regenera Prisma y `.next`, sin migrar ni publicar contenido.
 No ejecutar tipos a la vez que el build regenera Prisma.
 
+Las configuraciones de navegador están en `tests/playwright*.config.ts`. Usar los
+scripts npm de esta guía, o pasar explícitamente `-c tests/playwright.config.ts`
+(doble HTTP), `-c tests/playwright.real.config.ts` o
+`-c tests/playwright.docker.config.ts`. Los servidores temporales siguen usando
+la raíz del proyecto y los resultados se guardan en `test-results/`.
+
 ## Pruebas con servicios
 
 Iniciar servicios y servidores temporales requiere autorización previa. El usuario
@@ -43,7 +49,19 @@ real. Volver a compilar si cambia el producto. `tests/e2e/flows.spec.ts` es seri
 y tiene estado compartido: ejecutar el archivo completo, no un paso posterior aislado.
 No ejecutar lint mientras Playwright crea o elimina resultados.
 
-## Evidencia conservada — 26 de octubre de 2026
+## Comprobación de las rutas reorganizadas — 26 de octubre de 2026
+
+- Lint sin errores/avisos, tipos y **344 pruebas aprobadas sin omisiones**.
+- Las tres configuraciones cargan y enumeran 164, 24 y 43 tests respectivamente
+  (doble HTTP, real y Docker). `--list` no ejecuta recorridos ni inicia servidores.
+- Cuatro YAML analizados y comparados con los anteriores: equivalentes salvo
+  las rutas previstas de construcción y seguimiento. Instalador PowerShell y
+  enlaces documentales revisados; lanzadores locales actualizados sin ejecutarlos.
+- No se ejecutaron build, E2E ni Compose contra Docker: se conserva `.next`
+  intacta y no se inician servicios. La comprobación estática no acredita una
+  nueva construcción de imágenes, recarga real ni uso de los volúmenes existentes.
+
+## Evidencia funcional conservada — 26 de octubre de 2026
 
 Estos resultados son registros anteriores a la limpieza documental, no pruebas
 repetidas por ella ni una garantía sobre modificaciones futuras.

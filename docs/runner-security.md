@@ -2,7 +2,7 @@
 
 ## Alcance de esta entrega
 
-`compose.yaml` declara red deshabilitada, cuatro trabajos simultáneos, 64 procesos
+`docker/compose.yaml` declara red deshabilitada, cuatro trabajos simultáneos, 64 procesos
 por trabajo, 256 MiB por etapa, 64 KiB por canal de salida, 2048 descriptores y
 10.000.000 bytes por archivo. Ejecución: 12 s de pared y 10 s de CPU para permitir
 el conductor TypeScript; el adaptador solicita 3 s para Python/JavaScript.

@@ -50,7 +50,7 @@ services:
         - action: rebuild
           path: ./package-lock.json
         - action: rebuild
-          path: ./Dockerfile
+          path: ./docker/Dockerfile
         - action: rebuild
           path: ./.dockerignore
         - action: rebuild

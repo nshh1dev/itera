@@ -1,4 +1,5 @@
 # Solo durante pruebas desde el host; no usar para el arranque cotidiano.
+# Usar el mismo --project-directory . que los archivos base.
 services:
   database:
     ports:

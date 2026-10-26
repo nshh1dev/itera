@@ -1,5 +1,7 @@
 # Producto
 
+Las rutas de código y comandos de esta guía se refieren a la raíz del repositorio.
+
 ## Platform
 
 web

@@ -27,7 +27,7 @@ async function executorReady() {
 }
 
 const ready = await executorReady();
-const only = { skip: ready ? false : "Piston no responde; ejecuta docker compose up -d y npm run runner:setup" };
+const only = { skip: ready ? false : "Piston no responde; ejecuta docker compose --project-directory . -f docker/compose.yaml up -d y npm run runner:setup" };
 const base = { input: { a: 1, b: 2 } as Json, expected: 3 as Json, visible: true, order: 0 };
 const detail = (output: { stdout: string; stderr: string }) => `stdout=${JSON.stringify(output.stdout)} stderr=${output.stderr.slice(0, 400)}`;
 let typescriptReady = false;

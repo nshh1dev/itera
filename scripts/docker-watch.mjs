@@ -3,7 +3,7 @@ import { lstat, readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 const directories = ["src", "public", "prisma", "scripts", "tests"];
-const rebuild = new Set(["package.json", "package-lock.json", "Dockerfile", ".dockerignore", ".npmrc"]);
+const rebuild = new Set(["package.json", "package-lock.json", "docker/Dockerfile", ".dockerignore", ".npmrc"]);
 const restart = new Set(["next.config.ts", "tsconfig.json", "postcss.config.mjs", "prisma.config.ts"]);
 
 /** @param {string} path */
