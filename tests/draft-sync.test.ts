@@ -33,6 +33,8 @@ test("guardar borradores distingue errores de infraestructura sin perder la conc
   let available = true;
   let writes = 0;
   let draft: { code: string; revision: number } | null = null;
+  const logs: string[] = [];
+  t.mock.method(console, "error", (line: string) => { logs.push(line); });
   function fail(at: typeof stage) {
     if (stage === at) throw new Error("detalle privado de la conexión");
   }
@@ -93,6 +95,9 @@ test("guardar borradores distingue errores de infraestructura sin perder la conc
         stage = failure;
         assert.deepEqual(await save("local", 0), temporaryDraftFailure);
       }
+      assert.equal(logs.length, 2);
+      assert.deepEqual(logs.map(line => JSON.parse(line).phase), ["draft.save", "draft.save"]);
+      assert.equal(logs.some(line => /privad|local|conexión|cuenta/.test(line)), false);
       assert.equal(writes, 0);
       stage = null;
     });
@@ -117,6 +122,7 @@ test("guardar borradores distingue errores de infraestructura sin perder la conc
     });
 
     await t.test("una revisión obsoleta y una creación duplicada siguen siendo conflictos", async () => {
+      logs.length = 0;
       for (const revision of [0, 1]) {
         const result = await save("no sobrescribir", revision);
         assert.equal("kind" in result && result.kind, "conflict");
@@ -125,6 +131,7 @@ test("guardar borradores distingue errores de infraestructura sin perder la conc
       }
       assert.deepEqual(draft, { code: "edición pendiente", revision: 2 });
       assert.equal(writes, 2);
+      assert.equal(logs.length, 0);
     });
 
     await t.test("un ejercicio retirado, una sesión caducada y una entrada inválida no se reintentan", async () => {
@@ -140,6 +147,7 @@ test("guardar borradores distingue errores de infraestructura sin perder la conc
       assert.equal("kind" in invalid && invalid.kind, "invalid");
       for (const result of [unavailable, auth, invalid]) assert.equal(draftSaveFeedback(result, 900).blocked, true);
       assert.equal(writes, 2);
+      assert.equal(logs.length, 0);
     });
   } finally {
     hooks.deregister();

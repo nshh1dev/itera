@@ -13,6 +13,7 @@ import { prerequisiteIssue } from "@/lib/curriculum";
 import { languages } from "@/lib/types";
 import { checkConcept } from "./execution/concepts";
 import { editorialTestsIssue } from "@/lib/editorial-tests";
+import { reportOperationalFailure } from "./operational-failure";
 
 async function checkPrerequisites(slug: string, slugs: string[]) {
   if (!slugs.length) return;
@@ -53,7 +54,7 @@ export async function saveExercise(input: unknown) {
     });
     revalidatePath("/admin"); revalidatePath(`/admin/ejercicios/${data.slug}`);
     return {slug:data.slug};
-  } catch { return {error:"No pudimos guardar esta versión. Comprueba la conexión e inténtalo de nuevo."}; }
+  } catch { reportOperationalFailure("editorial.save"); return {error:"No pudimos guardar esta versión. Comprueba la conexión e inténtalo de nuevo."}; }
 }
 
 export async function publishExerciseVersion(versionId: string) {
@@ -96,7 +97,7 @@ export async function publishExerciseVersion(versionId: string) {
       db.auditLog.create({data:{userId:user.id,action:"exercise.version.published",resource:version.id}}),
     ]);
     revalidatePath("/", "layout"); return {success:true};
-  } catch(error) { return {error:error instanceof RunnerUnavailable ? error.message : "No se pudo completar la validación. La versión sigue guardada."}; }
+  } catch(error) { reportOperationalFailure("editorial.publish"); return {error:error instanceof RunnerUnavailable ? error.message : "No se pudo completar la validación. La versión sigue guardada."}; }
 }
 
 export async function hideExercise(id: string) {
@@ -155,6 +156,7 @@ export async function prepareCatalogRevision(input: unknown) {
     }
     return result;
   } catch {
+    reportOperationalFailure("editorial.prepare");
     return { error: "No pudimos preparar el borrador. Las versiones anteriores no se han modificado." };
   }
 }

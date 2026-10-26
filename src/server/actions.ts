@@ -5,6 +5,7 @@ import { db } from "./db";
 import { draftSchema, languageSchema } from "@/lib/validation";
 import { z } from "zod";
 import { temporaryDraftFailure, type DraftSaveResult } from "@/lib/draft-sync";
+import { reportOperationalFailure } from "./operational-failure";
 
 export async function saveDraft(input: unknown): Promise<DraftSaveResult> {
   try {
@@ -31,7 +32,7 @@ export async function saveDraft(input: unknown): Promise<DraftSaveResult> {
     const updated = await db.draft.updateMany({ where: { userId: user.id, variantId, revision }, data: { code, revision: { increment: 1 } } });
     if (!updated.count) return { error: "Este borrador cambió en otra pestaña. Copia tu código y recarga para recuperar la última versión.", kind: "conflict" };
     return { revision: revision + 1 };
-  } catch { return temporaryDraftFailure; }
+  } catch { reportOperationalFailure("draft.save"); return temporaryDraftFailure; }
 }
 
 export async function recordHint(variantId: string, index: number) {

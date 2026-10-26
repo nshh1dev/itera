@@ -31,7 +31,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Verificación y límites de las pruebas
 
-- Comprobaciones disponibles: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`. No hay formateador ni flujo de CI configurado; no inventar un script `format`.
+- Comprobaciones disponibles: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`. `.github/workflows/checks.yml` ejecuta lint, tipos, pruebas y build en Node 24/Python 3.12; no ejecuta E2E ni Piston. No hay formateador; no inventar un script `format`. Lint y tipos excluyen `.agents/` y `.opencode/`, no el producto ni sus pruebas.
 - Ejecutar las comprobaciones pertinentes. Informar cuáles aprobaron, cuáles fallaron o no se ejecutaron y por qué; separar avisos previos de problemas nuevos. No presentar una prueba omitida como aprobada.
 - Reutilizar resultados recientes si el código comprobado no cambió. Para cambios solo documentales, revisar contenido, enlaces/rutas pertinentes y el diff; no iniciar la aplicación ni repetir toda la suite sin motivo.
 - No ejecutar `typecheck` a la vez que el build regenera Prisma: puede producir errores transitorios de archivos faltantes. No ejecutar lint mientras Playwright crea o elimina resultados: puede provocar errores de lectura de directorios.
@@ -56,6 +56,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Cada versión puede documentar `complexity` (coste orientativo) y `commonErrors`; son opcionales y la interfaz solo los muestra cuando tienen contenido. `prisma/educational-exercise.ts` los deriva de `cost` y `mistakes`, y `content:metadata -- --apply` rellena los vacíos sin tocar otros campos.
 - El cliente recibe solo los casos visibles y pide la solución aparte. El resumen de la primera diferencia (`src/lib/json-diff.ts`) se calcula en el navegador con datos visibles; no exponer casos ocultos ni mover esa lógica al servidor sin filtrar.
 - Los borradores usan concurrencia optimista basada en revisión; no sustituirla por upserts incondicionales. Conservar las copias del navegador y la transferencia independiente de invitado a cuenta.
+- Los fallos operativos de borradores, edición y evaluación usan `reportOperationalFailure`: fase enumerada e identificador generado, sin errores brutos, SQL, código, credenciales ni datos de casos. No añadir contextos arbitrarios; alcance y límites en `docs/operational-logging.md`.
 - La recuperación de Better Auth escribe enlaces en `.local/mail/`, no usa SMTP. Promover una cuenta existente con `npm run admin -- email@example.com`. Las acciones administrativas deben seguir llamando a `requireAdmin()`.
 
 ## Diseño e integración visual

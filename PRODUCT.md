@@ -47,8 +47,8 @@ sin bloquear ni conceder progreso.
 - `npm run setup` prepara el clúster PostgreSQL privado, Prisma, las migraciones y
   el catálogo. Después, `npm run dev` levanta la base y Next.js en
   `http://127.0.0.1:3000`.
-- La recuperación de contraseña escribe un enlace en `.local/mail/`; no se envía
-  correo real.
+- La recuperación de contraseña escribe un enlace local: `.local/mail/` en modo
+  nativo o volumen `local-mail` en Docker; no se envía correo real.
 - El trabajo editorial ocurre desde `/admin`: nuevas versiones en borrador,
   validación contra el entorno de ejecución y publicación.
 - Lint, tipos, pruebas unitarias y editoriales, build y recorridos de navegador
@@ -87,18 +87,22 @@ sujetas a revisión caso por caso con el responsable del proyecto.
 
 ## Evidence on Hand
 
-- Contenido real: ejercicios originales con referencias de solución verificadas
-  por las pruebas editoriales del repositorio; la última entrega registrada en
-  `docs/roadmap.md` informa de 63 ejercicios y 347 casos por lenguaje.
+- Contenido real: 136 ejercicios del currículo común en cuatro rutas, con tres
+  variantes por identidad. Las referencias y plantillas se comprueban en la suite
+  editorial; el catálogo de 63 ejercicios pertenece a una etapa histórica.
 - Documentación: `README.md`, `docs/roadmap.md` con los criterios pedagógicos,
   `docs/curriculum.md`, `docs/ui-redesign.md` y `docs/motion.md`.
 - Sistema visual implementado y verificable en `src/app/globals.css` y en
   `src/components/ui/`.
 - Verificaciones registradas en `docs/verification.md`, con sus límites
   declarados.
+- Evidencia histórica de ejecución real: `docs/verification.md` registra activación
+  del currículo y comprobaciones con Piston, incluidas ocho pruebas del adaptador
+  y ocho recorridos en Docker el 21 de octubre de 2026. No son mediciones actuales
+  ni una garantía absoluta de aislamiento. En las mejoras del 26 de octubre,
+  Piston permanece apagado y su medición de duración efectiva sigue pendiente.
 - Ausencias que no deben inventarse: no hay testimonios, clientes, métricas de
-  aprendizaje ni personas usuarias medidas; tampoco ejecución real verificada
-  contra el entorno aislado en esta máquina.
+  aprendizaje ni observaciones con principiantes reales registradas.
 
 ## Product Principles
 

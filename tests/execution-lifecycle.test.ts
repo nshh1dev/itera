@@ -22,6 +22,9 @@ test("la evaluación conserva su presupuesto y detiene el trabajo finalizado sin
   let results: unknown = null;
   let message = "";
   let runnerError = false;
+  let failure = "";
+  const logs: string[] = [];
+  t.mock.method(console, "error", (line: string) => { logs.push(line); });
   const cases = Array.from({ length: 10 }, (_, order) => ({ order, input: order, expected: order, visible: order < 2 }));
   type Where = { id?: string | { in: string[] }; status?: string; createdAt?: { lt?: Date; lte?: Date; gt?: Date; gte?: Date } };
   function matches(where: Where) {
@@ -36,10 +39,11 @@ test("la evaluación conserva su presupuesto y detiene el trabajo finalizado sin
   }
   const models = {
     submission: {
-      findUnique: async () => submission(),
-      findFirst: async ({ where }: { where: Where }) => matches(where) ? { id: "intento", status } : null,
-      findMany: async ({ where }: { where: Where }) => matches(where) ? [submission()] : [],
+      findUnique: async () => { if (failure === "load") throw new Error("detalle privado"); return submission(); },
+      findFirst: async ({ where }: { where: Where }) => { if (failure === "state") throw new Error("detalle privado"); return matches(where) ? { id: "intento", status } : null; },
+      findMany: async ({ where }: { where: Where }) => { if (failure === "reconcile") throw new Error("detalle privado"); return matches(where) ? [submission()] : []; },
       updateMany: async ({ where, data }: { where: Where; data: { status: string; results?: unknown; message?: string } }) => {
+        if (failure === "persist" && data.status === "ERROR") throw new Error("fallo de persistencia privado");
         if (!matches(where)) return { count: 0 };
         status = data.status;
         if (data.message) message = data.message;
@@ -57,13 +61,13 @@ test("la evaluación conserva su presupuesto y detiene el trabajo finalizado sin
   const globals = globalThis as typeof globalThis & { [key: symbol]: unknown };
   globals[key] = {
     db,
-    availableRuntime: async () => { runtimes++; return { language, version: "1" }; },
+    availableRuntime: async () => { runtimes++; if (failure === "runtime") throw new Error("detalle privado"); return { language, version: "1" }; },
     runCode: async (_language: string, _runtime: unknown, _code: string, input: unknown) => {
       calls++; now += elapsed; await whileRunning?.();
       if (runnerError) throw new Error("detalle privado del proveedor");
       return { stdout: JSON.stringify(input), stderr: "", code: 0 };
     },
-    checkConcept: async (_language: string, _code: string, policy: string) => { if (!policy) return null; concepts++; now += 20000; await whileRunning?.(); return null; },
+    checkConcept: async (_language: string, _code: string, policy: string) => { if (!policy) return null; if (failure === "concept") throw new Error("detalle privado"); concepts++; now += 20000; await whileRunning?.(); return null; },
   };
   const hooks = registerHooks({
     resolve(specifier, context, next) {
@@ -90,6 +94,7 @@ test("la evaluación conserva su presupuesto y detiene el trabajo finalizado sin
   function reset() {
     now = start; status = "RUNNING"; createdAt = new Date(start); mode = "submit"; diagnosticItemId = null; language = "typescript"; conceptRule = "";
     calls = 0; concepts = 0; runtimes = 0; attempts = 0; passed = false; elapsed = 15000; whileRunning = null; beforeTransaction = null; results = null; message = ""; runnerError = false;
+    failure = ""; logs.length = 0;
   }
   try {
     const { evaluateSubmission, expireInterruptedSubmissions } = await import("../src/server/execution/service");
@@ -163,6 +168,32 @@ test("la evaluación conserva su presupuesto y detiene el trabajo finalizado sin
       await evaluateSubmission("intento");
       assert.equal(status, "ERROR"); assert.equal(attempts, 0); assert.equal(passed, false);
       assert.ok(!message.includes("detalle privado"));
+      assert.equal(JSON.parse(logs[0]).phase, "execution.case");
+      assert.equal(logs.some(line => /privado|código|stderr|input|expected/.test(line)), false);
+    });
+
+    await t.test("los fallos de estado, runtime, concepto y transacción conservan su fase sin progreso", async () => {
+      for (const point of ["state", "runtime", "concept", "finalize"]) {
+        reset(); failure = point; elapsed = 1;
+        if (point === "concept") conceptRule = "regla";
+        if (point === "finalize") beforeTransaction = () => { throw new Error("SQL y código privados"); };
+        await evaluateSubmission("intento");
+        assert.equal(status, "ERROR"); assert.equal(attempts, 0);
+        assert.equal(JSON.parse(logs[0]).phase, `execution.${point}`);
+        assert.equal(logs.some(line => /privad|SQL|código/.test(line)), false);
+      }
+    });
+    await t.test("carga, reconciliación y persistencia fallidas se registran y siguen propagando el fallo", async () => {
+      reset(); failure = "load";
+      await assert.rejects(evaluateSubmission("intento"), /detalle privado/);
+      assert.equal(JSON.parse(logs[0]).phase, "execution.load");
+      reset(); failure = "reconcile";
+      await assert.rejects(expireInterruptedSubmissions(), /detalle privado/);
+      assert.equal(JSON.parse(logs[0]).phase, "execution.reconcile");
+      reset(); failure = "persist"; runnerError = true;
+      await assert.rejects(evaluateSubmission("intento"), /fallo de persistencia/);
+      assert.deepEqual(logs.map(line => JSON.parse(line).phase), ["execution.case", "execution.error.persist"]);
+      assert.equal(status, "RUNNING"); assert.equal(attempts, 0);
     });
   } finally { Date.now = originalNow; hooks.deregister(); delete globals[key]; }
 });

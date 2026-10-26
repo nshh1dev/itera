@@ -1,5 +1,34 @@
 # Prioridades de Itera
 
+## Prioridades vigentes — 26 de octubre de 2026
+
+- Terminar las mejoras de fiabilidad y aprendizaje: cierre/repaso de rutas con
+  `readiness`, primera diferencia textual de PROGRAM solo con datos visibles y
+  verificación de teclado, temas, móvil, movimiento reducido y zoom al 200 %.
+- Medir duración efectiva con Piston real. Los últimos cambios de caducidad se
+  comprobaron con reloj simulado y doble HTTP; no dar por repetidas las pruebas
+  históricas del ejecutor. Docker solo se inicia con autorización.
+- Validar con principiantes reales la dificultad, las dudas y la retirada de ayuda;
+  la participación humana no se sustituye por pruebas automatizadas.
+- Mantener pendientes de decisión las protecciones de `main`, licencia y ampliaciones
+  de infraestructura. El workflow existe, pero no se afirma aquí que sus ejecuciones
+  remotas o comprobaciones obligatorias estén verificadas.
+
+El currículo vigente tiene 136 ejercicios en cuatro rutas y tres lenguajes.
+La recuperación de borradores, el seguimiento idempotente, la separación de estados
+editoriales y los diagnósticos inconclusos ya se corrigieron. La carga de Inicio
+comparte metadatos sin compartir progreso entre lenguajes. Los resultados actuales
+y sus límites se registran en [verification.md](verification.md); el plan de trabajo
+temporal se conserva localmente hasta terminar la implementación.
+
+## Historial de entregas
+
+Las secciones siguientes conservan decisiones, recuentos y comprobaciones de su
+momento. Sus «pendientes» no son por sí solos prioridades vigentes; las cifras
+antiguas y las pruebas realizadas no describen ni verifican automáticamente el
+estado actual. Preparación y actualización vigentes: [curriculum.md](curriculum.md)
+y [docker.md](docker.md). No resetear la base para actualizar contenido.
+
 ## Entregado en código: entrada desde cero
 
 - Siete actividades guiadas y la suma existente como octavo paso.
@@ -35,7 +64,7 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 - Pruebas de navegador que comprueban el orden completo de la ruta y las plantillas de rangos en Python y JavaScript.
 - Incorporado en la base local sin resetearla. Verificados lint, tipos, 14 pruebas unitarias/editoriales, build y 14 recorridos con doble HTTP. No equivale a validación en Piston ni a una prueba de aprendizaje con principiantes reales.
 
-## Pendiente: progresión completa
+## Pendiente histórico tras la tercera entrega: progresión completa
 
 1. Validar el recorrido con principiantes y ajustar la retirada de ayuda: las introducciones ya cubren igualdad, condiciones combinadas, selección, cadenas, pertenencia, rangos y productos.
 2. Publicar las revisiones didácticas ya preparadas de los retos originales tras validarlas en Piston; la instalación existente conserva sus versiones públicas antiguas hasta entonces.
@@ -128,11 +157,11 @@ La primera actividad es de observación: que se apruebe sin editar es intenciona
 - La activación completa validó 116 funciones por lenguaje y 20 programas por lenguaje. Una revisión posterior convirtió «Corrige una fórmula con paréntesis» en un programa de salida fija para no adelantar la entrada de datos; se publicó como versión 2 y la anterior permanece en el historial.
 - Lint focalizado, tipos, build, 89 pruebas unitarias/editoriales y 103 E2E aprobaron. La verificación corrigió una etiqueta de recuperación desactualizada y el desbordamiento de la autoevaluación con texto al 200 % a 320 px.
 
-## Siguiente entrega
+## Propuesta histórica tras la decimotercera entrega
 
 Revisar con uso real la progresión de Iniciación y ajustar la dificultad de los primeros pasos; después, ensayar una instalación limpia con Piston y documentar el respaldo.
 
-## Fiabilidad y experiencia
+## Propuestas históricas de fiabilidad y experiencia
 
 - Añadir una pantalla de cierre y repaso al completar una ruta; la continuación ya respeta sus límites.
 - Ofrecer recuperación explícita de borradores de versiones anteriores.
@@ -141,7 +170,7 @@ Revisar con uso real la progresión de Iniciación y ajustar la dificultad de lo
 - Explicar JSON y sus diferencias con los valores de Python.
 - Validar instalación limpia, build, E2E con doble y catálogo completo en Piston; registrar fecha y alcance.
 
-## GitHub y mantenimiento
+## Propuestas históricas de GitHub y mantenimiento
 
 - Ejecutar CI y después configurar sus comprobaciones como obligatorias para main.
 - Organizar issues y un milestone de mejora pedagógica; completar descripción y temas.

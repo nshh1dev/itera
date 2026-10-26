@@ -1,5 +1,38 @@
 # Verificación local
 
+## Registro operativo y coherencia documental (26 de octubre de 2026)
+
+- Borradores, guardado/publicación/preparación editorial y evaluación registran
+  excepciones operativas mediante `reportOperationalFailure`. Solo emite evento
+  fijo, UUID nuevo, fase enumerada y referencia UUID/CUID opcional del intento.
+  No recibe errores ni contexto arbitrario; no registra código, SQL, credenciales,
+  casos, resultados o stderr. Alcance y consulta: [operational-logging.md](operational-logging.md).
+- Las regresiones inyectan fallos en lectura, estado, runtime, casos, concepto,
+  finalización, persistencia del error y reconciliación. Comprueban la fase,
+  ausencia de contenido privado y que no se concede progreso. Los fallos que
+  antes se propagaban siguen haciéndolo. Un destino de logs roto no altera la
+  operación. Referencias inválidas y fases desconocidas se descartan; conflictos
+  de revisión, sesión ausente y validaciones no generan estos eventos.
+- Revisión acotada de lógica compartida: práctica y diagnóstico ya usan
+  `useDraftRecovery`, `DraftRecovery` y `useExecution`, con sus módulos puros de
+  recuperación y seguimiento. Se mantienen las políticas distintas de guardado
+  y claves por cuenta/contexto; no se extrae una abstracción adicional ni se
+  reestructura la interfaz. No se modifican versiones antiguas, catálogo,
+  migraciones, intentos, dependencias ni bases de datos.
+- README distingue apagado, recuperación y bases independientes en nativo/Docker;
+  PRODUCT separa currículo vigente y evidencia histórica de Piston. Roadmap
+  conserva el historial bajo prioridades actuales. AGENTS reconoce CI y documenta
+  el registro seguro: 82 líneas y bloque generado por Next idéntico al anterior.
+  El comando de logs Docker se cotejó con el lanzador; no se ejecutó en contenedor.
+- `npm test`: **264 aprobadas, sin omisiones**, código de salida 0. Lint completo,
+  tipos y build aprobados. Se reutilizan las comprobaciones de tipos/build ya
+  realizadas sobre este mismo código, sin ejecutar ambos a la vez. Persisten los
+  avisos conocidos de Better Auth en pruebas; lint no tiene avisos.
+- No se inicia la aplicación, PostgreSQL, Docker, WSL ni Piston. No se repiten E2E
+  ni revisión visual, porque no cambian la interfaz o los contratos HTTP. Las
+  pruebas usan dobles; no verifican ejecución real, duración o aislamiento. La
+  medición con Piston y la fase 5 continúan pendientes; el plan temporal se conserva.
+
 ## Mantenimiento: carga del catálogo y alcance de herramientas (26 de octubre de 2026)
 
 - `getPracticeNavigation` carga los tres catálogos mediante una lectura común por

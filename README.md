@@ -72,9 +72,16 @@ npm run dev
 
 `npm run dev` inicia primero el PostgreSQL privado mediante `predev` y después Next.js. Si la base ya está encendida, la reutiliza; si no puede arrancar, no inicia Next.js. No aplica migraciones ni ejecuta el seed: la primera preparación sigue siendo `npm run setup`. Con una `DATABASE_URL` personalizada debes iniciar tu servidor PostgreSQL por separado.
 
-Para parar la aplicación: `Ctrl+C`. Para parar **solo el clúster del proyecto**: `npm run db:stop`.
+Para terminar, elige el modo que estás usando:
 
-Al terminar los ejercicios, `docker-apagar` apaga Ubuntu, Docker y Piston y conserva sus datos. No detiene Next.js ni PostgreSQL. Estos dos comandos son lanzadores locales de este PC, no vienen al clonar el repositorio. Consulta [Docker local y uso diario](docs/docker-local.md).
+- **Nativo:** `Ctrl+C` detiene Next.js, pero PostgreSQL sigue activo. Después, `npm run db:stop` detiene solo el clúster privado del proyecto; no una base externa ni la base Docker. Si usaste Piston en WSL, `docker-apagar` también puede apagar ese entorno, pero no detiene Next.js o PostgreSQL nativos.
+- **Docker completo:** `docker-apagar` detiene la app, PostgreSQL y Piston del contenedor y apaga Ubuntu conservando los volúmenes. Para volver, `docker-iniciar`; no hace falta repetir setup, seed ni importar la base. Estos lanzadores locales de este PC no vienen al clonar el repositorio. Consulta [Docker local y uso diario](docs/docker-local.md).
+
+Tras un cierre inesperado, vuelve a iniciar en el mismo modo. La práctica recupera
+el seguimiento de un envío incierto con su misma clave y permite comparar copias
+de borradores; no borres `.local/`, volúmenes ni almacenamiento del navegador para
+resolverlo. Las bases nativa y Docker son independientes: cambiar de modo no
+transfiere automáticamente tu progreso. [Preparación y respaldo Docker](docs/docker.md).
 
 Si necesitas investigar PostgreSQL, consulta `.local/postgres.log`. `npm run doctor` comprueba configuración, base, editor, Docker y lenguajes del ejecutor sin mostrar credenciales.
 
@@ -100,7 +107,7 @@ Si ya tenías Piston instalado antes de incorporar TypeScript, repite `docker co
 - Las salidas esperadas se comparan en Itera; no forman parte del programa evaluado.
 - Las pruebas ocultas devuelven solo su estado, nunca entradas, salidas ni errores brutos.
 - Se permiten como máximo una evaluación activa por usuario y cuatro globales.
-- Si se interrumpe Next.js, los intentos pendientes se marcan como error al consultarlos después de dos minutos. No cuentan como respuestas incorrectas.
+- Si se interrumpe Next.js, los intentos pendientes se reconcilian al consultarlos o al iniciar otra ejecución, una vez agotado su presupuesto (mínimo dos minutos; depende del lenguaje, casos y comprobación conceptual). No se reanudan como un trabajador persistente ni conceden progreso tardío.
 
 El repositorio no llama a la API pública de Piston ni necesita una clave de terceros. `docker compose stop` detiene solo el sandbox; en este PC, usa `docker-apagar` para apagar también su entorno WSL y liberar sus recursos.
 
