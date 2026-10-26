@@ -2,6 +2,9 @@
 
 Estado: **protocolo preparado; sesiones no realizadas**. No hay resultados de
 aprendizaje ni tiempos observados que se puedan atribuir a este documento.
+El 26 de octubre de 2026 el usuario acordó **aplazar estas sesiones** para cerrar
+el plan técnico. El aplazamiento no equivale a validar la experiencia educativa;
+su realización futura requiere coordinar participantes y registrar evidencia.
 
 ## Objetivo y preparación
 

@@ -194,6 +194,10 @@ zoom real al 200 %. `browser-zoom.spec.ts` usa Chromium completo con una extensi
 local mínima en perfiles temporales, no tu navegador habitual. Preparación,
 recorridos y límites: [docs/browser-interaction.md](docs/browser-interaction.md).
 
+La medición optativa de [duración con Piston real](docs/runner-timing.md) compara
+casos secuenciales, comprobación conceptual y tiempos agotados con el presupuesto
+de evaluación. No inicia servicios, necesita Piston preparado y no toca bases de datos.
+
 ## Arquitectura
 
 ```text

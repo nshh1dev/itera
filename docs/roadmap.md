@@ -5,12 +5,14 @@
 - Mantener las regresiones de teclado, temas, móvil, movimiento reducido y zoom
   real al 200 %. La revisión contra Next/PostgreSQL ya se realizó en Chromium;
   no constituye certificación WCAG ni prueba de todos los navegadores/dispositivos.
-- Medir duración efectiva con Piston real. Los últimos cambios de caducidad se
-  comprobaron con reloj simulado y doble HTTP; no dar por repetidas las pruebas
-  históricas del ejecutor. Docker solo se inicia con autorización.
-- Validar con principiantes reales la dificultad, las dudas y la retirada de ayuda.
-  El [protocolo está preparado](beginner-validation.md), pero no se han realizado
-  sesiones; la participación humana no se sustituye por pruebas automatizadas.
+- Mantener las regresiones de duración con Piston real. La medición secuencial
+  de Python, JavaScript y TypeScript quedó dentro de los presupuestos vigentes;
+  no se cambiaron límites. [Alcance](runner-timing.md): no mide endpoints, base ni
+  saturación. Docker solo se inicia con autorización.
+- Validación con principiantes **aplazada por acuerdo del usuario** al cerrar el
+  plan técnico. El [protocolo está preparado](beginner-validation.md), pero no se
+  han realizado sesiones; no sustituirlas por pruebas automáticas ni afirmar
+  eficacia educativa. Retomarlas cuando se coordinen participantes.
 - Mantener pendientes de decisión las protecciones de `main`, licencia y ampliaciones
   de infraestructura. El workflow existe, pero no se afirma aquí que sus ejecuciones
   remotas o comprobaciones obligatorias estén verificadas.
@@ -22,8 +24,9 @@ comparte metadatos sin compartir progreso entre lenguajes. La primera diferencia
 textual de PROGRAM ya está implementada: solo usa datos visibles y respeta la
 normalización del evaluador. Las rutas curriculares ya ofrecen cierre por lenguaje
 y repaso basado en `readiness`, sin acreditar autoevaluaciones. Las verificaciones actuales
-y sus límites se registran en [verification.md](verification.md); el plan de trabajo
-temporal se conserva localmente hasta terminar la implementación.
+y sus límites se registran en [verification.md](verification.md). El plan técnico
+queda cerrado y su archivo temporal se elimina; se conserva explícitamente el
+aplazamiento de la validación humana.
 
 ## Historial de entregas
 

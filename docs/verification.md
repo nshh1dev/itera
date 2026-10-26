@@ -1,5 +1,63 @@
 # Verificación local
 
+## Cierre técnico y duración con Piston real (26 de octubre de 2026)
+
+El plan de mejoras queda **cerrado técnicamente**. La validación con principiantes
+se **aplaza por acuerdo explícito del usuario**, no se marca como realizada ni se
+atribuye eficacia educativa a las pruebas automáticas. Se conserva el protocolo en
+[beginner-validation.md](beginner-validation.md). Se elimina el plan temporal local;
+las entregas y sus límites quedan documentados en este historial.
+
+### Medición realizada
+
+- `tests/runner-timing.integration.ts`, con `ITERA_RUNNER_TIMING=1`:
+  **tres recorridos aprobados, sin omisiones**, en 204,65 segundos. Son 21 muestras:
+  por lenguaje, tres evaluaciones de diez casos FUNCTION de
+  `logica-busqueda-binaria`, tres de un caso PROGRAM + concepto de
+  `logica-actualiza-puntos` y una de diez bucles fijos con veredicto `timeout`.
+- Node 24.16.0 en Windows, Intel Core i7-10700F (8 núcleos/16 hilos), Piston en
+  Docker/Ubuntu-24.04/WSL2. Runtimes reales: Python 3.12.0, JavaScript 20.11.1 y
+  TypeScript 5.0.3. Ejecución secuencial, sin otras suites del sandbox simultáneas
+  ni carga artificial; no se garantiza arranque en frío.
+
+| Lenguaje | Diez casos FUNCTION, rango de tres muestras | PROGRAM + concepto, rango de tres muestras | Diez tiempos agotados, una muestra | Presupuesto FUNCTION/agotados | Presupuesto PROGRAM + concepto |
+| --- | --- | --- | --- | --- | --- |
+| Python | 0,362–0,994 s | 0,079–0,104 s | 31,146 s | 152,5 s | 120 s |
+| JavaScript | 0,615–1,157 s | 2,394–3,668 s | 31,177 s | 152,5 s | 120 s |
+| TypeScript | 21,003–24,190 s | 4,035–4,096 s | 50,373 s | 282,5 s | 120 s |
+
+- La fase conceptual, incluida su consulta de runtime, tardó 40–57 ms en Python,
+  2334–3593 ms en JavaScript y 2060–2171 ms en TypeScript. JavaScript utiliza
+  el parser TypeScript. En FUNCTION TypeScript, cada caso tardó 1910–2763 ms;
+  los casos con bucle tardaron 4858–5561 ms. Todos quedaron dentro de su límite HTTP.
+- Decisión: **no cambiar los límites**. La muestra más larga (50,373 s) conserva
+  232,127 s de margen respecto a su presupuesto. No se reprodujo una evaluación
+  de más de 120 s; esta muestra no invalida el presupuesto conservador derivado
+  de los límites HTTP secuenciales. No se reduce el mínimo de dos minutos.
+- Alcance: adaptador, consulta de runtime, casos, comparación y parser conceptual
+  reales. **No** llama `evaluateSubmission` ni endpoints: no mide PostgreSQL,
+  `after()`, persistencia, sondeo o latencia de navegador. No demuestra que los
+  30 s de margen de estado/finalización basten bajo cualquier carga, ni certifica
+  aislamiento o saturación. No sustituye las regresiones de caducidad y progreso
+  atómico ya documentadas. Preparación y repetición: [runner-timing.md](runner-timing.md).
+- Ensayo inicial: tres fallos por Piston inaccesible desde Windows cuando WSL
+  cerraba su sesión entre comandos. Mantener una sesión WSL activa resolvió la
+  conectividad; no se cambiaron el adaptador, la red ni los límites para aprobar.
+  El primer typecheck también detectó inferencia circular en una variable de la
+  prueba nueva; se añadió su tipo `string` y se repitió aprobado.
+- Sin la variable optativa: tres omisiones deliberadas, no tres aprobaciones;
+  se comprobó ese comportamiento por separado. La medición real posterior sí
+  ejecutó los tres lenguajes, sin omisiones.
+- No se inició Next ni PostgreSQL, no se conectó una base ni se hicieron
+  migraciones, seed, publicación editorial o escrituras de progreso. Solo se
+  inició Piston, conservando los paquetes; después se detuvo y se terminó la
+  sesión WSL creada para la medición, sin eliminar contenedores ni volúmenes.
+- Cierre verificado: `npm test` **280 aprobadas sin omisiones**, lint completo sin
+  errores/avisos y tipos aprobados. No se repiten build ni E2E: el código de producto,
+  dependencias y configuración de compilación no cambiaron desde la entrega
+  anterior, cuyo build y recorridos focalizados ya aprobaron. Se revisan los enlaces
+  locales y el diff. WSL figura `Stopped` y 2000/2001/3000/5434 no tienen escucha.
+
 ## Interacción global, foco y zoom real al 200 % (26 de octubre de 2026)
 
 - Se reutilizan los archivos completos `interface`, `controls`, `motion`, `curriculum`
