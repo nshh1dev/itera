@@ -9,8 +9,8 @@ export const advancedSteps = stepsForPath("un-paso-mas");
 // No deducir el nivel a partir de la posición: puede haber varias rutas del mismo nivel.
 export const learningPaths: { slug: string; title: string; description: string; level: Level; order: number; slugs?: string[] }[] = [
   { slug: "desde-cero", title: "Desde cero", description: "Sin experiencia previa: instrucciones, valores, variables, entradas, operaciones y primeras funciones. Termina escribiendo y explicando una solución pequeña por tu cuenta.", level: "INITIATION", order: -1, slugs: introductorySteps },
-  { slug: "primeros-pasos", title: "Construye tus bases", description: "Después de Desde cero: aprende comparaciones, condiciones, listas, textos y bucles con actividades guiadas antes de combinar las ideas.", level: "BEGINNER", order: 0, slugs: foundationSteps },
-  { slug: "pensar-en-soluciones", title: "Conecta las ideas", description: "Después de Construye tus bases: conecta conjuntos y mapas, agrega y ordena arreglos, recorre matrices y practica búsqueda, recursión, pilas, colas y ventanas.", level: "INTERMEDIATE", order: 1, slugs: intermediateSteps },
+  { slug: "primeros-pasos", title: "Construye tus bases", description: "Decisiones, bucles, listas y funciones; comprende alcance, referencias, validación y pruebas antes de construir tu gestor de gastos.", level: "BEGINNER", order: 0, slugs: foundationSteps },
+  { slug: "pensar-en-soluciones", title: "Conecta las ideas", description: "Conjuntos y mapas, módulos y archivos reales: construye inventario y agenda, y conecta búsqueda, matrices, recursión y recorridos eficientes.", level: "INTERMEDIATE", order: 1, slugs: intermediateSteps },
   { slug: "un-paso-mas", title: "Ve un paso más allá", description: "Recursión avanzada, programación dinámica, árboles, grafos y estrategias voraces. Problemas que invitan a mirar desde otro ángulo.", level: "ADVANCED", order: 2, slugs: advancedSteps },
 ];
 

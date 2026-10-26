@@ -5,7 +5,7 @@ import { seedVersionContent } from "../prisma/editorial-revision";
 import { editorialSchema } from "../src/lib/editorial";
 import { distinctExamples } from "../src/lib/public-examples";
 
-test("los 136 retos no duplican casos y las entradas variables producen resultados distintos", () => {
+test("los 176 retos no duplican casos y las entradas variables producen resultados distintos", () => {
   for (const exercise of logicExercises) {
     assert.equal(new Set(exercise.tests.map(test => JSON.stringify([test.input, test.expected]))).size, exercise.tests.length, exercise.slug);
     const fixed = exercise.runtimeMode === "PROGRAM" && exercise.tests.every(test => test.input === "");

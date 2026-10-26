@@ -13,11 +13,17 @@ import { levels, languages } from "../src/lib/types";
 import { editorialSchema, publicationMetadataSchema } from "../src/lib/editorial";
 import { prerequisiteIssue } from "../src/lib/curriculum";
 import { functionBatch } from "../prisma/logic-validation";
+import { fundamentalsProjectLessons } from "../prisma/fundamentals-project-lessons";
 
-test("136 identidades nuevas cubren cuatro etapas sin heredar progreso hist처rico", () => {
-  assert.equal(logicExercises.length, 136);
-  assert.deepEqual(levels.map(level => logicExercises.filter(e => e.level === level).length), [28, 36, 36, 36]);
-  assert.equal(new Set(logicExercises.map(e => e.slug)).size, 136);
+// Los proyectos se comprueban archivo por archivo en fundamentals-content.test.ts.
+const singleFileExercises = logicExercises.filter(e => !fundamentalsProjectLessons.has(e.slug.replace(/^logica-/, "")));
+const declarations = `declare function require(name: "fs"): { readFileSync(fd: number, encoding: "utf8"): string };
+declare function require(name: "node:assert/strict"): { equal(actual: unknown, expected: unknown): void; deepEqual(actual: unknown, expected: unknown): void };`;
+
+test("176 identidades cubren cuatro etapas sin heredar progreso hist처rico", () => {
+  assert.equal(logicExercises.length, 176);
+  assert.deepEqual(levels.map(level => logicExercises.filter(e => e.level === level).length), [30, 57, 53, 36]);
+  assert.equal(new Set(logicExercises.map(e => e.slug)).size, 176);
   assert.ok(logicExercises.every(e => !historicalExercises.some(old => old.slug === e.slug)));
   assert.deepEqual(learningPaths.flatMap(p => p.slugs!), logicExercises.map(e => e.slug));
   for (const path of learningPaths) {
@@ -29,7 +35,7 @@ test("136 identidades nuevas cubren cuatro etapas sin heredar progreso hist처ric
     assert.equal(unit.readiness.length, 2);
     for (const language of languages) assert.ok(unit.examples[language].length > 20);
   }
-  assert.equal(curriculumUnits.length, 25);
+  assert.equal(curriculumUnits.length, 36);
 });
 
 test("las tres variantes comparten casos, contrato conceptual, orden y navegaci처n", () => {
@@ -53,15 +59,15 @@ test("las tres variantes comparten casos, contrato conceptual, orden y navegaci�
 
 test("las referencias y plantillas TypeScript nuevas compilan con strict sin ocultar errores", () => {
   const sources = new Map<string, string>();
-  for (const exercise of logicExercises) for (const [kind, code] of [["solution", exercise.typescript], ["starter", exercise.starters!.typescript]]) {
+  for (const exercise of singleFileExercises) for (const [kind, code] of [["solution", exercise.typescript], ["starter", exercise.starters!.typescript]]) {
     assert.ok(code, exercise.slug);
     assert.doesNotMatch(code!, /@ts-(?:nocheck|ignore)|\bany\b/, exercise.slug);
-    sources.set(`/logica-${exercise.slug}-${kind}.ts`, `export {};\ndeclare function require(name: "fs"): { readFileSync(fd: number, encoding: "utf8"): string };\n${code}\n${exercise.typescriptContract ?? ""}`);
+    sources.set(`/logica-${exercise.slug}-${kind}.ts`, `export {};\n${declarations}\n${code}\n${exercise.typescriptContract ?? ""}`);
   }
-  const functions = logicExercises.filter(e => e.runtimeMode !== "PROGRAM");
+  const functions = singleFileExercises.filter(e => e.runtimeMode !== "PROGRAM");
   for (let offset = 0; offset < functions.length; offset += 6) for (const kind of ["solution", "starter"] as const) {
     const batch = functionBatch("typescript", functions.slice(offset, offset + 6).map(e => ({ code: kind === "solution" ? e.typescript! : e.starters!.typescript!, typeContract: e.typescriptContract ?? "" })));
-    sources.set(`/logica-batch-${offset}-${kind}.ts`, `export {};\n${batch}`);
+    sources.set(`/logica-batch-${offset}-${kind}.ts`, `export {};\n${declarations}\n${batch}`);
   }
   const options: ts.CompilerOptions = { strict: true, noEmit: true, target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, types: [], skipLibCheck: true };
   const host = ts.createCompilerHost(options);
@@ -72,7 +78,7 @@ test("las referencias y plantillas TypeScript nuevas compilan con strict sin ocu
 });
 
 for (const language of ["javascript", "typescript"] as const) test(`las referencias ${language} superan los casos y sus plantillas funcionan sin resolverlos todos`, () => {
-  for (const exercise of logicExercises) {
+  for (const exercise of singleFileExercises) {
     let starterSolved = true;
     for (const kind of ["solution", "starter"] as const) {
       const source = kind === "solution" ? exercise[language]! : exercise.starters![language]!;
@@ -80,6 +86,7 @@ for (const language of ["javascript", "typescript"] as const) test(`las referenc
       for (const fixture of exercise.tests) {
         const lines: string[] = [];
         const context = vm.createContext({ data: structuredClone(fixture.input), console: { log: (...args: unknown[]) => lines.push(args.map(String).join(" ")) }, require: (name: string) => {
+          if (name === "node:assert/strict") return assert;
           assert.equal(name, "fs");
           return { readFileSync: () => String(fixture.input) };
         } });
@@ -95,7 +102,7 @@ for (const language of ["javascript", "typescript"] as const) test(`las referenc
 
 test("las referencias y plantillas Python nuevas usan los mismos casos", () => {
   // Solo referencias fijas del repositorio, nunca c처digo de estudiantes.
-  const driver = `import json, sys, io, contextlib
+  const driver = `import json, sys, io, contextlib, copy
 items = json.load(sys.stdin)
 for item in items:
  solved = True
@@ -107,7 +114,7 @@ for item in items:
    sys.stdin = io.StringIO(str(case['input']))
    with contextlib.redirect_stdout(capture):
     exec(code, scope)
-    actual = capture.getvalue() if item.get('runtimeMode') == 'PROGRAM' else scope['solve'](case['input'])
+    actual = capture.getvalue() if item.get('runtimeMode') == 'PROGRAM' else scope['solve'](copy.deepcopy(case['input']))
    if kind == 'solution':
     assert actual == case['expected'], (item['slug'], actual, case['expected'])
    elif actual != case['expected']: solved = False
@@ -116,19 +123,19 @@ for item in items:
   batch_scope = {}
   exec(item['batchedPython'], batch_scope)
   assert batch_scope['solve']([[case['input'] for case in item['tests']]]) == [[case['expected'] for case in item['tests']]], item['slug']
-print('136 referencias y plantillas Python comprobadas')`;
-  const data = logicExercises.map(e => ({ ...e, batchedPython: functionBatch("python", [{ code: e.python, typeContract: "" }]) }));
+print('Referencias y plantillas Python de un archivo comprobadas')`;
+  const data = singleFileExercises.map(e => ({ ...e, batchedPython: functionBatch("python", [{ code: e.python, typeContract: "" }]) }));
   const result = spawnSync(process.env.PYTHON_BIN || "python", ["-c", driver], { input: JSON.stringify(data), encoding: "utf8", timeout: 60000, maxBuffer: 8 * 1024 * 1024 });
   assert.equal(result.status, 0, `${result.error ?? ""}\n${result.stdout}\n${result.stderr}`);
 });
 
 test("la validaci처n por lotes conserva los resultados independientes y el aislamiento de nombres", () => {
-  const functions = logicExercises.filter(e => e.runtimeMode !== "PROGRAM");
+  const functions = singleFileExercises.filter(e => e.runtimeMode !== "PROGRAM");
   for (const language of ["javascript", "typescript"] as const) for (let offset = 0; offset < functions.length; offset += 6) {
     const batch = functions.slice(offset, offset + 6);
     const source = functionBatch(language, batch.map(e => ({ code: e[language]!, typeContract: e.typescriptContract ?? "" })));
     const code = language === "typescript" ? ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } }).outputText : source;
-    const context = vm.createContext({ data: structuredClone(batch.map(e => e.tests.map(t => t.input))), console: { log: () => {} } });
+    const context = vm.createContext({ data: structuredClone(batch.map(e => e.tests.map(t => t.input))), console: { log: () => {} }, require: (name: string) => { assert.equal(name, "node:assert/strict"); return assert; } });
     const actual = new vm.Script(`${code}\nsolve(data)`).runInContext(context, { timeout: 1000 });
     assert.deepEqual(JSON.parse(JSON.stringify(actual)), batch.map(e => e.tests.map(t => t.expected)));
   }

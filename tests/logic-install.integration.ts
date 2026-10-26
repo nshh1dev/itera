@@ -21,12 +21,12 @@ async function protectedState() {
   ]);
   return createHash("sha256").update(JSON.stringify(data)).digest("hex");
 }
-test("preparar 136 borradores es idempotente y conserva íntegro el estado activo y de estudiantes", async () => {
+test("preparar 176 borradores es idempotente y conserva íntegro el estado activo y de estudiantes", async () => {
   try {
     const before = await protectedState();
     await prepareLogicCatalog(db);
     assert.equal(await protectedState(), before, "La preparación no debe modificar datos de estudiantes ni el catálogo activo.");
-    assert.equal((await logicSnapshot(db)).length, 136);
+    assert.equal((await logicSnapshot(db)).length, 176);
     assert.equal(await prepareLogicCatalog(db), 0);
     assert.equal(await protectedState(), before);
     const stale = await logicSnapshot(db);
