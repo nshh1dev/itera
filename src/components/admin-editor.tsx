@@ -6,14 +6,15 @@ import { saveExercise, publishExerciseVersion, hideExercise } from "@/server/adm
 import { Button } from "./ui/button";
 import { Tabs,TabsList,TabsTrigger,TabsContent } from "./ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
-import { categories, languages, languageNames, levelNames, type Level } from "@/lib/types";
+import { categories, languages, languageNames, levelNames, type Language, type Level } from "@/lib/types";
 import { activityNames, type ActivityType, runtimeModeNames, type RuntimeMode } from "@/lib/types";
 import { conceptRules, conceptMessages, conceptLabels } from "@/lib/concept-validation";
 import { editorialHasChanges, readEditorialDraft } from "@/lib/editorial-draft";
+import { buildEditorialSavePayload } from "@/lib/editorial-payload";
 
 type EditorialVariant = { starter: string; solution: string; explanation: string; statement?: string; typeContract?: string };
 // published describe esta versión; exercisePublished controla la visibilidad de la ficha.
-export type EditorialData = { id?:string; versionId?:string; versionNumber?:number; published?:boolean; exercisePublished?:boolean; slug:string;title:string;description:string;statement:string;objective:string;prerequisites:string[];practiceGoals:string[];prerequisiteSlugs:string[];complexity:string;commonErrors:string[];activityType:ActivityType;runtimeMode:RuntimeMode;conceptRule?:string;category:string;level:Level;minutes:number;hints:string[];constraints:string[];python:EditorialVariant;javascript:EditorialVariant;typescript:EditorialVariant;tests:string };
+export type EditorialData = { id?:string; versionId?:string; versionNumber?:number; published?:boolean; exercisePublished?:boolean; slug:string;title:string;description:string;statement:string;objective:string;prerequisites:string[];practiceGoals:string[];prerequisiteSlugs:string[];complexity:string;commonErrors:string[];activityType:ActivityType;runtimeMode:RuntimeMode;conceptRule?:string;category:string;level:Level;minutes:number;hints:string[];constraints:string[];python:EditorialVariant;javascript:EditorialVariant;typescript:EditorialVariant;projects:Record<Language,string>;projectSolutions:Record<Language,string>;tests:string };
 
 const subscribe = () => () => {};
 const clientReady = () => true;
@@ -65,7 +66,7 @@ function AdminEditorReady({initial, userId}: {initial:EditorialData; userId:stri
   }, [dirty, busy, copy]);
 
   function preserve(value: EditorialData) {
-    try { const raw = JSON.stringify(value); if (raw.length > 300000) throw new Error("Copia demasiado grande"); sessionStorage.setItem(copyKey, raw); lastCopy.current = raw; setCopyError(""); }
+    try { const raw = JSON.stringify(value); if (raw.length > 10_000_000) throw new Error("Copia demasiado grande"); sessionStorage.setItem(copyKey, raw); lastCopy.current = raw; setCopyError(""); }
     catch { setCopyError("No se pudo conservar la copia de sesión. Descarga tus cambios antes de salir o recargar."); }
   }
   function field(key:keyof EditorialData,value:unknown){
@@ -89,11 +90,10 @@ function AdminEditorReady({initial, userId}: {initial:EditorialData; userId:stri
     busyRef.current = true;
     setBusy("save"); setMessage("");
     try {
-      let tests;
-      try { tests = JSON.parse(data.tests); }
-      catch { setMessage("Los casos de prueba no tienen un JSON válido."); return; }
       const lines = (items: string[]) => items.map(item => item.trim()).filter(Boolean);
-      const result = await saveExercise({ ...data, prerequisites: lines(data.prerequisites), practiceGoals: lines(data.practiceGoals), prerequisiteSlugs: lines(data.prerequisiteSlugs), commonErrors: lines(data.commonErrors), tests });
+      const payload = buildEditorialSavePayload(data);
+      if (!payload.data) { setMessage(payload.error); return; }
+      const result = await saveExercise({ ...payload.data, prerequisites: lines(data.prerequisites), practiceGoals: lines(data.practiceGoals), prerequisiteSlugs: lines(data.prerequisiteSlugs), commonErrors: lines(data.commonErrors) });
       if (result.error) setMessage(result.error);
       else {
         clearCopy();
@@ -163,9 +163,17 @@ function AdminEditorReady({initial, userId}: {initial:EditorialData; userId:stri
         <div><label className="field-label" htmlFor="constraints">Restricciones · una por línea</label><textarea className="field min-h-24" id="constraints" value={data.constraints.join("\n")} onChange={e=>field("constraints",e.target.value.split("\n"))}/></div>
       </TabsContent>
       <TabsContent value="tests" forceMount className="mt-6 data-[state=inactive]:hidden"><label className="field-label" htmlFor="tests">Casos de prueba en JSON</label><p className="mb-4 text-sm leading-7 text-muted-foreground">Hasta 10 casos compartidos por los tres lenguajes, con input, expected y visible. Sin entrada basta un ejemplo visible. Con entrada, incluye al menos tres casos distintos y alguna prueba oculta.</p><textarea id="tests" className="field min-h-80 font-mono text-xs leading-6" value={data.tests} onChange={e=>field("tests",e.target.value)} spellCheck={false}/></TabsContent>
-      {languages.map(language => <TabsContent forceMount key={language} value={language} className="mt-6 flex flex-col gap-5 data-[state=inactive]:hidden">
-        {(["statement", "starter", "solution", "explanation", "typeContract"] as const).filter(key => key !== "typeContract" || language === "typescript").map(key => <div key={key}><label className="field-label" htmlFor={`${language}-${key}`}>{key === "statement" ? "Enunciado adaptado (vacío usa el común)" : key === "starter" ? "Plantilla inicial" : key === "solution" ? "Solución de referencia" : key === "typeContract" ? "Contrato de tipos (obligatorio en funciones TypeScript)" : "Explicación y complejidad"}</label><textarea id={`${language}-${key}`} className="field min-h-40 font-mono text-xs leading-6" value={data[language][key] ?? ""} onChange={event=>field(language,{...data[language],[key]:event.target.value})} spellCheck={false}/></div>)}
-      </TabsContent>)}
+       {languages.map(language => <TabsContent forceMount key={language} value={language} className="mt-6 flex flex-col gap-5 data-[state=inactive]:hidden">
+         {(["statement", "starter", "solution", "explanation", "typeContract"] as const).filter(key => key !== "typeContract" || language === "typescript").map(key => <div key={key}><label className="field-label" htmlFor={`${language}-${key}`}>{key === "statement" ? "Enunciado adaptado (vacío usa el común)" : key === "starter" ? "Plantilla inicial" : key === "solution" ? "Solución de referencia" : key === "typeContract" ? "Contrato de tipos (obligatorio en funciones TypeScript)" : "Explicación y complejidad"}</label><textarea id={`${language}-${key}`} className="field min-h-40 font-mono text-xs leading-6" value={data[language][key] ?? ""} onChange={event=>field(language,{...data[language],[key]:event.target.value})} spellCheck={false}/></div>)}
+         <details className="rounded-lg bg-surface p-4">
+           <summary className="cursor-pointer text-sm font-medium">Proyecto multarchivo y solución privada</summary>
+           <p className="mt-2 text-sm leading-6 text-muted-foreground">JSON opcional por lenguaje. El manifiesto se comparte con estudiantes; la solución queda privada y solo se usa para validar/publicar. Déjalos vacíos en ejercicios de un archivo.</p>
+           <div className="mt-4 grid gap-4">
+             <div><label className="field-label" htmlFor={`${language}-project`}>Manifiesto público del proyecto</label><textarea id={`${language}-project`} className="field min-h-48 font-mono text-xs leading-6" value={data.projects[language]} onChange={event=>field("projects",{...data.projects,[language]:event.target.value})} spellCheck={false} aria-describedby={`${language}-project-help`}/><p id={`${language}-project-help`} className="mt-1 text-xs leading-5 text-muted-foreground">Incluye version, entrypoint, files y, si corresponde, testEntrypoint o verifyPersistence.</p></div>
+             <div><label className="field-label" htmlFor={`${language}-project-solution`}>Archivos de solución privada</label><textarea id={`${language}-project-solution`} className="field min-h-48 font-mono text-xs leading-6" value={data.projectSolutions[language]} onChange={event=>field("projectSolutions",{...data.projectSolutions,[language]:event.target.value})} spellCheck={false} aria-describedby={`${language}-solution-help`}/><p id={`${language}-solution-help`} className="mt-1 text-xs leading-5 text-muted-foreground">Arreglo JSON de archivos <code>{'{ "path": "...", "content": "..." }'}</code>; debe incluir cada archivo editable. No se envía al catálogo público.</p></div>
+           </div>
+         </details>
+       </TabsContent>)}
     </Tabs></div><div className="editorial-save"><p className="text-sm text-muted-foreground">Guarda antes de publicar.</p><Button disabled={!!busy && busy !== "save"} loading={busy === "save"} type="submit"><Save/>Guardar versión</Button></div></fieldset></form>
     {initial.versionId && <div className="mt-8 flex flex-wrap items-center gap-3 border-t pt-6"><Button variant="secondary" disabled={!!busy || dirty || !!copy} onClick={event=>{confirmTrigger.current=event.currentTarget;setConfirm("publish");}}><Upload/>Validar y publicar</Button>{initial.exercisePublished && <Button variant="ghost" disabled={!!busy || dirty || !!copy} onClick={event=>{confirmTrigger.current=event.currentTarget;setConfirm("hide");}}><EyeOff/>Ocultar</Button>}<p className="w-full text-xs text-muted-foreground">{copy ? "Recupera o descarta la copia de sesión antes de publicar u ocultar." : dirty ? "Guarda los cambios antes de publicar u ocultar el ejercicio." : `Se validan los tres lenguajes en Piston antes de publicar la ${savedVersion} guardada.`}</p></div>}
     <Dialog open={confirm !== null} onOpenChange={open => { if (!open && !busy) setConfirm(null); }}>

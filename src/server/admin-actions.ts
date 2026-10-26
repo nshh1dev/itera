@@ -15,6 +15,7 @@ import { checkConcept } from "./execution/concepts";
 import { editorialTestsIssue } from "@/lib/editorial-tests";
 import { validateExpectedProjectFiles, validateProjectDefinition, validateProjectPersistence, validateProjectSolution } from "@/lib/project";
 import { reportOperationalFailure } from "./operational-failure";
+import { editorialPayloadBytes, maximumEditorialPayloadBytes } from "@/lib/editorial-payload";
 
 async function checkPrerequisites(slug: string, slugs: string[]) {
   if (!slugs.length) return;
@@ -26,7 +27,7 @@ async function checkPrerequisites(slug: string, slugs: string[]) {
 
 export async function saveExercise(input: unknown) {
   const user = await requireAdmin();
-  if (JSON.stringify(input).length > 180000) return { error: "El contenido es demasiado grande." };
+  if (editorialPayloadBytes(input) > maximumEditorialPayloadBytes) return { error: "El contenido editorial supera el límite de 11 MiB." };
   const parsed = schema.safeParse(input);
   if (!parsed.success) return { error: parsed.error.issues.map(issue=>`${issue.path.join(".")}: ${issue.message}`).slice(0,3).join(" · ") };
   const data = parsed.data;

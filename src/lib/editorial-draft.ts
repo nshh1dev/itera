@@ -9,7 +9,7 @@ export function editorialHasChanges(data: EditorialData, initial: EditorialData)
 // contener campos vacíos, JSON incompleto o una referencia todavía sin terminar.
 export function readEditorialDraft(raw: string | null, initial: EditorialData): EditorialData | null {
   try {
-    if (!raw || raw.length > 300000) return null;
+    if (!raw || raw.length > 10_000_000) return null;
     const saved = JSON.parse(raw) as Record<string, unknown>;
     if (!saved || typeof saved !== "object") return null;
     const strings = ["slug", "title", "description", "statement", "objective", "complexity", "activityType", "runtimeMode", "category", "level", "tests"] as const;
@@ -25,11 +25,19 @@ export function readEditorialDraft(raw: string | null, initial: EditorialData): 
       if (["starter", "solution", "explanation"].some(key => typeof fields[key] !== "string")) return null;
       if (["statement", "typeContract"].some(key => fields[key] !== undefined && typeof fields[key] !== "string")) return null;
     }
+    for (const field of ["projects", "projectSolutions"] as const) {
+      const value = saved[field];
+      if (value === undefined) continue;
+      if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+      const byLanguage = value as Record<string, unknown>;
+      if (["python", "javascript", "typescript"].some(language => typeof byLanguage[language] !== "string")) return null;
+    }
     // Nunca restaurar identidad, permisos ni estado de publicación desde el navegador.
     const restored = { ...initial };
     for (const key of [...strings, ...arrays, "minutes", "conceptRule", "python", "javascript", "typescript"] as const) {
       Object.assign(restored, { [key]: saved[key] });
     }
+    for (const key of ["projects", "projectSolutions"] as const) if (saved[key] !== undefined) Object.assign(restored, { [key]: saved[key] });
     if (initial.id) restored.slug = initial.slug;
     return restored;
   } catch { return null; }

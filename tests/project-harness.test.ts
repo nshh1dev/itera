@@ -68,6 +68,7 @@ test("el harness legado declara require de node:assert/strict para funciones y f
   const legacy = executionFiles("typescript", "const assert = require('node:assert/strict');\nfunction solve(data: number): number { assert.equal(data, 1); return data; }", "FUNCTION");
   assert.ok(legacy[0].content.includes('declare function require(name: \\"node:assert/strict\\")'));
   const projectBatch = projectExecutionFiles("typescript", [{ path: "main.ts", content: "export function solve(data: number): number { const assert = require('node:assert/strict'); assert.equal(data, 1); return data; }" }], { version: 1, entrypoint: "main.ts", files: [{ path: "main.ts", content: "" }] }, "FUNCTION");
+  assert.match(projectBatch.find(file => file.name === "__itera_node.d.ts")!.content, /declare function require/);
   assert.match(projectBatch.find(file => file.name === "__itera_node.d.ts")!.content, /declare module "node:assert\/strict"/);
 });
 
