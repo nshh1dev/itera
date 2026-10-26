@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync, rmSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { spawnSync } from "node:child_process";
 import ts from "typescript";
@@ -9,6 +9,7 @@ import { fundamentalsProjectLessons } from "../prisma/fundamentals-project-lesso
 import { logicExercises } from "../prisma/logic-content";
 import { curriculumSlug, curriculumUnits } from "../src/lib/curriculum-v2";
 import { languages } from "../src/lib/types";
+import { validateExpectedProjectFiles, validateProjectDefinition, validateProjectPersistence } from "../src/lib/project";
 
 const originalKeys = `saludo dos-lineas orden-mensaje texto-calculo guarda-nombre guarda-cantidad actualiza-puntos intercambia suma-cantidades cambio precio-unidades parentesis lee-nombre lee-doble lee-suma mensaje-resultado numero-texto booleano igualdad alcanza retorno parametro dos-parametros imprimir-devolver minutos-segundos perimetro repara-presupuesto merienda elige-mensaje signo mayor-tres dos-requisitos alternativas tarifa uno-n cuenta-atras suma-uno-n tabla multiplos bucle-roto posicion indices suma-lista maximo cuenta-condicion filtra-lista longitud-texto minusculas vocales invierte elimina-caracter palabras ficha-producto ficha-resultado opcional ausencia auxiliares variable-local factorial fizzbuzz mediciones carrito notas saldo repetido deduplica frecuencias primer-unico anagramas agrupa-registros busqueda-lineal busqueda-binaria insercion-posicion ordena-insercion ordena-registros combina palindromo pareja prefijos intervalos-suma ventana-fija ventana-suma celda filas columnas diagonales transpuesta vecinos pila cola delimitadores deshacer suma-recursiva busqueda-recursiva une-intervalos segundo-maximo suma-maxima sin-repeticiones ranking inventario cuenta-nodos altura preorden niveles arbol-busqueda ancestro monticulo-inserta monticulo-extrae prioridad k-mayores actividades combina-archivos potencia mezcla subconjuntos permutaciones combinaciones reinas fibonacci escalera caminos-obstaculos monedas mochila subsecuencia-comun adyacencia alcanzables distancias ciclo-dirigido dependencias dijkstra islas laberinto capacidad edicion subsecuencia-creciente planifica-tareas`.split(" ");
 
@@ -59,7 +60,7 @@ test("los manifiestos públicos no contienen soluciones ni recursos privados y l
       assert.ok(project.files.every(f => !/\.\.|[\\/]/.test(f.path)), key);
       assert.ok(exercise.projectSolutions[language].every(f => project.files.some(p => p.path === f.path)), key);
       assert.notEqual(project.files.find(f => f.path === project.entrypoint)!.content, exercise.projectSolutions[language].find(f => f.path === project.entrypoint)!.content, key);
-      assert.deepEqual(Object.keys(project).sort(), ["version", "entrypoint", "files", ...(project.previousStep ? ["previousStep"] : []), ...(project.testEntrypoint ? ["testEntrypoint"] : [])].sort());
+      assert.deepEqual(Object.keys(project).sort(), ["version", "entrypoint", "files", ...(project.previousStep ? ["previousStep"] : []), ...(project.testEntrypoint ? ["testEntrypoint"] : []), ...(project.verifyPersistence ? ["verifyPersistence"] : [])].sort());
       if (project.previousStep) assert.ok(seen.has(project.previousStep), `${key}: predecesor existente anterior`);
     }
     seen.add(curriculumSlug(key));
@@ -97,11 +98,88 @@ test("los casos conservan expectativas independientes de archivos nuevos al comp
   assert.equal([...fundamentalsProjectLessons].filter(([, e]) => e.tests.some(t => t.expectedFiles?.length)).length, writers.length);
 });
 
+test("los tres hitos persistentes conservan sus expectativas y validan el contrato compartido", () => {
+  const persistent = ["inventario-persistente", "agenda-almacenamiento", "agenda-regresion"];
+  let cases = 0;
+  for (const [key, exercise] of fundamentalsProjectLessons) {
+    const composed = logicExercises.find(e => e.slug === curriculumSlug(key))!;
+    for (const language of languages) {
+      const project = validateProjectDefinition(exercise.projects[language]);
+      assert.equal(project.verifyPersistence, persistent.includes(key) ? true : undefined, key);
+      assert.deepEqual(composed.projects?.[language], project, key);
+      for (const fixture of composed.tests) {
+        validateProjectPersistence(project, "FUNCTION", fixture.input, fixture.expectedPersistence);
+        if (fixture.expectedFiles) validateExpectedProjectFiles(project, fixture.expectedFiles);
+      }
+    }
+    if (!persistent.includes(key)) continue;
+    for (const [index, fixture] of exercise.tests.entries()) {
+      assert.ok(fixture.expectedPersistence !== undefined, key);
+      assert.deepEqual(composed.tests[index].expectedPersistence, fixture.expectedPersistence, key);
+      assert.ok(fixture.expectedFiles?.length, key);
+      cases++;
+    }
+  }
+  assert.equal(cases, 11);
+  const rejection = fundamentalsProjectLessons.get("inventario-persistente")!.tests[2];
+  assert.deepEqual(rejection.expected, { stock: { pan: 3 }, rechazados: 1 });
+  assert.deepEqual(rejection.expectedPersistence, { stock: { pan: 3 }, rechazados: 0 });
+});
+
 const temporaryRoot = () => {
   const parent = resolve(".local", "curriculum-reference-tests");
   mkdirSync(parent, { recursive: true });
   return mkdtempSync(join(parent, "fixtures-"));
 };
+
+for (const language of languages) test(`persistencia ${language}: dos procesos nuevos comparten solo el disco de cada caso`, () => {
+  const root = temporaryRoot();
+  try {
+    let cases = 0;
+    for (const [key, exercise] of fundamentalsProjectLessons) {
+      const project = exercise.projects[language];
+      if (!project.verifyPersistence) continue;
+      for (const [index, fixture] of exercise.tests.entries()) {
+        const directory = join(root, `${key}-${index}`);
+        mkdirSync(directory);
+        // Solo referencias fijas; nunca código de alumnos fuera de Piston.
+        // Se materializan una vez: no se restaura ni recompila entre llamadas.
+        writeFileSync(join(directory, "package.json"), '{"type":"commonjs"}');
+        for (const file of exercise.projectSolutions[language]) {
+          const source = language === "typescript" && file.path.endsWith(".ts");
+          const path = source ? file.path.replace(/\.ts$/, ".js") : file.path;
+          const content = source ? ts.transpileModule(file.content, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } }).outputText : file.content;
+          writeFileSync(join(directory, path), content, "utf8");
+        }
+        const entrypoint = project.entrypoint.replace(/\.ts$/, ".js");
+        const driver = language === "python"
+          ? "import json, os, sys\nfrom main import solve\nprint(json.dumps({'pid': os.getpid(), 'actual': solve(json.load(sys.stdin))}))"
+          : `const loaded = require('./${entrypoint}'); const solve = typeof loaded === 'function' ? loaded : loaded.solve; console.log(JSON.stringify({pid: process.pid, actual: solve(JSON.parse(require('node:fs').readFileSync(0, 'utf8')))}));`;
+        const invoke = (input: unknown) => {
+          const child = spawnSync(language === "python" ? process.env.PYTHON_BIN || "python" : process.execPath, [language === "python" ? "-c" : "-e", driver], { cwd: directory, input: JSON.stringify(input), encoding: "utf8", timeout: 10000 });
+          assert.equal(child.status, 0, `${key}/${language}: ${child.error ?? ""}\n${child.stderr}`);
+          return JSON.parse(child.stdout) as { pid: number; actual: unknown };
+        };
+        const checkDisk = () => {
+          for (const file of fixture.expectedFiles!) assert.deepEqual(readFileSync(join(directory, file.path)), Buffer.from(file.content, "utf8"), `${key}: artefacto exacto`);
+          for (const file of project.files.filter(f => f.readOnly)) assert.deepEqual(readFileSync(join(directory, file.path)), Buffer.from(file.content, "utf8"), `${key}: recurso inicial intacto`);
+        };
+        const first = invoke(fixture.input);
+        assert.deepEqual(first.actual, fixture.expected, `${key}: primera llamada`);
+        checkDisk();
+        // spawnSync terminó el primer proceso. Este segundo no comparte módulos,
+        // cachés ni globals y no ejecuta pruebas propias que alteren el archivo.
+        const second = invoke([]);
+        assert.notEqual(first.pid, second.pid, `${key}: procesos distintos`);
+        assert.notEqual(second.pid, process.pid);
+        assert.deepEqual(second.actual, fixture.expectedPersistence, `${key}: recuperación en un proceso nuevo`);
+        checkDisk();
+        cases++;
+      }
+    }
+    assert.equal(cases, 11);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
 
 test("todos los archivos TypeScript de referencia y plantilla compilan en strict", () => {
   const root = temporaryRoot();
