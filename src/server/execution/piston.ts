@@ -4,6 +4,8 @@ import type { Json, Language, RuntimeMode } from "@/lib/types";
 import type { RunOutput } from "./judge";
 import { languageNames } from "@/lib/types";
 import { executionFiles, executionInput, executionOutput } from "./harness";
+import { projectExecutionFiles } from "./harness";
+import type { ProjectDefinition, ProjectFile } from "@/lib/project";
 import { pistonOrigin } from "@/lib/piston-url.mjs";
 import { runtimeLookupTimeoutMs, executionRequestTimeoutMs } from "@/lib/execution-limits";
 
@@ -18,7 +20,7 @@ function baseUrl() {
 }
 
 const runtimeSchema = z.array(z.object({ language: z.string(), version: z.string(), aliases: z.array(z.string()) }));
-const outputSchema = z.object({ stdout: z.string().max(65536), stderr: z.string().max(65536), code: z.number().nullable(), signal: z.string().nullable().optional(), status: z.string().nullable().optional() });
+const outputSchema = z.object({ stdout: z.string().max(262144), stderr: z.string().max(65536), code: z.number().nullable(), signal: z.string().nullable().optional(), status: z.string().nullable().optional() });
 
 export async function availableRuntime(language: Language) {
   try {
@@ -32,13 +34,13 @@ export async function availableRuntime(language: Language) {
   } catch (error) { throw error instanceof RunnerUnavailable ? error : new RunnerUnavailable(); }
 }
 
-export async function runCode(language: Language, runtime: {language:string;version:string}, code: string, input: Json, mode: RuntimeMode = "FUNCTION", typeContract = ""): Promise<RunOutput> {
-  const files = executionFiles(language, code, mode, typeContract);
-  const stdin = executionInput(input, mode);
+export async function runCode(language: Language, runtime: {language:string;version:string}, code: string, input: Json, mode: RuntimeMode = "FUNCTION", typeContract = "", project?: { definition: ProjectDefinition; files: readonly ProjectFile[]; purpose?: "tests" }): Promise<RunOutput> {
+  const files = project ? projectExecutionFiles(language, project.files, project.definition, project.purpose === "tests" ? "tests" : mode, typeContract) : executionFiles(language, code, mode, typeContract);
+  const stdin = project?.purpose === "tests" ? "" : executionInput(input, mode);
   try {
     const response = await fetch(`${baseUrl()}/api/v2/execute`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, signal: AbortSignal.timeout(executionRequestTimeoutMs(language)),
-      body: JSON.stringify({ ...runtime, files, stdin, run_timeout: language === "typescript" ? 12000 : 3000, run_cpu_time: language === "typescript" ? 10000 : 3000, compile_timeout: 8000, run_memory_limit: 268435456, compile_memory_limit: 268435456 }),
+      method: "POST", headers: { "Content-Type": "application/json" }, signal: AbortSignal.timeout(executionRequestTimeoutMs(language, !!project?.definition.verifyPersistence)),
+       body: JSON.stringify({ ...runtime, files, stdin, run_timeout: language === "typescript" || (project && mode === "PROGRAM") ? 12000 : project?.definition.verifyPersistence ? 20000 : 3000, run_cpu_time: language === "typescript" || (project && mode === "PROGRAM") || project?.definition.verifyPersistence ? 10000 : 3000, compile_timeout: 8000, run_memory_limit: 268435456, compile_memory_limit: 268435456 }),
     });
     if (!response.ok) throw new RunnerUnavailable("Piston no pudo evaluar el programa. Comprueba los lenguajes instalados y vuelve a intentarlo.");
     const payload = await response.json();

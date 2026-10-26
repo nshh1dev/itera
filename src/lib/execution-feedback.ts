@@ -1,5 +1,6 @@
 export function executionFeedback(status: string, error = "") {
   if (status === "timeout") return "El programa tardó demasiado. Revisa si un bucle termina y si puedes evitar trabajo repetido.";
+  if (status === "assertion") return "Una aserción de tus pruebas propias falló. Revisa su entrada, el resultado obtenido y el esperado.";
   if (/SyntaxError|IndentationError|TabError/.test(error)) return "Hay un problema de sintaxis. Revisa la línea indicada, los signos y la sangría.";
   if (/NameError|ReferenceError/.test(error)) return "No se reconoce un nombre. Comprueba cómo lo escribiste y si tiene un valor antes de usarlo.";
   if (/error TS\d+/.test(error)) return "TypeScript no pudo compilar el programa. Revisa los tipos y la línea indicada antes de volver a ejecutar.";

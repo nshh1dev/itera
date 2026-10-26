@@ -13,11 +13,11 @@ export function ActivityList({ entries, compact = false }: { entries: Activity[]
   </div>;
   return <ul className={compact ? "flex flex-col gap-1" : "flex max-w-4xl flex-col gap-2"}>{entries.map(item => {
     const solved = item.status === "PASSED" && item.mode === "submit";
-    const status = item.status === "PASSED" ? solved ? "Resuelto" : "Ejemplos correctos" : item.status === "FAILED" ? `${item.passedCount}/${item.totalCount} pruebas` : item.status === "RUNNING" ? "En proceso" : "Sin evaluar";
+    const status = item.mode === "tests" ? item.status === "PASSED" ? "Pruebas propias finalizadas; no acreditan el ejercicio" : item.status === "FAILED" ? "Fallaron las pruebas propias" : item.status === "RUNNING" ? "Pruebas propias en proceso" : "Pruebas propias sin evaluar" : item.status === "PASSED" ? solved ? "Resuelto" : "Ejemplos correctos" : item.status === "FAILED" ? `${item.passedCount}/${item.totalCount} pruebas` : item.status === "RUNNING" ? "En proceso" : "Sin evaluar";
     const archived = item.variant.version.exercise.published === false;
     return <li key={item.id}><Link href={archived ? "/progreso#historial-anterior" : `/ejercicios/${item.variant.version.exercise.slug}?lenguaje=${item.variant.language}`} className="list-entry items-start gap-3">
       {solved ? <Check className="mt-0.5 size-4 shrink-0 text-success-text" aria-hidden="true" /> : <Circle className="mt-1 size-3 shrink-0 text-muted-foreground" aria-hidden="true" />}
-      <div className="min-w-0 flex-1"><p className="text-sm font-medium">{item.variant.version.title}</p><p className="mt-1 text-xs text-muted-foreground">{languageNames[item.variant.language as Language]} · {item.mode === "submit" ? "Comprobación" : "Ejemplos"}{archived ? " · Catálogo anterior" : ""}</p><p className="mt-1.5 text-xs text-muted-foreground">{status}</p></div>
+      <div className="min-w-0 flex-1"><p className="text-sm font-medium">{item.variant.version.title}</p><p className="mt-1 text-xs text-muted-foreground">{languageNames[item.variant.language as Language]} · {item.mode === "submit" ? "Comprobación" : item.mode === "tests" ? "Pruebas propias" : "Ejemplos"}{archived ? " · Catálogo anterior" : ""}</p><p className="mt-1.5 text-xs text-muted-foreground">{status}</p></div>
       <div className="shrink-0 text-right"><time dateTime={item.createdAt.toISOString()} className="mt-1 block text-xs text-muted-foreground">{new Intl.DateTimeFormat("es", { day: "numeric", month: "short", timeZone: "UTC" }).format(item.createdAt)}</time></div>
     </Link></li>;
   })}</ul>;

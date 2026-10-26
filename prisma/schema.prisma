@@ -202,6 +202,8 @@ model ExerciseVariant {
   explanation String
   statement   String @default("")
   typeContract String @default("")
+  project     Json?
+  solutionFiles Json?
   version     ExerciseVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
   tests       TestCase[]
   drafts      Draft[]
@@ -215,6 +217,8 @@ model TestCase {
   variantId String
   input     Json
   expected  Json
+  expectedFiles Json?
+  expectedPersistence Json?
   explanation String @default("")
   visible   Boolean @default(false)
   order     Int
@@ -227,6 +231,7 @@ model Draft {
   userId    String
   variantId String
   code      String
+  files     Json?
   revision  Int @default(1)
   updatedAt DateTime @updatedAt
   user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -239,6 +244,7 @@ model Submission {
   userId         String
   variantId      String
   code           String
+  files          Json?
   mode           String
   diagnosticItemId String?
   diagnosticItem DiagnosticItem? @relation(fields: [diagnosticItemId], references: [id], onDelete: Cascade)

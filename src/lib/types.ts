@@ -14,6 +14,6 @@ export const runtimeModeNames: Record<RuntimeMode, string> = { FUNCTION: "Funci√
 // output es la salida del programa (stdout). En modo FUNCTION recoge solo los
 // print de depuraci√≥n; en modo PROGRAM es lo que se compara. Nunca se incluye
 // para pruebas ocultas.
-export type TestResult = { index: number; visible: boolean; passed: boolean; status: "passed" | "wrong" | "runtime" | "timeout"; input?: Json; expected?: Json; actual?: Json; output?: string; error?: string };
+export type TestResult = { index: number; visible: boolean; passed: boolean; status: "passed" | "wrong" | "runtime" | "timeout" | "assertion"; input?: Json; expected?: Json; actual?: Json; expectedFiles?: { path: string; content: string }[]; actualFiles?: { path: string; content: string }[]; output?: string; error?: string };
 export type ExecutionResult = { id: string; status: string; mode: string; passedCount: number; totalCount: number; results: TestResult[]; message?: string | null };
 export type ExerciseCard = { id: string; slug: string; category: string; order: number; title: string; description: string; level: Level; minutes: number; runtimeMode: RuntimeMode; solved: boolean; started: boolean; solvedOther: boolean; practiceGoals?: string[]; activityType?: string; lastActivityAt?: string };

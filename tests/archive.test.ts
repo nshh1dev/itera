@@ -13,3 +13,12 @@ test("los intentos retirados enlazan al historial y no a un ejercicio inexistent
   item.variant.version.exercise.published = true;
   assert.match(renderToStaticMarkup(ActivityList({ entries: [item] })), /\/ejercicios\/reto-anterior\?lenguaje=python/);
 });
+
+test("las pruebas propias recientes no se presentan como ejemplos ni como progreso", () => {
+  const item: Activity = { id: "own-tests", status: "PASSED", mode: "tests", createdAt: new Date("2026-10-26T12:00:00Z"), passedCount: 1, totalCount: 1,
+    variant: { language: "python", version: { title: "Proyecto", exercise: { slug: "proyecto", published: true } } } };
+  const html = renderToStaticMarkup(ActivityList({ entries: [item] }));
+  assert.match(html, /Pruebas propias/);
+  assert.match(html, /no acreditan el ejercicio/);
+  assert.doesNotMatch(html, /Resuelto|Ejemplos correctos/);
+});
