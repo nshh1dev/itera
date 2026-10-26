@@ -10,13 +10,13 @@ La teoría ya no repite el objetivo general del módulo ni instrucciones de cier
 
 Las condiciones necesarias se leen junto al enunciado, también sin JavaScript. El historial de hasta cinco intentos del ejercicio y lenguaje actuales pasa a **Resultados**, después del resultado actual y inicialmente plegado. Se conserva el componente compartido de actividad, el filtrado del servidor, el comportamiento de ejecución y los controles del editor.
 
-## Verificación — 20 de octubre de 2026
+## Comprobaciones
 
-- Pruebas unitarias: **104 aprobadas**, incluyendo deduplicación, ausencia de contenido, escape de HTML y estructura sin desplegables anidados.
-- Build, TypeScript y ESLint de `src` y `tests`: aprobados. No se ejecutó lint global sobre las herramientas locales sin seguimiento; en entregas previas contiene avisos ajenos a la aplicación.
-- E2E focalizadas: **63 aprobadas**, con tres lenguajes, móvil, escritorio, ventanas bajas, claro/oscuro, teclado, movimiento reducido y persistencia del editor y de las pistas. Incluyen el historial plegado en Resultados sin desplazar la ejecución actual.
-- Confirmación global: **114 aprobadas, una fallida y una dependiente no ejecutada**. El fallo previo de `ux-polish.spec.ts` se reproduce al crear la cuenta temporal: Better Auth responde **429, Too many requests**. Ese archivo aprobó sus seis pruebas en el lote separado anterior; no se deshabilita la protección de autenticación para ocultar el fallo. No se presenta la ejecución global como completamente aprobada.
-- Tras la confirmación se reforzaron dos casos unitarios de deduplicación: mantener operadores distintos y omitir hijos vacíos en una guía sin contenido. No cambian los recorridos con contenido comprobados en navegador.
-- Capturas locales revisadas: `.local/screenshots/r1-*.png` y `.local/screenshots/help-inline-*.png`. Muestran contenido de prueba temporal, no datos de estudiantes.
-- Las E2E utilizan el doble HTTP de Piston; no comprueban ejecución real ni aislamiento. No se ejecutaron las suites del runner real ni se inició Docker, al no cambiar código del ejecutor.
-- Sin migraciones, dependencias nuevas ni cambios de casos, soluciones, borradores o progreso. Los servidores temporales de E2E se cierran al finalizar.
+Las regresiones cubren deduplicación conservadora, operadores distintos, campos
+vacíos, escape de HTML y estructura sin desplegables anidados. Los recorridos de
+navegador cubren tres lenguajes, móvil/escritorio, ambos temas, teclado, movimiento
+reducido y persistencia del editor, pistas e historial plegado.
+
+Las E2E con doble HTTP no verifican ejecución real ni aislamiento. No desactivar
+el limitador de autenticación para ocultar un 429 al crear cuentas temporales.
+Procedimientos y resultados generales: [verification.md](verification.md).

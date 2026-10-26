@@ -8,9 +8,9 @@ resultado** conecta la portada con el espacio de práctica. Se conservan la pale
 monocromática, el azul para acciones, el verde para éxito, Geist y Geist Mono
 locales. No se añaden dependencias, materiales translúcidos ni servicios externos.
 
-La skill `apple-design`, instalada solo en el proyecto, se empleó como referencia
-de claridad, jerarquía, legibilidad y feedback. Itera sigue siendo una web: no se
-imitan ventanas nativas ni se eliminan los controles de apariencia del navegador.
+Se priorizan claridad, jerarquía, legibilidad y feedback. Itera sigue siendo una
+web: no se imitan ventanas nativas ni se eliminan los controles de apariencia
+del navegador.
 
 ## Cambios
 
@@ -52,8 +52,8 @@ imitan ventanas nativas ni se eliminan los controles de apariencia del navegador
 - **Errores:** mensajes directos y acciones de recuperación.
 
 El sistema de movimiento que acompaña al rediseño se documenta aparte en
-`docs/motion.md`: tiempos compartidos entre CSS y Web Animations, paneles que se
-abren desde su control de origen, transiciones breves de navegación y respeto de
+`docs/motion.md`: componentes locales sobre Motion y Radix, tiempos compartidos,
+transiciones breves de navegación y respeto de
 `prefers-reduced-motion`.
 
 ## Fundamento de diseño
@@ -84,14 +84,10 @@ de cuenta temporal, continuación del borrador y capturas están en
 
 ### Referencias del rediseño inicial
 
-Referencias consultadas dentro de la skill:
-
-- `typography.md › Ensuring legibility`: “Use font sizes that most people can read easily.”
-- `layout.md › Visual hierarchy`: “Order content by relative importance.”
-- `layout.md › Adaptability`: “Be prepared for text-size changes.”
-- `writing.md › Best practices`: “Be action oriented.”
-- `feedback.md › Best practices`: “Consider integrating status feedback into your interface.”
-- `branding.md › Best practices`: “Ensure branding always defers to content.”
+Se tomaron como referencia las Human Interface Guidelines de Apple: legibilidad,
+jerarquía visual, adaptación al tamaño del texto, redacción orientada a acciones,
+feedback de estado y marca subordinada al contenido. Estas decisiones no requieren
+una skill instalada para mantenerse.
 
 La agrupación por módulos, la ausencia de números en el catálogo y el tratamiento
 de entrada/código/resultado son decisiones específicas de Itera, no exigencias de
@@ -118,32 +114,7 @@ La suite E2E existente cubre además guardado, concurrencia de borradores, regis
 recuperación, progreso, Monaco, navegación móvil y publicación editorial con un
 doble HTTP de Piston. No verifica aislamiento ni ejecución real.
 
-Comprobaciones de la entrega (16 de octubre de 2026):
-
-- `npm run build`: aprobado.
-- `npm run typecheck`: aprobado.
-- `npm test`: 79 pruebas aprobadas, incluidas cinco nuevas de diseño y resultados.
-- `npm run lint`: sin errores; tres avisos previos en plantillas de una skill local,
-  fuera del código de la aplicación.
-- `ITERA_E2E_PRODUCTION=1 npm run test:e2e`: 85 pruebas aprobadas, sin omisiones,
-  sobre el build de producción. Incluye 13 pruebas de rediseño: cinco tamaños,
-  dos temas, ampliación de texto, teclado y taller a 650 px de alto con Monaco cargado.
-- `npm run test:runner`: una prueba del ejecutor ausente aprobada y siete omitidas
-  porque Piston y su runtime TypeScript no están disponibles. No es una validación
-  del sandbox real.
-
-La matriz detectó y permitió corregir desbordamientos con texto ampliado en
-botones de portada, cabecera, filas del catálogo y paginación. No se resolvieron
-ocultando contenido: se eliminaron mínimos intrínsecos innecesarios y se permitió
-el reflujo.
-
-Las ejecuciones anteriores detectaron selectores acoplados a la composición antigua
-(titular de portada, enunciado como hijo directo y recuento de enlaces que incluía el
-nuevo acceso rápido). Se actualizaron conservando las verificaciones del texto
-publicado, orden y cantidad de ejercicios. La navegación al primer ejercicio espera
-la URL de destino antes de buscar su encabezado, evitando coincidencias transitorias
-con la ruta de origen. La suite completa aprobó después de estos ajustes.
-
-Pendiente de evaluación manual en dispositivos reales: NVDA/VoiceOver, zoom nativo,
-teclado virtual, navegadores distintos de Chromium y percepción de contraste bajo
-distintas condiciones de iluminación. No se declara conformidad WCAG completa.
+El zoom nativo de Chromium se verifica por separado; preparación y límites en
+[browser-interaction.md](browser-interaction.md). Los resultados se resumen en
+[verification.md](verification.md). No se declara conformidad WCAG completa ni
+evaluación con lectores de pantalla, dispositivos físicos o todos los navegadores.

@@ -11,7 +11,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Alcance y mantenimiento de estas instrucciones
 
 - Mantener este archivo por debajo de **180 líneas**, incluido el bloque generado por Next.js. No modificar ese bloque; conservar nuestras instrucciones en español.
-- Incluir reglas vigentes y particularidades del proyecto. Guardar explicaciones extensas e historial de verificaciones en `docs/`, sin duplicarlos aquí.
+- Incluir reglas vigentes y particularidades del proyecto. Guardar guías y límites de verificación en `docs/`, sin duplicarlos aquí; consultar diarios antiguos en el historial de Git en lugar de acumularlos de nuevo.
 - Resolver cada tarea con el menor cambio necesario. Acordar antes renombrados, reestructuraciones, cambios de dependencias o arreglos independientes que no sean necesarios para la tarea.
 - Preservar el trabajo ajeno, incluidos archivos sin seguimiento. Investigar cambios desconocidos antes de sobrescribirlos o eliminarlos.
 

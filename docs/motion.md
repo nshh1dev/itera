@@ -92,7 +92,7 @@ La prueba comprueba límites de suscripciones y reajustes para evitar regresione
 
 La revisión posterior autorizada ejecutó pruebas unitarias, tipos, build y
 recorridos de navegador. Resultados actuales y límites en
-[verification.md](verification.md#revisión-de-uiarc-y-rendimiento-20-de-octubre-de-2026).
+[verification.md](verification.md).
 
 Las pestañas conservan el scroll horizontal para teclado/pantallas estrechas,
 sin barra visible ni scroll vertical durante el movimiento del indicador. Los
@@ -107,19 +107,3 @@ breve, no una interpolación de altura. Se reserva espacio de scrollbar para no 
 la anchura al cargar la solución. Sus dos paneles permanecen montados mientras está abierto:
 volver a Pistas no repite la aparición de pistas ya descubiertas. Solo el panel
 activo es visible y accesible; cerrar y reabrir conserva la animación del diálogo.
-
-### Entrega inicial (histórico)
-
-Por petición expresa del usuario, no se ejecutaron pruebas, lint, comprobación
-de tipos, build, detector de diseño ni aplicación. La revisión fue estática:
-lectura de código, referencias, selectores y diff. Las expectativas existentes
-se adaptaron al sistema nuevo, pero no se han ejecutado.
-
-Pendiente verificar en navegador ambos temas, móvil/escritorio, navegación por
-teclado, cierres rápidos, movimiento reducido inicial y sobrevenido, foco de
-Configuración y conservación del nodo/cursor de Monaco. No se afirma fluidez
-medida, accesibilidad auditada ni ejecución real comprobada.
-
-Durante la instalación, npm informó de cinco vulnerabilidades de severidad
-alta. No se aplicó `audit fix --force` ni se ampliaron dependencias ajenas a esta
-migración. Es un aviso pendiente de diagnóstico separado, no una prueba aprobada.

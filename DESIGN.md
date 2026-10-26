@@ -318,6 +318,12 @@ son de 1 px y siempre suaves; ningún borde lateral grueso marca tarjetas ni avi
 
 ## Components
 
+Las decisiones siguientes se mantienen como documentación del proyecto, sin
+depender de herramientas de diseño instaladas. Las fuentes de verdad son los
+tokens de `src/app/globals.css` y los componentes locales. Conservar filtros
+útiles, Geist/Geist Mono y el espacio de trabajo compacto; no rediseñar pantallas
+como parte de una limpieza de herramientas.
+
 ### Buttons
 
 - **Shape:** rectángulo redondeado de 12 px, altura mínima 44 px en móvil y 40 px

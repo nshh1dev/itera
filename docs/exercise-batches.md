@@ -38,7 +38,7 @@ Las versiones publicadas anteriores a la ampliación quedaron con la guía de ap
 
 Las once identidades reclasificadas conservan en la base local su nivel publicado anterior (37/45/38) porque cambiarlo exige una nueva versión publicada, y la publicación valida referencias en Piston. El origen y las rutas ya reflejan 45/40/35. Cuando el sandbox vuelva a estar disponible, cada identidad afectada debe prepararse y publicarse desde administración.
 
-Verificaciones y resultados: [verification.md](verification.md#currículo-completo-120-actividades).
+Procedimientos y límites de verificación: [verification.md](verification.md).
 
 ## Compatibilidad y puesta en uso
 
@@ -64,7 +64,7 @@ No se cambian IDs, progreso, envíos ni borradores de estudiantes. Las variantes
 
 La migración aditiva está aplicada. Las doce revisiones están disponibles para importar desde administración, **no publicadas automáticamente**. Docker y Piston no estaban disponibles: no se debe confundir la verificación de referencias fijas del repositorio o el doble HTTP E2E con validación real del sandbox. Los mensajes históricos de metadatos ausentes seguirán en las versiones públicas antiguas hasta publicar sus revisiones.
 
-Verificaciones y resultados: [verification.md](verification.md#lote-r1-contenido-educativo-inicial).
+Procedimientos y límites de verificación: [verification.md](verification.md).
 
 ## Revisión editorial pendiente
 

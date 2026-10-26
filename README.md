@@ -224,6 +224,17 @@ La paleta se centraliza en `src/app/globals.css`. Los componentes consumen token
 
 `.env`, `.local`, los binarios de Monaco, dependencias y builds están excluidos de Git. Se versionan código, lockfile, migraciones y el catálogo editorial; nunca sesiones, credenciales ni borradores.
 
+Las skills de agentes y los informes de herramientas de diseño no son necesarios
+para ejecutar Itera. Las decisiones útiles se conservan en `PRODUCT.md`, `DESIGN.md`
+y las guías de `docs/`, cuyo [índice](docs/README.md) agrupa la documentación vigente.
+Los diarios antiguos siguen disponibles en el historial de Git.
+
+Para limpiar residuos, retirar solo resultados, capturas, registros y cachés
+identificados. No borrar `.local` en bloque: contiene la base nativa, respaldos,
+correo de recuperación, credenciales de desarrollo, configuración Docker y
+posibles copias de trabajo de Git. `.next` y `node_modules` son archivos generados,
+pero se conservan en esta limpieza para mantener la instalación preparada.
+
 Estrategia: `main` estable, ramas cortas `feat/...` y `fix/...`, commits pequeños con prefijos `feat:`, `fix:`, `docs:` y `chore:`. La versión inicial es `0.1.0`.
 
 El código se versiona en [github.com/nshh1dev/itera](https://github.com/nshh1dev/itera). La aplicación sigue ejecutándose localmente; el repositorio no despliega un sitio web ni contiene tu base de datos.

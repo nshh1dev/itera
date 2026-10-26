@@ -1,6 +1,4 @@
-# Product
-
-<!-- impeccable:product-schema 1 -->
+# Producto
 
 ## Platform
 
@@ -101,11 +99,9 @@ sujetas a revisión caso por caso con el responsable del proyecto.
   `src/components/ui/`.
 - Verificaciones registradas en `docs/verification.md`, con sus límites
   declarados.
-- Evidencia histórica de ejecución real: `docs/verification.md` registra activación
-  del currículo y comprobaciones con Piston, incluidas ocho pruebas del adaptador
-  y ocho recorridos en Docker el 21 de octubre de 2026. No son mediciones actuales
-  ni una garantía absoluta de aislamiento. En las mejoras del 26 de octubre,
-  Piston permanece apagado y su medición de duración efectiva sigue pendiente.
+- Evidencia de ejecución real: `docs/fundamentos.md` registra la activación del
+  currículo ampliado en Docker; `docs/runner-timing.md` documenta la medición del
+  26 de octubre de 2026. No garantiza aislamiento absoluto ni rendimiento bajo carga.
 - Ausencias que no deben inventarse: no hay testimonios, clientes, métricas de
   aprendizaje ni observaciones con principiantes reales registradas.
 

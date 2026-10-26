@@ -54,3 +54,14 @@ borradores, soluciones, intentos ni finalizaciones existentes.
 Resolver mide finalización de práctica, no dominio. La interfaz evita interpretar
 los intentos, la ayuda consultada o las barras de avance como una evaluación de
 conocimientos.
+
+## Orientación y recuperación
+
+Los resúmenes de habilidades también se incluyen en la búsqueda del catálogo.
+Las rutas retoman el pendiente iniciado más reciente y señalan su módulo; sus
+cierres y repasos orientan sin bloquear ni conceder progreso.
+
+La recuperación conserva ejercicio, lenguaje y ruta al volver a iniciar sesión.
+Los mensajes distinguen borradores del navegador, datos de la instalación y
+recuperación local de cuenta, sin prometer correo enviado ni copia en la nube.
+Progreso distingue visitantes, cuentas nuevas y cuentas con borradores sin intentos.
