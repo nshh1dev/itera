@@ -3,8 +3,8 @@
 ## Prioridades vigentes — 26 de octubre de 2026
 
 - Terminar las mejoras de fiabilidad y aprendizaje: cierre/repaso de rutas con
-  `readiness`, primera diferencia textual de PROGRAM solo con datos visibles y
-  verificación de teclado, temas, móvil, movimiento reducido y zoom al 200 %.
+  `readiness` y verificación global de teclado, temas, móvil, movimiento reducido
+  y zoom al 200 %.
 - Medir duración efectiva con Piston real. Los últimos cambios de caducidad se
   comprobaron con reloj simulado y doble HTTP; no dar por repetidas las pruebas
   históricas del ejecutor. Docker solo se inicia con autorización.
@@ -17,7 +17,9 @@
 El currículo vigente tiene 136 ejercicios en cuatro rutas y tres lenguajes.
 La recuperación de borradores, el seguimiento idempotente, la separación de estados
 editoriales y los diagnósticos inconclusos ya se corrigieron. La carga de Inicio
-comparte metadatos sin compartir progreso entre lenguajes. Los resultados actuales
+comparte metadatos sin compartir progreso entre lenguajes. La primera diferencia
+textual de PROGRAM ya está implementada: solo usa datos visibles y respeta la
+normalización del evaluador. Las verificaciones actuales
 y sus límites se registran en [verification.md](verification.md); el plan de trabajo
 temporal se conserva localmente hasta terminar la implementación.
 

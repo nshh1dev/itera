@@ -48,3 +48,31 @@ export function firstDifference(expected: Json, actual: Json): FirstDifference |
   if (expected !== actual) return { path: "", kind: "value", message: `Se esperaba ${preview(expected)} y recibiste ${preview(actual)}.` };
   return null;
 }
+
+export type FirstTextDifference = { line: number; column: number; message: string };
+
+function describeCharacter(character: string | undefined): string {
+  if (character === undefined) return "el final de la salida";
+  if (character === "\n") return "un salto de línea";
+  if (character === " ") return "un espacio";
+  if (character === "\t") return "una tabulación";
+  if (/\s/u.test(character)) return `el carácter U+${character.codePointAt(0)!.toString(16).toUpperCase().padStart(4, "0")}`;
+  return JSON.stringify(character);
+}
+
+// Misma normalización que judgeProgram, verificada por las pruebas de paridad.
+// Las columnas cuentan puntos Unicode desde 1, no unidades UTF-16 ni píxeles.
+// Solo se invoca en el cliente, después de filtrar los casos visibles.
+export function firstTextDifference(expected: string, actual: string): FirstTextDifference | null {
+  const characters = (text: string) => Array.from(text.replace(/\r\n?/g, "\n").split("\n").map(line => line.trimEnd()).join("\n").trimEnd());
+  const wanted = characters(expected);
+  const received = characters(actual);
+  let line = 1;
+  let column = 1;
+  for (let index = 0; index < Math.max(wanted.length, received.length); index++) {
+    if (wanted[index] !== received[index]) return { line, column, message: `En la línea ${line}, columna ${column}: se esperaba ${describeCharacter(wanted[index])} y recibiste ${describeCharacter(received[index])}.` };
+    if (wanted[index] === "\n") { line++; column = 1; }
+    else column++;
+  }
+  return null;
+}

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Check, CircleX, Loader2, Terminal, LockKeyhole, ArrowRight, Info, ChevronDown, ChevronUp } from "lucide-react";
 import { memo, useId } from "react";
 import type { ExecutionResult, Json, RuntimeMode } from "@/lib/types";
-import { firstDifference } from "@/lib/json-diff";
+import { firstDifference, firstTextDifference } from "@/lib/json-diff";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { MotionRegion } from "@/components/motion-region";
@@ -31,7 +31,15 @@ export const Results = memo(function Results({ result, busy, error, notice, next
             {result.status === "PASSED" ? <Check className="mt-0.5 size-5 shrink-0 text-success-text" aria-hidden="true" /> : result.status === "ERROR" ? <Info className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden="true" /> : <CircleX className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden="true" />}
             <div><h3 className="text-sm font-medium">{result.status === "PASSED" ? result.mode === "submit" ? diagnostic ? "Reto de diagnóstico superado." : "Un paso más. Ejercicio resuelto." : "Los ejemplos funcionan." : result.status === "ERROR" ? "La evaluación se interrumpió." : result.message && result.passedCount === result.totalCount ? "La salida coincide; falta aplicar el concepto." : "Tu solución todavía puede mejorar."}</h3><p className="mt-1 text-sm leading-6 text-muted-foreground">{result.status === "PASSED" ? result.mode === "submit" ? diagnostic ? "Este resultado orienta tu recomendación; no completa el ejercicio de práctica." : "Tu progreso está guardado. Quédate con lo que aprendiste." : "Comprobar solución revisa todos los casos y, en prácticas guiadas, el concepto solicitado. Ejecutar ejemplos no completa el ejercicio." : result.message || "Revisa el resultado y prueba una nueva idea."}</p></div>
           </div>
-          <div className="mt-4 flex flex-col gap-2">{result.results.filter(r => r.visible).map((test, visibleIndex) => { const asText = runtimeMode === "PROGRAM"; const diff = !asText && !test.passed && "actual" in test ? firstDifference(test.expected as Json, test.actual as Json) : null; const plain = (value: Json | undefined) => String(value ?? ""); return <Disclosure key={test.index} defaultOpen={visibleIndex === 0 || !test.passed} className="result-case rounded-lg bg-control px-3" triggerClassName="text-xs" title={<>
+          <div className="mt-4 flex flex-col gap-2">{result.results.filter(r => r.visible).map((test, visibleIndex) => {
+            const asText = runtimeMode === "PROGRAM";
+            const plain = (value: Json | undefined) => String(value ?? "");
+            const diff = !test.passed && "actual" in test
+              ? asText
+                ? test.status === "wrong" && typeof test.actual === "string" ? firstTextDifference(plain(test.expected), test.actual) : null
+                : firstDifference(test.expected as Json, test.actual as Json)
+              : null;
+            return <Disclosure key={test.index} defaultOpen={visibleIndex === 0 || !test.passed} className="result-case rounded-lg bg-control px-3" triggerClassName="text-xs" title={<>
               {test.passed ? <Check className="size-3.5 shrink-0 text-success-text" aria-hidden="true" /> : <CircleX className="size-3.5 shrink-0 text-destructive" aria-hidden="true" />}Ejemplo {test.index}
               <span className="ml-auto text-right text-muted-foreground">{test.passed ? "Correcto" : test.status === "timeout" ? "Límite de tiempo" : test.status === "runtime" ? "Error de ejecución" : asText ? "La salida no coincide" : "Resultado diferente"}</span>
             </>}>
@@ -50,7 +58,7 @@ export const Results = memo(function Results({ result, busy, error, notice, next
                 </div>
                 {test.output !== undefined && <div><span className="text-muted-foreground">Salida del programa</span><pre className="mt-1 overflow-x-auto font-mono">{test.output.length ? test.output : "(sin salida)"}</pre></div>}
               </>}
-              {diff && <div className="flex items-start gap-2 rounded-lg bg-surface p-2.5"><Info className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" /><div><span className="text-muted-foreground">Primera diferencia</span><p className="mt-1 leading-6">{diff.message}</p></div></div>}
+              {diff && <div className="flex items-start gap-2 rounded-lg bg-surface p-2.5"><Info className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" /><div className="min-w-0 flex-1 break-words"><span className="text-muted-foreground">Primera diferencia</span><p className="mt-1 leading-6">{diff.message}</p></div></div>}
               {!test.passed && <p className="text-sm leading-6 text-muted-foreground">{executionFeedback(test.status, test.error)}</p>}
               {test.error && <Disclosure title="Detalle del error"><pre className="max-h-44 overflow-auto font-mono leading-6 whitespace-pre-wrap text-destructive">{test.error}</pre></Disclosure>}
             </div>

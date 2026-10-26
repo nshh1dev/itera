@@ -1,5 +1,42 @@
 # Verificación local
 
+## Primera diferencia textual de PROGRAM — fase 5 parcial (26 de octubre de 2026)
+
+- `firstTextDifference` en `src/lib/json-diff.ts` explica la primera diferencia de
+  salida con línea y columna desde 1. Cuenta puntos Unicode, no unidades UTF-16,
+  grafemas o columnas visuales de tabulación. Identifica espacios, tabulaciones,
+  saltos de línea y fin de salida; otros espacios Unicode se nombran por su código.
+  El mensaje no crece con la longitud del programa o de su salida.
+- Respeta la normalización vigente de `judgeProgram`: CRLF/CR se convierten en LF,
+  se ignoran espacios al final de cada línea y líneas vacías finales. No normaliza
+  mayúsculas, espacios interiores o equivalencia de acentos. La regresión compara
+  324 pares de salidas con el evaluador, también usando el `actual` canónico que
+  llega al navegador. No se cambia el evaluador ni el contrato del sandbox.
+- `Results` calcula la diferencia después de filtrar casos visibles, solo ante
+  una salida textual incorrecta disponible; no en aciertos, runtime o timeout.
+  Conserva la comparación JSON de FUNCTION, la salida completa y el resumen de
+  estados ocultos. Pruebas de render incluyen datos ocultos deliberadamente
+  inyectados y HTML para comprobar que no aparecen ni se interpretan como marcado.
+- **29 pruebas focalizadas** aprobadas; suite completa: **272 aprobadas, sin
+  omisiones**. Lint sin errores ni avisos, tipos y build aprobados. El detector
+  mecánico de la superficie no emitió hallazgos. No hay dependencias nuevas,
+  cambios de base, progreso o contenido editorial.
+- Chromium: componente React hidratado con datos sintéticos y CSS/fuentes locales
+  del build, sin servidor Next ni peticiones API. Ambos temas a **1440, 390 y
+  320 px**: mensaje visible, confidencialidad, plegado mediante Tab/Enter, foco
+  visible, ausencia de errores JavaScript y sin desbordamiento horizontal de página.
+  Con movimiento reducido y texto raíz al **200 %** en 320 px, se comprobó además
+  que el resumen no recorta su texto. La primera inspección detectó un riesgo de
+  recorte en palabras largas; `min-w-0` y ajuste de palabras lo corrigen. Una segunda
+  pasada confirmó los seis tamaños/temas y las dos variantes de texto ampliado.
+  Capturas solo locales en `.local/screenshots/text-diff-*`.
+- Límites: la prueba de texto ampliado no equivale a zoom real del navegador.
+  La comprobación de componente no sustituye el recorrido completo con sesión,
+  almacenamiento, editor y API, ni una auditoría de lectores de pantalla. No se
+  ejecutaron E2E, Piston real ni mediciones de duración; no se iniciaron la aplicación,
+  PostgreSQL, Docker o WSL. El cierre de rutas, la revisión global de interacción y
+  la preparación de validación humana siguen pendientes. El plan temporal se conserva.
+
 ## Registro operativo y coherencia documental (26 de octubre de 2026)
 
 - Borradores, guardado/publicación/preparación editorial y evaluación registran
