@@ -4,13 +4,15 @@ import { logicLessons } from "./logic-lessons";
 import { curriculumSlug, curriculumUnits } from "../src/lib/curriculum-v2";
 import { languages } from "../src/lib/types";
 import { reviseLearningContent } from "./learning-revisions";
+import { fundamentalsLessons } from "./fundamentals-lessons";
+import { fundamentalsProjectLessons } from "./fundamentals-project-lessons";
 
 // Se reutilizan referencias algorítmicas verificadas cuando el contrato coincide.
 // Nunca se reutiliza la identidad ni se atribuye progreso del catálogo anterior.
 const historical = new Map(historicalExercises.map(exercise => [exercise.slug, exercise]));
 let previous: string | undefined;
 export const logicExercises: SeedExercise[] = curriculumUnits.flatMap(unit => unit.steps.map(step => {
-  const source = logicLessons.get(step.key) ?? (step.source ? historical.get(step.source) : undefined);
+  const source = fundamentalsLessons.get(step.key) ?? fundamentalsProjectLessons.get(step.key) ?? logicLessons.get(step.key) ?? (step.source ? historical.get(step.source) : undefined);
   if (!source) throw new Error(`Falta la lección de lógica: ${step.key}`);
   const slug = curriculumSlug(step.key);
   const prerequisites = previous ? [previous] : [];
@@ -25,6 +27,6 @@ export const logicExercises: SeedExercise[] = curriculumUnits.flatMap(unit => un
     prerequisites: unit.slug.startsWith("integracion") ? ["Los bloques anteriores de esta etapa."] : source.prerequisites ?? [],
     objective: source.objective || `${step.title} utilizando los datos y reglas del problema.`,
     practiceGoals: source.practiceGoals?.length ? source.practiceGoals : [step.title],
-    activityType: unit.slug.startsWith("integracion") ? "INTEGRATION" : unit.level === "INITIATION" ? "GUIDED" : "PRACTICE",
+    activityType: unit.slug.startsWith("integracion") ? "INTEGRATION" : unit.level === "INITIATION" || step.key === "reproduce-fallo" ? "GUIDED" : "PRACTICE",
   } satisfies SeedExercise, step.key);
 }));

@@ -8,9 +8,9 @@ import { activePathExercise } from "../src/lib/practice-navigation";
 import { Statement } from "../src/components/practice/statement";
 import type { ExerciseCard } from "../src/lib/types";
 
-test("los 136 pasos describen una habilidad breve sin repetir su título", () => {
+test("los 176 pasos describen una habilidad breve sin repetir su título", () => {
   const steps = curriculumUnits.flatMap(unit => unit.steps);
-  assert.equal(steps.length, 136);
+  assert.equal(steps.length, 176);
   for (const step of steps) {
     const summary = exerciseSkillSummary({ slug: curriculumSlug(step.key), title: step.title, description: step.title, practiceGoals: [step.title] });
     assert.ok(summary.length > 20 && summary.length < 130, step.key);
