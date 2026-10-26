@@ -1,5 +1,28 @@
 # Optimización general de Itera
 
+## Carga compartida de Inicio — 26 de octubre de 2026
+
+Inicio usa `getCatalogs`: una lectura común de ejercicios publicados, su última
+versión publicada y el progreso propio, seguida de proyecciones por lenguaje.
+Las tres consultas de actividad siguen separadas por lenguaje y usuario y se
+solapan con la lectura común. `getCatalog` conserva la carga individual para las
+otras pantallas; no solicita actividad de los lenguajes que no necesita.
+
+No hay caché global ni entre peticiones. Se conserva el orden curricular y el
+contenido personalizado, la actividad de versiones históricas y la exclusión de
+envíos de diagnóstico. Completar en un lenguaje no completa otro; su indicador
+de completado en otros lenguajes se mantiene.
+
+Las pruebas reproducen tres llamadas `exercise.findMany` antes del cambio y una
+después, tanto para cuenta como para invitado. Son llamadas Prisma, no un conteo
+de sentencias SQL ni una medición de latencia. La carga individual y la compartida
+producen los mismos catálogos en los tres lenguajes. También se retiró `getLastDraft`,
+ya sin consumidores; Inicio continúa mediante la navegación de práctica actual.
+Verificaciones actuales y límites en [verification.md](verification.md).
+
+Las secciones siguientes son evidencia histórica del 18 de octubre, no pruebas
+repetidas en esta entrega ni una descripción completa del Inicio actual.
+
 ## Alcance implementado — 18 de octubre de 2026
 
 - Inicio consulta catálogo, último borrador, rutas e historial en paralelo.

@@ -1,5 +1,45 @@
 # Verificación local
 
+## Mantenimiento: carga del catálogo y alcance de herramientas (26 de octubre de 2026)
+
+- `getPracticeNavigation` carga los tres catálogos mediante una lectura común por
+  llamada de ejercicios, versión publicada vigente y progreso propio. Proyecta los
+  estados por lenguaje y conserva tres lecturas independientes de actividad, en
+  paralelo. `getCatalog` mantiene su firma y solicita solo un lenguaje. No añade
+  caché global ni entre peticiones, ni cambia selección pública, orden curricular,
+  actividad histórica, recomendaciones o reglas de progreso.
+- La regresión de Inicio falló antes del cambio: tres llamadas `exercise.findMany`
+  en lugar de una, también como invitado. Tras el cambio pasa y compara carga
+  individual/compartida en los tres lenguajes, fechas máximas entre versiones,
+  intentos sin completado, completado en otro lenguaje y separación entre cuentas.
+  El conteo mide llamadas Prisma con doble, no sentencias SQL ni latencia real.
+- Búsqueda de consumidores: `savePreferences`, `getLastDraft` y `preferenceSchema`
+  solo aparecían en su declaración/importación, aparte del plan. Se retiran sin
+  tocar las acciones vigentes `saveAccountName` y `saveLearningPreferences`, ni los
+  datos, versiones históricas, contenido, migraciones o dependencias.
+- ESLint y TypeScript excluyen `.agents/` y `.opencode/`, sin borrarlos ni reducir
+  comprobaciones de `src/`, `scripts/` o `tests/`. Dos regresiones verifican el
+  alcance real de ESLint y la configuración resuelta de TypeScript. Esas herramientas
+  permanecen locales, fuera del staging y de la entrega.
+- `npm test`: **259 aprobadas**, sin omisiones; nueve comprobaciones nuevas de carga
+  y alcance de herramientas. Tipos, build y **lint completo sin errores ni avisos**.
+  Los 97 avisos históricos pertenecían a las herramientas ahora excluidas; no se
+  corrigieron ni suprimieron reglas del producto. El primer lint de esta entrega
+  detectó un import sobrante al retirar la acción: se eliminó y se repitió aprobado.
+- `dashboard-catalog.spec.ts`: **dos recorridos aprobados** con el archivo completo
+  repetido dos veces, contra producción y PostgreSQL temporal. Una cuenta tiene un
+  completado en Python y borradores distintos en JavaScript/TypeScript; Inicio
+  recomienda correctamente al cambiar la preferencia y muestra 1/0/0 completados.
+  Otra cuenta comienza sin heredar actividad ni completados. Consultar Inicio no
+  añade progreso. Las regresiones unitarias cubren además el acceso de invitado.
+- La copia temporal recibió migraciones y se eliminó; las cuentas de prueba se
+  limpiaron. Base original sin escrituras ni migraciones y servicios detenidos.
+  No se iniciaron Docker, WSL o Piston ni se enviaron programas. No se ejecutaron
+  la suite E2E completa, mediciones de rendimiento ni revisión visual: no hay cambios
+  de interfaz. Permanecen los avisos conocidos de Better Auth en pruebas locales.
+- Este es un bloque parcial de la fase 4: registro seguro de fallos, revisión de
+  otras duplicaciones y coherencia documental general siguen pendientes.
+
 ## Recuperación según instalación: bloque 3.5 (26 de octubre de 2026)
 
 - Recuperación y Configuración → Seguridad comparten una ayuda desplegable: carpeta

@@ -1,6 +1,6 @@
 import "server-only";
 import { db } from "./db";
-import { getCatalog } from "./catalog";
+import { getCatalogs } from "./catalog";
 import { languages, type Language } from "@/lib/types";
 import { personalizedPractice } from "@/lib/practice-navigation";
 import { getLearningSummary } from "./learning";
@@ -8,7 +8,7 @@ import { dashboardOverview } from "@/lib/dashboard";
 
 export async function getPracticeNavigation(userId: string | undefined, preferred: Language) {
   const [catalogs, contexts, paths, learning] = await Promise.all([
-    Promise.all(languages.map(language => getCatalog(userId, language))),
+    getCatalogs(userId),
     userId ? db.practiceContext.findMany({ where: { userId, exercise: { published: true } }, orderBy: { visitedAt: "desc" } }) : [],
     db.learningPath.findMany({ orderBy: { order: "asc" }, select: { slug: true, title: true, items: { orderBy: { position: "asc" }, select: { exerciseId: true } } } }),
     userId ? getLearningSummary(userId, preferred) : null,

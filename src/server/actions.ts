@@ -1,25 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { currentUser, requireUser } from "./auth";
 import { db } from "./db";
-import { draftSchema, preferenceSchema, languageSchema } from "@/lib/validation";
+import { draftSchema, languageSchema } from "@/lib/validation";
 import { z } from "zod";
 import { temporaryDraftFailure, type DraftSaveResult } from "@/lib/draft-sync";
-
-export async function savePreferences(input: unknown) {
-  const user = await requireUser();
-  const parsed = preferenceSchema.safeParse(input);
-  if (!parsed.success) return { error: "Revisa tu nombre y tus preferencias." };
-  const { name, language, level } = parsed.data;
-  await db.$transaction([
-    db.user.update({ where: { id: user.id }, data: { name } }),
-    db.userPreference.upsert({ where: { userId: user.id }, create: { userId: user.id, language, level }, update: { language, level } }),
-    db.learningProfile.upsert({ where: { userId_language: { userId: user.id, language } }, create: { userId: user.id, language, declaredLevel: level }, update: { declaredLevel: level } }),
-  ]);
-  revalidatePath("/", "layout");
-  return { success: true };
-}
 
 export async function saveDraft(input: unknown): Promise<DraftSaveResult> {
   try {
