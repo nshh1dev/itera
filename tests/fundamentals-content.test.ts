@@ -67,6 +67,36 @@ test("los manifiestos públicos no contienen soluciones ni recursos privados y l
   assert.equal([...fundamentalsProjectLessons.keys()].filter(key => /^(gastos|inventario|agenda)-/.test(key)).length, 7);
 });
 
+test("los casos conservan expectativas independientes de archivos nuevos al componer el catálogo", () => {
+  const writers = ["escribe-archivo", "guarda-recupera", "actualiza-persistidos", "inventario-persistente", "agenda-almacenamiento", "agenda-regresion"];
+  let cases = 0;
+  for (const key of writers) {
+    const exercise = fundamentalsProjectLessons.get(key)!;
+    const composed = logicExercises.find(e => e.slug === curriculumSlug(key))! as typeof exercise;
+    assert.equal(composed.tests.length, exercise.tests.length);
+    for (const [i, fixture] of exercise.tests.entries()) {
+      assert.equal(fixture.expectedFiles?.length, 1, key);
+      assert.deepEqual(composed.tests[i].expectedFiles, fixture.expectedFiles, key);
+      for (const language of languages) for (const file of fixture.expectedFiles!) {
+        assert.ok(!exercise.projects[language].files.some(source => source.path.toLowerCase() === file.path.toLowerCase()), `${key}: ruta nueva`);
+        assert.ok(!file.readOnly);
+        assert.ok(Buffer.byteLength(file.content, "utf8") <= 32 * 1024);
+        if (file.path.endsWith(".json")) {
+          assert.equal(JSON.stringify(JSON.parse(file.content)), file.content, `${key}: JSON compacto determinista`);
+          assert.notEqual(file.content, "", key);
+        }
+      }
+      cases++;
+    }
+    for (const project of Object.values(exercise.projects)) {
+      assert.match(project.files[0].content, /solve/);
+      assert.doesNotMatch(JSON.stringify(project), /expectedFiles/);
+    }
+  }
+  assert.equal(cases, 20);
+  assert.equal([...fundamentalsProjectLessons].filter(([, e]) => e.tests.some(t => t.expectedFiles?.length)).length, writers.length);
+});
+
 const temporaryRoot = () => {
   const parent = resolve(".local", "curriculum-reference-tests");
   mkdirSync(parent, { recursive: true });
@@ -98,7 +128,7 @@ test("todos los archivos TypeScript de referencia y plantilla compilan en strict
 for (const language of ["javascript", "typescript"] as const) test(`proyectos ${language}: referencias completas, plantillas ejecutables y disco real aislado`, () => {
   const root = temporaryRoot();
   try {
-    const manifest: { directory: string; entrypoint: string; kind: string; key: string; input: unknown; expected: unknown; ownTests?: string }[] = [];
+    const manifest: { directory: string; entrypoint: string; kind: string; key: string; input: unknown; expected: unknown; expectedFiles?: { path: string; content: string }[]; ownTests?: string; originals: { path: string; content: string }[] }[] = [];
     for (const [key, exercise] of fundamentalsProjectLessons) for (const kind of ["solution", "starter"] as const) for (const [index, fixture] of exercise.tests.entries()) {
       const directory = join(root, `${key}-${kind}-${index}`);
       mkdirSync(directory);
@@ -110,18 +140,30 @@ for (const language of ["javascript", "typescript"] as const) test(`proyectos ${
         const content = source ? ts.transpileModule(file.content, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } }).outputText : file.content;
         writeFileSync(join(directory, path), content);
       }
-      manifest.push({ directory, entrypoint: project.entrypoint.replace(/\.ts$/, ".js"), kind, key, input: fixture.input, expected: fixture.expected, ...(kind === "solution" && index === 0 && project.testEntrypoint ? { ownTests: project.testEntrypoint.replace(/\.ts$/, ".js") } : {}) });
+      manifest.push({ directory, entrypoint: project.entrypoint.replace(/\.ts$/, ".js"), kind, key, input: fixture.input, expected: fixture.expected, expectedFiles: fixture.expectedFiles, originals: project.files.filter(f => f.readOnly && !/\.(py|js|ts)$/.test(f.path)), ...(kind === "solution" && index === 0 && project.testEntrypoint ? { ownTests: project.testEntrypoint.replace(/\.ts$/, ".js") } : {}) });
     }
     // Exclusivamente referencias fijas del repositorio. Nunca código de alumnos.
     const driver = `const fs = require('node:fs'); const path = require('node:path'); const assert = require('node:assert/strict');
 const fixtures = JSON.parse(fs.readFileSync(0, 'utf8')); const solved = new Map();
 for (const item of fixtures) {
   process.chdir(item.directory);
+  const filesMatch = () => (item.expectedFiles ?? []).every(file => fs.existsSync(file.path) && fs.readFileSync(file.path, 'utf8') === file.content);
+  if (item.expectedFiles?.length) assert.equal(filesMatch(), false, item.key + ': los artefactos no vienen preparados');
   const loaded = require(path.join(item.directory, item.entrypoint));
   const solve = typeof loaded === 'function' ? loaded : loaded.solve;
   const actual = solve(structuredClone(item.input));
-  if (item.kind === 'solution') assert.deepEqual(actual, item.expected, item.key);
-  else solved.set(item.key, (solved.get(item.key) ?? true) && JSON.stringify(actual) === JSON.stringify(item.expected));
+  if (item.kind === 'solution') {
+    assert.deepEqual(actual, item.expected, item.key);
+    assert.equal(filesMatch(), true, item.key + ': contenido real de los archivos producidos');
+    for (const file of item.expectedFiles ?? []) {
+      fs.unlinkSync(file.path);
+      assert.equal(filesMatch(), false, item.key + ': retorno correcto sin archivo no basta');
+      fs.writeFileSync(file.path, file.content + '\\n', 'utf8');
+      assert.equal(filesMatch(), false, item.key + ': contenido alterado no basta');
+      fs.writeFileSync(file.path, file.content, 'utf8');
+    }
+  } else solved.set(item.key, (solved.get(item.key) ?? true) && JSON.stringify(actual) === JSON.stringify(item.expected) && filesMatch());
+  for (const file of item.originals) assert.equal(fs.readFileSync(file.path, 'utf8'), file.content, item.key + ': recurso inicial intacto');
   if (item.ownTests) require(path.join(item.directory, item.ownTests));
 }
 for (const [key, all] of solved) assert.equal(all, false, key + ': plantilla resuelta');
@@ -137,26 +179,47 @@ test("proyectos Python: referencias completas, plantillas ejecutables y disco re
     const driver = `import json, sys, os, pathlib, tempfile, importlib, copy
 items = json.load(sys.stdin)
 root = os.getcwd()
+def check_case(item, case, index, kind):
+ with tempfile.TemporaryDirectory(dir=root) as directory:
+  files = item['projectSolutions']['python'] if kind == 'solution' else item['projects']['python']['files']
+  for file in files: pathlib.Path(directory, file['path']).write_bytes(file['content'].encode('utf-8'))
+  os.chdir(directory)
+  sys.path.insert(0, directory)
+  try:
+   for name in ['main', 'reglas', 'formato', 'almacenamiento']: sys.modules.pop(name, None)
+   importlib.invalidate_caches()
+   module = importlib.import_module('main')
+   expected_files = case.get('expectedFiles', [])
+   def files_match():
+    return all(pathlib.Path(file['path']).exists() and pathlib.Path(file['path']).read_bytes() == file['content'].encode('utf-8') for file in expected_files)
+   if expected_files: assert not files_match(), (item['slug'], 'artefactos no preparados')
+   actual = module.solve(copy.deepcopy(case['input']))
+   passed = actual == case['expected'] and files_match()
+   if kind == 'solution':
+    assert actual == case['expected'], (item['slug'], actual, case['expected'])
+    assert files_match(), (item['slug'], 'archivos producidos incorrectos')
+    for file in expected_files:
+     path = pathlib.Path(file['path'])
+     path.unlink()
+     assert not files_match(), (item['slug'], 'retorno correcto sin archivo no basta')
+     path.write_bytes((file['content'] + '\\n').encode('utf-8'))
+     assert not files_match(), (item['slug'], 'archivo alterado no basta')
+     path.write_bytes(file['content'].encode('utf-8'))
+    if index == 0 and item['projects']['python'].get('testEntrypoint'):
+     exec(pathlib.Path(item['projects']['python']['testEntrypoint']).read_text(encoding='utf-8'), {})
+   for file in item['projects']['python']['files']:
+    if file.get('readOnly') and not file['path'].endswith('.py'):
+     assert pathlib.Path(file['path']).read_bytes() == file['content'].encode('utf-8'), (item['slug'], 'recurso inicial modificado')
+   return passed
+  finally:
+   sys.path.pop(0)
+   os.chdir(root)
 for item in items:
  solved = True
  for kind in ['solution', 'starter']:
   for index, case in enumerate(item['tests']):
-   with tempfile.TemporaryDirectory(dir=root) as directory:
-    files = item['projectSolutions']['python'] if kind == 'solution' else item['projects']['python']['files']
-    for file in files: pathlib.Path(directory, file['path']).write_text(file['content'], encoding='utf-8')
-    os.chdir(directory)
-    sys.path.insert(0, directory)
-    for name in ['main', 'reglas', 'formato', 'almacenamiento']: sys.modules.pop(name, None)
-    importlib.invalidate_caches()
-    module = importlib.import_module('main')
-    actual = module.solve(copy.deepcopy(case['input']))
-    if kind == 'solution':
-     assert actual == case['expected'], (item['slug'], actual, case['expected'])
-     if index == 0 and item['projects']['python'].get('testEntrypoint'):
-      exec(pathlib.Path(item['projects']['python']['testEntrypoint']).read_text(encoding='utf-8'), {})
-    elif actual != case['expected']: solved = False
-    sys.path.pop(0)
-    os.chdir(root)
+   passed = check_case(item, case, index, kind)
+   if kind == 'starter' and not passed: solved = False
  assert not solved, (item['slug'], 'plantilla ya resuelta')
 print('18 proyectos Python comprobados')`;
     const result = spawnSync(process.env.PYTHON_BIN || "python", ["-c", driver], { cwd: root, input: JSON.stringify([...fundamentalsProjectLessons.values()]), encoding: "utf8", timeout: 60000 });

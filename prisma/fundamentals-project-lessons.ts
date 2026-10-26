@@ -5,9 +5,20 @@ import type { Json, Language } from "../src/lib/types";
 // Al integrar, SeedExercise incorpora estos campos aditivos desde prisma/content.ts.
 type ProjectFile = { path: string; content: string; readOnly?: boolean };
 type ProjectDefinition = { version: 1; entrypoint: string; files: ProjectFile[]; testEntrypoint?: string; previousStep?: string };
-export type ProjectLesson = SeedExercise & {
+export type ProjectLesson = Omit<SeedExercise, "tests"> & {
   projects: Record<Language, ProjectDefinition>;
   projectSolutions: Record<Language, ProjectFile[]>;
+  tests: (SeedExercise["tests"][number] & { expectedFiles?: ProjectFile[] })[];
+};
+// Expectativas editoriales literales: no se derivan ejecutando la referencia
+// ni serializando su retorno. El contrato compartido solo admite rutas nuevas.
+const producedFiles: Record<string, { path: string; contents: string[] }> = {
+  "escribe-archivo": { path: "resultado.txt", contents: ["Hola Ada", "Hola", "Hola!"] },
+  "guarda-recupera": { path: "guardado.json", contents: ["[1,2]", "[]", "[-3,0,3]"] },
+  "actualiza-persistidos": { path: "guardado.json", contents: ["[2,4,6]", "[2,4]", "[2,4,-1,0]"] },
+  "inventario-persistente": { path: "guardado.json", contents: ['{"pan":1,"sal":3}', '{"pan":2}', '{"pan":3}'] },
+  "agenda-almacenamiento": { path: "guardado.json", contents: ['[{"titulo":"leer","hecha":true}]', '[{"titulo":"leer","hecha":false}]', '[{"titulo":"leer","hecha":false},{"titulo":"andar","hecha":false}]'] },
+  "agenda-regresion": { path: "guardado.json", contents: ['[{"titulo":"leer","hecha":true}]', '[{"titulo":"leer","hecha":false}]', '[{"titulo":"leer","hecha":false},{"titulo":"andar","hecha":false}]', '[{"titulo":"leer","hecha":true}]', '[{"titulo":"leer","hecha":false},{"titulo":"andar","hecha":true}]'] },
 };
 export const fundamentalsProjectLessons = new Map<string, ProjectLesson>();
 type Code = { python: string; javascript: string; typescript: string };
@@ -20,6 +31,8 @@ type ProjectOptions = {
 };
 const extensions: Record<Language, string> = { python: "py", javascript: "js", typescript: "ts" };
 export function projectLesson(d: ProjectOptions) {
+  const produced = producedFiles[d.key];
+  if (produced && produced.contents.length !== d.cases.length) throw new Error(`Faltan expectativas de archivo: ${d.key}`);
   const signature = `export function solve(data: ${d.input}): ${d.output}`;
   const wrap = (language: Language, body: string) => {
     if (language === "python") return `def solve(data):\n${body.split("\n").map(line => `    ${line}`).join("\n")}\n`;
@@ -66,10 +79,17 @@ export function projectLesson(d: ProjectOptions) {
     hints: d.hints, explanation, explanations: { python: explanation, javascript: explanation, typescript: explanation },
     python: solutions.python, javascript: solutions.javascript, typescript: solutions.typescript, starters,
     typescriptContract: `const __iteraContract: (data: ${d.input}) => ${d.output} = solve;`,
-    projects, projectSolutions, tests: d.cases.map(([input, expected], i) => ({ input, expected, visible: i < 2 })),
+    projects, projectSolutions, tests: d.cases.map(([input, expected], i) => ({ input, expected, visible: i < 2, ...(produced ? { expectedFiles: [{ path: produced.path, content: produced.contents[i] }] } : {}) })),
     complexity: "Cuenta los elementos recorridos, las copias y el tamaño del texto leído o escrito; leer todo un archivo requiere memoria proporcional a su contenido.",
     commonErrors: ["Confundir una ruta local de módulo con un paquete externo.", "Suponer que el disco se conserva entre envíos.", "Escribir un archivo sin volver a abrirlo para verificar sus datos."],
   };
+  if (produced) {
+    const format = produced.path.endsWith(".json") ? " JSON UTF-8 compacto, sin espacios de separación ni salto final. Python: json.dump(datos, archivo, ensure_ascii=False, separators=(',', ':')); Node: JSON.stringify(datos). Conserva el orden de las listas y de inserción de las claves: stock inicial antes de productos nuevos; en tareas, titulo antes de hecha." : " Texto UTF-8 exacto, sin añadir salto final.";
+    e.statement += `\n\nArchivo evaluado: ${produced.path}, que debe crearse durante esta ejecución y no forma parte de la plantilla.${format} Los recursos iniciales no se modifican: carga el recurso y guarda una instantánea nueva. Se comprueba el contenido del archivo además del valor devuelto; devolver el resultado sin escribir no basta.`;
+    e.explanation += `\n\nPersistencia comprobada: crea y reabre ${produced.path}.${format} Después del guardado se consulta el archivo producido, sin sobrescribir recursos iniciales. Esto verifica un solo proceso, no dos procesos secuenciales.`;
+    e.explanations = { python: e.explanation, javascript: e.explanation, typescript: e.explanation };
+    e.constraints.push(`Genera ${produced.path} con el formato indicado; no lo añadas como recurso inicial.`);
+  }
   // La explicación contrasta lenguajes: no reemplazar JavaScript por TypeScript
   // al adaptar el enunciado, porque cambiaría el significado de CommonJS.
   e.statements = { python: e.statement, javascript: e.statement, typescript: e.statement };
@@ -123,9 +143,34 @@ projectLesson({
   hints: ["Analizar JSON no valida su estructura.", "Comprueba el tipo de la ficha y de limite antes de comparar.", "Rechaza un limite ausente, textual o negativo; después incluye cero y el límite."],
   theory: `${fileTheory} En TypeScript JSON.parse no aporta garantías: guarda como unknown y usa typeof, comparación con null y 'limite' in config para estrechar. En Python isinstance(config, dict) comprueba el contenedor y type(x) is int evita aceptar un booleano como cantidad. Cada recurso permite comprobar una regla distinta; no basta probar siempre la configuración correcta.`,
 });
-projectLesson({key:"guarda-recupera",problem:"Guarda y recupera una lista de enteros. Recibe hasta 100 enteros, escríbelos como JSON en guardado.json, cierra y reabre el archivo y devuelve la lista recuperada. No devuelvas directamente data.",input:"number[]",output:"number[]",code:{python:`${fsPy}\nwith open('guardado.json', 'w', encoding='utf-8') as archivo:\n    json.dump(data, archivo)\nwith open('guardado.json', encoding='utf-8') as archivo:\n    return json.load(archivo)`,javascript:`${fsJs}\nfs.writeFileSync('guardado.json', JSON.stringify(data), 'utf8');\nreturn JSON.parse(fs.readFileSync('guardado.json', 'utf8'));`,typescript:`${fsTs}\nfs.writeFileSync('guardado.json', JSON.stringify(data), 'utf8');\nconst valores: number[] = JSON.parse(fs.readFileSync('guardado.json', 'utf8'));\nreturn valores;`},cases:[[[1,2],[1,2]],[[],[]],[[-3,0,3],[-3,0,3]]],hints:["Serializa antes de escribir.","Cierra el archivo de escritura antes de leer.","Devuelve el JSON analizado desde la lectura."],theory:`${fileTheory} En esta actividad el programa controla los datos escritos: la lista recuperada tiene la estructura que acabas de guardar. Esto comprueba reapertura en el mismo proceso, no persistencia entre envíos ni entre procesos.`});
+projectLesson({
+  key: "guarda-recupera",
+  problem: "Guarda y recupera una lista de enteros. Recibe hasta 100 enteros, escríbelos como JSON en guardado.json, cierra y reabre el archivo y devuelve la lista recuperada. No devuelvas directamente data.",
+  input: "number[]", output: "number[]",
+  code: {
+    python: `${fsPy}\nwith open('guardado.json', 'w', encoding='utf-8') as archivo:\n    json.dump(data, archivo, ensure_ascii=False, separators=(',', ':'))\nwith open('guardado.json', encoding='utf-8') as archivo:\n    return json.load(archivo)`,
+    javascript: `${fsJs}\nfs.writeFileSync('guardado.json', JSON.stringify(data), 'utf8');\nreturn JSON.parse(fs.readFileSync('guardado.json', 'utf8'));`,
+    typescript: `${fsTs}\nfs.writeFileSync('guardado.json', JSON.stringify(data), 'utf8');\nconst valores: number[] = JSON.parse(fs.readFileSync('guardado.json', 'utf8'));\nreturn valores;`,
+  },
+  cases: [[[1,2],[1,2]],[[],[]],[[-3,0,3],[-3,0,3]]],
+  hints: ["Serializa antes de escribir.", "Cierra el archivo de escritura antes de leer.", "Devuelve el JSON analizado desde la lectura."],
+  theory: `${fileTheory} En esta actividad el programa controla los datos escritos: la lista recuperada tiene la estructura que acabas de guardar. Esto comprueba reapertura en el mismo proceso, no persistencia entre envíos ni entre procesos.`,
+});
 projectLesson({key:"recupera-archivo-invalido",problem:"Recupera un archivo inexistente o inválido. Recibe modo: ausente, roto o valido. Elige falta.json, roto.json o valido.json respectivamente. Devuelve el valor entero guardado, o 0 si no existe o el JSON está roto. Los recursos preparados contienen texto inválido y el número 7.",input:"string",output:"number",code:{python:`${fsPy}\nruta = 'falta.json'\nif data == 'roto': ruta = 'roto.json'\nif data == 'valido': ruta = 'valido.json'\ntry:\n    with open(ruta, encoding='utf-8') as archivo:\n        return json.load(archivo)\nexcept (FileNotFoundError, json.JSONDecodeError):\n    return 0`,javascript:`${fsJs}\nlet ruta = 'falta.json'; if (data === 'roto') ruta = 'roto.json'; if (data === 'valido') ruta = 'valido.json';\nif (!fs.existsSync(ruta)) return 0;\ntry { return JSON.parse(fs.readFileSync(ruta, 'utf8')); } catch (error) { if (error instanceof SyntaxError) return 0; throw error; }`,typescript:`${fsTs}\nlet ruta = 'falta.json'; if (data === 'roto') ruta = 'roto.json'; if (data === 'valido') ruta = 'valido.json';\nif (!fs.existsSync(ruta)) return 0;\ntry { const valor: number = JSON.parse(fs.readFileSync(ruta, 'utf8')); return valor; } catch (error: unknown) { if (error instanceof SyntaxError) return 0; throw error; }`},resources:[{path:"roto.json",content:"{roto",readOnly:true},{path:"valido.json",content:"7",readOnly:true}],cases:[["ausente",0],["roto",0],["valido",7]],hints:["La ausencia y el JSON roto son errores diferentes.","Captura solo errores esperados.","En JS comprueba existsSync y captura SyntaxError al analizar."],theory:`${fileTheory} existsSync indica existencia en este entorno aislado; no sustituye manejar carreras en sistemas concurrentes. Capturar SyntaxError permite no esconder errores inesperados de programación.`});
-projectLesson({key:"actualiza-persistidos",problem:"Actualiza datos sin perder registros anteriores. historial.json empieza en [2,4]. Recibe una lista de enteros que añadir, carga el historial, añade en orden, guarda y reabre. Devuelve todos los registros recuperados, incluidos los anteriores.",input:"number[]",output:"number[]",code:{python:`${fsPy}\nwith open('historial.json', encoding='utf-8') as archivo:\n    historial = json.load(archivo)\nfor n in data: historial.append(n)\nwith open('historial.json', 'w', encoding='utf-8') as archivo:\n    json.dump(historial, archivo)\nwith open('historial.json', encoding='utf-8') as archivo:\n    return json.load(archivo)`,javascript:`${fsJs}\nconst historial = JSON.parse(fs.readFileSync('historial.json', 'utf8'));\nfor (const n of data) historial.push(n);\nfs.writeFileSync('historial.json', JSON.stringify(historial), 'utf8');\nreturn JSON.parse(fs.readFileSync('historial.json', 'utf8'));`,typescript:`${fsTs}\nconst historial: number[] = JSON.parse(fs.readFileSync('historial.json', 'utf8'));\nfor (const n of data) historial.push(n);\nfs.writeFileSync('historial.json', JSON.stringify(historial), 'utf8');\nreturn JSON.parse(fs.readFileSync('historial.json', 'utf8')) as number[];`},resources:[{path:"historial.json",content:"[2,4]"}],cases:[[[6],[2,4,6]],[[],[2,4]],[[-1,0],[2,4,-1,0]]],hints:["Abrir en w antes de leer borraría el historial.","Carga y modifica antes de guardar.","Reabre y devuelve el historial completo."],theory:`${fileTheory} Actualizar requiere leer-modificar-escribir. Cada prueba reinicia el recurso; la segunda entrada no hereda escrituras de la primera. No se promete durabilidad ante fallos ni escritura atómica del sistema de archivos.`});
+projectLesson({
+  key: "actualiza-persistidos",
+  problem: "Actualiza datos sin perder registros anteriores. historial.json empieza en [2,4]. Recibe una lista de enteros que añadir, carga ese historial, añade en orden, guarda la instantánea completa en guardado.json y reabre ese archivo nuevo. Devuelve todos los registros recuperados, incluidos los anteriores. Conserva historial.json como recurso inicial.",
+  input: "number[]", output: "number[]",
+  code: {
+    python: `${fsPy}\nwith open('historial.json', encoding='utf-8') as archivo:\n    historial = json.load(archivo)\nfor n in data: historial.append(n)\nwith open('guardado.json', 'w', encoding='utf-8') as archivo:\n    json.dump(historial, archivo, ensure_ascii=False, separators=(',', ':'))\nwith open('guardado.json', encoding='utf-8') as archivo:\n    return json.load(archivo)`,
+    javascript: `${fsJs}\nconst historial = JSON.parse(fs.readFileSync('historial.json', 'utf8'));\nfor (const n of data) historial.push(n);\nfs.writeFileSync('guardado.json', JSON.stringify(historial), 'utf8');\nreturn JSON.parse(fs.readFileSync('guardado.json', 'utf8'));`,
+    typescript: `${fsTs}\nconst historial: number[] = JSON.parse(fs.readFileSync('historial.json', 'utf8'));\nfor (const n of data) historial.push(n);\nfs.writeFileSync('guardado.json', JSON.stringify(historial), 'utf8');\nreturn JSON.parse(fs.readFileSync('guardado.json', 'utf8')) as number[];`,
+  },
+  resources: [{ path: "historial.json", content: "[2,4]", readOnly: true }],
+  cases: [[[6],[2,4,6]],[[],[2,4]],[[-1,0],[2,4,-1,0]]],
+  hints: ["Abrir el recurso inicial en w antes de leer borraría el historial.", "Carga y modifica antes de guardar en guardado.json.", "Reabre guardado.json y devuelve el historial completo."],
+  theory: `${fileTheory} Actualizar requiere leer-modificar-escribir. Aquí se conserva el recurso inicial y se escribe una instantánea nueva, para evaluar el archivo producido por separado. Cada prueba reinicia los recursos; la segunda entrada no hereda escrituras de la primera. No se promete durabilidad ante fallos ni escritura atómica del sistema de archivos.`,
+});
 
 const expenseCode: Code = {
   python: "total = 0\npor_categoria = {}\nfor movimiento in data:\n    total += movimiento['importe']\n    categoria = movimiento['categoria']\n    por_categoria[categoria] = por_categoria.get(categoria, 0) + movimiento['importe']\nreturn {'total': total, 'porCategoria': por_categoria}",
@@ -153,9 +198,9 @@ const invOutput = "{ stock: Record<string, number>; rechazados: number }";
 const invCases: [Json, Json][] = [[[ {producto:"pan",cambio:3},{producto:"pan",cambio:-4},{producto:"pan",cambio:-1}],{stock:{pan:2},rechazados:1}],[[],{stock:{},rechazados:0}],[[{producto:"sal",cambio:-1},{producto:"pan",cambio:0}],{stock:{pan:0},rechazados:1}]];
 projectLesson({key:"inventario-modular",problem:"Inventario persistente, hito 1: organiza reglas y adaptador. Empieza con stock vacío. Procesa movimientos con producto pan o sal y cambio entero. Rechaza los que dejarían existencias negativas; devuelve {stock, rechazados}. La función aplicar de reglas modifica stock intencionalmente. Este proyecto no reemplaza la actividad histórica inventario, que solo consolida movimientos.",input:invInput,output:invOutput,code:{python:"from reglas import aplicar\nstock = {}\nrechazados = aplicar(stock, data)\nreturn {'stock': stock, 'rechazados': rechazados}",javascript:"const { aplicar } = require('./reglas');\nconst stock = {};\nconst rechazados = aplicar(stock, data);\nreturn { stock, rechazados };",typescript:"const { aplicar } = require('./reglas') as { aplicar: (stock: Record<string, number>, movimientos: {producto:string;cambio:number}[]) => number };\nconst stock: Record<string, number> = {};\nconst rechazados = aplicar(stock, data);\nreturn { stock, rechazados };"},helpers:[{name:"reglas",code:inventoryRule,starter:inventoryStarter,editable:true}],cases:invCases,hints:["El módulo de reglas recibe el stock, no lo obtiene de una global.","Comprueba la existencia resultante antes de mutar.","Devuelve el número de rechazos y consulta stock en main."],theory:"Los mapas representan cantidades por producto. El contrato de aplicar declara una mutación intencional: el adaptador conserva la referencia y consulta el estado final. No confundas este proyecto con sumar cambios sin validar existencias."});
 const storage: Code = {
-  python:"import json\ndef guardar(datos):\n    with open('estado.json', 'w', encoding='utf-8') as archivo:\n        json.dump(datos, archivo)\ndef cargar():\n    with open('estado.json', encoding='utf-8') as archivo:\n        return json.load(archivo)\n",
-  javascript:"const fs = require('fs');\nfunction guardar(datos) { fs.writeFileSync('estado.json', JSON.stringify(datos), 'utf8'); }\nfunction cargar() { return JSON.parse(fs.readFileSync('estado.json', 'utf8')); }\nmodule.exports = { guardar, cargar };\n",
-  typescript:"const fs = require('fs') as { writeFileSync: (path: string, content: string, encoding: string) => void; readFileSync: (path: string, encoding: string) => string };\nexport function guardar(datos: unknown): void { fs.writeFileSync('estado.json', JSON.stringify(datos), 'utf8'); }\n// El archivo lo controla el proyecto; el consumidor declara el tipo guardado.\nexport function cargar<T>(): T { return JSON.parse(fs.readFileSync('estado.json', 'utf8')) as T; }\n",
+  python:"import json\ndef guardar(datos):\n    with open('guardado.json', 'w', encoding='utf-8') as archivo:\n        json.dump(datos, archivo, ensure_ascii=False, separators=(',', ':'))\ndef cargar():\n    try:\n        with open('guardado.json', encoding='utf-8') as archivo:\n            return json.load(archivo)\n    except FileNotFoundError:\n        with open('estado.json', encoding='utf-8') as archivo:\n            return json.load(archivo)\n",
+  javascript:"const fs = require('fs');\nfunction guardar(datos) { fs.writeFileSync('guardado.json', JSON.stringify(datos), 'utf8'); }\nfunction cargar() { const ruta = fs.existsSync('guardado.json') ? 'guardado.json' : 'estado.json'; return JSON.parse(fs.readFileSync(ruta, 'utf8')); }\nmodule.exports = { guardar, cargar };\n",
+  typescript:"const fs = require('fs') as { writeFileSync: (path: string, content: string, encoding: string) => void; readFileSync: (path: string, encoding: string) => string; existsSync: (path: string) => boolean };\nexport function guardar(datos: unknown): void { fs.writeFileSync('guardado.json', JSON.stringify(datos), 'utf8'); }\n// El archivo lo controla el proyecto; el consumidor declara el tipo guardado.\nexport function cargar<T>(): T { const ruta = fs.existsSync('guardado.json') ? 'guardado.json' : 'estado.json'; return JSON.parse(fs.readFileSync(ruta, 'utf8')) as T; }\n",
 };
 const inventoryTests: Code = {
   python: "from reglas import aplicar\nfrom almacenamiento import cargar, guardar\nstock = {'sal': 6}\nassert aplicar(stock, [{'producto': 'sal', 'cambio': -7}]) == 1\nassert stock == {'sal': 6}\nassert aplicar(stock, [{'producto': 'sal', 'cambio': -6}]) == 0\nguardar(stock)\nassert cargar() == {'sal': 0}\n",
@@ -172,7 +217,7 @@ projectLesson({
     typescript: "const { aplicar } = require('./reglas') as { aplicar: (stock: Record<string, number>, movimientos: {producto:string;cambio:number}[]) => number };\nconst { cargar, guardar } = require('./almacenamiento') as { cargar: () => Record<string, number>; guardar: (datos: Record<string, number>) => void };\nconst stock: Record<string, number> = cargar(); const rechazados = aplicar(stock, data);\nguardar(stock);\nreturn { stock: cargar(), rechazados };",
   },
   helpers: [{ name: "reglas", code: inventoryRule, starter: inventoryStarter, editable: true }, { name: "almacenamiento", code: storage, editable: true }],
-  resources: [{ path: "estado.json", content: '{"pan":2}' }],
+  resources: [{ path: "estado.json", content: '{"pan":2}', readOnly: true }],
   cases: [[[ { producto: "pan", cambio: -1 }, { producto: "sal", cambio: 3 }], { stock: { pan: 1, sal: 3 }, rechazados: 0 }], [[], { stock: { pan: 2 }, rechazados: 0 }], [[{ producto: "pan", cambio: -3 }, { producto: "pan", cambio: 1 }], { stock: { pan: 3 }, rechazados: 1 }]],
   hints: ["No empieces con stock vacío: carga el preparado.", "Reutiliza aplicar sin lectura de archivos dentro de reglas.", "Guarda y vuelve a cargar antes de devolver."],
   ownTests: inventoryTests,
@@ -188,7 +233,7 @@ const agendaStarter: Code = {python:"def aplicar(tareas, comandos):\n    # Dise�
 const agendaInput = "{ accion: string; titulo: string }[]";
 const agendaOutput = "{ titulo: string; hecha: boolean }[]";
 const agendaHelpers = [{name:"reglas",code:agendaRule,starter:agendaStarter,editable:true}];
-const agendaInitial: ProjectFile[] = [{path:"estado.json",content:'[{"titulo":"leer","hecha":false}]'}];
+const agendaInitial: ProjectFile[] = [{path:"estado.json",content:'[{"titulo":"leer","hecha":false}]',readOnly:true}];
 const agendaMain: Code = {python:"from reglas import aplicar\nreturn aplicar([], data)",javascript:"const { aplicar } = require('./reglas');\nreturn aplicar([], data);",typescript:"const { aplicar } = require('./reglas') as { aplicar: (tareas: {titulo:string;hecha:boolean}[], comandos: {accion:string;titulo:string}[]) => {titulo:string;hecha:boolean}[] };\nreturn aplicar([], data);"};
 projectLesson({key:"agenda-operaciones",problem:"Agenda, hito 1: diseña crear y completar. Empieza sin tareas. Recibe comandos {accion, titulo}; crear añade una tarea pendiente al final, completar marca las tareas de ese título. Completar un título inexistente no hace nada. Devuelve las tareas en orden de creación. Los títulos al crear son no vacíos y únicos; acciones desconocidas se ignoran.",input:agendaInput,output:agendaOutput,code:agendaMain,helpers:agendaHelpers,cases:[[[{accion:"crear",titulo:"leer"},{accion:"completar",titulo:"leer"}],[{titulo:"leer",hecha:true}]],[[],[]],[[{accion:"completar",titulo:"nada"},{accion:"crear",titulo:"andar"}],[{titulo:"andar",hecha:false}]]],hints:["Define una ficha de tarea y un recorrido de comandos.","Completar no debe crear tareas nuevas.","Conserva el orden; solo cambia hecha cuando coincide el título."],theory:"Este proyecto reúne funciones, registros, recorridos y módulos. Primero diseña el contrato de operaciones sin disco, para probar reglas independientemente del almacenamiento. El acceso libre permite empezar aquí con una plantilla propia."});
 const agendaPersistent: Code = {python:"from reglas import aplicar\nfrom almacenamiento import cargar, guardar\ntareas = aplicar(cargar(), data)\nguardar(tareas)\nreturn cargar()",javascript:"const { aplicar } = require('./reglas');\nconst { cargar, guardar } = require('./almacenamiento');\nguardar(aplicar(cargar(), data));\nreturn cargar();",typescript:"type Tarea = {titulo:string;hecha:boolean};\nconst { aplicar } = require('./reglas') as { aplicar: (tareas: Tarea[], comandos: {accion:string;titulo:string}[]) => Tarea[] };\nconst { cargar, guardar } = require('./almacenamiento') as { cargar: () => Tarea[]; guardar: (datos: Tarea[]) => void };\nguardar(aplicar(cargar(), data));\nreturn cargar();"};
