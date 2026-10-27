@@ -40,6 +40,7 @@
     "content:audit": "tsx scripts/audit-learning-content.ts",
     "content:revisions": "tsx scripts/content-revisions.ts",
     "content:replace": "tsx --conditions=react-server scripts/replace-catalog.ts",
+    "content:python": "tsx --conditions=react-server scripts/python-catalog.ts",
     "db:studio": "prisma studio",
     "admin": "tsx scripts/admin.ts",
     "runner:setup": "node --env-file-if-exists=.env scripts/piston.mjs"

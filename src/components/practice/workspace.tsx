@@ -6,7 +6,7 @@ import { memo, useCallback, useEffect, useRef, useState, useSyncExternalStore } 
 import { ArrowLeft, ArrowRight, ChevronLeft, Play, Check, Lightbulb, Code2, Clock3, ChevronRight, BookOpen, GripVertical, GripHorizontal } from "lucide-react";
 import type { Language, Level, RuntimeMode } from "@/lib/types";
 import { activityNames, type ActivityType } from "@/lib/types";
-import { languageNames, levelNames } from "@/lib/types";
+import { languages, languageNames, levelNames } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { exerciseHref } from "@/lib/learning-paths";
 import { uniqueHelp } from "@/lib/learning-help";
@@ -280,6 +280,7 @@ function WorkspaceReady(props: Props) {
       <div ref={grid} className="workspace-grid" style={{"--statement-width":`${width}%`} as React.CSSProperties}>
         <section id="workspace-statement" className={cn("workspace-statement px-5 py-6 sm:px-7 min-[1200px]:block", mobileTab !== "statement" && "hidden")} aria-label="Enunciado">
           <Challenge exercise={props} />
+          {props.availableLanguages.length < languages.length && <nav aria-label="Continuar en otro lenguaje" className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs"><span className="w-full text-muted-foreground">Este reto tiene variantes propias. Para otros lenguajes, continúa en su ruta:</span>{languages.filter(language => !props.availableLanguages.includes(language)).map(language => <Link key={language} className="text-link" href={`${props.pathSlug ? `/rutas/${encodeURIComponent(props.pathSlug)}` : "/rutas"}?lenguaje=${language}`}>{languageNames[language]} · ir a su ruta</Link>)}</nav>}
           <Button variant="outline" className="mt-6 w-full min-[1200px]:hidden" onClick={()=>{setMobileTab("code");setFocusCodeRequest(value=>value+1);}}>Ir al código<ArrowRight /></Button>
           <div className="workspace-reference">
           <LearningGuide title={props.title} statement={props.statement} objective={props.objective} prerequisites={props.prerequisites} practiceGoals={props.practiceGoals} previousExercises={props.previousExercises}>

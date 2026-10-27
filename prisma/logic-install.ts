@@ -44,6 +44,7 @@ export async function prepareLogicCatalog(db: PrismaClient) {
       const existing = await tx.exercise.findUnique({ where: { slug: source.slug }, include });
       const current = existing?.versions[0];
       if (current) {
+        if (current.variants.length === 1 && current.variants[0].language === "python") throw new Error(`${source.slug}: hay una revisión exclusiva de Python. Usa content:python; la sustitución compartida no debe reemplazarla.`);
         const decision = catalogRevisionDecision(current, seedVersionContent(source), current.id);
         if (decision === "unchanged") continue;
         if (decision !== "create") throw new Error(`${source.slug}: hay un borrador distinto. Se conserva sin sobrepasarlo.`);

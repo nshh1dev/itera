@@ -2,6 +2,7 @@ import "server-only";
 import { db } from "./db";
 import { languages, type ExerciseCard, type Language } from "@/lib/types";
 import { learningPaths } from "@/lib/learning-paths";
+import { orderLanguageCatalog } from "@/lib/language-curriculum";
 
 export async function getCatalog(userId?: string, language: Language = "python"): Promise<ExerciseCard[]> {
   const [catalog] = await getCatalogs(userId, [language]);
@@ -14,7 +15,7 @@ export async function getCatalogs(userId?: string, requestedLanguages: readonly 
   const [exercises, activities] = await Promise.all([db.exercise.findMany({
     where: { published: true, versions: { some: { published: true } } }, orderBy: { order: "asc" },
     select: { id: true, slug: true, category: true, order: true,
-      versions: { where: { published: true }, orderBy: { number: "desc" }, take: 1, select: { title: true, description: true, level: true, minutes: true, runtimeMode: true, practiceGoals: true, activityType: true } },
+      versions: { where: { published: true }, orderBy: { number: "desc" }, select: { title: true, description: true, level: true, minutes: true, runtimeMode: true, practiceGoals: true, activityType: true, variants: { select: { language: true } } } },
       progress: { where: { userId: userId ?? "__guest__", language: { in: [...languages] } }, select: { language: true, firstPassedAt: true, attempts: true } },
     },
   }), Promise.all(requestedLanguages.map(language => userId ? db.exerciseVariant.findMany({
@@ -34,20 +35,24 @@ export async function getCatalogs(userId?: string, requestedLanguages: readonly 
         if (value > (activityDates.get(variant.version.exerciseId) ?? "")) activityDates.set(variant.version.exerciseId, value);
       }
     }
-    return exercises.flatMap((e, index) => {
-      if (!e.versions[0]) return [];
+    const entries = exercises.flatMap(e => {
+      const version = e.versions.find(version => version.variants.some(variant => variant.language === language));
+      if (!version) return [];
+      const { variants: _variants, ...metadata } = version;
+      void _variants; // No enviar metadatos internos de variantes al catálogo público.
       const active = e.progress.find(item => item.language === language);
       const other = e.progress.find(item => item.language !== language && item.firstPassedAt);
-      return [{ id: e.id, slug: e.slug, category: e.category, order: index, ...e.versions[0], solved: !!active?.firstPassedAt, started: activityDates.has(e.id) || (active?.attempts ?? 0) > 0, solvedOther: !!other?.firstPassedAt, lastActivityAt: activityDates.get(e.id) }];
+      return [{ id: e.id, slug: e.slug, category: e.category, order: 0, ...metadata, solved: !!active?.firstPassedAt, started: activityDates.has(e.id) || (active?.attempts ?? 0) > 0, solvedOther: !!other?.firstPassedAt, lastActivityAt: activityDates.get(e.id) }];
     });
+    return orderLanguageCatalog(entries, language).map((entry, order) => ({ ...entry, order }));
   });
 }
 
 export async function getExercise(slug: string, language: Language, userId?: string) {
-  return db.exercise.findUnique({
+  const exercise = await db.exercise.findUnique({
     where: { slug, published: true },
     select: { id: true, slug: true, category: true,
-      versions: { where: { published: true }, orderBy: { number: "desc" }, take: 1, select: {
+      versions: { where: { published: true }, orderBy: { number: "desc" }, select: {
         id: true, title: true, statement: true, constraints: true, hints: true, level: true, minutes: true, number: true,
         objective: true, prerequisites: true, practiceGoals: true, prerequisiteSlugs: true, activityType: true,
         runtimeMode: true, complexity: true, commonErrors: true,
@@ -58,4 +63,8 @@ export async function getExercise(slug: string, language: Language, userId?: str
       } },
     },
   });
+  if (!exercise) return null;
+  const availableLanguages = languages.filter(language => exercise.versions.some(version => version.variants.some(variant => variant.language === language)));
+  const version = exercise.versions.find(version => version.variants.some(variant => variant.language === language)) ?? exercise.versions[0];
+  return { ...exercise, availableLanguages, versions: version ? [version] : [] };
 }

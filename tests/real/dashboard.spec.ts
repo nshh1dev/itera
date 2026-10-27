@@ -7,6 +7,7 @@ import { PrismaClient } from "../../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { postAuth } from "../e2e/auth-request";
 import { openSimpleEditor } from "../workspace";
+import { languagePaths } from "../../src/lib/language-curriculum";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 const ids: string[] = [];
@@ -28,7 +29,11 @@ for (const theme of ["light", "dark"] as const) {
   test(`dashboard: borrador, ruta y actividad sin redundancias en ${theme}`, async ({ page }) => {
     const userId = await account(page);
     const route = await db.learningPath.findFirstOrThrow({ orderBy: { order: "asc" }, include: { items: { orderBy: { position: "asc" }, include: { exercise: { include: { versions: { where: { published: true }, orderBy: { number: "desc" }, take: 1, include: { variants: { where: { language: "python" } } } } } } } } } });
-    const available = route.items.filter(item => item.exercise.published && item.exercise.versions[0]?.variants[0]);
+    const catalog = await db.exercise.findMany({ where: { published: true, versions: { some: { published: true, variants: { some: { language: "python" } } } } }, include: { versions: { where: { published: true, variants: { some: { language: "python" } } }, orderBy: { number: "desc" }, take: 1, include: { variants: { where: { language: "python" } } } } } });
+    const available = languagePaths([route], catalog, "python")[0].items.flatMap(item => {
+      const exercise = catalog.find(exercise => exercise.id === item.exerciseId);
+      return exercise?.versions[0]?.variants[0] ? [{ exerciseId: item.exerciseId, exercise }] : [];
+    });
     expect(available.length).toBeGreaterThan(3);
     const [featured, pending, solved] = available;
     const variant = (item: typeof featured) => item.exercise.versions[0].variants[0].id;

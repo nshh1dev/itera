@@ -4,7 +4,9 @@
 
 El currículo enseña programación y resolución de problemas, no desarrollo web, frameworks ni todas las bibliotecas de cada lenguaje. Se puede elegir Python, JavaScript o TypeScript desde el inicio; TypeScript no exige haber estudiado JavaScript.
 
-`src/lib/curriculum-v2.ts` compone 176 ejercicios en 36 bloques, con títulos, orden, teoría breve, ejemplos por lenguaje y criterios de salida. Los once bloques añadidos se definen en `src/lib/fundamentals-curriculum.ts`. `learning-modules.ts` y `learning-paths.ts` derivan las cuatro secuencias. Cambiar de lenguaje conserva el reto y su posición. Cada identidad tiene tres variantes con los mismos casos de entrada y salida; el progreso sigue separado por persona, ejercicio y lenguaje. La ampliación conserva los 136 slugs anteriores y añade 40 identidades; no sustituye un ejercicio completado por un contrato más exigente.
+`src/lib/curriculum-v2.ts` compone el currículo común de 176 ejercicios en 36 bloques, con títulos, orden, teoría breve, ejemplos por lenguaje y criterios de salida. Los once bloques añadidos se definen en `src/lib/fundamentals-curriculum.ts`. `learning-modules.ts` y `learning-paths.ts` derivan las cuatro secuencias. Las identidades comunes tienen tres variantes con los mismos casos; el progreso sigue separado por persona, ejercicio y lenguaje. La ampliación común conserva los 136 slugs anteriores y añade 40 identidades; no sustituye un ejercicio completado por un contrato más exigente.
+
+**Excepción Python:** [recorrido específico](recorrido-python.md), con 48 identidades adicionales, puentes y orden propios. Se activa explícitamente con `content:python`; no modifica las rutas persistidas ni las variantes de JavaScript/TypeScript. Las cifras de las tablas siguientes describen el currículo común. Las consultas eligen la última versión publicada que contenga el lenguaje solicitado.
 
 ## Etapas y competencias de salida
 

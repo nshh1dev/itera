@@ -20,6 +20,10 @@ export default async function AdminExercisePage({params}:{params:Promise<{slug:s
     const exercise=await db.exercise.findUnique({where:{slug},include:{versions:{orderBy:{number:"desc"},take:1,include:{variants:{include:{tests:{orderBy:{order:"asc"}}}}}}}});
     const version=exercise?.versions[0];
     if(!exercise||!version)notFound();
+    if (version.variants.length === 1 && version.variants[0].language === "python") {
+      const variant = version.variants[0];
+      return <div className="page-container max-w-4xl"><Link href="/admin" className="text-link">Volver al catálogo</Link><h1 className="page-title mt-6">{version.title}</h1><p className="mt-3 text-sm leading-7 text-muted-foreground">Versión {version.number} exclusiva de Python · {version.published ? "Publicada" : "Borrador"}. Este lote se revisa en sus fuentes editoriales y se prepara y valida mediante content:python. El editor de tres lenguajes no debe crear variantes ajenas ni reemplazar este recorrido.</p><h2 className="section-title mt-6">Reto</h2><p className="mt-3 whitespace-pre-wrap text-sm leading-7">{variant.statement || version.statement}</p><h2 className="section-title mt-6">Solución de referencia privada</h2><pre className="code-block mt-3" tabIndex={0}><code>{variant.solution}</code></pre><p className="mt-4 whitespace-pre-wrap text-sm leading-7">{variant.explanation}</p></div>;
+    }
     const python=version.variants.find(v=>v.language==="python");
     const javascript=version.variants.find(v=>v.language==="javascript");
     const typescript=version.variants.find(v=>v.language==="typescript");
