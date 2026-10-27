@@ -35,13 +35,19 @@ test("Desde cero es Iniciación y comienza con un programa completo", async ({ p
   await expect(page.getByRole("textbox", { name: "Editor sencillo de Python" })).toHaveValue(logicExercises[0].starters!.python);
 });
 
-test("cambiar de lenguaje conserva el reto, su posición y la ruta", async ({ page }) => {
+test("el lenguaje se elige en la ruta y permanece fijo en el editor", async ({ page }) => {
   const slug = "logica-dos-parametros";
-  await page.goto(exerciseHref(slug, "python", "desde-cero"));
   const exercise = logicExercises.find(e => e.slug === slug)!;
   for (const language of languages) {
-    await page.getByLabel("Lenguaje del ejercicio").selectOption(language);
+    await page.goto("/rutas/desde-cero?lenguaje=python");
+    await page.getByRole("navigation", { name: "Lenguaje de la ruta", exact: true }).getByRole("link", { name: languageNames[language], exact: true }).click();
+    await expect(page).toHaveURL(`/rutas/desde-cero?lenguaje=${language}`);
+    const exerciseLink = page.locator(".route-module").getByRole("link", { name: new RegExp(exercise.title) });
+    for (const trigger of await page.locator(".route-module > div > h3 > button").all()) if (await trigger.getAttribute("aria-expanded") !== "true") await trigger.click();
+    await exerciseLink.click();
     await expect(page).toHaveURL(exerciseHref(slug, language, "desde-cero"));
+    await expect(page.getByText(`Lenguaje del ejercicio: ${languageNames[language]}`, { exact: true })).toBeVisible();
+    await expect(page.getByRole("combobox", { name: "Lenguaje del ejercicio", exact: true })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: exercise.title, exact: true })).toBeVisible();
     await openSimpleEditor(page);
     await expect(page.getByRole("textbox", { name: `Editor sencillo de ${languageNames[language]}` })).toHaveValue(exercise.starters![language]!);

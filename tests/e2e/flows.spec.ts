@@ -312,7 +312,7 @@ test("administración guarda borradores privados y publica tras validar las refe
   await expect(page.getByText("Sumamos tres y cinco para obtener ocho.",{exact:true})).toBeVisible();
   await expect(page.getByText("Explicación privada que no debe entregarse al cliente.",{exact:true})).toHaveCount(0);
   await expect(page.getByRole("button",{name:"Comprobar solución",exact:true})).toBeEnabled();
-  await page.getByLabel("Lenguaje del ejercicio").selectOption("javascript");
+  await page.goto(`/ejercicios/${editorialSlug}?lenguaje=javascript`);
   await expect(page).toHaveURL(/lenguaje=javascript/);
   await openLearningHelp(page);
   await expect(guide.getByText("Sumar dos propiedades numéricas.",{exact:true})).toBeVisible();

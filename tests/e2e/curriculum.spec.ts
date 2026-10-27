@@ -23,7 +23,8 @@ test("TypeScript empieza con variables sin exigir JavaScript y conserva su espac
   await openLearningHelp(page);
   await expect(page.getByRole("region", { name: "Teoría y ejemplo" })).toBeVisible();
   await page.getByRole("button", { name: "Código", exact: true }).click();
-  await expect(page.getByLabel("Lenguaje del ejercicio")).toHaveValue("typescript");
+  await expect(page.getByText("Lenguaje del ejercicio: TypeScript", { exact: true })).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "Lenguaje del ejercicio", exact: true })).toHaveCount(0);
   await expect(page.locator(".monaco-editor")).toBeVisible();
   await page.getByRole("button", { name: "Editor sencillo", exact: true }).click();
   await expect(page.getByRole("textbox", { name: "Editor sencillo de TypeScript", exact: true })).toHaveValue(/puntos: number/);
