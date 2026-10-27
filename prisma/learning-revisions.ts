@@ -54,6 +54,15 @@ const statements: Record<string, string> = {
   frecuencias: "Recibes un texto formado por letras de a a z. Devuelve una ficha con la cantidad de apariciones de cada letra presente. El orden de las propiedades no importa. Para el texto vacío devuelve {}. La plantilla prepara la ficha: completa el recorrido y la actualización de los contadores.",
   anagramas: "Recibes dos textos, a y b, formados por letras ASCII y espacios. Devuelve verdadero si contienen las mismas letras con las mismas cantidades, aunque estén en distinto orden. Ignora mayúsculas y espacios normales. La plantilla prepara dos tablas con las 26 letras: completa el conteo y la comparación. Un texto vacío y otro de espacios sí cumplen la condición.",
   fizzbuzz: 'Recibes un entero n. Construye una lista con los números desde 1 hasta n, incluidos. Sustituye cada múltiplo de 3 por "Fizz", cada múltiplo de 5 por "Buzz" y los múltiplos de ambos por "FizzBuzz". Conserva los demás como números. Para cero, devuelve una lista vacía.\n\nLa plantilla ya recorre los números. Dentro del bucle, decide qué valor añadir. Comprueba primero si cumple ambas condiciones: 15 debe producir "FizzBuzz", no solo "Fizz". Devuelve la lista cuando termine el recorrido.',
+  altura: "Recibes un árbol binario o ausencia si está vacío. Cada nodo tiene v, su valor, e izq y der, sus hijos o ausencia. Devuelve su altura contando nodos, no aristas: el árbol vacío tiene altura cero, una hoja tiene altura uno y cada nodo añade uno a la mayor altura de sus hijos. Usa los nombres v, izq y der de esta entrada; no value, left y right de otros retos.",
+  preorden: "Recibes un árbol binario o ausencia si está vacío. Cada nodo tiene v, su valor, e izq y der, sus hijos o ausencia. Devuelve una lista de valores en preorden: primero v, después todos los del subárbol izq y finalmente los del subárbol der. El árbol vacío devuelve [].",
+  niveles: "Recibes un árbol binario o ausencia si está vacío. Cada nodo tiene v, su valor, e izq y der, sus hijos o ausencia. Devuelve una lista de valores por niveles, empezando por la raíz y de izquierda a derecha en cada nivel. Una cola permite visitar antes los nodos descubiertos antes. El árbol vacío devuelve [].",
+  "arbol-busqueda": "Recibes un árbol binario con valores distintos o ausencia si está vacío. Cada nodo tiene v, su valor, e izq y der, sus hijos o ausencia. Devuelve un booleano: todos los valores del subárbol izquierdo deben ser estrictamente menores que v y todos los del derecho, estrictamente mayores. Comprueba los límites heredados de todos los antecesores, no solo los hijos inmediatos. El árbol vacío cumple la propiedad.",
+  permutaciones: "Recibes hasta 8 enteros distintos en orden ascendente. Devuelve todas sus permutaciones: cada una utiliza todos los elementos exactamente una vez. Ordena las permutaciones lexicográficamente por sus valores numéricos: compara el primer elemento diferente, no los números convertidos a texto. Por ejemplo, [2, 10] va antes de [10, 2]. Para una entrada vacía devuelve [[]].",
+  distancias: "Recibes n, aristas e inicio de un grafo no dirigido y sin pesos. Los nodos están numerados de 0 a n - 1; cada par [a, b] conecta ambos sentidos. Devuelve una lista de longitud n: en la posición i, la mínima cantidad de aristas desde inicio hasta i, o -1 si no se alcanza. La distancia de inicio a sí mismo es cero. Recorre por niveles y marca cada nodo al descubrirlo.",
+  dijkstra: "Recibes n, aristas y destino de un grafo no dirigido. Los nodos están numerados de 0 a n - 1 y cada arista [a, b, peso] conecta ambos sentidos con un peso positivo. Devuelve el menor coste desde el nodo 0 hasta destino, o -1 si no se puede llegar. Si destino es 0, devuelve cero. A diferencia de contar aristas, debes sumar sus pesos; Dijkstra elige el nodo pendiente con menor distancia conocida.",
+  laberinto: "Recibes una cuadrícula rectangular no vacía: 0 indica una celda libre y 1 un muro. Devuelve el mínimo número de movimientos desde la esquina superior izquierda a la inferior derecha, avanzando arriba, abajo, izquierda o derecha; no se permiten diagonales ni atravesar muros. Devuelve -1 si no hay camino o alguna esquina es un muro. La celda inicial cuenta como cero movimientos: una única celda libre devuelve cero.",
+  factorial: "Recibes un entero n entre 0 y 15. Devuelve su factorial: el producto de los enteros desde 1 hasta n. Por ejemplo, para 4 el cálculo es 1 * 2 * 3 * 4 = 24. El factorial de cero se define como 1.\n\nLa plantilla prepara producto = 1. Añade un recorrido desde 1 hasta el número recibido, incluido, y multiplica el acumulador por cada valor. Devuelve producto después del bucle. Con cero no hay vueltas y se conserva el valor inicial.",
 };
 
 // Respuestas escritas y revisadas, no calculadas desde la referencia a validar.
@@ -99,6 +108,28 @@ const rules: Record<string, ConceptRule> = {
 const guided = new Set(["elige-mensaje", "signo", "uno-n", "suma-uno-n", "indices", "suma-lista", "maximo", "minusculas", "vocales", "frecuencias", "anagramas", "dos-requisitos", "alternativas", "invierte", "deduplica", "busqueda-binaria", "bucle-roto", "variable-local", "repara-presupuesto"]);
 
 const openingHelp: Record<string, Partial<SeedExercise>> = {
+  "arbol-busqueda": {
+    explanation: "Cada nodo debe respetar el rango impuesto por todos sus antecesores. Al bajar a izq, el valor actual pasa a ser el límite superior; al bajar a der, pasa a ser el inferior. Los límites son estrictos. Un nodo ausente cumple la propiedad. Comparar solo con los hijos inmediatos no detecta una infracción más profunda. Se visita cada nodo como máximo una vez: tiempo O(n) y memoria O(h) para las llamadas, con h la altura.",
+  },
+  alcanzables: {
+    complexity: "Tiempo O(n + m + r log r), con n nodos, m aristas y r nodos alcanzables; la ordenación final también cuenta. Memoria O(n + m) para el grafo y el recorrido.",
+    explanation: "Crea las conexiones en ambos sentidos y comienza con inicio marcado. Una pila guarda los nodos pendientes; marca cada vecino al descubrirlo para no añadirlo varias veces. Al terminar, ordena numéricamente los nodos alcanzables, incluido inicio. El recorrido cuesta O(n + m); ordenar los r alcanzables añade O(r log r). La memoria total, incluidas las conexiones, es O(n + m).",
+  },
+  permutaciones: {
+    complexity: "Tiempo O(n × n!) y memoria O(n × n!) para la salida. La referencia además mantiene O(n²) de copias de candidatos a lo largo de una rama, con O(n) llamadas.",
+    explanation: "Elige cada candidato disponible en orden numérico, añádelo a la combinación actual y explora con los restantes. Si no quedan candidatos, guarda una copia de la combinación. Después retira la última elección antes de probar otra. Como la entrada está ordenada, las respuestas salen en orden lexicográfico numérico. Para vacío se guarda la combinación vacía. Construir la salida cuesta O(n × n!) en tiempo y memoria; las copias de candidatos de una rama añaden O(n²) de memoria auxiliar.",
+  },
+  dijkstra: {
+    complexity: "Tiempo O(n² + m) con selección lineal; memoria O(n + m) para distancias y conexiones. n es el número de nodos y m el de aristas.",
+    explanations: {
+      python: "Inicializa las distancias con float('inf') y la del nodo 0 con cero. Selecciona el nodo no fijado con menor distancia; si su distancia es infinita, el resto es inalcanzable. Fíjalo y mejora la distancia de cada vecino cuando pasar por él sea más barato. Los pesos positivos permiten dar su distancia por definitiva. Devuelve -1 si destino sigue infinito. La referencia busca el mínimo recorriendo los nodos, sin montículo: O(n² + m) en tiempo y O(n + m) en memoria.",
+      javascript: "Inicializa las distancias con Infinity y la del nodo 0 con cero. Selecciona el nodo no fijado con menor distancia; si es Infinity, el resto es inalcanzable. Fíjalo y mejora cada vecino cuando distancia actual más peso sea menor. Los pesos positivos permiten fijar esa distancia definitivamente. Devuelve -1 si destino sigue en Infinity. Esta referencia selecciona el mínimo recorriendo los nodos, sin montículo: O(n² + m) en tiempo y O(n + m) en memoria.",
+      typescript: "Inicializa una lista de distancias numéricas con Infinity y la del nodo 0 con cero. Selecciona el nodo no fijado con menor distancia, fíjalo y mejora las distancias vecinas si pasar por él abarata el coste. Detente si no quedan nodos alcanzables. Devuelve -1 cuando destino siga en Infinity. Los pesos positivos justifican fijar cada mínimo. La selección lineal de esta referencia cuesta O(n² + m) en tiempo; distancias y conexiones ocupan O(n + m).",
+    },
+  },
+  "guarda-cantidad": {
+    explanation: "La asignación guarda 8 en puntos. Mostrar puntos consulta ese valor; mostrar el texto entre comillas escribe la palabra puntos. Conserva la variable y úsala al mostrar el resultado: además de la salida, esta práctica comprueba el concepto de utilizar una variable.",
+  },
   "valida-divisor": {
     hints: ["Comprueba el divisor antes de operar.", "Cero en total sí es válido.", "Devuelve ausencia solo cuando divisor vale cero; consulta su representación en la explicación de tu lenguaje."],
   },
@@ -168,6 +199,7 @@ const openingHelp: Record<string, Partial<SeedExercise>> = {
   },
   factorial: {
     hints: ["No empieces el producto en cero: cualquier número multiplicado por cero da cero.", "Recorre desde uno hasta el número recibido, incluido.", "En cada vuelta multiplica el producto anterior por el número actual. Devuelve el producto al terminar el bucle."],
+    explanation: "El acumulador empieza en uno. Para n = 4, después de multiplicar por 1, 2, 3 y 4 pasa por 1, 2, 6 y 24. Si n es cero no hay vueltas y conserva uno. No necesitas recursividad: combina un recorrido numérico con multiplicaciones y devuelve el resultado cuando termine.",
   },
   opcional: {
     hints: ["Una propiedad puede no estar presente.", "Conserva cero: no es lo mismo que ausencia.", "Consulta cantidad y utiliza uno como respaldo solo cuando falte esa propiedad."],
@@ -242,7 +274,12 @@ export function reviseLearningContent(exercise: SeedExercise, key: string): Seed
   ];
   const statement = statements[key];
   const statementsByLanguage = Object.fromEntries((["python", "javascript", "typescript"] as Language[]).map(language => [language, statement ?? exercise.statements?.[language] ?? exercise.statement])) as Record<Language, string>;
-  const constraints = fixed ? [] : exercise.constraints.filter(text => !/^(Implementa solve\(data\)|Escribe un programa completo|Los casos de salida fija)/.test(text));
+  const constraints = key === "saludo"
+    // La primera práctica mantiene una condición concreta: no repite el enunciado y explica el criterio de salida.
+    ? ["La salida debe coincidir exactamente con el texto esperado; no añadas líneas vacías ni texto adicional."]
+    : fixed ? [] : key === "potencia"
+      ? ["0 ≤ base ≤ 10; 0 ≤ exponente ≤ 100; enteros con resultado ≤ 9007199254740991."]
+      : exercise.constraints.filter(text => !/^(Implementa solve\(data\)|Escribe un programa completo|Los casos de salida fija)/.test(text));
   // No adelantar complejidad a quien aún está aprendiendo instrucciones.
   const complexity = exercise.level === "INITIATION" ? "" : exercise.complexity;
   const help = openingHelp[key];

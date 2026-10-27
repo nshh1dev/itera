@@ -50,8 +50,66 @@ type Definition = {
   cases: [Json, Json][]; hints: [string, string, string]; theory: string;
   pyStarter?: string; jsStarter?: string; tsStarter?: string;
 };
+// Descripciones editoriales, no una traducción automática de sintaxis de tipos.
+// Python y JavaScript no necesitan aprender anotaciones de TypeScript para empezar.
+const contractDescriptions: Record<string, string> = {
+  number: "un entero",
+  string: "un texto",
+  "number[]": "una lista de enteros",
+  "string[]": "una lista de textos",
+  "number | null": "un número o ausencia",
+  "number | string": "el número consultado o el mensaje de error indicado",
+  "{ exterior: number; argumento: number }": "una ficha con los enteros exterior y argumento",
+  "{ base: number; tasas: number[] }": "una ficha con base, un entero, y tasas, una lista de enteros",
+  "{ precio: number; unidades: number }": "una ficha con los enteros precio y unidades",
+  "{ valores: number[]; nuevo: number }": "una ficha con valores, una lista de enteros, y nuevo, un entero",
+  "{ valores: number[]; incremento: number }": "una ficha con valores, una lista de enteros, e incremento, un entero",
+  "{ ficha: { cantidad: number }; cambio: number }": "una ficha con cambio, un entero, y ficha, otra ficha que contiene el entero cantidad",
+  "{ total: number; divisor: number }": "una ficha con los enteros total y divisor",
+  "{ cantidad: number | null }": "una ficha con cantidad, un entero o ausencia",
+  "{ valores: number[]; indice: number }": "una ficha con valores, una lista de enteros, e indice, una posición entera",
+  "{ total: number; limite: number }": "una ficha con los enteros total y limite",
+  "{ matriz: number[][]; fila: number; columna: number; valor: number }": "una ficha con matriz, una lista de filas de enteros, y los enteros fila, columna y valor",
+  "{ original: number[]; alias: number[] }": "una ficha con las listas de enteros original y alias",
+  "{ original: number[]; copia: number[] }": "una ficha con las listas de enteros original y copia",
+  "{ original: number[]; ajustados: number[] }": "una ficha con las listas de enteros original y ajustados",
+  "{ validos: number[]; rechazados: number }": "una ficha con validos, la lista de enteros aceptados, y rechazados, la cantidad de textos inválidos",
+  "{ original: number[][]; copia: number[][] }": "una ficha con las matrices de enteros original y copia",
+};
+const learningObjectives: Record<string, string> = {
+  "predice-valores": "Predecir el valor después de dos actualizaciones, respetando su orden.",
+  "tabla-valores": "Conservar y mostrar el estado inicial y cada actualización de un valor.",
+  "parametro-exterior": "Utilizar un parámetro sin modificar ni confundirlo con un valor exterior.",
+  "llamadas-independientes": "Reiniciar el contador local en cada llamada de una función.",
+  "sin-estado-global": "Pasar todas las dependencias de un cálculo mediante argumentos.",
+  "encadena-retornos": "Conectar dos funciones pasando el retorno de una como argumento de otra.",
+  "dos-nombres-lista": "Observar una modificación de la misma lista desde dos nombres.",
+  "reasigna-o-muta": "Distinguir reasignar un nombre de modificar una lista compartida.",
+  "copia-plana": "Copiar una lista plana antes de modificarla para conservar el original.",
+  "conserva-entrada": "Construir una lista transformada sin alterar los valores recibidos.",
+  "registro-compartido": "Modificar intencionalmente un registro y observarlo desde su alias.",
+  "valida-divisor": "Comprobar el divisor antes de dividir y distinguir cero de ausencia.",
+  "valido-cero-ausente": "Distinguir ausencia, entero negativo y cantidad válida, incluido cero.",
+  "localiza-error": "Validar un índice antes de acceder a una lista.",
+  "captura-conversion": "Recuperarse de una conversión inválida sin ocultar errores inesperados.",
+  "error-dominio": "Lanzar y tratar un error que explica una regla de dominio incumplida.",
+  "recupera-elementos": "Tratar los errores por elemento sin perder los datos válidos siguientes.",
+  "asercion-normal": "Comprobar un resultado conocido mediante una aserción.",
+  "pruebas-limites": "Comprobar el máximo con listas vacías y valores negativos.",
+  "reproduce-fallo": "Reproducir con cero un error de comparación y corregirlo.",
+  "conserva-regresion": "Conservar pruebas del límite de un descuento y de su importe mínimo.",
+  "copia-anidada": "Copiar las filas de una matriz para modificar una celda sin alterar el original.",
+};
 // Las respuestas son datos editoriales independientes de las referencias.
 export function foundation(d: Definition): SeedExercise {
+  const inputDescription = d.key === "llamadas-independientes" ? "una lista de exactamente dos enteros no negativos" : contractDescriptions[d.input];
+  const outputDescription = contractDescriptions[d.output];
+  const objective = learningObjectives[d.key];
+  if (!inputDescription || !outputDescription || !objective) throw new Error(`Falta describir el contrato u objetivo de ${d.key}.`);
+  const task = d.pyStarter || d.jsStarter || d.tsStarter
+    ? "La plantilla contiene el cálculo que debes corregir. Conserva solve(data) y devuelve su resultado con return."
+    : "La plantilla solo prepara solve(data). Escribe dentro de ella las operaciones y auxiliares que pide el reto y devuelve el resultado con return.";
+  const statement = `${d.problem}\n\n${task}\n\nEntrada y resultado: data contiene ${inputDescription}; debes devolver ${outputDescription}. Usa enteros entre -1000 y 1000 y colecciones de hasta 100 elementos, salvo límites más específicos indicados.`;
   const signature = `function solve(data: ${d.input}): ${d.output}`;
   const empty = d.output === "number" || d.output === "number | string" ? "0" : d.output === "string" ? '""' : d.output.endsWith("[]") ? "[]" : d.output.includes("null") ? "null" : d.output.includes("ajustados") ? "{ original: [], ajustados: [] }" : d.output.includes("alias") ? "{ original: [], alias: [] }" : d.output.includes("copia") ? "{ original: [], copia: [] }" : "{ validos: [], rechazados: 0 }";
   const explain = (language: Language) => `${localTheory[d.key]?.[language] ?? d.theory}\n\nSigue los valores en orden y contrasta el resultado con un caso límite. Las comprobaciones oficiales evalúan los resultados: no demuestran por sí solas una técnica interna ni la calidad de tus pruebas.`;
@@ -75,8 +133,9 @@ export function foundation(d: Definition): SeedExercise {
   const exercise: SeedExercise = {
     slug: d.key, title: d.key, description: d.problem.split(". ")[0].slice(0, 290),
     level: "BEGINNER", category: "Fundamentos", minutes: 15,
-    statement: `${d.problem}\n\nContrato: solve(data) recibe ${d.input} y devuelve ${d.output}. Usa enteros entre -1000 y 1000 y colecciones de hasta 100 elementos, salvo límites más específicos indicados.`,
-    objective: d.problem.split(". ")[0], practiceGoals: [d.problem.split(". ")[0]],
+    statement,
+    statements: { python: statement, javascript: statement, typescript: `${statement}\n\nFirma de la plantilla: ${signature}. Las anotaciones describen los datos; no los convierten ni sustituyen las comprobaciones.` },
+    objective, practiceGoals: [objective],
     prerequisites: [/^(predice-valores|tabla-valores)$/.test(d.key) ? "Variables, operaciones y primeras funciones." : "Funciones, decisiones y recorridos; consulta la teoría de este bloque."],
     constraints: ["La aplicación proporciona data; devuelve el resultado, no una respuesta fija.", "Las plantillas son ejecutables, pero están incompletas. Los errores deliberados aparecen como fragmentos explicados, no como plantillas que se caen."],
     hints: d.hints, explanation,

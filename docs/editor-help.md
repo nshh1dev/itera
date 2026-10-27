@@ -18,6 +18,11 @@ Los ejemplos de programas muestran texto real con sus saltos de línea y omiten 
 
 Las fuentes de fundamentos y proyectos generan explicaciones específicas por lenguaje. `prisma/learning-revisions.ts` aplica las correcciones editoriales y conserva sus variantes; cuando una corrección sustituye un texto común, actualiza también el texto de las variantes para evitar que la importación recupere la explicación anterior. `tests/practice-clarity.test.ts` recorre las 176 actividades y los 36 bloques para detectar mezclas sintácticas. Esta comprobación no certifica por sí sola la claridad pedagógica de todos los textos ni su publicación en una instalación.
 
+La revisión del catálogo, los contratos aclarados y la verificación de su instalación
+se documentan en [Claridad educativa](revision-claridad-educativa.md). Los fundamentos
+describen los datos en español; solo TypeScript añade su firma anotada. Los hitos de
+proyectos conservan un contrato autocontenido aunque permitan copiar trabajo anterior.
+
 La interfaz utiliza Source Sans 3 con archivos y licencia locales en `src/app/fonts/`, mediante `next/font/local`; el código conserva Geist Mono.
 
 ## Comprobaciones
