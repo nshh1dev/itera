@@ -1,5 +1,7 @@
 # Fundamentos y miniproyectos
 
+El mapa siguiente corresponde a la ampliación común. Python añade después un [recorrido específico de 224 pasos](recorrido-python.md), conservando estas identidades y sus contratos; sus incorporaciones no crean variantes de JavaScript ni TypeScript.
+
 ## Mapa editorial
 
 Ampliación de 40 identidades con tres variantes cada una. Resultado: 176 actividades, 36 bloques, cuatro rutas (30/57/53/36 por nivel). Los 136 slugs anteriores conservan contratos, nivel e identidad. La prueba `tests/fundamentals-content.test.ts` fija esa lista, no solo el recuento. Ninguna fuente histórica cambia.

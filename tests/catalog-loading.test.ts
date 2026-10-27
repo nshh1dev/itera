@@ -6,9 +6,10 @@ import { languages, type Language } from "../src/lib/types";
 test("Inicio comparte metadatos sin compartir actividad o progreso entre lenguajes y cuentas", async t => {
   let catalogReads = 0;
   let activityReads: Language[] = [];
+  let pythonRevision = false;
   const reset = () => { catalogReads = 0; activityReads = []; };
   const date = (day: number) => new Date(`2026-10-${day}T00:00:00.000Z`);
-  const version = { title: "Título publicado", description: "Descripción", level: "INITIATION", minutes: 5, runtimeMode: "FUNCTION", practiceGoals: ["Practicar"], activityType: "PRACTICE" };
+  const version = { title: "Título publicado", description: "Descripción", level: "INITIATION", minutes: 5, runtimeMode: "FUNCTION", practiceGoals: ["Practicar"], activityType: "PRACTICE", variants: languages.map(language => ({ language })) };
   const path = { slug: "desde-cero", title: "Desde cero", items: [{ exerciseId: "saludo" }, { exerciseId: "signo" }] };
   const key = Symbol.for("itera:test:catalog-loading");
   const globals = globalThis as typeof globalThis & { [key: symbol]: unknown };
@@ -22,13 +23,13 @@ test("Inicio comparte metadatos sin compartir actividad o progreso entre lenguaj
       assert.deepEqual(query.orderBy, { order: "asc" });
       assert.deepEqual(query.select.versions.where, { published: true });
       assert.deepEqual(query.select.versions.orderBy, { number: "desc" });
-      assert.equal(query.select.versions.take, 1);
+      assert.equal(query.select.versions.take, undefined); // Puede haber revisiones publicadas exclusivas de un lenguaje.
       assert.deepEqual(query.select.progress.where.language.in, languages);
       const own = query.select.progress.where.userId === "cuenta";
       return [
         { id: "personalizado", slug: "personalizado", category: "Fundamentos", order: 0, versions: [version], progress: [] },
         { id: "signo", slug: "logica-signo", category: "Fundamentos", order: 1, versions: [version], progress: own ? [{ language: "typescript", firstPassedAt: null, attempts: 1 }] : [] },
-        { id: "saludo", slug: "logica-saludo", category: "Fundamentos", order: 2, versions: [version], progress: own ? [{ language: "python", firstPassedAt: date(20), attempts: 1 }] : [] },
+        { id: "saludo", slug: "logica-saludo", category: "Fundamentos", order: 2, versions: [...(pythonRevision ? [{ ...version, title: "Revisión Python", variants: [{ language: "python" }] }] : []), version], progress: own ? [{ language: "python", firstPassedAt: date(20), attempts: 1 }] : [] },
         { id: "sin-version", slug: "sin-version", category: "Fundamentos", order: 3, versions: [], progress: [] },
       ];
     } },
@@ -114,6 +115,15 @@ test("Inicio comparte metadatos sin compartir actividad o progreso entre lenguaj
       reset(); const result = await getPracticeNavigation(undefined, "python");
       assert.equal(catalogReads, 1); assert.deepEqual(activityReads, []);
       assert.equal(result.catalog.some(entry => entry.started || entry.solved), false);
+    });
+    await t.test("una revisión Python no oculta ni cambia los metadatos publicados de otros lenguajes", async () => {
+      pythonRevision = true;
+      assert.equal((await getCatalog("cuenta", "python"))[0].title, "Revisión Python");
+      for (const language of ["javascript", "typescript"] as const) {
+        const catalog = await getCatalog("cuenta", language);
+        assert.equal(catalog[0].title, "Título publicado");
+        assert.equal("variants" in catalog[0], false);
+      }
     });
   } finally { hooks.deregister(); delete globals[key]; }
 });

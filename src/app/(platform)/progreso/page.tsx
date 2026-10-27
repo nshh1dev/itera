@@ -11,6 +11,7 @@ import { LanguageNavigation } from "@/components/language-navigation";
 import { languageSchema } from "@/lib/validation";
 import { Progress } from "@/components/arc/progress";
 import { Disclosure } from "@/components/arc/disclosure";
+import { languagePaths } from "@/lib/language-curriculum";
 
 export const metadata = { title: "Mi progreso" };
 export default async function ProgressPage({ searchParams }: { searchParams: Promise<{ lenguaje?: string; pagina?: string; archivo?: string; borradores?: string }> }) {
@@ -20,7 +21,7 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
   const language = languageSchema.catch((user.preference?.language ?? "python") as Language).parse(params.lenguaje);
   const archivePage = Math.min(100000, Math.max(1, Number.parseInt(params.archivo ?? "1") || 1));
   const draftPage = Math.min(100000, Math.max(1, Number.parseInt(params.borradores ?? "1") || 1));
-  const [catalog, history, paths, help, archivedProgress, archivedDrafts, archivedSubmissions, currentVersions] = await Promise.all([
+  const [catalog, history, storedPaths, help, archivedProgress, archivedDrafts, archivedSubmissions, currentVersions] = await Promise.all([
     getCatalog(user.id, language),
     getHistoryGroups(user.id, language),
     db.learningPath.findMany({ orderBy: { order: "asc" }, select: { slug: true, title: true, items: { select: { exerciseId: true } } } }),
@@ -28,8 +29,9 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
     db.progress.count({ where: { userId: user.id, language, firstPassedAt: { not: null }, exercise: { published: false } } }),
     db.draft.findMany({ where: { userId: user.id, variant: { language, version: { exercise: { published: false } } } }, orderBy: [{ updatedAt: "desc" }, { id: "desc" }], skip: (archivePage - 1) * 20, take: 21, select: { id: true, code: true, variant: { select: { language: true, version: { select: { title: true } } } } } }),
     db.submission.findMany({ where: { userId: user.id, diagnosticItemId: null, variant: { language, version: { exercise: { published: false } } } }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], skip: (archivePage - 1) * 20, take: 21, select: { id: true, code: true, status: true, variant: { select: { language: true, version: { select: { title: true } } } } } }),
-    db.exerciseVersion.findMany({ where: { published: true, exercise: { published: true } }, distinct: ["exerciseId"], orderBy: { number: "desc" }, select: { id: true } }),
+    db.exerciseVersion.findMany({ where: { published: true, variants: { some: { language } }, exercise: { published: true } }, distinct: ["exerciseId"], orderBy: { number: "desc" }, select: { id: true } }),
   ]);
+  const paths = languagePaths(storedPaths, catalog, language);
   const historicalDrafts = await db.draft.findMany({ where: { userId: user.id, variant: { language, version: { id: { notIn: currentVersions.map(version => version.id) }, exercise: { published: true } } } }, orderBy: [{ updatedAt: "desc" }, { id: "desc" }], skip: (draftPage - 1) * 20, take: 21, select: { id: true, code: true, updatedAt: true, variant: { select: { version: { select: { title: true, number: true } } } } } });
   const solved = catalog.filter(e => e.solved).length;
   const pages = Math.max(1, Math.ceil(history.length / 10));

@@ -8,12 +8,14 @@ import { db } from "@/server/db";
 import { getRecentSubmissions } from "@/server/activity";
 import { exerciseHref, exercisePosition, nextExerciseSlug, previousExerciseSlug } from "@/lib/learning-paths";
 import { educationalMetadataSchema } from "@/lib/learning-metadata";
-import { languages, languageNames } from "@/lib/types";
+import { languageNames } from "@/lib/types";
 import { moduleForExercise } from "@/lib/learning-modules";
 import { theoryForLanguage } from "@/lib/lesson-language";
 import Link from "next/link";
 import { relatedExercise } from "@/lib/practice-navigation";
 import { validateProjectDefinition, validateProjectSnapshot, type ProjectFile } from "@/lib/project";
+import { languagePaths } from "@/lib/language-curriculum";
+import { hasPythonCurriculum } from "@/lib/python-curriculum";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Espacio de práctica" };
@@ -34,11 +36,12 @@ export default async function ExercisePage({ params, searchParams }: { params: P
   const version = exercise?.versions[0];
   if (!exercise || !version) notFound();
   const variant = version.variants.find(variant => variant.language === language);
-  const availableLanguages = languages.filter(language => version.variants.some(variant => variant.language === language));
+  const availableLanguages = exercise.availableLanguages;
   if (!variant) return <main id="main-content" className="page-container"><h1 className="page-title">Esta versión todavía no está disponible en {languageNames[language]}</h1><p className="mt-4 text-sm leading-7 text-muted-foreground">La revisión de este lenguaje debe validarse y publicarse. No hemos cambiado tus ejercicios ni tu progreso.</p><nav aria-label="Lenguajes disponibles" className="mt-5 flex flex-wrap gap-4">{availableLanguages.map(language => <Link key={language} className="text-link" href={exerciseHref(slug, language, query.ruta)}>{languageNames[language]}</Link>)}<Link className="text-link" href="/rutas">Volver a las rutas</Link></nav></main>;
-  const lessonModule = moduleForExercise(slug);
+  const lessonModule = moduleForExercise(slug, hasPythonCurriculum(catalog) ? language : undefined);
   const lesson = lessonModule ? { title: lessonModule.title, objective: lessonModule.objective, theory: theoryForLanguage(lessonModule, language), example: lessonModule.examples[language] } : undefined;
-  const pathSlugs = path?.items.flatMap(item => { const entry = catalog.find(e => e.id === item.exerciseId); return entry ? [entry.slug] : []; });
+  const resolvedPath = path ? languagePaths([path], catalog, language)[0] : undefined;
+  const pathSlugs = resolvedPath?.items.flatMap(item => { const entry = catalog.find(e => e.id === item.exerciseId); return entry ? [entry.slug] : []; });
   const pathSlug = pathSlugs?.includes(slug) ? path!.slug : undefined;
   const sequence = pathSlug ? pathSlugs! : catalog.map(e => e.slug);
   const current = catalog.find(item => item.slug === slug);
@@ -63,7 +66,7 @@ export default async function ExercisePage({ params, searchParams }: { params: P
     else if (variant.drafts[0]?.code) initialFiles = validateProjectSnapshot(project, project.files.map(file => ({ ...file, content: file.path === project.entrypoint ? variant.drafts[0]!.code : file.content })));
     else initialFiles = project.files;
     if (project.previousStep) {
-      const previous = await db.exercise.findUnique({ where: { slug: project.previousStep, published: true }, select: { versions: { where: { published: true }, orderBy: { number: "desc" }, take: 1, select: { variants: { where: { language }, take: 1, select: { id: true, project: true, drafts: { where: { userId: user?.id ?? "__guest__" }, take: 1, select: { code: true, files: true } } } } } } } });
+      const previous = await db.exercise.findUnique({ where: { slug: project.previousStep, published: true }, select: { versions: { where: { published: true, variants: { some: { language } } }, orderBy: { number: "desc" }, take: 1, select: { variants: { where: { language }, take: 1, select: { id: true, project: true, drafts: { where: { userId: user?.id ?? "__guest__" }, take: 1, select: { code: true, files: true } } } } } } } });
       const priorVariant = previous?.versions[0]?.variants[0];
       if (priorVariant?.project) {
         try {

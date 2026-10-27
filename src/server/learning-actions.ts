@@ -54,7 +54,7 @@ export async function startDiagnostic(input: unknown) {
   const profile = await db.learningProfile.findUnique({ where: { userId_language: { userId: user.id, language } } });
   if (!profile) return { error: "Guarda primero tu nivel para este lenguaje." };
   const slugs = diagnosticExercises[profile.declaredLevel];
-  const exercises = await db.exercise.findMany({ where: { slug: { in: [...slugs] }, published: true }, select: { slug: true, versions: { where: { published: true }, orderBy: { number: "desc" }, take: 1, select: { variants: { where: { language }, select: { id: true, starter: true, tests: { select: { id: true } } } } } } } });
+   const exercises = await db.exercise.findMany({ where: { slug: { in: [...slugs] }, published: true }, select: { slug: true, versions: { where: { published: true, variants: { some: { language } } }, orderBy: { number: "desc" }, take: 1, select: { variants: { where: { language }, select: { id: true, starter: true, tests: { select: { id: true } } } } } } } });
   const variants = slugs.map(slug => exercises.find(exercise => exercise.slug === slug)?.versions[0]?.variants[0]);
   if (variants.some(variant => !variant || !variant.tests.length)) return { error: "El diagnóstico no está disponible en este catálogo. Puedes continuar sin hacerlo." };
   const diagnostic = await db.$transaction(async tx => {

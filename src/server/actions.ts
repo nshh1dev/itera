@@ -80,7 +80,13 @@ export async function rememberPractice(input: unknown) {
   const variant = await db.exerciseVariant.findFirst({ where: { id: variantId, language, version: { published: true, exercise: { published: true } } }, select: { version: { select: { exerciseId: true } } } });
   if (!variant) return;
   const exerciseId = variant.version.exerciseId;
-  const path = pathSlug ? await db.learningPath.findFirst({ where: { slug: pathSlug, items: { some: { exerciseId } } }, select: { slug: true } }) : null;
+  const storedPath = pathSlug ? await db.learningPath.findFirst({ where: { slug: pathSlug }, select: { slug: true, items: { select: { exerciseId: true } } } }) : null;
+  let path = storedPath?.items.some(item => item.exerciseId === exerciseId) ? storedPath : null;
+  if (storedPath && language === "python") {
+    const [{ getCatalog }, { languagePaths }] = await Promise.all([import("./catalog"), import("@/lib/language-curriculum")]);
+    const catalog = await getCatalog(user.id, language);
+    path = languagePaths([storedPath], catalog, language)[0].items.some(item => item.exerciseId === exerciseId) ? storedPath : null;
+  }
   const key = { userId: user.id, exerciseId, language };
   await db.practiceContext.upsert({ where: { userId_exerciseId_language: key }, create: { ...key, pathSlug: path?.slug }, update: { pathSlug: path?.slug ?? null, visitedAt: new Date() } });
 }

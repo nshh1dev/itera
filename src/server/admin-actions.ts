@@ -41,6 +41,8 @@ export async function saveExercise(input: unknown) {
         const order = await tx.exercise.aggregate({ _max: { order:true } });
         exercise = await tx.exercise.create({ data: { slug:data.slug, category:data.category, order:(order._max.order ?? -1)+1, published:false }, include:{versions:true} });
       }
+      const currentVariants = exercise.versions[0] ? await tx.exerciseVariant.findMany({ where: { versionId: exercise.versions[0].id }, select: { language: true } }) : [];
+      if (currentVariants.length === 1 && currentVariants[0].language === "python") throw new Error("La revisión exclusiva de Python requiere el flujo content:python.");
       const version = await tx.exerciseVersion.create({ data: {
         exerciseId:exercise.id, number:(exercise.versions[0]?.number ?? 0)+1, title:data.title, description:data.description,
         statement:data.statement, level:data.level, minutes:data.minutes, hints:data.hints, constraints:data.constraints,
@@ -144,6 +146,7 @@ export async function prepareCatalogRevision(input: unknown) {
       } });
       const current = exercise?.versions[0];
       if (!exercise || !current) return { error: "El ejercicio ya no está disponible." };
+      if (current.variants.length === 1 && current.variants[0].language === "python") return { error: "Esta revisión exclusiva de Python se prepara con content:python, no con el importador compartido." };
       const decision = catalogRevisionDecision(current, content, parsed.data.versionId);
       if (decision === "unchanged") return { created: false, number: current.number };
       if (decision === "stale") return { error: "La versión cambió en otra pestaña. Recarga antes de preparar la actualización." };

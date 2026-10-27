@@ -2,8 +2,8 @@ import { learningPaths } from "./learning-paths";
 
 // El orden editorial es compartido con el catálogo. Los ejercicios administrativos
 // ajenos a las rutas mantienen su orden persistido, después de esas rutas.
-export function prerequisiteIssue(slug: string, prerequisites: string[], entries: { slug: string; order: number }[]): string | undefined {
-  const curriculum = [...new Set(learningPaths.flatMap(path => path.slugs ?? []))];
+export function prerequisiteIssue(slug: string, prerequisites: string[], entries: { slug: string; order: number }[], sequence?: readonly string[]): string | undefined {
+  const curriculum = [...new Set(sequence ?? learningPaths.flatMap(path => path.slugs ?? []))];
   const rank = (entry: { slug: string; order: number }) => {
     const index = curriculum.indexOf(entry.slug);
     return index < 0 ? curriculum.length + entry.order : index;

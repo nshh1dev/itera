@@ -29,6 +29,7 @@ async function main() {
       const exercise = await tx.exercise.findUnique({ where: { slug: source.slug }, include: { versions: { orderBy: { number: "desc" }, take: 1, include: { variants: { include: { tests: true } } } } } });
       const current = exercise?.versions[0];
       if (!exercise || !current) throw new Error(`Falta ${source.slug}. Ejecuta primero npm run db:seed.`);
+      if (current.variants.length === 1 && current.variants[0].language === "python") { console.log(`${source.slug}: revisión exclusiva de Python; usa content:python.`); conflicts++; return; }
       const decision = catalogRevisionDecision(current, content, current.id);
       if (decision === "unchanged") { unchanged++; return; }
       if (decision !== "create") { console.log(`${source.slug}: se conserva el borrador editorial existente.`); conflicts++; return; }

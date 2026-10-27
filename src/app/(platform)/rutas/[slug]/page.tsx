@@ -12,6 +12,8 @@ import { learningPaths } from "@/lib/learning-paths";
 import { Disclosure } from "@/components/arc/disclosure";
 import { activePathExercise } from "@/lib/practice-navigation";
 import { PathCompletion, PathReview } from "@/components/path-review";
+import { languagePaths } from "@/lib/language-curriculum";
+import { hasPythonCurriculum } from "@/lib/python-curriculum";
 
 export default async function PathPage({ params, searchParams }: { params: Promise<{slug:string}>; searchParams: Promise<{lenguaje?:string}> }) {
   const {slug} = await params;
@@ -22,8 +24,8 @@ export default async function PathPage({ params, searchParams }: { params: Promi
     getCatalog(user?.id, language),
   ]);
   if (!path) notFound();
-  const exercises = path.items.flatMap(item => { const exercise = catalog.find(e => e.id === item.exerciseId); return exercise ? [exercise] : []; });
-  const modules = modulesForPath(slug);
+  const exercises = languagePaths([path], catalog, language)[0].items.flatMap(item => { const exercise = catalog.find(e => e.id === item.exerciseId); return exercise ? [exercise] : []; });
+  const modules = modulesForPath(slug, hasPythonCurriculum(catalog) ? language : undefined);
   const definition = learningPaths.find(path => path.slug === slug);
   const next = definition ? learningPaths.find(path => path.order > definition.order) : undefined;
   const nextExercise = activePathExercise(exercises);
@@ -34,7 +36,7 @@ export default async function PathPage({ params, searchParams }: { params: Promi
     {definition && <p className="mt-3 text-xs font-medium text-muted-foreground">{levelNames[definition.level]} · Fundamentos de programación y algoritmos</p>}
     <p className="page-description">{path.description}</p>
     <nav aria-label="Lenguaje de la ruta" className="segmented-control mt-5 flex-wrap">{languages.map(lang => <Link key={lang} href={`?lenguaje=${lang}`} aria-current={language === lang ? "page" : undefined} className="segment">{languageNames[lang]}</Link>)}</nav>
-    <Disclosure title="Sobre esta ruta" className="mt-3 max-w-prose"><p className="pb-3 text-sm leading-6 text-muted-foreground">Los mismos retos y el mismo orden en Python, JavaScript y TypeScript. Cambia la sintaxis, no el problema. El progreso se guarda por lenguaje y todas las etapas tienen acceso libre. {language === "typescript" ? "Puedes empezar sin conocer JavaScript: los tipos se presentan gradualmente." : "Las ayudas disminuyen a medida que practicas."}</p></Disclosure>
+    <Disclosure title="Sobre esta ruta" className="mt-3 max-w-prose"><p className="pb-3 text-sm leading-6 text-muted-foreground">{language === "python" && hasPythonCurriculum(catalog) ? "Python incluye prácticas propias y una secuencia gradual para aprender sus herramientas antes de combinarlas." : "JavaScript y TypeScript conservan sus retos y su orden común."} El progreso se guarda por lenguaje y todas las etapas tienen acceso libre. {language === "typescript" ? "Puedes empezar sin conocer JavaScript: los tipos se presentan gradualmente." : "Las ayudas disminuyen a medida que practicas."}</p></Disclosure>
     {completed && <PathCompletion language={language} count={exercises.length} />}
     <p className="mt-6 mb-3 px-3 text-xs text-muted-foreground">{exercises.filter(e => e.solved).length} de {exercises.length} completados · Sin prisa, sin bloqueos</p>
     <div className="route-content mt-6">

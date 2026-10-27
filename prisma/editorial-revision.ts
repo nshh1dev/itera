@@ -1,4 +1,5 @@
 import { isDeepStrictEqual } from "node:util";
+import { createHash } from "node:crypto";
 import { exercises, starter, type SeedExercise } from "./content";
 import type { Level, RuntimeMode } from "../src/lib/types";
 import { languages } from "../src/lib/types";
@@ -6,7 +7,7 @@ import { statementForLanguage } from "./lesson-statements";
 import { logicExercises } from "./logic-content";
 import { Prisma } from "../src/generated/prisma/client";
 
-type VersionContent = {
+export type VersionContent = {
   title: string; description: string; statement: string; constraints: string[]; hints: string[]; level: Level; minutes: number;
   objective: string; prerequisites: string[];
   practiceGoals: string[]; prerequisiteSlugs: string[]; activityType: string;
@@ -61,6 +62,12 @@ function normalized(version: ComparableVersion) {
 }
 
 type RevisionSnapshot = ComparableVersion & { id: string; published: boolean };
+
+export function catalogRevisionFingerprint(version: ComparableVersion) {
+  const canonical = JSON.stringify(normalized(version), (_key, value) => value && typeof value === "object" && !Array.isArray(value)
+    ? Object.fromEntries(Object.keys(value).sort().map(key => [key, value[key]])) : value);
+  return createHash("sha256").update(canonical).digest("hex");
+}
 
 export function catalogRevisionDecision(current: RevisionSnapshot, source: VersionContent, expectedVersionId: string): "unchanged" | "stale" | "draft" | "create" {
   // Repetir una importación idéntica no crea versiones ni eventos duplicados.
