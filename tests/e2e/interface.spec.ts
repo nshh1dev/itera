@@ -77,9 +77,9 @@ test("el IDE permite ajustar paneles por teclado y colapsar los resultados", asy
   await page.keyboard.press("ArrowUp");
   await expect(height).toHaveAttribute("aria-valuenow", "260");
   await page.getByRole("button", { name: "Contraer resultados", exact: true }).click();
-  await expect(page.getByText("Todo empieza con un intento.", { exact: true })).not.toBeVisible();
+  await expect(page.getByText("Aquí verás el resultado de tu código.", { exact: true })).not.toBeVisible();
   await page.getByRole("button", { name: "Expandir resultados", exact: true }).click();
-  await expect(page.getByText("Todo empieza con un intento.", { exact: true })).toBeVisible();
+  await expect(page.getByText("Aquí verás el resultado de tu código.", { exact: true })).toBeVisible();
   const editor = await page.locator(".editor-region").boundingBox();
   expect(editor!.width).toBeGreaterThanOrEqual(420);
   await page.screenshot({ path: ".local/screenshots/ui-workspace-light.png", fullPage: true, animations: "disabled" });

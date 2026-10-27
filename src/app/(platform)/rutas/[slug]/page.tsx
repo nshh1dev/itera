@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import { db } from "@/server/db";
 import { currentUser } from "@/server/auth";
 import { getCatalog } from "@/server/catalog";
@@ -36,7 +35,6 @@ export default async function PathPage({ params, searchParams }: { params: Promi
     <p className="page-description">{path.description}</p>
     <nav aria-label="Lenguaje de la ruta" className="segmented-control mt-5 flex-wrap">{languages.map(lang => <Link key={lang} href={`?lenguaje=${lang}`} aria-current={language === lang ? "page" : undefined} className="segment">{languageNames[lang]}</Link>)}</nav>
     <Disclosure title="Sobre esta ruta" className="mt-3 max-w-prose"><p className="pb-3 text-sm leading-6 text-muted-foreground">Los mismos retos y el mismo orden en Python, JavaScript y TypeScript. Cambia la sintaxis, no el problema. El progreso se guarda por lenguaje y todas las etapas tienen acceso libre. {language === "typescript" ? "Puedes empezar sin conocer JavaScript: los tipos se presentan gradualmente." : "Las ayudas disminuyen a medida que practicas."}</p></Disclosure>
-    {nextExercise && <section className="surface-panel mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-surface p-5" aria-label="Siguiente ejercicio de la ruta"><div><h2 className="text-sm font-semibold">{nextExercise.started ? "Retoma tu práctica" : "Tu siguiente paso"}</h2><p className="mt-2 text-sm text-muted-foreground">Ejercicio {exercises.findIndex(exercise => exercise.id === nextExercise.id) + 1} de {exercises.length}{nextExercise.started ? " · En curso" : ""}</p></div><Button asChild><Link aria-description={nextExercise.title} href={`/ejercicios/${nextExercise.slug}?lenguaje=${language}&ruta=${encodeURIComponent(slug)}`}>Abrir ejercicio<ArrowRight aria-hidden="true" /></Link></Button></section>}
     {completed && <PathCompletion language={language} count={exercises.length} />}
     <p className="mt-6 mb-3 px-3 text-xs text-muted-foreground">{exercises.filter(e => e.solved).length} de {exercises.length} completados · Sin prisa, sin bloqueos</p>
     <div className="route-content mt-6">

@@ -17,8 +17,8 @@ comprensión ni se intenta impedir toda solución escrita para memorizar los tes
   versiones antiguas también se deduplican en la presentación, sin cambiar sus tests.
 - Con entrada: ejemplos diferentes y formato exacto. Un JSON null sigue siendo
   una entrada; no se interpreta como ausencia de entrada de un programa.
-- Antes de empezar y Comprender la idea son desplegables hermanos, sin
-  desplegables anidados. Se conservan teoría, ejemplos de otros datos y repaso.
+- La teoría esencial y los ejemplos de aprendizaje se muestran directamente;
+  Antes de empezar conserva el repaso opcional plegado, sin desplegables anidados.
 - Pistas progresivas y errores comunes se consultan bajo demanda. La solución
   completa mantiene una petición autenticada independiente y un botón explícito.
 

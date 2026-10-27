@@ -16,15 +16,16 @@ test("la ayuda elimina objetivos repetidos y relleno sin confundir conceptos dif
   assert.deepEqual(learningHelp({ objective: "Combinar datos y devolver una suma.", practiceGoals: ["Leer dos propiedades.", "Sumar sus valores."], prerequisites: [] }).goals, ["Leer dos propiedades.", "Sumar sus valores."]);
 });
 
-test("la guía separa los requisitos y los conceptos en desplegables hermanos", () => {
+test("la guía muestra los conceptos directamente y reserva el desplegable para el repaso", () => {
   const html = renderToStaticMarkup(createElement(LearningGuide, {
     objective: "Usar una variable.", practiceGoals: ["Usar una variable."], prerequisites: ["Mostrar texto."],
   }, createElement(ModuleLesson, { lesson: { title: "Variables", objective: "Usar una variable.", theory: "Una variable conserva un valor.", example: "nombre = 'Ada'" }, language: "python" })));
-  assert.match(html, /Comprender la idea/);
+  assert.doesNotMatch(html, /Comprender la idea/);
+  assert.match(html, /Qué vas a practicar/);
   assert.match(html, /Antes de empezar/);
   assert.match(html, /No es la solución del reto/);
   assert.equal((html.match(/Usar una variable\./g) ?? []).length, 1);
-  assert.equal((html.match(/<button/g) ?? []).length, 2);
+  assert.equal((html.match(/<button/g) ?? []).length, 1);
   assert.doesNotMatch(renderToStaticMarkup(createElement(ExerciseNotes, { complexity: "", commonErrors: ["Revisar cero."] })), /<button/);
 });
 

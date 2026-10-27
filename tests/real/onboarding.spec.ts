@@ -97,7 +97,7 @@ test("diagnóstico real aislado: casos ocultos, propiedad, idempotencia y repeti
   for (const item of diagnostic.items.slice(0, 2)) {
     await expect(page.getByRole("textbox", { name: "Código del diagnóstico" })).toHaveCSS("font-size", "18px");
     await page.getByRole("textbox", { name: "Código del diagnóstico" }).fill(item.variant.solution);
-    await page.getByRole("button", { name: "Evaluar reto", exact: true }).click();
+    await page.getByRole("button", { name: "Comprobar respuesta", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Reto de diagnóstico superado." })).toBeVisible({ timeout: 60000 });
     if (item.position === 0) await page.getByRole("button", { name: "Siguiente reto" }).click();
   }

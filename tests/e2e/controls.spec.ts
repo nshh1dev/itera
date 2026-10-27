@@ -7,7 +7,7 @@ for (const theme of ["light", "dark"] as const) {
       await page.setViewportSize({ width, height: 760 });
       await page.emulateMedia({ colorScheme: theme });
       await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
-      const hints = page.getByRole("button", { name: "Pistas progresivas", exact: true });
+      const hints = page.getByRole("button", { name: "Antes de empezar", exact: true });
       await hints.focus();
       await hints.press("Enter");
       await expect(hints).toHaveAttribute("aria-expanded", "true");

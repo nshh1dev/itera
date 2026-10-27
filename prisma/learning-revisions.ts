@@ -4,13 +4,13 @@ import type { ConceptRule } from "../src/lib/concept-validation";
 
 // Revisiones del catálogo actual. Las fuentes históricas no se reescriben.
 const statements: Record<string, string> = {
-  saludo: "Muestra el texto Hola, mundo! en una sola línea. Respeta la coma, el espacio y el signo de exclamación.",
+  saludo: 'Escribe una instrucción que muestre el saludo "Hola, mundo!" en la pantalla. El saludo debe ocupar una sola línea, con la coma, el espacio y el signo de exclamación que ves en la salida esperada.\n\nNo necesitas introducir ningún dato. Escribe el texto entre comillas dentro de la instrucción que lo muestra; las comillas no deben aparecer en la salida.',
   "dos-lineas": "Muestra Primera y Segunda, en ese orden y en líneas distintas.",
   "orden-mensaje": "La plantilla muestra las instrucciones de una receta en un orden incorrecto. Reorganízalas para mostrar Preparar, Mezclar y Servir, cada palabra en una línea.",
   "texto-calculo": "Muestra el resultado de sumar 4 y 6 en la primera línea. En la segunda, muestra el texto 4 + 6 sin calcularlo. Utiliza una expresión numérica para la suma y comillas para el texto.",
   "guarda-nombre": "Guarda el texto Ada en una variable y muestra su valor. Utiliza la variable al mostrarlo, no escribas de nuevo el texto.",
   "guarda-cantidad": "La plantilla guarda 8 en puntos, pero muestra la palabra puntos. Corrige la impresión para mostrar el valor de la variable.",
-  "actualiza-puntos": "Empiezas con 8 puntos y ganas 3. Corrige la actualización para sumar los nuevos puntos al valor anterior. Muestra el valor de la variable después de actualizarla.",
+  "actualiza-puntos": "El código empieza guardando 8 puntos en la variable puntos. Después has ganado 3 puntos más, pero la siguiente instrucción reemplaza tu puntuación en lugar de aumentarla.\n\nCorrige esa actualización para sumar los 3 puntos nuevos a los que ya tenías. Después muestra el valor de puntos: debe ser 11. Utiliza la variable para hacer la suma, en lugar de escribir directamente el resultado.",
   intercambia: "Guarda 3 en una variable y 8 en otra. Intercambia sus valores usando una variable auxiliar. Después muestra el valor de la primera y el de la segunda, en líneas distintas.",
   "suma-cantidades": "Guarda 7 y 5 en dos variables. Calcula su suma utilizando esas variables y muestra el resultado.",
   cambio: "Una compra cuesta 13 y pagas con 20. Guarda ambas cantidades en variables. Calcula cuánto deben devolverte usando una resta entre esos valores y muestra el resultado.",
@@ -43,7 +43,7 @@ const statements: Record<string, string> = {
   "k-mayores": "Recibes numbers, una lista de hasta 1000 enteros, y k, entre cero y su longitud. Devuelve los k valores mayores en orden descendente. Conserva las repeticiones; para k igual a cero devuelve [].",
   "intervalos-suma": "Recibes numbers, una lista de hasta 1000 enteros, y consultas, hasta 100 pares [inicio, fin]. Devuelve la suma de cada intervalo en el orden de las consultas, incluyendo ambos extremos. Los índices son válidos. Si numbers está vacío, consultas también lo está.",
   potencia: "Recibes base y exponente, enteros entre 0 y 10 y entre 0 y 100, respectivamente. Devuelve base elevada a exponente. Las entradas garantizan que el resultado no supera 9007199254740991. Para exponente cero devuelve 1, también cuando la base es cero.",
-  "elige-mensaje": 'Recibes un entero. Devuelve "positivo" si es mayor que cero y "no positivo" en otro caso. La plantilla ya comprueba la condición: corrige el texto de la primera respuesta.',
+  "elige-mensaje": 'La función recibe un número entero en data y debe responder con uno de estos textos:\n\n- "positivo" cuando el número sea mayor que 0.\n- "no positivo" cuando sea 0 o negativo.\n\nEl código ya comprueba si el número es mayor que 0, pero el texto que devuelve en ese caso está equivocado. Corrige esa respuesta y conserva la respuesta para los demás números. Usa return para entregar el texto, no para mostrarlo en pantalla.',
   signo: 'Recibes un entero. Devuelve "positivo", "negativo" o "cero", según su valor. La plantilla ya distingue las dos primeras posibilidades. Completa la respuesta del último caso.',
   "uno-n": "Recibes un entero no negativo en data. Devuelve la lista de números desde 1 hasta data, incluido. Para cero devuelve []. La plantilla ya recorre ese intervalo, pero añade siempre cero. Corrige el valor que añade a la lista.",
   indices: "Recibes una lista. Devuelve una copia con los mismos valores y en el mismo orden. La plantilla recorre sus posiciones, pero copia siempre el primer elemento. Corrige el acceso para copiar el elemento de la posición actual. La lista vacía devuelve [].",
@@ -53,6 +53,7 @@ const statements: Record<string, string> = {
   vocales: "Recibes un texto. Devuelve cuántas vocales contiene: a, e, i, o, u, en mayúsculas o minúsculas. No cuentes vocales acentuadas. La plantilla ya prepara la conversión a minúsculas y el contador; completa el recorrido y su condición.",
   frecuencias: "Recibes un texto formado por letras de a a z. Devuelve una ficha con la cantidad de apariciones de cada letra presente. El orden de las propiedades no importa. Para el texto vacío devuelve {}. La plantilla prepara la ficha: completa el recorrido y la actualización de los contadores.",
   anagramas: "Recibes dos textos, a y b, formados por letras ASCII y espacios. Devuelve verdadero si contienen las mismas letras con las mismas cantidades, aunque estén en distinto orden. Ignora mayúsculas y espacios normales. La plantilla prepara dos tablas con las 26 letras: completa el conteo y la comparación. Un texto vacío y otro de espacios sí cumplen la condición.",
+  fizzbuzz: 'Recibes un entero n. Construye una lista con los números desde 1 hasta n, incluidos. Sustituye cada múltiplo de 3 por "Fizz", cada múltiplo de 5 por "Buzz" y los múltiplos de ambos por "FizzBuzz". Conserva los demás como números. Para cero, devuelve una lista vacía.\n\nLa plantilla ya recorre los números. Dentro del bucle, decide qué valor añadir. Comprueba primero si cumple ambas condiciones: 15 debe producir "FizzBuzz", no solo "Fizz". Devuelve la lista cuando termine el recorrido.',
 };
 
 // Respuestas escritas y revisadas, no calculadas desde la referencia a validar.
@@ -97,6 +98,141 @@ const rules: Record<string, ConceptRule> = {
 };
 const guided = new Set(["elige-mensaje", "signo", "uno-n", "suma-uno-n", "indices", "suma-lista", "maximo", "minusculas", "vocales", "frecuencias", "anagramas", "dos-requisitos", "alternativas", "invierte", "deduplica", "busqueda-binaria", "bucle-roto", "variable-local", "repara-presupuesto"]);
 
+const openingHelp: Record<string, Partial<SeedExercise>> = {
+  "valida-divisor": {
+    hints: ["Comprueba el divisor antes de operar.", "Cero en total sí es válido.", "Devuelve ausencia solo cuando divisor vale cero; consulta su representación en la explicación de tu lenguaje."],
+  },
+  "valido-cero-ausente": {
+    hints: ["No uses una comprobación genérica de falsedad.", "Comprueba primero si falta la cantidad.", "Después rechaza los negativos y acepta cero y positivos."],
+  },
+  "captura-conversion": {
+    statement: "Recibes un texto que puede representar un entero decimal o contener una palabra no numérica. Devuelve el entero si la conversión es válida, o ausencia en caso contrario. El texto puede tener signo y espacios exteriores. Rechaza el texto vacío antes de convertir. Define una auxiliar que convierta o lance un error y captura ese error esperado desde solve.",
+    hints: ["Limpia los espacios exteriores y rechaza el texto vacío.", "La auxiliar debe lanzar un error si el texto no representa un entero.", "Captura únicamente el error esperado y devuelve ausencia; consulta la sintaxis de tu lenguaje en la explicación."],
+  },
+  "error-dominio": {
+    statement: "Recibes una edad entera. Define validar(edad): si la edad es negativa, debe lanzar un error con el mensaje edad negativa. Desde solve, llama a esa función y captura ese error para devolver su mensaje. Para una edad igual o mayor que cero, devuelve aceptada.",
+    explanations: {
+      python: "validar lanza ValueError('edad negativa') con raise cuando la edad es menor que cero. solve llama a validar dentro de try y devuelve 'aceptada' si no hay error. except ValueError as error trata el rechazo y devuelve str(error).",
+      javascript: "validar lanza new Error('edad negativa') con throw. solve llama a validar dentro de try y devuelve 'aceptada' si no hay error. En catch, comprueba error instanceof Error antes de devolver error.message; vuelve a lanzar los errores que no puedas tratar.",
+      typescript: "validar(edad: number): void lanza new Error('edad negativa') cuando la edad es negativa. En catch, error tiene tipo unknown: comprueba error instanceof Error antes de leer message. Si validar no lanza, devuelve 'aceptada'.",
+    },
+  },
+  "ordena-registros": {
+    hints: ["Un criterio puede empatar y necesitar otro.", "Ordena primero por puntos de mayor a menor; en empate, por nombre de menor a mayor.", "Conserva el orden original cuando ambos campos coincidan; no utilices el nombre para decidir antes de comparar los puntos."],
+  },
+  "monticulo-inserta": {
+    statements: {
+      python: "Recibes heap, un montículo mínimo válido con hasta 100 enteros, y value. Añade value al final y asciéndelo: mientras sea estrictamente menor que su padre, intercambia ambos valores. Devuelve la lista resultante. Para el índice i, el padre está en (i - 1) // 2. Detente al llegar a la raíz o cuando el padre sea menor o igual; no intercambies valores iguales.",
+      javascript: "Recibes heap, un montículo mínimo válido con hasta 100 enteros, y value. Añade value al final y asciéndelo: mientras sea estrictamente menor que su padre, intercambia ambos valores. Devuelve la lista resultante. Para el índice i, el padre está en Math.floor((i - 1) / 2). Detente al llegar a la raíz o cuando el padre sea menor o igual; no intercambies valores iguales.",
+      typescript: "Recibes heap, un montículo mínimo válido con hasta 100 enteros, y value. Añade value al final y asciéndelo: mientras sea estrictamente menor que su padre, intercambia ambos valores. Devuelve la lista resultante. Para el índice i, el padre está en Math.floor((i - 1) / 2). Detente al llegar a la raíz o cuando el padre sea menor o igual; no intercambies valores iguales.",
+    },
+  },
+  deduplica: {
+    explanation: "El conjunto recuerda qué valores has encontrado y la lista conserva su primera aparición. Solo añades un número al resultado cuando todavía no estaba en el conjunto. Con [3, 1, 3], la salida pasa por [3], [3, 1] y se mantiene en [3, 1]. El coste esperado es O(n) en tiempo y espacio; no necesitas ordenar ni recorrer el conjunto para construir la respuesta.",
+    hints: ["Recorre los valores en el orden recibido.", "Usa el conjunto preparado para recordar qué números ya has añadido.", "Añade un número al resultado solo la primera vez que aparezca; no ordenes la lista."],
+  },
+  "dos-requisitos": {
+    hints: ["No basta con que se cumpla una sola condición.", "Ambas comparaciones ya están guardadas en variables.", "Combina los dos booleanos con la conjunción lógica del lenguaje seleccionado."],
+  },
+  "copia-plana": {
+    objective: "Crear una copia independiente de una lista plana.",
+    practiceGoals: ["Copiar una lista de números antes de modificarla.", "Conservar la lista original sin el elemento nuevo."],
+    hints: ["Un alias no es una copia independiente.", "Copia el contenedor antes de añadir.", "Añade nuevo únicamente a copia y devuelve ambas listas."],
+    statements: {
+      python: "Recibes valores, una lista de enteros, y nuevo, otro entero. Copia valores con list(valores), añade nuevo al final de la copia y devuelve {original, copia}. original conserva los valores recibidos sin el elemento nuevo. La copia debe ser una lista independiente, también cuando la entrada esté vacía.",
+      javascript: "Recibes valores, una lista de enteros, y nuevo, otro entero. Copia valores con valores.slice(), añade nuevo al final de la copia y devuelve {original, copia}. original conserva los valores recibidos sin el elemento nuevo. La copia debe ser una lista independiente, también cuando la entrada esté vacía.",
+      typescript: "Recibes valores, una lista de enteros, y nuevo, otro entero. Copia valores con valores.slice(), añade nuevo al final de la copia y devuelve {original, copia}. Ambas propiedades contienen number[], pero deben apuntar a listas independientes. original conserva los valores recibidos sin el elemento nuevo.",
+    },
+  },
+  "asercion-normal": {
+    objective: "Comprobar el resultado de una función mediante una aserción.",
+    practiceGoals: ["Escribir una aserción para el caso conocido 4 → 12.", "Devolver el triple del dato recibido después de esa comprobación."],
+    statement: "Recibes un entero y debes devolver su triple. Define una función auxiliar triple(n) que multiplique por tres. Dentro de solve, antes de atender data, escribe una aserción que compruebe el caso conocido triple(4) igual a 12. Después devuelve triple(data). Una aserción que falla interrumpe el programa; no basta con imprimir un mensaje de aprobado.",
+    explanations: {
+      python: "Define triple(n) para devolver n * 3. assert triple(4) == 12 comprueba un resultado conocido antes de devolver triple(data). Si la condición no se cumple, lanza AssertionError: te ayuda a localizar un fallo. La aserción no concede progreso por sí misma.",
+      javascript: "Obtén assert con require('node:assert/strict') y define triple(n) para devolver n * 3. assert.equal(triple(4), 12) comprueba el caso conocido antes de devolver triple(data). Una aserción que falla lanza un error; no concede progreso por sí misma.",
+      typescript: "Obtén assert con require('node:assert/strict') y define triple(n: number): number. assert.equal(triple(4), 12) comprueba el cálculo durante la ejecución: los tipos no garantizan que multipliques correctamente. Después devuelve triple(data).",
+    },
+  },
+  "uno-n": {
+    hints: ["numero cambia automáticamente en cada vuelta.", "Añade el número de la vuelta actual, no siempre cero.", "Conserva la operación de añadir de la plantilla y sustituye su argumento por numero."],
+  },
+  "longitud-texto": {
+    hints: ["No necesitas recorrer ni modificar el texto.", "Los espacios también cuentan como caracteres.", "Devuelve la longitud del texto recibido, no un número escrito de antemano."],
+  },
+  minusculas: {
+    hints: ["La plantilla devuelve el texto sin convertirlo.", "La operación de conversión devuelve otro texto; conserva sus paréntesis.", "Devuelve el texto convertido, no el original."],
+  },
+  vocales: {
+    hints: ["No cuentes todas las letras: primero comprueba si son vocales.", "Comprueba si la letra actual aparece en el texto aeiou.", "Dentro de esa condición, suma uno al contador; devuélvelo después del recorrido."],
+  },
+  factorial: {
+    hints: ["No empieces el producto en cero: cualquier número multiplicado por cero da cero.", "Recorre desde uno hasta el número recibido, incluido.", "En cada vuelta multiplica el producto anterior por el número actual. Devuelve el producto al terminar el bucle."],
+  },
+  opcional: {
+    hints: ["Una propiedad puede no estar presente.", "Conserva cero: no es lo mismo que ausencia.", "Consulta cantidad y utiliza uno como respaldo solo cuando falte esa propiedad."],
+    explanations: {
+      python: "data.get('cantidad', 1) consulta la cantidad y devuelve 1 solo si falta la clave. Si la cantidad es cero, conserva cero: no hace una comprobación genérica de falsedad.",
+      javascript: "data.cantidad ?? 1 consulta la cantidad y usa 1 cuando la propiedad está ausente. A diferencia de ||, ?? conserva cero. El contrato garantiza que la propiedad nunca contiene null.",
+      typescript: "El tipo { cantidad?: number } permite omitir cantidad. data.cantidad ?? 1 entrega la cantidad presente o el respaldo 1; conserva cero. El operador comprueba ausencia, no falsedad.",
+    },
+  },
+  ausencia: {
+    explanations: {
+      python: "Comprueba data is None antes de sumar. En ese caso devuelve -1; en los demás devuelve data + 1. No uses una comprobación de falsedad: perderías el cero válido.",
+      javascript: "Comprueba data === null antes de sumar. En ese caso devuelve -1; en los demás devuelve data + 1. No uses !data: cero es un número válido, no ausencia.",
+      typescript: "Comprueba data === null y devuelve -1 en esa rama. En la restante, el tipo number | null se estrecha a number y puedes devolver data + 1. La comprobación conserva el cero válido.",
+    },
+  },
+  "ficha-producto": {
+    explanations: {
+      python: "data es un diccionario con nombre y precio. data['precio'] consulta el valor asociado a esa clave. Devuelve ese número con return, no la ficha completa ni el texto 'precio'.",
+      javascript: "data es un objeto con nombre y precio. data.precio consulta la propiedad solicitada. Devuelve ese número con return, no el objeto completo ni el texto 'precio'.",
+      typescript: "El contrato declara nombre como texto y precio como número. data.precio consulta la propiedad y conserva su tipo numérico. Devuelve ese valor con return, no el objeto completo.",
+    },
+  },
+  dependencias: {
+    explanations: {
+      python: "Cuenta cuántos requisitos pendientes tiene cada tarea. Usa heapq para elegir la menor tarea disponible; al completarla, reduce los contadores de las que dependían de ella. Si no puedes completar las n tareas, hay un ciclo y devuelves [].",
+      javascript: "Cuenta los requisitos pendientes de cada tarea. Ordena numéricamente las tareas disponibles y elige la menor; al completarla, reduce los contadores de las dependientes. Si no completas las n tareas, hay un ciclo y devuelves []. Para este límite, la referencia ordena la lista en cada paso.",
+      typescript: "Guarda los requisitos pendientes en una lista de contadores y las dependencias en listas de vecinos. Ordena numéricamente las tareas disponibles y elige la menor. Reduce los contadores de las dependientes; si el resultado no contiene las n tareas, devuelve [] porque existe un ciclo.",
+    },
+  },
+  "dos-lineas": {
+    prerequisites: ["Mostrar un texto por la pantalla."],
+    explanation: "Cada instrucción muestra su texto y termina la línea. El orden del código determina el orden de la salida: primero Primera y después Segunda.",
+    explanations: {
+      python: 'print("Primera") muestra la primera palabra y termina la línea. Después print("Segunda") muestra la segunda palabra en otra línea. Las instrucciones se ejecutan de arriba abajo.',
+      javascript: 'console.log("Primera"); muestra la primera palabra y termina la línea. Después console.log("Segunda"); muestra la segunda palabra en otra línea. El orden de las instrucciones determina el de la salida.',
+      typescript: 'console.log("Primera"); muestra la primera palabra y termina la línea. Después console.log("Segunda"); muestra la segunda palabra en otra línea. No necesitas una función: escribe ambas instrucciones de arriba abajo.',
+    },
+  },
+  "lee-nombre": {
+    hints: ["La plantilla ya guarda el texto recibido en nombre.", 'Une el texto "Hola, " con nombre. Conserva el espacio después de la coma.', "Muestra el texto que has construido, no la palabra nombre entre comillas."],
+  },
+  "lee-doble": {
+    hints: ["La lectura y la conversión a número ya están preparadas.", "El doble se obtiene multiplicando numero por 2.", "Muestra el resultado de esa operación; no cambies la lectura de la entrada."],
+  },
+  booleano: {
+    hints: ["Solo necesitas cambiar el valor asignado a listo.", "Un booleano se escribe sin comillas; no es un texto.", "Consulta el valor verdadero en la teoría del lenguaje seleccionado y conserva la impresión de la plantilla."],
+  },
+  igualdad: {
+    hints: ["Los dos números ya están disponibles en la plantilla.", "Necesitas una comparación que produzca un booleano, no una asignación.", "Utiliza la comparación de igualdad del lenguaje seleccionado y conserva el formato de salida preparado."],
+  },
+  saludo: {
+    objective: "Mostrar un texto por la pantalla.",
+    practiceGoals: ["Mostrar un texto por la pantalla.", "Distinguir el texto entre comillas de la instrucción que lo muestra."],
+    hints: ["Necesitas una instrucción que muestre texto.", 'Escribe "Hola, mundo!" entre los paréntesis de esa instrucción.', "Conserva las comillas alrededor del saludo y cierra los paréntesis."],
+    commonErrors: ["Escribir el saludo sin comillas.", "Dejar un paréntesis sin cerrar.", "Cambiar una letra o un signo del saludo."],
+    explanation: "La instrucción muestra el texto que recibe entre paréntesis y termina la línea. Las comillas indican dónde empieza y acaba el texto; no forman parte de la salida.",
+    explanations: {
+      python: 'print("Hola, mundo!") muestra el saludo y termina la línea. print es la instrucción; el saludo es el texto entre comillas. Las comillas no aparecen en la salida.',
+      javascript: 'console.log("Hola, mundo!"); muestra el saludo y termina la línea. El texto va entre comillas dentro de los paréntesis. Las comillas no aparecen en la salida.',
+      typescript: 'console.log("Hola, mundo!"); muestra el saludo y termina la línea. El texto va entre comillas dentro de los paréntesis. No hace falta declarar una variable ni una función para este primer programa.',
+    },
+  },
+};
+
 export function reviseLearningContent(exercise: SeedExercise, key: string): SeedExercise {
   const fixed = exercise.runtimeMode === "PROGRAM" && exercise.tests.every(test => test.input === "");
   const conceptRule = rules[key] ?? "";
@@ -109,8 +245,14 @@ export function reviseLearningContent(exercise: SeedExercise, key: string): Seed
   const constraints = fixed ? [] : exercise.constraints.filter(text => !/^(Implementa solve\(data\)|Escribe un programa completo|Los casos de salida fija)/.test(text));
   // No adelantar complejidad a quien aún está aprendiendo instrucciones.
   const complexity = exercise.level === "INITIATION" ? "" : exercise.complexity;
-  return { ...exercise, statement: statementsByLanguage.python, statements: statementsByLanguage, conceptRule, tests, constraints, complexity,
+  const help = openingHelp[key];
+  const revisedStatements = help?.statements ?? (help?.statement ? { python: help.statement, javascript: help.statement, typescript: help.statement } : statementsByLanguage);
+  const explanations = help?.explanations ?? (help?.explanation ? { python: help.explanation, javascript: help.explanation, typescript: help.explanation } : exercise.explanations);
+  return { ...exercise, statements: revisedStatements, conceptRule, tests, constraints, complexity,
     activityType: guided.has(key) ? "GUIDED" : exercise.activityType,
     ...(key === "cambio" ? { practiceGoals: ["Representar una diferencia mediante una resta entre variables."] } : {}),
+    ...help,
+    statement: help?.statement ?? revisedStatements.python,
+    explanations,
   };
 }

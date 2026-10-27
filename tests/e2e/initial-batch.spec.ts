@@ -48,7 +48,7 @@ for (const language of ["python", "javascript"] as const) {
       const guide = page.getByRole("region", { name: "Guía de aprendizaje" });
       // Los objetivos concretos sustituyen el resumen general, sin repetirlo.
       for (const goal of exercise.practiceGoals!) await expect(guide.getByText(goal, { exact: true })).toBeVisible();
-      await expect(page.getByText(activityNames[exercise.activityType!], { exact: true })).toBeVisible();
+      await expect(page.getByText(exercise.activityType === "PRACTICE" || exercise.activityType === "INTEGRATION" ? "Desafío independiente" : activityNames[exercise.activityType!], { exact: true })).toBeVisible();
       await expect(guide.getByText(/todavía no tiene|no especifica/)).toHaveCount(0);
       await expect(page.locator(".example-panel")).toHaveCount(2);
       await expect(page.getByText(exercise.tests[0].explanation!, { exact: true })).toBeVisible();
@@ -98,9 +98,8 @@ test("la solución explica cada lenguaje sin conceder progreso por consultarla",
   expect(signup.ok()).toBe(true);
   for (const language of ["python", "javascript"] as const) {
     await page.goto(`/ejercicios/${prefix}-suma-de-dos-numeros?lenguaje=${language}`);
-    await page.getByRole("button", { name: "Solución explicada", exact: true }).click();
     await page.getByRole("button", { name: "Ver solución explicada", exact: true }).click();
-    const dialog = page.getByRole("region", { name: "Solución explicada", exact: true });
+    const dialog = page.getByRole("dialog", { name: "Solución explicada", exact: true });
     await expect(dialog.getByText(/Razonamiento\s/)).toBeVisible();
     await expect(dialog.getByText(/Errores comunes\s/)).toBeVisible();
     await expect(dialog.getByText(language === "python" ? /En Python\s/ : /En JavaScript\s/)).toBeVisible();

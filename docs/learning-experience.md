@@ -31,8 +31,8 @@ borradores, soluciones, intentos ni finalizaciones existentes.
 
 ## Pantallas
 
-- **Editor:** enunciado y ejemplos primero; objetivos, conocimientos previos,
-  pistas progresivas y solución voluntaria se despliegan por separado. Consultar
+- **Editor:** enunciado, ejemplos, objetivos y teoría esencial visibles; repaso previo
+  opcional plegado, pistas de una en una y solución voluntaria en un diálogo. Consultar
   ayuda no completa el ejercicio. Los diagnósticos técnicos quedan disponibles
   detrás de una orientación breve. Se conservan paneles ajustables, atajos,
   preferencias, pestañas móviles y sincronización optimista de borradores.
@@ -41,7 +41,8 @@ borradores, soluciones, intentos ni finalizaciones existentes.
 - **Catálogo:** filtros automáticos, búsqueda por conceptos editoriales y orden
   curricular, dificultad o duración. Cambiar filtros reinicia la página; quitar
   uno conserva el resto y el lenguaje. En móvil, las opciones se despliegan.
-- **Rutas:** módulos independientes, recomendado abierto e integradores publicados
+- **Rutas:** módulos independientes, recomendado abierto y «Empezar/Continuar»
+  en la fila del ejercicio, sin tarjeta duplicada de siguiente paso; integradores publicados
   al cierre. No hay bloqueos ni casillas que simulen progreso. Si falta un
   integrador publicado se explica, sin inventar contenido.
 - **Progreso:** lenguaje independiente de la preferencia, avance por ruta y

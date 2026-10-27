@@ -11,7 +11,7 @@ import type { ExecutionRequest } from "../../src/lib/execution-tracker";
 import { maximumExecutionBodyBytes } from "../../src/lib/execution-limits";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
-const exerciseUrl = "/ejercicios/logica-dos-parametros?lenguaje=python";
+const exerciseUrl = "/ejercicios/logica-mayor-tres?lenguaje=python";
 let piston: Server;
 const test = base.extend<{ account: { userId: string; variantId: string } }>({
   account: async ({ page }, runTest) => {
@@ -19,7 +19,7 @@ const test = base.extend<{ account: { userId: string; variantId: string } }>({
     try {
       expect((await postAuth(page.request, "/api/auth/sign-up/email", { name: "Recuperación de intentos", email, password: "Itera-ejecucion-local-63821" })).ok()).toBe(true);
       const user = await db.user.findUniqueOrThrow({ where: { email } });
-      const exercise = await db.exercise.findUniqueOrThrow({ where: { slug: "logica-dos-parametros", published: true }, select: { versions: { where: { published: true }, orderBy: { number: "desc" }, take: 1, select: { variants: { where: { language: "python" }, select: { id: true } } } } } });
+      const exercise = await db.exercise.findUniqueOrThrow({ where: { slug: "logica-mayor-tres", published: true }, select: { versions: { where: { published: true }, orderBy: { number: "desc" }, take: 1, select: { variants: { where: { language: "python" }, select: { id: true } } } } } });
       const variantId = exercise.versions[0].variants[0].id;
       await runTest({ userId: user.id, variantId });
     } finally { await db.user.deleteMany({ where: { email } }); }
@@ -114,7 +114,7 @@ test("el diagnóstico recupera su petición perdida sin duplicar ni completar pr
   const diagnostic = await db.diagnostic.create({ data: { userId: account.userId, language: "python", declaredLevel: "BEGINNER", items: { create: [0, 1, 2].map(position => ({ variantId: account.variantId, code, position })) } }, include: { items: { orderBy: { position: "asc" } } } });
   await page.goto(`/diagnostico/${diagnostic.id}`);
   const network = await uncertainConnection(page);
-  await page.getByRole("button", { name: "Probar ejemplos", exact: true }).click();
+  await page.getByRole("button", { name: "Comprobar respuesta", exact: true }).click();
   await expect(page.getByRole("status").filter({ hasText: "Conservamos el intento" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Siguiente reto", exact: true })).toBeDisabled();
   network.loseResponse = false;
@@ -126,7 +126,7 @@ test("el diagnóstico recupera su petición perdida sin duplicar ni completar pr
   expect(network.bodies[0].diagnosticItemId).toBe(diagnostic.items[0].id);
   expect(await db.submission.count({ where: { userId: account.userId } })).toBe(1);
   network.failQueries = false;
-  await expect(page.getByRole("button", { name: "Probar ejemplos", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Comprobar respuesta", exact: true })).toBeEnabled();
   expect(await db.submission.count({ where: { userId: account.userId } })).toBe(1);
   expect(await db.progress.count({ where: { userId: account.userId } })).toBe(0);
   expect(await page.evaluate(key => localStorage.getItem(key), `itera:diagnostic-execution:${account.userId}:${diagnostic.items[0].id}:${account.variantId}`)).toBeNull();

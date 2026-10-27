@@ -48,35 +48,35 @@ colors:
   overlay-dark: "#00000099"
 typography:
   display:
-    fontFamily: "Geist, sans-serif"
+    fontFamily: "Source Sans 3, sans-serif"
     fontSize: "clamp(2.5rem, 5.5vw, 4.5rem)"
     fontWeight: 600
     lineHeight: 1.08
     letterSpacing: "-0.055em"
   headline:
-    fontFamily: "Geist, sans-serif"
+    fontFamily: "Source Sans 3, sans-serif"
     fontSize: "clamp(1.875rem, 3.6vw, 2.875rem)"
     fontWeight: 550
     lineHeight: 1.14
     letterSpacing: "-0.045em"
   title:
-    fontFamily: "Geist, sans-serif"
+    fontFamily: "Source Sans 3, sans-serif"
     fontSize: "1.75rem"
     fontWeight: 600
     lineHeight: 1.25
     letterSpacing: "-0.035em"
   body:
-    fontFamily: "Geist, sans-serif"
+    fontFamily: "Source Sans 3, sans-serif"
     fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.75
   compact:
-    fontFamily: "Geist, sans-serif"
+    fontFamily: "Source Sans 3, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 400
     lineHeight: 1.6
   label:
-    fontFamily: "Geist, sans-serif"
+    fontFamily: "Source Sans 3, sans-serif"
     fontSize: "0.8125rem"
     fontWeight: 500
     lineHeight: 1.5
@@ -174,7 +174,7 @@ que el código y el resultado ocupen el centro.
 El sistema es monocromático y frío. El azul de instrumento aparece solo cuando hay
 una acción que ejecutar, un enlace que seguir o un foco que mostrar; el verde solo
 confirma un éxito comprobado. Nada decora con color. La tipografía hace el trabajo
-de jerarquía: Geist para leer y para la interfaz, Geist Mono para el código, las
+de jerarquía: Source Sans 3 para leer y para la interfaz, Geist Mono para el código, las
 cifras comparadas y el orden de los pasos.
 
 La densidad es la de una herramienta, no la de una revista ni la de un panel de
@@ -231,8 +231,8 @@ tono, no se les añade un divisor.
 
 ## Typography
 
-**Display Font:** Geist (con `sans-serif`)
-**Body Font:** Geist (con `sans-serif`)
+**Display Font:** Source Sans 3 local (con `sans-serif`)
+**Body Font:** Source Sans 3 local (con `sans-serif`)
 **Label/Mono Font:** Geist Mono (con `monospace`)
 
 **Character:** Una sola familia para todo lo que se lee y se opera, con una
@@ -261,7 +261,7 @@ interfaz no baja de 0.8125rem. Al estrechar la ventana se reorganiza; no se
 reduce el texto.
 
 **La regla de la mono con propósito.** Geist Mono se usa para código, cifras y
-orden. Una etiqueta que no es ninguna de las tres va en Geist.
+orden. Una etiqueta que no es ninguna de las tres va en Source Sans 3.
 
 ## Layout
 
@@ -321,7 +321,7 @@ son de 1 px y siempre suaves; ningún borde lateral grueso marca tarjetas ni avi
 Las decisiones siguientes se mantienen como documentación del proyecto, sin
 depender de herramientas de diseño instaladas. Las fuentes de verdad son los
 tokens de `src/app/globals.css` y los componentes locales. Conservar filtros
-útiles, Geist/Geist Mono y el espacio de trabajo compacto; no rediseñar pantallas
+útiles, Source Sans 3/Geist Mono y el espacio de trabajo compacto; no rediseñar pantallas
 como parte de una limpieza de herramientas.
 
 ### Buttons

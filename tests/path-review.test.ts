@@ -96,7 +96,7 @@ test("el cierre de ruta depende del catálogo del usuario y lenguaje, sin escrib
       for (const language of ["javascript", "typescript"]) {
         const html = await render(language);
         assert.doesNotMatch(html, /Ruta completada en/);
-        assert.match(html, /Siguiente ejercicio de la ruta/);
+        assert.match(html, /aria-current="step"/);
         assert.match(html, /Continuar con Construye tus bases/);
       }
       user = { id: "otra-cuenta", preference: { language: "python" } };
@@ -108,7 +108,7 @@ test("el cierre de ruta depende del catálogo del usuario y lenguaje, sin escrib
       const before = JSON.stringify(catalog);
       const html = await render();
       assert.doesNotMatch(html, /Ruta completada en/);
-      assert.match(html, /Retoma tu práctica/);
+      assert.match(html, /Continuar<\/span>/);
       assert.equal(JSON.stringify(catalog), before);
     });
     await t.test("invitados, rutas vacías y rutas sin módulos no tienen un cierre falso", async () => {

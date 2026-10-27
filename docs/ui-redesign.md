@@ -5,7 +5,7 @@
 Un taller de programación claro, tranquilo y preciso: elegir qué practicar,
 escribir una idea y entender el resultado. La relación **entrada → código →
 resultado** conecta la portada con el espacio de práctica. Se conservan la paleta
-monocromática, el azul para acciones, el verde para éxito, Geist y Geist Mono
+monocromática, el azul para acciones, el verde para éxito, Source Sans 3 y Geist Mono
 locales. No se añaden dependencias, materiales translúcidos ni servicios externos.
 
 Se priorizan claridad, jerarquía, legibilidad y feedback. Itera sigue siendo una

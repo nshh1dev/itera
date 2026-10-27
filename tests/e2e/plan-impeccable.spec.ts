@@ -12,19 +12,19 @@ test.afterAll(async () => {
   await db.$disconnect();
 });
 
-test("la ayuda llega cerrada y se descubre con teclado sin perder código", async ({ page }) => {
+test("la teoría está visible y se pide una pista con teclado sin perder código", async ({ page }) => {
   await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
-  const summary = page.getByRole("button", { name: "Comprender la idea", exact: true });
-  await expect(summary).toHaveAttribute("aria-expanded", "false");
+  const hint = page.getByRole("button", { name: "Mostrar una pista", exact: true });
+  await expect(page.getByRole("region", { name: "Teoría y ejemplo" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Tu reto", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Pistas progresivas", exact: true })).toBeVisible();
+  await expect(hint).toBeVisible();
   await openSimpleEditor(page);
   const editor = page.getByRole("textbox", { name: "Editor sencillo de Python", exact: true });
   await editor.fill("def solve(data):\n    return data['a'] + data['b']");
-  await summary.focus();
+  await hint.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("region", { name: "Guía de aprendizaje" })).toBeVisible();
-  await summary.click();
+  await expect(page.getByRole("heading", { name: "Pista 1", exact: true })).toBeVisible();
   await expect(editor).toHaveValue(/return data\['a'\] \+ data\['b'\]/);
   await openLearningHelp(page);
 });

@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "@fontsource/geist/latin.css";
 @import "@fontsource/geist-mono/latin.css";
 
 @custom-variant dark (&:is(.dark *));
@@ -130,7 +129,7 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-  --font-sans: "Geist", sans-serif;
+  --font-sans: var(--font-source-sans), "Segoe UI", sans-serif;
   --font-mono: "Geist Mono", monospace;
   --text-xs: 0.8125rem;
   --text-xs--line-height: 1.5;

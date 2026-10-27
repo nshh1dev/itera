@@ -14,7 +14,7 @@ for (const path of learningPaths) for (const language of languages) {
     await expect(steps).toHaveCount(path.slugs!.length);
     expect(await steps.evaluateAll(links => links.map(link => link.getAttribute("href"))))
       .toEqual(path.slugs!.map(slug => exerciseHref(slug, language, path.slug)));
-    await expect(page.getByRole("region", { name: "Siguiente ejercicio de la ruta" }).getByRole("link", { name: "Abrir ejercicio" }))
+    await expect(page.locator('.exercise-row[aria-current="step"]'))
       .toHaveAttribute("href", exerciseHref(path.slugs![0], language, path.slug));
     // Acceso libre: el último reto se puede abrir sin resolver ninguno.
     await steps.last().click();

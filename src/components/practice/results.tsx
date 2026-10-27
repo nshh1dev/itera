@@ -9,10 +9,12 @@ import { Button } from "@/components/ui/button";
 import { MotionRegion } from "@/components/motion-region";
 import { Disclosure } from "@/components/arc/disclosure";
 import { executionFeedback } from "@/lib/execution-feedback";
-import { ActivityList, type Activity } from "@/components/activity-list";
 
-export const Results = memo(function Results({ result, busy, error, notice, nextHref, nextLabel = "Practicar un ejercicio relacionado", collapsed = false, onToggle, runtimeMode = "FUNCTION", recentSubmissions, diagnostic = false }: { result: ExecutionResult | null; busy: boolean; error: string; notice?: string; nextHref?: string; nextLabel?: string; collapsed?: boolean; onToggle?: () => void; runtimeMode?: RuntimeMode; recentSubmissions?: Activity[]; diagnostic?: boolean }) {
+export const Results = memo(function Results({ result, busy, error, notice, nextHref, nextLabel = "Practicar un ejercicio relacionado", collapsed = false, onToggle, runtimeMode = "FUNCTION", diagnostic = false }: { result: ExecutionResult | null; busy: boolean; error: string; notice?: string; nextHref?: string; nextLabel?: string; collapsed?: boolean; onToggle?: () => void; runtimeMode?: RuntimeMode; diagnostic?: boolean }) {
   const contentId = useId();
+  const visible = result?.results.filter(test => test.visible) ?? [];
+  const singleProgram = runtimeMode === "PROGRAM" && result?.mode !== "tests" && visible.length === 1 && !visible[0].expectedFiles?.length && !visible[0].actualFiles?.length;
+  const output = singleProgram ? visible[0].output ?? ("actual" in visible[0] ? String(visible[0].actual ?? "") : undefined) : undefined;
   return <section aria-label="Resultados de ejecución">
     <div className="results-toolbar flex h-[42px] items-center gap-2 px-4 text-xs font-medium">
       <Terminal className="size-3.5 text-muted-foreground" aria-hidden="true" />Resultados
@@ -25,13 +27,14 @@ export const Results = memo(function Results({ result, busy, error, notice, next
       <MotionRegion motionKey={busy ? "busy" : error || (result ? `${result.status}:${result.mode}:${result.passedCount}` : "empty")}>
       {busy ? <div className="flex items-center gap-3 py-4"><Loader2 className="size-5 shrink-0 arc-spin text-primary" aria-hidden="true" /><p className="text-sm font-medium">Probando tu idea…</p></div>
         : error ? <div className="rounded-lg bg-surface p-3"><div className="flex items-center gap-2 text-sm font-medium"><Info className="size-4 text-destructive" aria-hidden="true" />No pudimos ejecutar el programa</div><p className="mt-2 text-sm leading-6 text-muted-foreground">{error}</p><p className="mt-3 text-xs text-muted-foreground">Puedes seguir escribiendo, explorar pistas o consultar la solución.</p></div>
-        : !result ? <div className="py-4 text-center"><span className="mx-auto mb-3 flex size-9 items-center justify-center rounded-lg bg-control"><Terminal className="size-4 text-muted-foreground" aria-hidden="true" /></span><p className="text-sm">Todo empieza con un intento.</p><p className="mt-2 text-xs leading-6 text-muted-foreground">Ejecuta los ejemplos para ver cómo se comporta tu código.</p></div>
+        : !result ? <div className="py-4"><p className="text-sm">Aquí verás el resultado de tu código.</p><p className="mt-2 text-xs leading-6 text-muted-foreground">{diagnostic ? "Pulsa «Comprobar respuesta» cuando quieras probarlo." : "Pulsa «Comprobar solución» cuando quieras probarlo."}</p></div>
         : <>
+          {output !== undefined && <div className="mb-4"><h3 className="text-xs font-medium text-muted-foreground">Salida de tu programa</h3><pre className="mt-2 overflow-x-auto rounded-lg bg-surface-inset p-3 font-mono text-sm">{output.length ? output : "(el programa no mostró nada)"}</pre></div>}
           <div className="flex items-start gap-2.5">
             {result.status === "PASSED" ? <Check className="mt-0.5 size-5 shrink-0 text-success-text" aria-hidden="true" /> : result.status === "ERROR" ? <Info className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden="true" /> : <CircleX className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden="true" />}
              <div><h3 className="text-sm font-medium">{result.mode === "tests" ? result.status === "PASSED" ? "Tus pruebas terminaron correctamente." : result.results[0]?.status === "assertion" ? "Falló una aserción." : result.status === "ERROR" ? "La ejecución de pruebas se interrumpió." : "El archivo de pruebas produjo un error." : result.status === "PASSED" ? result.mode === "submit" ? diagnostic ? "Reto de diagnóstico superado." : "Un paso más. Ejercicio resuelto." : "Los ejemplos funcionan." : result.status === "ERROR" ? "La evaluación se interrumpió." : result.message && result.passedCount === result.totalCount ? "La salida coincide; falta aplicar el concepto." : "Tu solución todavía puede mejorar."}</h3><p className="mt-1 text-sm leading-6 text-muted-foreground">{result.mode === "tests" ? result.message || "Este resultado solo confirma cómo terminó tu archivo público de pruebas; no comprueba cobertura ni guarda progreso." : result.status === "PASSED" ? result.mode === "submit" ? diagnostic ? "Este resultado orienta tu recomendación; no completa el ejercicio de práctica." : "Tu progreso está guardado. Quédate con lo que aprendiste." : "Comprobar solución revisa todos los casos y, en prácticas guiadas, el concepto solicitado. Ejecutar ejemplos no completa el ejercicio." : result.message || "Revisa el resultado y prueba una nueva idea."}</p></div>
           </div>
-          <div className="mt-4 flex flex-col gap-2">{result.results.filter(r => r.visible).map((test, visibleIndex) => {
+          <div className="mt-4 flex flex-col gap-2">{visible.filter(test => !singleProgram || !test.passed).map((test, visibleIndex) => {
             const asText = runtimeMode === "PROGRAM";
             const plain = (value: Json | undefined) => String(value ?? "");
             const diff = !test.passed && "actual" in test
@@ -39,22 +42,22 @@ export const Results = memo(function Results({ result, busy, error, notice, next
                 ? test.status === "wrong" && typeof test.actual === "string" ? firstTextDifference(plain(test.expected), test.actual) : null
                 : firstDifference(test.expected as Json, test.actual as Json)
               : null;
-            return <Disclosure key={test.index} defaultOpen={visibleIndex === 0 || !test.passed} className="result-case rounded-lg bg-control px-3" triggerClassName="text-xs" title={<>
-              {test.passed ? <Check className="size-3.5 shrink-0 text-success-text" aria-hidden="true" /> : <CircleX className="size-3.5 shrink-0 text-destructive" aria-hidden="true" />}{result.mode === "tests" ? "Archivo de pruebas" : `Ejemplo ${test.index}`}
+            return <Disclosure key={test.index} defaultOpen={!test.passed || visibleIndex === 0 && visible.length === 1} className="result-case rounded-lg bg-control px-3" triggerClassName="text-xs" title={<>
+              {test.passed ? <Check className="size-3.5 shrink-0 text-success-text" aria-hidden="true" /> : <CircleX className="size-3.5 shrink-0 text-destructive" aria-hidden="true" />}{result.mode === "tests" ? "Archivo de pruebas" : singleProgram ? "Qué debes revisar" : `Comprobación ${test.index}`}
               <span className="ml-auto text-right text-muted-foreground">{test.passed ? result.mode === "tests" ? "Terminó con éxito" : "Correcto" : test.status === "timeout" ? "Límite de tiempo" : test.status === "assertion" ? "Falló una aserción" : test.status === "runtime" ? "Error de ejecución" : asText ? "La salida no coincide" : "Resultado diferente"}</span>
             </>}>
             <div className="mb-3 flex min-w-0 flex-col gap-3 rounded-lg bg-surface-inset p-3 text-xs">
               {asText ? <>
-                <div><span className="text-muted-foreground">Entrada</span><pre className="mt-1 overflow-x-auto font-mono">{plain(test.input).length ? plain(test.input) : "(sin entrada)"}</pre></div>
+                {plain(test.input).length > 0 && <div><span className="text-muted-foreground">Entrada</span><pre className="mt-1 overflow-x-auto font-mono">{plain(test.input)}</pre></div>}
                 <div className="result-comparison">
+                  {!singleProgram && "actual" in test && <div className="result-value"><span className="text-muted-foreground">Salida de tu programa</span><pre>{test.output ?? plain(test.actual)}</pre></div>}
                   <div className="result-value"><span className="text-muted-foreground">Salida esperada</span><pre>{plain(test.expected)}</pre></div>
-                  {"actual" in test && <div className="result-value"><span className="text-muted-foreground">Salida del programa</span><pre>{test.output ?? plain(test.actual)}</pre></div>}
                 </div>
               </> : <>
                 <div><span className="text-muted-foreground">Entrada</span><pre className="mt-1 overflow-x-auto font-mono">{JSON.stringify(test.input)}</pre></div>
                 <div className="result-comparison">
-                  <div className="result-value"><span className="text-muted-foreground">Esperado</span><pre>{JSON.stringify(test.expected)}</pre></div>
                   {"actual" in test && <div className="result-value"><span className="text-muted-foreground">Tu resultado</span><pre>{JSON.stringify(test.actual)}</pre></div>}
+                  <div className="result-value"><span className="text-muted-foreground">Resultado esperado</span><pre>{JSON.stringify(test.expected)}</pre></div>
                 </div>
                 {test.output !== undefined && <div><span className="text-muted-foreground">Salida del programa</span><pre className="mt-1 overflow-x-auto font-mono">{test.output.length ? test.output : "(sin salida)"}</pre></div>}
               </>}
@@ -71,7 +74,6 @@ export const Results = memo(function Results({ result, busy, error, notice, next
           {result.status === "PASSED" && result.mode === "submit" && nextHref && <Link className="text-link mt-4 text-xs" href={nextHref}>{nextLabel}<ArrowRight className="size-3.5" /></Link>}
         </>}
       </MotionRegion>
-      {!!recentSubmissions?.length && <Disclosure title="Tus intentos en este ejercicio" className="mt-4"><section id="workspace-history" aria-label="Tus intentos en este ejercicio"><ActivityList entries={recentSubmissions} compact /></section></Disclosure>}
     </div>
   </section>;
 });

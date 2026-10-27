@@ -1,7 +1,49 @@
 import type { SeedExercise } from "./content";
-import type { Json } from "../src/lib/types";
+import type { Json, Language } from "../src/lib/types";
 
 export const fundamentalsLessons = new Map<string, SeedExercise>();
+const localTheory: Record<string, Record<Language, string>> = {
+  "tabla-valores": {
+    python: "Guarda cada estado antes de calcular el siguiente: inicial, segundo y final. str(valor) convierte un número a texto. Une esos textos con ' -> ' para que la flecha tenga un espacio a cada lado. Una tabla de seguimiento permite localizar la primera operación que no coincide con tu predicción.",
+    javascript: "Guarda los estados inicial, segundo y final en variables distintas. String(valor) convierte cada número a texto. Une esos textos con ' -> ', con un espacio a cada lado de la flecha. La tabla permite localizar la primera operación que no coincide con tu predicción.",
+    typescript: "Guarda los estados inicial, segundo y final en variables distintas. String(valor) convierte cada número a texto; una anotación string no hace esa conversión. Une los textos con ' -> ', con un espacio a cada lado de la flecha. Revisa cada estado, no solo el resultado final.",
+  },
+  "dos-nombres-lista": {
+    python: "original y alias apuntan a la misma lista. alias.append(nuevo) modifica ese contenedor, por lo que original también muestra el elemento añadido. Asignar un segundo nombre no copia los valores. El resultado comprueba los datos devueltos: revisa tu código para asegurarte de practicar el alias solicitado.",
+    javascript: "original y alias apuntan a la misma lista. alias.push(nuevo) modifica ese contenedor y el cambio también se observa desde original. const impide reasignar el nombre, pero no impide modificar la lista. Revisa tu código para asegurarte de practicar el alias solicitado.",
+    typescript: "original y alias apuntan a la misma lista. alias.push(nuevo) modifica ese contenedor y el cambio también se observa desde original. const impide reasignar el nombre, no modificar los elementos. El tipo number[] describe esos elementos; no crea una copia.",
+  },
+  "reasigna-o-muta": {
+    python: "Al principio ambos nombres apuntan a una lista. alias = [nuevo] crea otra lista y cambia solo a qué contenedor apunta alias. La lista consultada desde original conserva sus elementos. Reasignar un nombre y modificar el contenido son operaciones distintas.",
+    javascript: "Declara alias con let porque después vas a reasignarlo. alias = [nuevo] cambia el enlace de ese nombre, pero no modifica la lista anterior. original sigue apuntando a la lista recibida. No uses push sobre original: eso sí cambiaría su contenido.",
+    typescript: "Declara alias con let porque después vas a reasignarlo. alias = [nuevo] cambia el enlace de ese nombre sin modificar la lista anterior. original sigue apuntando a la lista recibida. Las dos propiedades del resultado contienen listas, pero no deben compartir el mismo contenedor al terminar.",
+  },
+  "registro-compartido": {
+    python: "ficha y alias apuntan al mismo diccionario. Actualizar alias['cantidad'] cambia el dato compartido. Por eso las consultas ficha['cantidad'] y alias['cantidad'] devuelven el mismo número actualizado. Esta mutación es intencional y forma parte del ejercicio.",
+    javascript: "ficha y alias apuntan al mismo objeto. Actualizar alias.cantidad cambia el dato compartido, de modo que ambas consultas devuelven la misma cantidad. const no congela el objeto: solo impide reasignar el nombre. Aquí modificar el objeto es parte del ejercicio.",
+    typescript: "ficha y alias apuntan al mismo objeto. Actualizar alias.cantidad cambia el dato compartido, de modo que ambas consultas devuelven la misma cantidad. const no hace inmutables sus propiedades. El contrato pide esta modificación intencional, no una copia independiente.",
+  },
+  "valida-divisor": {
+    python: "Comprueba primero si divisor vale cero y devuelve None en ese caso. Así evitas ZeroDivisionError antes de dividir. Si el divisor es válido, devuelve total / divisor. Un total igual a cero sí es válido y produce cero; no lo confundas con ausencia.",
+    javascript: "Comprueba divisor === 0 y devuelve null antes de dividir. La división por cero puede producir Infinity o NaN en lugar de lanzar un error. Validar explícitamente conserva el contrato. Un total igual a cero sí es válido.",
+    typescript: "Comprueba divisor === 0 y devuelve null antes de dividir. El retorno number | null admite un resultado numérico o ausencia. Esa anotación no impide una división por cero durante la ejecución: debes comprobar el divisor. Un total igual a cero sigue siendo válido.",
+  },
+  "valido-cero-ausente": {
+    python: "Comprueba cantidad is None antes de comparar números. Si falta, devuelve 'ausente'; si es negativa, 'invalido'; en los demás casos, 'valido'. No utilices una comprobación genérica de falsedad: cero es un dato válido.",
+    javascript: "Comprueba cantidad === null antes de comparar números. Si falta, devuelve 'ausente'; si es negativa, 'invalido'; en los demás casos, 'valido'. No uses !cantidad: también aceptaría cero como falso, aunque aquí cero es válido.",
+    typescript: "Comprueba cantidad === null antes de comparar números. En la rama restante el tipo se estrecha a number y puedes revisar si es negativo. Cero es válido: no lo confundas con ausencia mediante una comprobación de falsedad.",
+  },
+  "localiza-error": {
+    python: "Comprueba 0 <= indice < len(valores) antes de acceder a la lista. Aunque el lenguaje admite índices negativos, este ejercicio los considera fuera de rango. Para un índice no permitido devuelve el texto indicado; para uno válido devuelve valores[indice]. No necesitas provocar ni capturar IndexError.",
+    javascript: "Comprueba indice >= 0 e indice < valores.length antes de acceder a la lista. Un acceso fuera de los límites puede devolver undefined, pero ese no es el resultado solicitado: debes devolver 'indice fuera de rango'. Valida antes de consultar el elemento.",
+    typescript: "Comprueba indice >= 0 e indice < valores.length antes de consultar la lista. El tipo del índice no garantiza que la posición exista. Devuelve 'indice fuera de rango' cuando no sea válida; en los demás casos devuelve el número almacenado en esa posición.",
+  },
+  "captura-conversion": {
+    python: "Limpia los espacios exteriores con strip y rechaza el texto vacío. float convierte el texto; is_integer comprueba que no tenga parte decimal y int entrega el entero. Una conversión inválida lanza ValueError: captura solo ese error esperado y devuelve None, sin ocultar fallos distintos.",
+    javascript: "Limpia los espacios exteriores con trim y rechaza el texto vacío antes de llamar a Number. La conversión inválida puede producir NaN sin lanzar un error. Si Number.isInteger no acepta el resultado, lanza un Error explícito. Captura ese error esperado y devuelve null; no ocultes errores distintos.",
+    typescript: "Limpia el texto con trim, rechaza vacío y convierte con Number. Si Number.isInteger no acepta el resultado, lanza un Error. En catch el error es unknown: comprueba instanceof Error antes de tratarlo. Devuelve null ante el error esperado y deja visibles los fallos distintos.",
+  },
+};
 type Definition = {
   key: string; problem: string; input: string; output: string;
   python: string; javascript: string; typescript?: string;
@@ -12,14 +54,15 @@ type Definition = {
 export function foundation(d: Definition): SeedExercise {
   const signature = `function solve(data: ${d.input}): ${d.output}`;
   const empty = d.output === "number" || d.output === "number | string" ? "0" : d.output === "string" ? '""' : d.output.endsWith("[]") ? "[]" : d.output.includes("null") ? "null" : d.output.includes("ajustados") ? "{ original: [], ajustados: [] }" : d.output.includes("alias") ? "{ original: [], alias: [] }" : d.output.includes("copia") ? "{ original: [], copia: [] }" : "{ validos: [], rechazados: 0 }";
-  const explanation = `${d.theory}\n\nProcedimiento: identifica la entrada, sigue los valores en orden y contrasta el resultado con un caso límite. Los casos oficiales comprueban resultados, no demuestran por sí solos una técnica interna ni la calidad de tus pruebas.`;
+  const explain = (language: Language) => `${localTheory[d.key]?.[language] ?? d.theory}\n\nSigue los valores en orden y contrasta el resultado con un caso límite. Las comprobaciones oficiales evalúan los resultados: no demuestran por sí solas una técnica interna ni la calidad de tus pruebas.`;
+  const explanation = explain("python");
   const referenceErrors = /^(dos-nombres-lista|reasigna-o-muta|copia-plana|conserva-entrada|registro-compartido|copia-anidada)$/.test(d.key);
   const scopeErrors = /^(parametro-exterior|llamadas-independientes|sin-estado-global|encadena-retornos)$/.test(d.key);
   const errorLessons = /^(valida-divisor|valido-cero-ausente|localiza-error|captura-conversion|error-dominio|recupera-elementos)$/.test(d.key);
   const mistakes = referenceErrors
-    ? ["Confundir un alias con una copia independiente.", "Creer que const impide modificar un objeto o que copiar el exterior duplica todos sus elementos."]
+    ? ["Confundir un alias con una copia independiente.", "Suponer que una copia del contenedor exterior duplica también todos los elementos anidados."]
     : scopeErrors ? ["Usar un valor exterior en lugar del parámetro recibido.", "Conservar un contador entre llamadas que deberían ser independientes."]
-    : errorLessons ? ["Confundir cero válido, ausencia y dato rechazado.", "Capturar todos los errores indiscriminadamente o suponer que Number lanza ValueError."]
+    : errorLessons ? ["Confundir cero válido, ausencia y dato rechazado.", "Capturar todos los errores indiscriminadamente sin distinguir los que puedes tratar."]
     : ["Comparar solo el resultado final sin localizar la primera diferencia.", "Elegir únicamente casos positivos y olvidar vacío o igualdad en el límite."];
   const complexity = d.key === "copia-anidada" ? "Tiempo O(R × C) y memoria O(R × C): se crea una fila nueva por cada fila de la matriz."
     : d.key === "dos-nombres-lista" ? "Una inserción al final tiene coste amortizado O(1), aunque ampliar el almacenamiento puede costar O(n); el estado auxiliar es O(1), sin copia explícita de la lista."
@@ -37,7 +80,7 @@ export function foundation(d: Definition): SeedExercise {
     prerequisites: [/^(predice-valores|tabla-valores)$/.test(d.key) ? "Variables, operaciones y primeras funciones." : "Funciones, decisiones y recorridos; consulta la teoría de este bloque."],
     constraints: ["La aplicación proporciona data; devuelve el resultado, no una respuesta fija.", "Las plantillas son ejecutables, pero están incompletas. Los errores deliberados aparecen como fragmentos explicados, no como plantillas que se caen."],
     hints: d.hints, explanation,
-    explanations: { python: `${explanation}\nPython: un bloque if o for no crea un ámbito local nuevo; una función sí. Los textos son inmutables.`, javascript: `${explanation}\nJavaScript: let y const tienen ámbito de bloque; const impide reasignar, no mutar una lista u objeto.`, typescript: `${explanation}\nTypeScript: conserva las anotaciones; una anotación no valida datos durante la ejecución. Un error capturado es unknown: comprueba instanceof Error antes de leer message.` },
+    explanations: { python: explain("python"), javascript: explain("javascript"), typescript: explain("typescript") },
     python: `def solve(data):\n${d.python.split("\n").map(line => `    ${line}`).join("\n")}\n`,
     javascript: `function solve(data) {\n${d.javascript}\n}\n`,
     typescript: `${signature} {\n${d.typescript ?? d.javascript}\n}\n`,

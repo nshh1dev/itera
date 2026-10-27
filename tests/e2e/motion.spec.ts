@@ -67,28 +67,20 @@ test("el cierre Arc desvanece el diálogo de seguridad y devuelve el foco", asyn
   await expect(page).toHaveURL(/\/configuracion\?seccion=seguridad$/);
 });
 
-test("pistas y detalles permiten invertir la apertura sin perder el editor", async ({ page }) => {
+test("las pistas se revelan con teclado sin ocultar la teoría ni perder el editor", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   await expect(page.locator(".monaco-editor")).toBeVisible();
-  const trigger = page.getByRole("button", { name: "Pistas progresivas", exact: true });
-  await trigger.click();
-  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+  const trigger = page.getByRole("button", { name: "Mostrar una pista", exact: true });
+  await trigger.focus();
   await trigger.press("Enter");
-  await expect(trigger).toHaveAttribute("aria-expanded", "false");
-  await expect(trigger).toBeFocused();
-  await trigger.click();
-  await expect(trigger).toHaveAttribute("aria-expanded", "true");
-  await trigger.press("Enter");
-  await expect(trigger).toHaveAttribute("aria-expanded", "false");
+  await expect(page.getByRole("heading", { name: "Pista 1", exact: true })).toBeVisible();
+  const next = page.getByRole("button", { name: "Mostrar otra pista", exact: true });
+  await next.focus();
+  await next.press("Enter");
+  await expect(page.getByRole("heading", { name: "Pista 2", exact: true })).toBeVisible();
   await openLearningHelp(page);
-  const summary = page.getByRole("button", { name: "Comprender la idea", exact: true });
-  const initial = await summary.getAttribute("aria-expanded");
-  await summary.focus();
-  await summary.press("Enter");
-  await expect(summary).toHaveAttribute("aria-expanded", initial === "true" ? "false" : "true");
-  await summary.press("Enter");
-  await expect(summary).toHaveAttribute("aria-expanded", initial!);
+  await expect(page.getByRole("region", { name: "Teoría y ejemplo" })).toBeVisible();
   await expect(page.locator(".monaco-editor")).toBeVisible();
 });
 
@@ -140,9 +132,9 @@ test("cambiar a movimiento reducido durante una apertura termina el diálogo sin
 test("movimiento reducido permite abrir y cerrar sin transformaciones espaciales", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
-  const trigger = page.getByRole("button", { name: "Pistas progresivas", exact: true });
+  const trigger = page.getByRole("button", { name: "Antes de empezar", exact: true });
   await trigger.click();
-  const content = page.getByRole("region", { name: "Pistas progresivas", exact: true });
+  const content = page.getByRole("region", { name: "Antes de empezar", exact: true });
   await expect(content).toBeVisible();
   await expect(content).toHaveCSS("transform", "none");
   await trigger.press("Enter");

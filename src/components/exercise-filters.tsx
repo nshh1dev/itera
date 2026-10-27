@@ -11,8 +11,10 @@ export function ExerciseFilters({ query, language, level, category, status, orde
   const router = useRouter();
   const form = useRef<HTMLFormElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const requested = useRef("");
   const values = JSON.stringify({ q: query, lenguaje: language, nivel: level, categoria: category, estado: status, orden: order });
+  // El HTML inicial ya contiene estos valores. No sobrescribir una selección
+  // realizada justo antes de hidratar; sincronizar solo navegaciones posteriores.
+  const requested = useRef(values);
   useEffect(() => {
     // Sin remontar el campo: conserva el foco al buscar y restaura atrás/adelante.
     if (requested.current === values) return;

@@ -49,7 +49,7 @@ test("la recuperación y el inicio de sesión devuelven al ejercicio y lenguaje 
   await page.context().clearCookies();
   const target = exerciseHref("logica-dos-parametros", "typescript", "desde-cero");
   await page.goto(target);
-  await page.getByRole("button", { name: "Ejecutar ejemplos", exact: true }).click();
+  await page.getByRole("button", { name: "Comprobar solución", exact: true }).click();
   await expect(page.getByRole("link", { name: "Volver al ejercicio", exact: true })).toHaveAttribute("href", target);
   await page.getByRole("link", { name: "¿La olvidaste?", exact: true }).click();
   await expect(page).toHaveURL(/recuperar-cuenta\?volver=/);
@@ -91,7 +91,7 @@ test("el módulo activo retoma el borrador y los integradores no duplican filas"
   await expect(active).toHaveCount(1);
   await expect(active.locator(".arc-disclosure-trigger").first()).toHaveAttribute("aria-expanded", "true");
   await expect(active.locator('a[aria-current="step"]')).toContainText("Calcula con dos parámetros");
-  await expect(page.getByRole("region", { name: "Siguiente ejercicio de la ruta" }).getByRole("link", { name: "Abrir ejercicio", exact: true })).toHaveAttribute("href", exerciseHref("logica-dos-parametros", "python", "desde-cero"));
+  await expect(page.locator('.exercise-row[aria-current="step"]')).toHaveAttribute("href", exerciseHref("logica-dos-parametros", "python", "desde-cero"));
   await expect(page.locator('.exercise-row[href*="logica-merienda?"]')).toHaveCount(1);
   await page.goto("/progreso?lenguaje=python");
   await expect(page.getByRole("link", { name: "Retomar un borrador", exact: true })).toBeVisible();

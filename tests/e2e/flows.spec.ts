@@ -115,8 +115,13 @@ test("registro, preferencias y borrador persistente entre sesiones",async({page}
 test("evaluación asíncrona, pruebas ocultas e idempotencia del progreso",async({page})=>{
   await page.context().addCookies(authCookies);
   await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python&ruta=desde-cero");
-  await page.getByRole("button",{name:"Ejecutar ejemplos",exact:true}).click();
-  await expect(page.getByText("Los ejemplos funcionan.",{exact:true})).toBeVisible();
+  // La ejecución parcial sigue disponible en el protocolo, no como una segunda
+  // acción que confunda a quien está empezando.
+  const variant=await db.exerciseVariant.findFirstOrThrow({where:{language:"python",version:{published:true,exercise:{slug:"logica-dos-parametros"}}},orderBy:{version:{number:"desc"}}});
+  const examples=await page.request.post("/api/executions",{headers:{origin:"http://127.0.0.1:3000"},data:{variantId:variant.id,code:"def solve(data):\n    return data['a'] + data['b']\n",mode:"examples",idempotencyKey:crypto.randomUUID()}});
+  expect(examples.status()).toBe(202);
+  const exampleId=(await examples.json()).id;
+  await expect.poll(async()=>(await db.submission.findUniqueOrThrow({where:{id:exampleId}})).status).toBe("PASSED");
   const user=await db.user.findUniqueOrThrow({where:{email}});
   expect(await db.progress.count({where:{userId:user.id,firstPassedAt:{not:null}}})).toBe(0);
   await page.getByRole("button",{name:"Comprobar solución",exact:true}).click();
@@ -165,13 +170,11 @@ test("ayudas progresivas, solución explícita y autorización administrativa",a
   const firstHint=version.hints[0];
   expect(firstHint.length).toBeGreaterThan(0);
   await page.goto("/ejercicios/logica-dos-requisitos");
-  await page.getByRole("button",{name:"Pistas progresivas",exact:true}).click();
   await expect(page.getByText(firstHint,{exact:true})).toHaveCount(0);
-  await page.getByRole("button",{name:"Descubrir la primera pista"}).click();
+  await page.getByRole("button",{name:"Mostrar una pista"}).click();
   await expect(page.getByText(firstHint,{exact:true})).toBeVisible();
-  await page.getByRole("button",{name:"Solución explicada",exact:true}).click();
   await page.getByRole("button",{name:"Ver solución explicada"}).click();
-  await expect(page.getByRole("region",{name:"Solución explicada",exact:true}).locator("pre")).toHaveText(logicExercises.find(e => e.slug === "logica-dos-requisitos")!.python);
+  await expect(page.getByRole("dialog",{name:"Solución explicada",exact:true}).locator("pre")).toHaveText(logicExercises.find(e => e.slug === "logica-dos-requisitos")!.python);
   await page.goto("/admin");
   await expect(page).toHaveURL(/\/inicio/);
   const noOrigin=await page.request.post("/api/executions",{data:{}});
@@ -361,13 +364,13 @@ test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borrador
   }
   await prepare();
   if(decision==="draft"){
-    await expect(page.getByRole("status")).toContainText("Ya existe un borrador editorial distinto");
+    await expect(page.getByRole("status").filter({hasText:"Ya existe un borrador editorial distinto"})).toBeVisible();
     expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count);
     await completeAction.assertComplete();
     return; // No modificar un borrador previo del propietario.
   }
-  if(decision==="create")await expect(page.getByRole("status")).toContainText("preparada en borrador");
-  else await expect(page.getByRole("status")).toContainText("ya contiene esta revisión");
+  if(decision==="create")await expect(page.getByRole("status").filter({hasText:"preparada en borrador"})).toBeVisible();
+  else await expect(page.getByRole("status").filter({hasText:"ya contiene esta revisión"})).toBeVisible();
   const latest=await db.exerciseVersion.findFirstOrThrow({where:{exerciseId:exercise.id},orderBy:{number:"desc"},include:{variants:{orderBy:{language:"asc"},include:{tests:{orderBy:{order:"asc"}}}}}});
   expect(catalogRevisionDecision(latest,source,latest.id)).toBe("unchanged");
   expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?1:0));
@@ -381,7 +384,7 @@ test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borrador
   await expect.poll(async () => (await page.locator('#exercise-statement').textContent() ?? "").replace(/\s+/g, "")).toBe(statement);
   await page.goto(`/admin/ejercicios/${exercise.slug}`);
   await prepare();
-  await expect(page.getByRole("status")).toContainText("ya contiene esta revisión");
+  await expect(page.getByRole("status").filter({hasText:"ya contiene esta revisión"})).toBeVisible();
   expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?1:0));
   // Un guardado manual posterior debe impedir que una importación lo sobrepase.
   await page.locator("#description").fill("Borrador temporal para verificar que se conserva el trabajo editorial manual.");
@@ -389,7 +392,7 @@ test(`la revisión de ${revisionSlug} es privada, idempotente y respeta borrador
   await expect.poll(async()=>db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?2:1));
   await page.reload();
   await prepare();
-  await expect(page.getByRole("status")).toContainText("Ya existe un borrador editorial distinto");
+  await expect(page.getByRole("status").filter({hasText:"Ya existe un borrador editorial distinto"})).toBeVisible();
   expect(await db.exerciseVersion.count({where:{exerciseId:exercise.id}})).toBe(count+(decision==="create"?2:1));
   expect(providerRequests).toBe(requests); // Preparar no publica ni ejecuta referencias.
   await completeAction.assertComplete();
