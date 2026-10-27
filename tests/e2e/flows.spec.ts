@@ -174,7 +174,17 @@ test("ayudas progresivas, solución explícita y autorización administrativa",a
   await page.getByRole("button",{name:"Mostrar una pista"}).click();
   await expect(page.getByText(firstHint,{exact:true})).toBeVisible();
   await page.getByRole("button",{name:"Ver solución explicada"}).click();
-  await expect(page.getByRole("dialog",{name:"Solución explicada",exact:true}).locator("pre")).toHaveText(logicExercises.find(e => e.slug === "logica-dos-requisitos")!.python);
+  const solutionDialog=page.getByRole("dialog",{name:"Solución explicada",exact:true});
+  const solutionCode=logicExercises.find(e => e.slug === "logica-dos-requisitos")!.python!;
+  await expect(solutionDialog.locator("pre")).toHaveText(solutionCode);
+  await page.context().grantPermissions(["clipboard-read","clipboard-write"]);
+  await solutionDialog.getByRole("button",{name:"Copiar solución",exact:true}).click();
+  await expect(solutionDialog.getByRole("status")).toHaveText("Solución copiada.");
+  expect(await page.evaluate(()=>navigator.clipboard.readText())).toBe(solutionCode);
+  await page.evaluate(()=>{ Object.defineProperty(navigator.clipboard,"writeText",{configurable:true,value:async()=>{throw new Error("Portapapeles no disponible");}}); });
+  await solutionDialog.getByRole("button",{name:"Copiar solución",exact:true}).click();
+  await expect(solutionDialog.getByRole("alert")).toHaveText("No se pudo copiar. Selecciona el código y cópialo manualmente.");
+  await expect(solutionDialog.getByRole("status")).toHaveCount(0);
   await page.goto("/admin");
   await expect(page).toHaveURL(/\/inicio/);
   const noOrigin=await page.request.post("/api/executions",{data:{}});
