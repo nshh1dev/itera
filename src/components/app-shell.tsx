@@ -30,6 +30,7 @@ function snapshot() { try { return localStorage.getItem(preferenceKey); } catch 
 
 export function AppShell({ children, user, workspace = false, header }: { children: React.ReactNode; user: ShellUser | null; workspace?: boolean; header?: React.ReactNode }) {
   const pathname = usePathname();
+  const home = pathname === "/inicio";
   const router = useRouter();
   const preference = useSyncExternalStore(subscribe, snapshot, () => null);
   const [fallback, setFallback] = useState<string | null>(null);
@@ -78,7 +79,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
     function item({ href, label, icon: Icon }: typeof navigation[number]) {
       const active = pathname.startsWith(href);
        const link = <Link href={href} className="navigation-link relative isolate" aria-label={label} aria-current={active ? "page" : undefined}>
-        {active && <Selection id="navigation" />}
+        {active && !home && <Selection id="navigation" />}
         <Icon aria-hidden="true" /><span className="navigation-label">{label}</span>
       </Link>;
       return <div key={href} className="navigation-item relative">
@@ -96,12 +97,12 @@ export function AppShell({ children, user, workspace = false, header }: { childr
     </LayoutGroup>;
   }
 
-  return <div className="app-shell" data-collapsed={collapsed}>
+  return <div className="app-shell" data-collapsed={collapsed} data-home={home || undefined}>
     <aside id="navigation-sidebar" className="app-sidebar" aria-label="Barra lateral">{navigationContent()}</aside>
       <header className="app-header flex min-w-0 items-center gap-2 px-3 sm:gap-3 sm:px-5">
       <Dialog open={navigationOpen} onOpenChange={changeNavigation}>
         <DialogTrigger asChild><Button variant="ghost" size="icon" className="md:hidden" aria-label="Abrir navegación"><Menu /></Button></DialogTrigger>
-        <DialogContent className="navigation-drawer inset-y-0 left-0 top-0 flex h-dvh max-h-none w-[min(288px,calc(100%-3rem))] translate-x-0 translate-y-0 flex-col rounded-none border-0 border-r bg-surface p-4" onClickCapture={event => {
+        <DialogContent data-home={home || undefined} className="navigation-drawer inset-y-0 left-0 top-0 flex h-dvh max-h-none w-[min(288px,calc(100%-3rem))] translate-x-0 translate-y-0 flex-col rounded-none border-0 border-r bg-surface p-4" onClickCapture={event => {
           const link = event.target instanceof Element ? event.target.closest("a") : null;
           if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           event.preventDefault();
@@ -116,7 +117,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
       <Button variant="ghost" size="icon" className="hidden min-[1200px]:inline-flex" aria-label={collapsed ? "Expandir navegación" : "Contraer navegación"} aria-expanded={!collapsed} aria-controls="navigation-sidebar" title={collapsed ? "Expandir navegación" : "Contraer navegación"} onClick={toggleNavigation}>
         {collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
       </Button>
-      <div className="min-w-0 flex-1">{header ?? <p className="text-sm font-medium">{title}</p>}</div>
+      <div className="min-w-0 flex-1">{header ?? (!home && <p className="text-sm font-medium">{title}</p>)}</div>
       <div className="flex shrink-0 items-center gap-2">
         <ThemeToggle />
         {user ? <AccountMenu user={user} signingOut={signingOut} onSignOut={async () => {
@@ -127,6 +128,6 @@ export function AppShell({ children, user, workspace = false, header }: { childr
       </div>
     </header>
     {logoutError && <p role="alert" className="border-b px-5 py-3 text-sm text-destructive">No se pudo cerrar la sesión. Inténtalo de nuevo.</p>}
-    {workspace ? children : <main id="main-content"><MotionRegion>{children}</MotionRegion></main>}
+    {workspace ? children : <main id="main-content">{home ? children : <MotionRegion>{children}</MotionRegion>}</main>}
   </div>;
 }
