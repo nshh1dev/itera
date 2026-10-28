@@ -5,6 +5,7 @@ import { languageNames, type Language } from "@/lib/types";
 import { exerciseHref } from "@/lib/learning-paths";
 import { exerciseSkillSummary } from "@/lib/exercise-skills";
 import { ActivityDate } from "@/components/activity-date";
+import { Button } from "@/components/ui/button";
 
 export const metadata = { title: "Inicio" };
 export default async function DashboardPage() {
@@ -16,14 +17,14 @@ export default async function DashboardPage() {
     <p className="dashboard-greeting">{user ? `Hola, ${user.name.split(" ")[0]}.` : "Empieza a practicar."}</p>
     <section className="dashboard-next" aria-label="Tu siguiente paso">
       {recommendation ? <>
-        <h1 className="dashboard-exercise-title" title={recommendation.exercise.title}>{recommendation.exercise.title}</h1>
+        <h1 className="dashboard-exercise-title">{recommendation.exercise.title}</h1>
         <p className="dashboard-description">{exerciseSkillSummary(recommendation.exercise)}</p>
         <p className="dashboard-context">{languageNames[language]}{path && <> · {path.title}</>} · {recommendation.exercise.minutes} min</p>
-        <Link className="dashboard-continue" href={exerciseHref(recommendation.exercise.slug, language, recommendation.pathSlug)}>Continuar</Link>
+        <Button asChild className="dashboard-continue"><Link href={exerciseHref(recommendation.exercise.slug, language, recommendation.pathSlug)}>Continuar</Link></Button>
       </> : <>
         <h1 className="dashboard-exercise-title">{complete ? "Todo el catálogo completado" : "Todavía no hay ejercicios"}</h1>
         <p className="dashboard-description">{complete ? "Puedes repasar una ruta o practicar en otro lenguaje." : "Tu siguiente ejercicio aparecerá aquí cuando esté disponible."}</p>
-        <Link className="dashboard-continue" href="/rutas">Explorar rutas</Link>
+        <Button asChild className="dashboard-continue"><Link href="/rutas">Explorar rutas</Link></Button>
       </>}
     </section>
     {path && path.total > 0 && <Link href={progressHref} className="dashboard-progress" aria-label={`Progreso de ${path.title}: ${path.completed} de ${path.total} ejercicios completados`}>

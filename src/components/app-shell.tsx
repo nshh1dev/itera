@@ -79,8 +79,8 @@ export function AppShell({ children, user, workspace = false, header }: { childr
     function item({ href, label, icon: Icon }: typeof navigation[number]) {
       const active = pathname.startsWith(href);
        const link = <Link href={href} className="navigation-link relative isolate" aria-label={label} aria-current={active ? "page" : undefined}>
-        {active && !home && <Selection id="navigation" />}
-        {home && href === "/configuracion" && user ? <span className="navigation-avatar" aria-hidden="true">{user.name.slice(0, 1).toUpperCase()}</span> : <Icon aria-hidden="true" />}<span className="navigation-label">{label}</span>
+        {active && <Selection id="navigation" />}
+        <Icon aria-hidden="true" /><span className="navigation-label">{label}</span>
       </Link>;
       return <div key={href} className="navigation-item relative">
         {link}
@@ -88,12 +88,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
       </div>;
     }
     return <LayoutGroup id={mobile ? "mobile-navigation" : "desktop-navigation"}>
-      <div className={home ? "home-navigation-heading" : "flex h-11 items-center px-1 md:h-9"}>
-        <Logo className="navigation-brand" href="/" />
-        {home && !mobile && <button type="button" className="home-navigation-toggle" aria-label={collapsed ? "Expandir navegación" : "Contraer navegación"} aria-expanded={!collapsed} aria-controls="navigation-sidebar" onClick={toggleNavigation}>
-          {collapsed ? <PanelLeftOpen aria-hidden="true" /> : <PanelLeftClose aria-hidden="true" />}
-        </button>}
-      </div>
+      <div className="flex h-11 items-center px-1 md:h-9"><Logo className="navigation-brand" href="/" /></div>
       <nav aria-label={mobile ? "Navegación móvil" : "Navegación principal"} className="mt-7 space-y-1">{navigation.map(entry => item(entry))}</nav>
       <div className="mt-auto space-y-1 pt-8">
         {user?.role === "ADMIN" && item({ href: "/admin", label: "Administración", icon: Shield })}
@@ -103,7 +98,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
   }
 
   const mobileNavigation = <Dialog open={navigationOpen} onOpenChange={changeNavigation}>
-        <DialogTrigger asChild><button type="button" className={home ? "home-mobile-trigger" : "flex size-11 items-center justify-center rounded-lg hover:bg-selection md:hidden"} aria-label="Abrir navegación"><Menu aria-hidden="true" className="size-5" /></button></DialogTrigger>
+        <DialogTrigger asChild><button type="button" className="flex size-11 items-center justify-center rounded-lg hover:bg-selection md:hidden" aria-label="Abrir navegación"><Menu aria-hidden="true" className="size-5" /></button></DialogTrigger>
         <DialogContent data-home={home || undefined} className="navigation-drawer inset-y-0 left-0 top-0 flex h-dvh max-h-none w-[min(288px,calc(100%-3rem))] translate-x-0 translate-y-0 flex-col rounded-none border-0 border-r bg-surface p-4" onClickCapture={event => {
           const link = event.target instanceof Element ? event.target.closest("a") : null;
           if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -119,12 +114,12 @@ export function AppShell({ children, user, workspace = false, header }: { childr
 
   return <div className="app-shell" data-collapsed={collapsed} data-home={home || undefined}>
     <aside id="navigation-sidebar" className="app-sidebar" aria-label="Barra lateral">{navigationContent()}</aside>
-    {home ? mobileNavigation : <header className="app-header flex min-w-0 items-center gap-2 px-3 sm:gap-3 sm:px-5">
+    <header className="app-header flex min-w-0 items-center gap-2 px-3 sm:gap-3 sm:px-5">
       {mobileNavigation}
       <Button variant="ghost" size="icon" className="hidden min-[1200px]:inline-flex" aria-label={collapsed ? "Expandir navegación" : "Contraer navegación"} aria-expanded={!collapsed} aria-controls="navigation-sidebar" title={collapsed ? "Expandir navegación" : "Contraer navegación"} onClick={toggleNavigation}>
         {collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
       </Button>
-      <div className="min-w-0 flex-1">{header ?? (!home && <p className="text-sm font-medium">{title}</p>)}</div>
+       <div className="min-w-0 flex-1">{header ?? <p className="text-sm font-medium">{title}</p>}</div>
       <div className="flex shrink-0 items-center gap-2">
         <ThemeToggle />
         {user ? <AccountMenu user={user} signingOut={signingOut} onSignOut={async () => {
@@ -133,7 +128,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
              catch { setLogoutError(true); } finally { setSigningOut(false); }
            }} /> : !workspace && <Button asChild variant="outline" size="sm"><Link href="/registro">Crear cuenta</Link></Button>}
       </div>
-    </header>}
+    </header>
     {logoutError && <p role="alert" className="border-b px-5 py-3 text-sm text-destructive">No se pudo cerrar la sesión. Inténtalo de nuevo.</p>}
     {workspace ? children : <main id="main-content">{home ? children : <MotionRegion>{children}</MotionRegion>}</main>}
   </div>;
