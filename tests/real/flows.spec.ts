@@ -48,11 +48,8 @@ test("registro y preferencias con el ejecutor real disponible",async({page})=>{
   await expect(page.getByRole("heading",{name:"Aprende a tu manera"})).toBeVisible();
   await page.getByLabel("Lenguaje preferido",{exact:true}).selectOption("typescript");
   await page.getByRole("radio",{name:/Principiante/}).check();
-  await page.getByRole("button",{name:"Guardar y continuar"}).click();
-  await page.getByRole("button",{name:"Saltar diagnóstico"}).click();
-  await expect(page.getByRole("heading",{name:"Tu punto de partida"})).toBeVisible();
-  await page.getByRole("button",{name:"Explorar ejercicios libremente"}).click();
-  await expect(page).toHaveURL(/\/ejercicios\?lenguaje=typescript/);
+  await page.getByRole("button",{name:"Guardar y empezar mi ruta"}).click();
+  await expect(page).toHaveURL(/\/rutas\/primeros-pasos\?lenguaje=typescript/);
   authCookies=await page.context().cookies();
 });
 

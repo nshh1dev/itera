@@ -2,11 +2,29 @@
 
 ## Experiencia
 
-El registro crea la cuenta en el primer paso y continúa en `/bienvenida`. Los
-pasos son Cuenta, Personalizar, Diagnóstico opcional y Tu ruta. La bienvenida no
-bloquea el catálogo: se puede salir y retomarla desde Inicio. Las cuentas creadas
-antes de la migración quedan exentas (`onboardingStep = 0`). Las altas por Better
-Auth comienzan en el paso 2; este campo no admite entrada del cliente.
+El registro crea la cuenta y continúa en `/bienvenida`, salvo que proceda de un
+ejercicio: en ese caso vuelve directamente a ese ejercicio conservando `volver`,
+lenguaje y ruta, y deja la personalización pendiente para otro momento.
+La secuencia consta de Cuenta y Punto de partida. Guardar lenguaje y nivel lleva
+directamente a la ruta recomendada, sin diagnóstico ni pantalla de resumen
+obligatorios. Si hay un ejercicio de retorno, este tiene prioridad sobre la ruta.
+La propuesta según la selección aparece en el propio formulario; un diagnóstico
+previo aplicable puede ajustar el destino y se conserva al guardar.
+
+El diagnóstico se ofrece como alternativa secundaria tras guardar la selección,
+y sigue disponible desde Configuración → Aprendizaje. Se presenta como orientación
+para encontrar un punto de partida, no como certificación del nivel. Sus reglas v1
+no cambian con esta simplificación del flujo.
+
+La bienvenida no bloquea el catálogo: se puede salir y retomarla desde Inicio.
+Las cuentas con `onboardingStep = 0` quedan exentas y `/bienvenida` las dirige a
+Aprendizaje. Las altas por Better Auth comienzan en el estado 2. Los estados
+antiguos 1–4 se mantienen compatibles sin migración: los enlaces `paso=1`, `2`
+y `4` muestran la personalización; `paso=3` abre la opción de diagnóstico solo
+si existe un perfil guardado. Sin `paso` siempre se muestra personalización.
+Guardar y empezar completa la bienvenida en la misma transacción que guarda
+las preferencias; guardar para diagnosticar conserva el flujo pendiente.
+No se borran sesiones diagnósticas ni se escribe progreso al completar estos pasos.
 
 El diseño conserva las fuentes locales, controles y tonos de Itera. Configuración
 es una página, no una ventana interceptada. Su navegación lateral se convierte en

@@ -12,7 +12,7 @@ export default async function WelcomePage({ searchParams }: { searchParams: Prom
   if (!user.onboardingStep) redirect("/configuracion?seccion=aprendizaje");
   const language = (user.preference?.language ?? "python") as Language;
   const [summary, profiles] = await Promise.all([getLearningSummary(user.id, language), db.learningProfile.findMany({ where: { userId: user.id }, select: { language: true, declaredLevel: true } })]);
-  const requested = Number(query.paso ?? user.onboardingStep);
-  const step = Math.min(summary.declaredLevel ? 4 : 2, Math.max(1, Number.isInteger(requested) ? requested : 2));
-  return <Onboarding step={step} name={user.name} email={user.email} profiles={profiles} summary={summary} returnTo={safeReturnTo(query.volver)} />;
+  const requested = Number(query.paso ?? 2);
+  const step = requested === 3 && summary.declaredLevel ? 3 : 2;
+  return <Onboarding step={step} profiles={profiles} summary={summary} returnTo={safeReturnTo(query.volver)} />;
 }

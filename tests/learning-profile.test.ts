@@ -89,11 +89,15 @@ test("la ejecución valida el identificador diagnóstico sin aceptar cambios de 
   assert.equal("userId" in executionSchema.parse({ ...base, userId: "otro" }), false);
 });
 
-test("la bienvenida identifica cuatro pasos y anuncia el diagnóstico como opcional", () => {
+test("la bienvenida tiene dos pasos y deja el diagnóstico fuera de la secuencia obligatoria", () => {
   const html = renderToStaticMarkup(createElement(OnboardingProgress, { step: 3 }));
-  assert.equal((html.match(/<li /g) ?? []).length, 4);
+  assert.equal((html.match(/<li /g) ?? []).length, 2);
   assert.equal((html.match(/aria-current="step"/g) ?? []).length, 1);
-  assert.match(html, /Paso 3 de 4/);
-  assert.match(html, /Opcional/);
-  assert.match(html, /Tu nivel/);
+  assert.match(html, /Diagnóstico opcional/);
+  assert.doesNotMatch(html, /Paso 3 de/);
+  assert.match(html, /Punto de partida/);
+  const initial = renderToStaticMarkup(createElement(OnboardingProgress, { step: 1 }));
+  assert.match(initial, /Paso 1 de 2/);
+  const final = renderToStaticMarkup(createElement(OnboardingProgress, { step: 4 }));
+  assert.match(final, /Paso 2 de 2/);
 });

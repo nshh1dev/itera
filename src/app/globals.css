@@ -751,7 +751,7 @@
 .learning-level:hover { background: var(--selection); }
 .learning-level:has(input:checked) { outline: 1px solid var(--primary); }
 .learning-level input { flex-shrink: 0; margin-top: 5px; accent-color: var(--primary); }
-.onboarding-progress { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.onboarding-progress { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .onboarding-progress li { display: flex; min-width: 0; flex-direction: column; gap: 6px; border-top: 2px solid var(--border); padding-top: 10px; font-size: .75rem; color: var(--muted-foreground); overflow-wrap: anywhere; }
 .onboarding-progress li[data-reached="true"] { border-color: var(--primary); color: var(--foreground); }
 .onboarding-progress li[aria-current="step"] { font-weight: 600; }

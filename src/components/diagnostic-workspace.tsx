@@ -24,7 +24,7 @@ type Props = { id: string; userId: string; language: Language; backHref: string;
 export function DiagnosticWorkspace(props: Props) {
   const hydrated = useSyncExternalStore(subscribe, () => true, () => false);
   const [index, setIndex] = useState(0);
-  return <>{props.onboarding && <OnboardingProgress step={3} />}<h1 className="page-title">Descubre tu nivel</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">{languageNames[props.language]} · Dos retos y un tercero opcional. No cuenta como práctica completada. Puedes terminar sin responder.</p>
+  return <>{props.onboarding && <OnboardingProgress step={3} />}<h1 className="page-title">Encuentra un punto de partida</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">{languageNames[props.language]} · Dos retos y un tercero opcional. Orienta dónde practicar, no certifica tu nivel ni cuenta como práctica completada. Puedes terminar sin responder.</p>
     {hydrated ? <DiagnosticEditor key={`${props.userId}:${props.items[index].id}`} {...props} item={props.items[index]} index={index} onNavigate={setIndex} /> : <p role="status" className="mt-8">Preparando el diagnóstico…</p>}
   </>;
 }

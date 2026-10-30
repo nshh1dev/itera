@@ -86,10 +86,8 @@ test("registro, preferencias y borrador persistente entre sesiones",async({page}
   await page.getByRole("button",{name:"Crear cuenta",exact:true}).click();
    await expect(page.getByRole("heading",{name:"Aprende a tu manera"})).toBeVisible();
    await page.getByRole("radio",{name:/Intermedio/}).check();
-   await page.getByRole("button",{name:"Guardar y continuar"}).click();
-   await page.getByRole("button",{name:"Saltar diagnóstico"}).click();
-   await expect(page.getByRole("heading",{name:"Tu punto de partida"})).toBeVisible();
-   await page.getByRole("button",{name:"Explorar ejercicios libremente"}).click();
+   await page.getByRole("button",{name:"Guardar y empezar mi ruta"}).click();
+   await expect(page).toHaveURL(/\/rutas\/pensar-en-soluciones\?lenguaje=python/);
   await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   await expect(page.locator(".monaco-editor")).toBeVisible();
   await openSimpleEditor(page);

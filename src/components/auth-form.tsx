@@ -51,7 +51,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" | "re
       if (result.error?.status === 429) throw new Error("Has realizado varios intentos seguidos. Espera un momento antes de volver a intentarlo.");
       if (result.error?.code === "ACCOUNT_DISABLED") throw new Error("Esta cuenta está desactivada. Contacta con un administrador para reactivarla.");
       if (result.error) throw new Error(register ? "No pudimos crear la cuenta. Comprueba el correo y usa una contraseña de al menos 10 caracteres; si ya tienes cuenta, inicia sesión." : "El correo o la contraseña no coinciden. Revisa los datos e inténtalo de nuevo.");
-      if (register) { router.push(`/bienvenida?volver=${encodeURIComponent(returnTo)}`); router.refresh(); return; }
+      if (register) { router.push(returnTo.startsWith("/ejercicios/") ? returnTo : `/bienvenida?volver=${encodeURIComponent(returnTo)}`); router.refresh(); return; }
       router.push(returnTo);
       router.refresh();
     } catch (error) { setError(error instanceof Error ? error.message : "No se pudo conectar con Itera."); }

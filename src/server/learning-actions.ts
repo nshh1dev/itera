@@ -7,22 +7,24 @@ import { db } from "./db";
 import { languageSchema } from "@/lib/validation";
 import { levels } from "@/lib/types";
 import { diagnosticExercises, diagnosticRecommendation } from "@/lib/learning-profile";
+import { getLearningSummary } from "@/server/learning";
 
-const learningSchema = z.object({ language: languageSchema, level: z.enum(levels) });
+const learningSchema = z.object({ language: languageSchema, level: z.enum(levels), finishOnboarding: z.boolean().optional() });
 const idSchema = z.string().min(1).max(100);
 
 export async function saveLearningPreferences(input: unknown) {
   const user = await requireUser();
   const parsed = learningSchema.safeParse(input);
   if (!parsed.success) return { error: "Elige un lenguaje y un nivel." };
-  const { language, level } = parsed.data;
+  const { language, level, finishOnboarding } = parsed.data;
   await db.$transaction([
     db.learningProfile.upsert({ where: { userId_language: { userId: user.id, language } }, create: { userId: user.id, language, declaredLevel: level }, update: { declaredLevel: level } }),
     db.userPreference.upsert({ where: { userId: user.id }, create: { userId: user.id, language, level }, update: { language, level } }),
-    db.user.updateMany({ where: { id: user.id, onboardingStep: 2 }, data: { onboardingStep: 3 } }),
+    db.user.updateMany({ where: { id: user.id, onboardingStep: finishOnboarding ? { gt: 0 } : 2 }, data: { onboardingStep: finishOnboarding ? 0 : 3 } }),
   ]);
   revalidatePath("/", "layout");
-  return { success: true };
+  const pathSlug = finishOnboarding ? (await getLearningSummary(user.id, language)).path.slug : undefined;
+  return { success: true, pathSlug };
 }
 
 export async function saveAccountName(input: unknown) {

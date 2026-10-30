@@ -12,6 +12,14 @@ Estado: implementación iniciada en `feat/experiencia-recorrido-python`. No inic
 - Verificación del lote: lint, tipos, 368 pruebas y build correctos. Sin E2E, navegador ni Piston real: no se han iniciado servicios. Los avisos de Better Auth durante pruebas de seguridad no producen fallos.
 - Pendientes la comprobación en navegador, la conservación de filtros/contexto de historial, los ajustes restantes de recomendaciones y las fases B–F. No se ha publicado contenido ni consultado la base activa.
 
+### Avance del segundo lote
+
+- Implementada la bienvenida breve con salida directa a la ruta tras guardar, diagnóstico secundario y retorno prioritario al ejercicio de origen al registrarse.
+- Los pasos antiguos 1/2/4 convergen en personalización; el paso 3 conserva el acceso optativo al diagnóstico. No se borran diagnósticos ni cambia su interpretación histórica.
+- Actualizados el indicador de dos pasos, el título orientativo del diagnóstico, las pruebas de acciones/página y los recorridos E2E afectados.
+- Verificación del lote: lint, tipos, 374 pruebas y build correctos. Corregida una incompatibilidad de inferencia de Prisma detectada por tipos durante el desarrollo; el chequeo posterior y el build aprobaron. E2E actualizado, pero no ejecutado.
+- Pendientes la ejecución de E2E y revisión visual con entorno autorizado. Este lote no modifica las reglas v1 del diagnóstico, la organización de Configuración/Progreso ni el contenido Python.
+
 ## 1. Objetivo, alcance y cierre
 
 Corregir las incoherencias de navegación, simplificar el acceso a la práctica y alinear los objetivos, enunciados, plantillas, ayudas y evaluaciones de Python. Mantener la dirección visual actual y mejorar la jerarquía de información.
@@ -79,12 +87,14 @@ Archivos principales: `src/server/practice-navigation.ts`, `src/lib/practice-nav
 
 ### B1. Bienvenida breve y diagnóstico opcional
 
-- [ ] Reducir la bienvenida a una pantalla breve de lenguaje y punto de partida con acceso directo a la ruta. Incorporar el resumen a esa misma decisión, sin otro paso obligatorio.
-- [ ] Retirar la pantalla redundante «Tu cuenta está creada» del recorrido, también al usar Atrás.
-- [ ] Si el registro procede de un ejercicio, priorizar el retorno a ese ejercicio y permitir completar preferencias después.
-- [ ] Mantener una entrada secundaria al diagnóstico desde Aprendizaje y, si resulta útil, desde la bienvenida, sin interponerlo antes de practicar.
-- [ ] Compatibilizar cuentas con `onboardingStep` 0, 2, 3 y 4 y enlaces antiguos `paso`/`volver`; no exigir un reinicio de cuentas ni borrar diagnósticos pendientes.
-- [ ] Ajustar el indicador de pasos, enlaces de reanudación y mensajes para que describan el flujo nuevo.
+- [x] Reducir la bienvenida a una pantalla breve de lenguaje y punto de partida con acceso directo a la ruta. Incorporar el resumen a esa misma decisión, sin otro paso obligatorio.
+- [x] Retirar la pantalla redundante «Tu cuenta está creada» del recorrido, también al usar Atrás.
+- [x] Si el registro procede de un ejercicio, priorizar el retorno a ese ejercicio y permitir completar preferencias después.
+- [x] Mantener una entrada secundaria al diagnóstico desde Aprendizaje y, si resulta útil, desde la bienvenida, sin interponerlo antes de practicar.
+- [x] Compatibilizar cuentas con `onboardingStep` 0, 2, 3 y 4 y enlaces antiguos `paso`/`volver`; no exigir un reinicio de cuentas ni borrar diagnósticos pendientes.
+- [x] Ajustar el indicador de pasos, enlaces de reanudación y mensajes para que describan el flujo nuevo.
+
+Implementación y pruebas sin servicios completadas; aceptación en navegador pendiente.
 
 ### B2. Ajustar la promesa y las reglas del diagnóstico
 

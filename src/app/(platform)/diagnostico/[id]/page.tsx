@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import type { ExecutionResult, Json, Language } from "@/lib/types";
 import { safeReturnTo } from "@/lib/utils";
 
-export const metadata = { title: "Descubre tu nivel" };
+export const metadata = { title: "Encuentra un punto de partida" };
 export default async function DiagnosticPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ bienvenida?: string; volver?: string }> }) {
   const [user, { id }, query] = await Promise.all([requireUser(), params, searchParams]);
   await expireInterruptedSubmissions();
