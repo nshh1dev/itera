@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { exerciseState, nextPractice, relatedExercise, sortExercises, type PracticeEntry } from "../src/lib/practice-navigation";
 import type { ExerciseCard } from "../src/lib/types";
+import { nextExerciseSlug, previousExerciseSlug } from "../src/lib/learning-paths";
 
 const exercise = (id: string, order: number, extra: Partial<ExerciseCard> = {}): ExerciseCard => ({ id, slug: id, title: id, description: "", category: "Fundamentos", level: "INITIATION", order, minutes: 5, runtimeMode: "FUNCTION", solved: false, started: false, solvedOther: false, ...extra });
 test("los estados distinguen borradores e intentos de la finalización", () => {
@@ -45,6 +46,23 @@ test("práctica libre recomienda por categoría y nivel sin repetir resueltos", 
   const items = [current, exercise("b", 1, { solved: true }), exercise("c", 2, { category: "Grafos" }), exercise("d", 3)];
   assert.equal(relatedExercise(items, current)?.id, "d");
   assert.equal(relatedExercise([current], current), undefined);
+});
+test("las flechas siguen la secuencia aunque el contiguo esté resuelto o cambie de categoría", () => {
+  const items = [exercise("a", 0), exercise("b", 1, { solved: true, category: "Listas" }), exercise("c", 2)];
+  const sequence = items.map(item => item.slug);
+  assert.equal(nextExerciseSlug("a", sequence), "b");
+  assert.equal(previousExerciseSlug("b", sequence), "a");
+  assert.equal(nextExerciseSlug("c", sequence), undefined);
+  assert.equal(previousExerciseSlug("a", sequence), undefined);
+  assert.equal(nextExerciseSlug("retirado", sequence), undefined);
+});
+test("la continuación libre prioriza orden curricular, no similitud de categoría", () => {
+  const entries: PracticeEntry[] = [
+    { exercise: exercise("a", 0, { solved: true }), language: "python", date: "2026-10-20" },
+    { exercise: exercise("b", 1, { category: "Listas" }), language: "python" },
+    { exercise: exercise("c", 2), language: "python" },
+  ];
+  assert.equal(nextPractice(entries, "python")?.exercise.id, "b");
 });
 test("los órdenes son estables y no modifican el catálogo compartido", () => {
   const items = [exercise("a", 0, { level: "ADVANCED", minutes: 20 }), exercise("b", 1), exercise("c", 2)];

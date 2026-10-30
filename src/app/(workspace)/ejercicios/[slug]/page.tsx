@@ -12,7 +12,6 @@ import { languageNames } from "@/lib/types";
 import { moduleForExercise } from "@/lib/learning-modules";
 import { theoryForLanguage } from "@/lib/lesson-language";
 import Link from "next/link";
-import { relatedExercise } from "@/lib/practice-navigation";
 import { validateProjectDefinition, validateProjectSnapshot, type ProjectFile } from "@/lib/project";
 import { languagePaths } from "@/lib/language-curriculum";
 import { hasPythonCurriculum } from "@/lib/python-curriculum";
@@ -44,8 +43,7 @@ export default async function ExercisePage({ params, searchParams }: { params: P
   const pathSlugs = resolvedPath?.items.flatMap(item => { const entry = catalog.find(e => e.id === item.exerciseId); return entry ? [entry.slug] : []; });
   const pathSlug = pathSlugs?.includes(slug) ? path!.slug : undefined;
   const sequence = pathSlug ? pathSlugs! : catalog.map(e => e.slug);
-  const current = catalog.find(item => item.slug === slug);
-  const nextSlug = pathSlug ? nextExerciseSlug(slug, sequence) : current ? relatedExercise(catalog, current)?.slug : undefined;
+  const nextSlug = nextExerciseSlug(slug, sequence);
   const nextHref = nextSlug ? exerciseHref(nextSlug, language, pathSlug) : undefined;
   const previousSlug = previousExerciseSlug(slug, sequence);
   const previousHref = previousSlug ? exerciseHref(previousSlug, language, pathSlug) : undefined;

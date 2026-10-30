@@ -21,7 +21,7 @@ export async function getPracticeNavigation(userId: string | undefined, preferre
     return { exercise, language, pathSlug: context?.pathSlug && routes.includes(context.pathSlug) ? context.pathSlug : undefined, routes, date: [exercise.lastActivityAt, context?.visitedAt.toISOString()].filter(Boolean).sort().at(-1) };
   }));
   const recommendation = personalizedPractice(entries, preferred, learning?.path.slug);
-  if (recommendation && !entries.some(entry => entry.date)) recommendation.pathSlug = entries.find(entry => entry.language === recommendation.language && entry.exercise.id === recommendation.exercise.id)?.routes[0];
+  if (recommendation && !entries.some(entry => entry.language === preferred && entry.date)) recommendation.pathSlug ??= entries.find(entry => entry.language === recommendation.language && entry.exercise.id === recommendation.exercise.id)?.routes[0];
   const language = recommendation?.language ?? preferred;
   const catalog = catalogs[languages.indexOf(language)];
   const lastPath = contexts.find(context => context.language === preferred && context.pathSlug && paths.some(path => path.slug === context.pathSlug));

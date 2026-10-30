@@ -28,14 +28,14 @@ export default async function LandingPage() {
           <h1 id="landing-title">Menos teoría.<br />Más intentos.</h1>
           <p className="landing-lead">Aprende lógica escribiendo código.</p>
           <div className="landing-hero-actions">
-            <Button asChild size="lg"><Link href={user ? "/inicio" : "/ejercicios/suma-de-dos-numeros?lenguaje=javascript"}>{user ? "Continuar" : "Empezar"}<ArrowRight aria-hidden="true" /></Link></Button>
+            <Button asChild size="lg"><Link href={user ? "/inicio" : "/rutas/desde-cero?lenguaje=python"}>{user ? "Continuar" : "Empezar"}<ArrowRight aria-hidden="true" /></Link></Button>
             <Link href="/rutas" className="landing-quiet-link">Elegir ruta<ArrowRight className="size-3.5" aria-hidden="true" /></Link>
           </div>
           <p className="landing-hero-note">Python · JavaScript · TypeScript</p>
         </div>
         <div className="landing-hero-product">
           <PracticeDemo />
-          <div className="landing-demo-footnote"><span>Demo interactiva · código fijo</span><Link href="/ejercicios/suma-de-dos-numeros?lenguaje=javascript" className="landing-quiet-link">Abrir editor<ArrowRight className="size-3.5" aria-hidden="true" /></Link></div>
+          <div className="landing-demo-footnote"><span>Demo interactiva · código fijo</span><Link href={user ? "/inicio" : "/rutas/desde-cero?lenguaje=python"} className="landing-quiet-link">Ir a practicar<ArrowRight className="size-3.5" aria-hidden="true" /></Link></div>
         </div>
       </section>
       <section className="landing-explore" aria-labelledby="explore-title">
@@ -55,7 +55,7 @@ export default async function LandingPage() {
                 <Button type="submit" variant="outline" className="mt-5 w-full">Explorar ejercicios<ArrowRight aria-hidden="true" /></Button>
               </fieldset>
             </form>
-            <Link href="/rutas/desde-cero" className="landing-route-link">
+            <Link href="/rutas/desde-cero?lenguaje=python" className="landing-route-link">
               <span className="landing-route-mark" aria-hidden="true"><span /><span /><span /></span>
               <div><h3>Desde cero</h3><p>Tu primera línea de código.</p></div>
               <ArrowRight className="ml-auto size-5 shrink-0" aria-hidden="true" />
@@ -66,7 +66,7 @@ export default async function LandingPage() {
       </section>
       <section className="landing-closing landing-container" aria-labelledby="closing-title">
         <div><Code2 className="mb-4 size-6 text-muted-foreground" aria-hidden="true" /><h2 id="closing-title">Un intento<br />más cerca.</h2></div>
-        <Button asChild size="lg"><Link href="/rutas/desde-cero">Empezar desde cero<ArrowRight aria-hidden="true" /></Link></Button>
+        <Button asChild size="lg"><Link href="/rutas/desde-cero?lenguaje=python">Empezar desde cero<ArrowRight aria-hidden="true" /></Link></Button>
       </section>
     </main>
     <footer className="landing-footer landing-container"><Logo href="/" /><div className="flex flex-wrap gap-5"><Link href="/ejercicios" className="landing-quiet-link">Ejercicios</Link><Link href="/rutas" className="landing-quiet-link">Rutas</Link></div></footer>

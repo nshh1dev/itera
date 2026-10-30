@@ -88,7 +88,7 @@ export function AppShell({ children, user, workspace = false, header }: { childr
       </div>;
     }
     return <LayoutGroup id={mobile ? "mobile-navigation" : "desktop-navigation"}>
-      <div className="flex h-11 items-center px-1 md:h-9"><Logo className="navigation-brand" href="/" /></div>
+      <div className="flex h-11 items-center px-1 md:h-9"><Logo className="navigation-brand" href="/inicio" /></div>
       <nav aria-label={mobile ? "Navegación móvil" : "Navegación principal"} className="mt-7 space-y-1">{navigation.map(entry => item(entry))}</nav>
       <div className="mt-auto space-y-1 pt-8">
         {user?.role === "ADMIN" && item({ href: "/admin", label: "Administración", icon: Shield })}

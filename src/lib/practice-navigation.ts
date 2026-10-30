@@ -41,7 +41,7 @@ export function nextPractice(entries: PracticeEntry[], fallbackLanguage: Languag
   const catalog = entries.filter(entry => entry.language === language);
   const next = last?.pathSlug
     ? catalog.find(entry => entry.routes?.includes(last.pathSlug!) && !entry.exercise.solved)
-    : last ? (() => { const related = relatedExercise(catalog.map(entry => entry.exercise), last.exercise); return catalog.find(entry => entry.exercise.id === related?.id); })() : undefined;
+    : last ? catalog.slice(catalog.findIndex(entry => entry.exercise.id === last.exercise.id) + 1).find(entry => !entry.exercise.solved) : undefined;
   const choice = next ?? catalog.find(entry => !entry.exercise.solved) ?? catalog[0];
   return choice ? { ...choice, pathSlug: last?.pathSlug && choice.routes?.includes(last.pathSlug) ? last.pathSlug : undefined, resume: false } : undefined;
 }

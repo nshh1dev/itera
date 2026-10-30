@@ -2,7 +2,15 @@
 
 Fecha: 30 de octubre de 2026.
 
-Estado: pendiente de implementación. Crear este documento no autoriza a iniciar servicios ni significa que las mejoras estén realizadas.
+Estado: implementación iniciada en `feat/experiencia-recorrido-python`. No iniciar servicios sin autorización. Las fases sin verificar siguen pendientes.
+
+### Avance del primer lote
+
+- Implementados los accesos de portada sin slugs históricos, el logo hacia Inicio y la explicación anticipada del requisito de cuenta.
+- Implementada navegación contigua en práctica libre y retorno al catálogo al terminar; la continuación libre deja de saltar por categoría.
+- La lista de Rutas comparte la recomendación de Inicio para el lenguaje seleccionado.
+- Verificación del lote: lint, tipos, 368 pruebas y build correctos. Sin E2E, navegador ni Piston real: no se han iniciado servicios. Los avisos de Better Auth durante pruebas de seguridad no producen fallos.
+- Pendientes la comprobación en navegador, la conservación de filtros/contexto de historial, los ajustes restantes de recomendaciones y las fases B–F. No se ha publicado contenido ni consultado la base activa.
 
 ## 1. Objetivo, alcance y cierre
 

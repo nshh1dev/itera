@@ -71,7 +71,7 @@ export function PracticeDemo() {
         <div className="flex items-center gap-3"><ArrowRight className="size-4 text-muted-foreground" aria-hidden="true" /><span>Resultado</span><motion.output key={`${attempt}:${result}`} initial={reduced ? false : { opacity: .5, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduced ? 0 : motionTokens.duration.standard, ease: motionTokens.ease.enter }} htmlFor="demo-a demo-b">{result ?? "—"}</motion.output></div>
         <span className="text-muted-foreground">{result === null ? "Entrada modificada" : <><Check className="size-3.5" aria-hidden="true" /> Suma calculada</>}</span>
       </div>
-      <p id="demo-help" className="sr-only">La demo calcula una suma fija. Abre el editor para escribir tu propio código.</p>
+      <p id="demo-help" className="sr-only">La demo calcula una suma fija. Elige una ruta para escribir tu propio código.</p>
     </form>
     </div>
   </section>;

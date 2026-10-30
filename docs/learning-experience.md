@@ -15,9 +15,21 @@ No se reinterpretan las identidades retiradas como ejercicios del catálogo nuev
 
 ## Inicio y contexto
 
-«Tu siguiente paso» busca primero el pendiente iniciado con actividad más reciente,
-entre los tres lenguajes. Después continúa según la última actividad; sin ella,
-utiliza el lenguaje preferido y el primer ejercicio curricular disponible.
+«Tu siguiente paso» busca primero el pendiente iniciado con actividad más reciente
+del lenguaje seleccionado. Después continúa según su contexto de ruta o su orden
+curricular; sin actividad, utiliza el punto de partida del perfil y, como respaldo,
+el primer pendiente disponible. La lista de Rutas usa esta misma recomendación
+para destacar la ruta correspondiente; no calcula otra a partir de visitas.
+
+Las flechas anterior/siguiente recorren posiciones contiguas de la ruta activa
+o del catálogo del lenguaje, incluidos los ejercicios resueltos. No se confunden
+con recomendaciones por similitud. Al terminar la secuencia, los resultados ofrecen
+volver a la ruta o al catálogo, sin reiniciar el recorrido silenciosamente.
+
+La portada invita a los visitantes a Desde cero en Python, sin depender de un
+ejercicio histórico retirado; las cuentas acceden a su continuación desde Inicio.
+El editor explica antes de escribir que ejecutar y guardar progreso requiere
+cuenta; explorar y conservar un borrador local sigue disponible sin sesión.
 
 `PracticeContext` conserva por usuario, ejercicio y lenguaje la última visita y
 el origen validado: `pathSlug` para una ruta o `null` para práctica libre. No

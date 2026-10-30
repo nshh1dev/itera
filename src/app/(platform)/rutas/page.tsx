@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { db } from "@/server/db";
 import { currentUser } from "@/server/auth";
-import { getCatalog } from "@/server/catalog";
+import { getPracticeNavigation } from "@/server/practice-navigation";
 import { levelNames } from "@/lib/types";
 import { learningPathLevel } from "@/lib/learning-paths";
 import { languagePaths } from "@/lib/language-curriculum";
@@ -15,14 +15,13 @@ export default async function PathsPage({ searchParams }: { searchParams: Promis
   const user = await currentUser();
   const preferredLanguage = languageSchema.catch("python").parse(user?.preference?.language);
   const language = languageSchema.catch(preferredLanguage).parse((await searchParams).lenguaje);
-  const [storedPaths, catalog] = await Promise.all([
+  const [storedPaths, { catalog, recommendation }] = await Promise.all([
     db.learningPath.findMany({ orderBy: { order: "asc" }, include: { items: { orderBy: { position: "asc" }, select: { exerciseId: true } } } }),
-    getCatalog(user?.id, language),
+    getPracticeNavigation(user?.id, language),
   ]);
   const paths = languagePaths(storedPaths, catalog, language).map(path => ({ ...path, exercises: path.items.flatMap(item => catalog.filter(exercise => exercise.id === item.exerciseId)) }));
-  const lastContext = user ? await db.practiceContext.findFirst({ where: { userId: user.id, language, pathSlug: { not: null }, exercise: { published: true } }, orderBy: { visitedAt: "desc" }, select: { pathSlug: true } }) : null;
-  const suggestedPath = paths.find(path => path.slug === lastContext?.pathSlug && path.exercises.some(exercise => !exercise.solved))
-    ?? paths.find(path => path.exercises.some(exercise => !exercise.solved)) ?? paths[0];
+  const suggestedPath = recommendation ? paths.find(path => path.slug === recommendation.pathSlug)
+    ?? paths.find(path => path.exercises.some(exercise => exercise.id === recommendation.exercise.id)) : undefined;
   return <div className="page-container">
     <h1 className="page-title">Rutas</h1><p className="page-description">Aprende con una guía o explora cualquier etapa a tu ritmo.</p>
     <div className="path-map">{paths.map((path,i) => {
