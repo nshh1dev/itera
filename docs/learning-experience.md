@@ -57,8 +57,11 @@ borradores, soluciones, intentos ni finalizaciones existentes.
   en la fila del ejercicio, sin tarjeta duplicada de siguiente paso; integradores publicados
   al cierre. No hay bloqueos ni casillas que simulen progreso. Si falta un
   integrador publicado se explica, sin inventar contenido.
-- **Progreso:** lenguaje independiente de la preferencia, avance por ruta y
-  categoría e historial agrupado por ejercicio, incluidas sus versiones. Los
+- **Progreso:** lenguaje independiente de la preferencia; primero muestra el
+  resumen, la continuación compartida con Inicio y el historial por ejercicio.
+  El historial precede a las rutas también en el orden del documento y en móvil.
+  Las categorías y la interpretación se consultan en desplegables secundarios.
+  Se conservan el avance por ruta y las versiones anteriores. Los
   intentos se cargan de diez en diez mediante una acción que exige la cuenta
   actual y devuelve solo su código y resultado global, nunca casos ocultos.
   Los archivos y borradores históricos son secundarios y se paginan de veinte

@@ -54,7 +54,8 @@ for (const theme of ["light", "dark"] as const) {
     await avatar.click(); await page.getByRole("menuitem", { name: "Configuración", exact: true }).click();
     const settings = page.getByRole("main");
     const sections = page.getByRole("navigation", { name: "Secciones de configuración" });
-    for (const name of ["Mi cuenta", "Aprendizaje", "Apariencia", "Seguridad", "Privacidad y cuenta"]) await expect(sections.getByRole("link", { name, exact: true })).toBeVisible();
+    for (const name of ["Mi cuenta", "Aprendizaje", "Apariencia"]) await expect(sections.getByRole("link", { name, exact: true })).toBeVisible();
+    await expect(sections.getByRole("link")).toHaveCount(3);
     await settings.getByLabel("Nombre", { exact: true }).fill("Nombre actualizado");
     await settings.getByRole("button", { name: "Guardar nombre" }).click();
     await expect(settings.getByRole("status")).toHaveText("Tu nombre está actualizado.");
@@ -71,7 +72,6 @@ for (const theme of ["light", "dark"] as const) {
     await sections.getByRole("link", { name: "Mi cuenta", exact: true }).click();
     await expect(page.getByLabel("Nombre", { exact: true })).toHaveValue("Nombre actualizado");
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
-    await sections.getByRole("link", { name: "Seguridad", exact: true }).click();
     await page.getByRole("button", { name: "Cambiar contraseña", exact: true }).click();
     const passwordDialog = page.getByRole("dialog", { name: "Cambiar contraseña", exact: true });
     await expect(passwordDialog.getByLabel("Contraseña actual")).toBeVisible();
@@ -90,6 +90,24 @@ for (const theme of ["light", "dark"] as const) {
     expect(await db.user.findUnique({ where: { id: user.id } })).not.toBeNull();
   });
 }
+
+test("los enlaces antiguos de cuenta conservan foco, edición pendiente e historial de navegación", async ({ page }) => {
+  await register(page.request);
+  for (const [section, heading] of [["seguridad", "Acceso y seguridad"], ["privacidad", "Datos y desactivación"]]) {
+    await page.goto(`/configuracion?seccion=${section}`);
+    await expect(page.getByRole("heading", { name: heading, exact: true })).toBeFocused();
+    await expect(page.getByRole("navigation", { name: "Secciones de configuración" }).getByRole("link", { name: "Mi cuenta", exact: true })).toHaveAttribute("aria-current", "page");
+    await page.getByLabel("Nombre", { exact: true }).fill("Edición pendiente");
+    await page.getByRole("navigation", { name: "Secciones de configuración" }).getByRole("link", { name: "Aprendizaje", exact: true }).click();
+    await page.goBack();
+    await expect(page.getByRole("heading", { name: heading, exact: true })).toBeFocused();
+    await expect(page.getByLabel("Nombre", { exact: true })).toHaveValue("Edición pendiente");
+    await page.goForward();
+    await expect(page.getByRole("heading", { name: "Aprendizaje", exact: true })).toBeVisible();
+    await page.goBack();
+    await expect(page.getByLabel("Nombre", { exact: true })).toHaveValue("Edición pendiente");
+  }
+});
 
 test("cambiar correo exige contraseña, evita duplicados y revoca otras sesiones", async ({ page, playwright }) => {
   const user = await register(page.request);
@@ -131,7 +149,6 @@ test("cambio de contraseña valida confirmación y actual, guarda hash y revoca 
   try {
     expect((await signIn(other, user.email)).ok()).toBeTruthy();
     await openSettings(page);
-    await page.getByRole("navigation", { name: "Secciones de configuración" }).getByRole("link", { name: "Seguridad", exact: true }).click();
     await page.getByRole("button", { name: "Cambiar contraseña", exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Cambiar contraseña", exact: true });
     const next = "Itera-renovada-67890";
@@ -167,7 +184,6 @@ test("desactivar conserva datos, bloquea acceso y permite reactivación solo adm
   await db.submission.create({ data: { userId: user.id, variantId: variant.id, code: "# intento conservado", mode: "submit", status: "FAILED", idempotencyKey: randomUUID() } });
   const oldCookies = await page.context().cookies();
   await openSettings(page);
-  await page.getByRole("navigation", { name: "Secciones de configuración" }).getByRole("link", { name: "Privacidad y cuenta", exact: true }).click();
   await page.getByRole("button", { name: "Desactivar cuenta", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Desactivar cuenta", exact: true });
   await expect(dialog).toContainText("No se eliminará ningún dato ni ejercicio");

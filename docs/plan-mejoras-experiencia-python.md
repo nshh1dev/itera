@@ -20,6 +20,13 @@ Estado: implementación iniciada en `feat/experiencia-recorrido-python`. No inic
 - Verificación del lote: lint, tipos, 374 pruebas y build correctos. Corregida una incompatibilidad de inferencia de Prisma detectada por tipos durante el desarrollo; el chequeo posterior y el build aprobaron. E2E actualizado, pero no ejecutado.
 - Pendientes la ejecución de E2E y revisión visual con entorno autorizado. Este lote no modifica las reglas v1 del diagnóstico, la organización de Configuración/Progreso ni el contenido Python.
 
+### Avance del tercer lote
+
+- Configuración agrupa datos personales, acceso y desactivación en Mi cuenta, junto a Aprendizaje y Apariencia. Los enlaces antiguos conservan su URL y enfocan el bloque equivalente; los formularios siguen montados.
+- Progreso prioriza resumen, continuación compartida e historial; las categorías quedan plegadas, sin eliminar registros ni cambiar las consultas y límites de archivos históricos.
+- Añadidas pruebas sin servicios para agrupación, continuidad, paginación y aislamiento, y un recorrido E2E de enlaces antiguos, foco y edición pendiente. La ejecución E2E y la revisión visual siguen pendientes de entorno autorizado.
+- Verificación del lote: lint, tipos, 378 pruebas y build correctos. Se corrigieron los dobles y aserciones de las pruebas nuevas durante el desarrollo. No se iniciaron servicios ni se modificó el catálogo publicado.
+
 ## 1. Objetivo, alcance y cierre
 
 Corregir las incoherencias de navegación, simplificar el acceso a la práctica y alinear los objetivos, enunciados, plantillas, ayudas y evaluaciones de Python. Mantener la dirección visual actual y mejorar la jerarquía de información.
@@ -106,11 +113,11 @@ Implementación y pruebas sin servicios completadas; aceptación en navegador pe
 
 ### B3. Configuración y Progreso
 
-- [ ] Agrupar Configuración en Cuenta, Aprendizaje y Apariencia. Dentro de Cuenta, organizar datos personales, acceso y desactivación con sus controles actuales.
-- [ ] Mantener enlaces antiguos `seccion=seguridad` y `seccion=privacidad` mediante equivalencias al bloque correspondiente; conservar edición pendiente, foco y navegación atrás/adelante.
-- [ ] En Progreso, priorizar resumen por lenguaje, continuación e historial. Dejar categorías, interpretación y archivos históricos como información secundaria desplegable.
-- [ ] Conservar acceso a todos los borradores e intentos históricos, su paginación y aislamiento por cuenta; simplificar presentación no significa eliminar datos.
-- [ ] Mantener Inicio como reanudación, Rutas como aprendizaje guiado y Ejercicios como biblioteca de búsqueda y repaso. No fusionar pantallas con funciones distintas.
+- [x] Agrupar Configuración en Cuenta, Aprendizaje y Apariencia. Dentro de Cuenta, organizar datos personales, acceso y desactivación con sus controles actuales.
+- [x] Mantener enlaces antiguos `seccion=seguridad` y `seccion=privacidad` mediante equivalencias al bloque correspondiente; conservar edición pendiente, foco y navegación atrás/adelante. Implementado; interacción pendiente de E2E.
+- [x] En Progreso, priorizar resumen por lenguaje, continuación e historial. Dejar categorías, interpretación y archivos históricos como información secundaria desplegable.
+- [x] Conservar acceso a todos los borradores e intentos históricos, su paginación y aislamiento por cuenta; simplificar presentación no significa eliminar datos.
+- [x] Mantener Inicio como reanudación, Rutas como aprendizaje guiado y Ejercicios como biblioteca de búsqueda y repaso. No fusionar pantallas con funciones distintas.
 
 Archivos principales: `src/components/auth-form.tsx`, `onboarding.tsx`, `onboarding-progress.tsx`, `learning-preferences.tsx`, `settings-page.tsx`, `diagnostic-workspace.tsx`, `src/server/learning-actions.ts`, `src/lib/learning-profile.ts` y páginas asociadas.
 

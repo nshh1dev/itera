@@ -27,10 +27,14 @@ las preferencias; guardar para diagnosticar conserva el flujo pendiente.
 No se borran sesiones diagnósticas ni se escribe progreso al completar estos pasos.
 
 El diseño conserva las fuentes locales, controles y tonos de Itera. Configuración
-es una página, no una ventana interceptada. Su navegación lateral se convierte en
-una lista compacta de enlaces en pantallas estrechas; `seccion` permite enlazar
-directamente a Mi cuenta, Aprendizaje, Apariencia, Seguridad o Privacidad y cuenta.
-Los formularios permanecen montados al navegar entre secciones para conservar
+es una página, no una ventana interceptada. Su navegación tiene tres apartados:
+Mi cuenta, Aprendizaje y Apariencia; en pantallas estrechas usa enlaces compactos.
+Mi cuenta agrupa los datos personales, el acceso y seguridad y los datos y
+desactivación, con los mismos controles de correo, contraseña y confirmación.
+Los enlaces antiguos `seccion=seguridad` y `seccion=privacidad` siguen siendo
+válidos: muestran Mi cuenta, desplazan al bloque correspondiente y enfocan su
+encabezado, sin cambiar la URL ni añadir una entrada al historial. Los tres
+paneles y sus formularios permanecen montados al navegar para conservar las
 ediciones pendientes. No se añaden exportación ni restauración de datos.
 
 ## Declaración, orientación y progreso

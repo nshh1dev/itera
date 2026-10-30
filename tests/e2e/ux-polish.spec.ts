@@ -94,7 +94,7 @@ test("el módulo activo retoma el borrador y los integradores no duplican filas"
   await expect(page.locator('.exercise-row[aria-current="step"]')).toHaveAttribute("href", exerciseHref("logica-dos-parametros", "python", "desde-cero"));
   await expect(page.locator('.exercise-row[href*="logica-merienda?"]')).toHaveCount(1);
   await page.goto("/progreso?lenguaje=python");
-  await expect(page.getByRole("link", { name: "Retomar un borrador", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Retomar: Calcula con dos parámetros", exact: true })).toHaveAttribute("href", exerciseHref("logica-dos-parametros", "python"));
   await expect(page.locator(".activity-journal")).toContainText("Aquí aparecerán tus ejecuciones");
   await mkdir(".local/screenshots/pulido", { recursive: true });
   for (const theme of ["light", "dark"] as const) for (const width of [390, 1440]) {
