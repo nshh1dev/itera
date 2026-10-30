@@ -3,6 +3,7 @@ import { db } from "./db";
 import { languages, type ExerciseCard, type Language } from "@/lib/types";
 import { learningPaths } from "@/lib/learning-paths";
 import { orderLanguageCatalog } from "@/lib/language-curriculum";
+import { hasPythonCurriculum, pythonCurriculumMarker, pythonStepMetadata } from "@/lib/python-curriculum";
 
 export async function getCatalog(userId?: string, language: Language = "python"): Promise<ExerciseCard[]> {
   const [catalog] = await getCatalogs(userId, [language]);
@@ -44,27 +45,34 @@ export async function getCatalogs(userId?: string, requestedLanguages: readonly 
       const other = e.progress.find(item => item.language !== language && item.firstPassedAt);
       return [{ id: e.id, slug: e.slug, category: e.category, order: 0, ...metadata, solved: !!active?.firstPassedAt, started: activityDates.has(e.id) || (active?.attempts ?? 0) > 0, solvedOther: !!other?.firstPassedAt, lastActivityAt: activityDates.get(e.id) }];
     });
-    return orderLanguageCatalog(entries, language).map((entry, order) => ({ ...entry, order }));
+    return orderLanguageCatalog(entries, language).map((entry, order) => {
+      const category = language === "python" && hasPythonCurriculum(entries) ? pythonStepMetadata(entry.slug)?.category ?? entry.category : entry.category;
+      return { ...entry, category, order };
+    });
   });
 }
 
 export async function getExercise(slug: string, language: Language, userId?: string) {
-  const exercise = await db.exercise.findUnique({
-    where: { slug, published: true },
-    select: { id: true, slug: true, category: true,
-      versions: { where: { published: true }, orderBy: { number: "desc" }, select: {
-        id: true, title: true, statement: true, constraints: true, hints: true, level: true, minutes: true, number: true,
-        objective: true, prerequisites: true, practiceGoals: true, prerequisiteSlugs: true, activityType: true,
-        runtimeMode: true, complexity: true, commonErrors: true,
-        variants: { select: { id: true, language: true, starter: true, statement: true, project: true,
-          tests: { where: { visible: true }, orderBy: { order: "asc" }, select: { input: true, expected: true, expectedFiles: true, explanation: true } },
-          drafts: { where: { userId: userId ?? "__guest__" }, select: { code: true, files: true, revision: true } },
+  const [exercise, pythonCurriculum] = await Promise.all([
+    db.exercise.findUnique({
+      where: { slug, published: true },
+      select: { id: true, slug: true, category: true,
+        versions: { where: { published: true }, orderBy: { number: "desc" }, select: {
+          id: true, title: true, statement: true, constraints: true, hints: true, level: true, minutes: true, number: true,
+          objective: true, prerequisites: true, practiceGoals: true, prerequisiteSlugs: true, activityType: true,
+          runtimeMode: true, complexity: true, commonErrors: true,
+          variants: { select: { id: true, language: true, starter: true, statement: true, project: true,
+            tests: { where: { visible: true }, orderBy: { order: "asc" }, select: { input: true, expected: true, expectedFiles: true, explanation: true } },
+            drafts: { where: { userId: userId ?? "__guest__" }, select: { code: true, files: true, revision: true } },
+          } },
         } },
-      } },
-    },
-  });
+      },
+    }),
+    language === "python" ? db.exercise.findFirst({ where: { slug: pythonCurriculumMarker, published: true, versions: { some: { published: true, variants: { some: { language: "python" } } } } }, select: { id: true } }) : null,
+  ]);
   if (!exercise) return null;
   const availableLanguages = languages.filter(language => exercise.versions.some(version => version.variants.some(variant => variant.language === language)));
   const version = exercise.versions.find(version => version.variants.some(variant => variant.language === language)) ?? exercise.versions[0];
-  return { ...exercise, availableLanguages, versions: version ? [version] : [] };
+  const category = language === "python" && pythonCurriculum ? pythonStepMetadata(exercise.slug)?.category ?? exercise.category : exercise.category;
+  return { ...exercise, category, availableLanguages, versions: version ? [version] : [] };
 }

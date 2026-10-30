@@ -34,6 +34,14 @@ Estado: implementación iniciada en `feat/experiencia-recorrido-python`. No inic
 - La finalización usa `rulesVersion` persistida y conserva reanudación e idempotencia. No requiere migración ni escribe progreso. Verificación en navegador y Piston real pendiente.
 - Verificación del lote: lint, tipos, 384 pruebas y build correctos. No se iniciaron servicios ni se modificó el catálogo publicado.
 
+### Avance del quinto lote
+
+- Reordenadas las fuentes Python sin cambiar las 224 identidades: búsqueda lineal junto a listas, copia exterior/interior explicada en referencias, inventario como acumulación → stock → módulos → persistencia → valoración, iteradores tras comprensiones y contactos/transformación después de sus herramientas.
+- El tramo intermedio se presenta en tres grupos visuales y las categorías se proyectan desde la secuencia Python sin escribir `Exercise.category`. Catálogo, tarjetas, recomendaciones y progreso comparten la proyección; las rutas de JavaScript y TypeScript no cambian.
+- Los prerrequisitos ya no son la cadena del ejercicio anterior: cada módulo declara dependencias relevantes, se validan anteriores y sin ciclos, y las posiciones/denominadores se recalculan desde la misma secuencia.
+- Metadatos explícitos por módulo y excepciones Python para las actividades compartidas afectadas; los enunciados distinguen saldo acumulado con negativos de stock no negativo. La entrega de fuentes queda registrada en `prisma/python-releases.ts` a falta de preparación y activación.
+- Verificación del lote: lint, tipos, 385 pruebas, build y `content:python` sin conexión correctos. No se iniciaron servicios, no se prepararon borradores y no se modificó el catálogo publicado. La comprobación visual, E2E, Piston real y la activación siguen pendientes de autorización.
+
 ## 1. Objetivo, alcance y cierre
 
 Corregir las incoherencias de navegación, simplificar el acceso a la práctica y alinear los objetivos, enunciados, plantillas, ayudas y evaluaciones de Python. Mantener la dirección visual actual y mejorar la jerarquía de información.
@@ -136,21 +144,21 @@ Esta fase precede a la reescritura extensa: acordar primero dónde y para qué s
 
 ### C1. Aislar las revisiones por lenguaje
 
-- [ ] Aplicar cambios compartidos únicamente como revisiones Python desde `prisma/python-content.ts` y fuentes Python específicas. Evitar editar las fuentes comunes para resolver un problema exclusivo de este recorrido.
-- [ ] Sustituir reglas implícitas de modalidad, minutos y categoría por metadatos explícitos y revisados donde sea necesario.
-- [ ] Resolver las categorías con conciencia del modelo: `Exercise.category` es compartido y el instalador Python no actualiza categorías existentes. Usar una proyección Python consistente para filtros, tarjetas, recomendaciones y progreso; cualquier persistencia adicional necesita acuerdo previo.
-- [ ] Cubrir la activación de cambios de orden/metadatos: el marcador `python-constante` detecta el recorrido, no cada revisión posterior. Coordinar la publicación y la entrega de fuentes, o usar una selección de revisión comprobada, para no mostrar un recorrido nuevo con contenido antiguo durante un estado intermedio.
+- [x] Aplicar cambios compartidos únicamente como revisiones Python desde `prisma/python-content.ts` y fuentes Python específicas. Evitar editar las fuentes comunes para resolver un problema exclusivo de este recorrido.
+- [x] Sustituir reglas implícitas de modalidad, minutos y categoría por metadatos explícitos y revisados donde sea necesario.
+- [x] Resolver las categorías con conciencia del modelo: `Exercise.category` es compartido y el instalador Python no actualiza categorías existentes. Usar una proyección Python consistente para filtros, tarjetas, recomendaciones y progreso; cualquier persistencia adicional necesita acuerdo previo.
+- [x] Cubrir la activación de cambios de orden/metadatos: el marcador `python-constante` detecta el recorrido, no cada revisión posterior. Coordinar la publicación y la entrega de fuentes, o usar una selección de revisión comprobada, para no mostrar un recorrido nuevo con contenido antiguo durante un estado intermedio.
 
 ### C2. Reordenar manteniendo identidades
 
-- [ ] Acercar búsqueda lineal al bloque de listas y control del recorrido. Mantener búsqueda binaria y ordenación algorítmica en intermedio.
-- [ ] Adelantar la explicación de copia exterior/interior antes de agrupación y academia. Mantener la actividad de matrices como aplicación posterior, con metadatos que no afirmen que es la primera introducción.
-- [ ] Reordenar inventario: acumulación por producto → reglas de stock → módulos → persistencia → valoración. Integrarlo con los bloques de módulos/archivos sin anticipar sus dependencias.
-- [ ] Explicar expresamente que saldo acumulado con negativos y stock no negativo son modelos distintos; no cambiar silenciosamente contratos históricos.
-- [ ] Agrupar visualmente el tramo intermedio en Colecciones y transformación, Proyectos y persistencia, y Algoritmos y estructuras, conservando sus módulos y las cuatro rutas.
-- [ ] Revisar el lugar de iteradores, generadores, `map`, `filter`, contactos y transformaciones para que cada ampliación llegue tras sus herramientas necesarias.
-- [ ] Separar posición curricular de prerrequisito: reemplazar la cadena automática del ejercicio anterior por dependencias relevantes, anteriores en el recorrido y sin ciclos.
-- [ ] Recalcular posiciones, denominadores, cierres de módulo, navegación y recomendaciones desde una única proyección Python.
+- [x] Acercar búsqueda lineal al bloque de listas y control del recorrido. Mantener búsqueda binaria y ordenación algorítmica en intermedio.
+- [x] Adelantar la explicación de copia exterior/interior antes de agrupación y academia. Mantener la actividad de matrices como aplicación posterior, con metadatos que no afirmen que es la primera introducción.
+- [x] Reordenar inventario: acumulación por producto → reglas de stock → módulos → persistencia → valoración. Integrarlo con los bloques de módulos/archivos sin anticipar sus dependencias.
+- [x] Explicar expresamente que saldo acumulado con negativos y stock no negativo son modelos distintos; no cambiar silenciosamente contratos históricos.
+- [x] Agrupar visualmente el tramo intermedio en Colecciones y transformación, Proyectos y persistencia, y Algoritmos y estructuras, conservando sus módulos y las cuatro rutas.
+- [x] Revisar el lugar de iteradores, generadores, `map`, `filter`, contactos y transformaciones para que cada ampliación llegue tras sus herramientas necesarias.
+- [x] Separar posición curricular de prerrequisito: reemplazar la cadena automática del ejercicio anterior por dependencias relevantes, anteriores en el recorrido y sin ciclos.
+- [x] Recalcular posiciones, denominadores, cierres de módulo, navegación y recomendaciones desde una única proyección Python.
 
 Archivos principales: `src/lib/python-curriculum.ts`, `src/lib/language-curriculum.ts`, `src/lib/learning-modules.ts`, `prisma/python-content.ts`, `prisma/python-install.ts` y pruebas de currículo/catálogo.
 

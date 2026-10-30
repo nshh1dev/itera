@@ -2,13 +2,14 @@
 
 ## Contrato
 
-Python conserva las 176 identidades del currículo común y añade 48 actividades propias: 224 pasos (32/73/83/36 por nivel) en las mismas cuatro rutas. JavaScript y TypeScript conservan sus fuentes, orden, niveles, versiones publicadas, contratos y casos. Las competencias nuevas tienen slugs `python-*`; no heredan completados anteriores. El documento original `python-logica-y-flujo.md` no se importa ni se modifica.
+Python conserva las 176 identidades del currículo común y añade 48 actividades propias: 224 pasos (32/74/82/36 por nivel) en las mismas cuatro rutas. JavaScript y TypeScript conservan sus fuentes, orden, niveles, versiones publicadas, contratos y casos. Las competencias nuevas tienen slugs `python-*`; no heredan completados anteriores. El documento original `python-logica-y-flujo.md` no se importa ni se modifica.
 
-La secuencia está en `src/lib/python-curriculum.ts`. `prisma/python-content.ts` compone una fila por actividad con posición, nivel, objetivo, prerrequisito anterior, modalidad, ayuda y pruebas. Las referencias nuevas y sus casos independientes están en `prisma/python-lessons.ts`; errores frecuentes y ejemplos explicados, en `prisma/python-help.ts`. Las fuentes compartidas permanecen intactas.
+La secuencia está en `src/lib/python-curriculum.ts`. `prisma/python-content.ts` compone una fila por actividad con posición, nivel, objetivo, dependencias por módulo, modalidad, ayuda y pruebas. Las referencias nuevas y sus casos independientes están en `prisma/python-lessons.ts`; errores frecuentes y ejemplos explicados, en `prisma/python-help.ts`. Las fuentes compartidas permanecen intactas.
 
 - No hay migración: una versión puede contener solo Python. Cada lenguaje selecciona su última versión publicada que contenga ese lenguaje, no la última versión global.
-- La proyección solo se activa cuando el catálogo publicado contiene `python-constante`. Preparar borradores no cambia la experiencia activa. Se publica el lote entero en una transacción.
+- La proyección solo se activa cuando el catálogo publicado contiene `python-constante`. Preparar borradores no cambia la experiencia activa. Se publica el lote entero en una transacción. Desplegar las fuentes y activar el catálogo debe coordinarse: el marcador detecta el recorrido, no cada revisión posterior.
 - Rutas, módulos, navegación, reanudación, recomendaciones y denominadores usan la misma proyección. Los ejercicios personalizados conservan su pertenencia a las rutas.
+- Las categorías visibles de Python se proyectan desde la secuencia sin escribir `Exercise.category`, que sigue siendo compartido. Filtros, tarjetas, recomendaciones y progreso usan la misma categoría proyectada.
 - La base conserva el orden global y los 176 elementos de las rutas comunes. No se eliminan versiones, variantes, borradores, envíos ni progreso.
 - Las versiones exclusivas se consultan en administración, pero no se guardan desde el formulario de tres lenguajes. Los importadores compartidos no deben sobrepasarlas.
 - Las soluciones siguen siendo privadas; el espacio de trabajo solo recibe casos visibles. Las técnicas sugeridas no se certifican mediante AST salvo las reglas iniciales ya existentes.
@@ -30,21 +31,33 @@ Las filas indican conocimientos previos → introducción/práctica → integrac
 | Principiante | Datos con nombre | Actualizar → borrar → parejas → lista de registros | Ausencia frente a cero; puente previo a gastos |
 | Principiante | Diccionarios | Errores concretos, pruebas y regresión | Gastos en memoria, sin archivos |
 | Intermedio | Ordenación numérica | Conjuntos: actualización y cinco operaciones/relaciones | Vacíos, duplicados, resta dirigida, salida ordenada |
-| Intermedio | Diccionarios y listas | Frecuencias → lista de categoría → agrupación | Crear antes de añadir; orden y repetidos |
-| Intermedio | Bucle y filtro manual | Comprensión: transformación, filtro, condicional y diccionario | Filtrar no equivale a conservar posiciones |
+| Intermedio | Diccionarios y listas | Frecuencias → agrupación por categoría | Crear antes de añadir; orden y repetidos |
+| Intermedio | Bucle y filtro manual | Comprensión → iterador/generador/`map`/`filter` | Consumo, materialización, selección |
 | Intermedio | Auxiliares y tuplas | Agregación → función clave → lambda y desempate | Extremos ausentes, estabilidad, criterios opuestos |
 | Intermedio | Decimales | Formato fijo frente a redondeo | Ceros finales y redondeo nativo al par |
-| Intermedio | Diccionarios planos | Consulta anidada → inscripción → nota → resumen | `None` distinto de cero, ausencias y empates |
-| Intermedio | Estado en memoria | Módulos → archivos → inventario persistente | Disco aislado por caso; proyectos conservados |
-| Intermedio | Listas y comprensiones | Búsqueda, recorridos, matrices y copias | Explicaciones de diagonales e intervalos |
+| Intermedio | Diccionarios planos | Consulta anidada → acumulación por producto | `None` distinto de cero, saldos negativos |
+| Intermedio | Estado en memoria | Módulos → archivos → inventario persistente → valoración | Disco aislado por caso; stock no negativo |
+| Intermedio | Registros y copias | Academia → contactos → agenda → transformación | Normalización, campos y conservación |
+| Intermedio | Listas y comprensiones | Búsqueda binaria, recorridos, matrices y copias | Explicaciones de diagonales e intervalos |
 | Intermedio | Estructuras conocidas | Pilas, colas y recursión gradual | No exigir profundidad arbitraria al introducir diccionarios |
-| Ampliación | Transformación y funciones | Iterador → generador → `map` → `filter` | Consumo, materialización, selección |
-| Ampliación | Agregación y claves | Reporte de valor de inventario | Céntimos enteros; otra identidad, mismo stock anterior |
-| Ampliación | Copias y textos | Contactos: crear → editar → borrar → criterios | Normalización, duplicados, campos y texto vacío |
-| Ampliación | Recuperación por elemento | Un campo → reglas sobre registros | Operaciones por nombre; `ValueError` por campo |
 | Avanzado | Bloques anteriores | Conservar los 36 pasos avanzados | Árboles, prioridades, exploración, dinámica y grafos |
 
 Las ampliaciones tienen acceso libre y no bloquean algoritmos. Leer teoría o consultar soluciones no concede progreso.
+
+## Orden, categorías y dependencias (revisión del 30 de octubre de 2026)
+
+La secuencia fuente se revisó sin cambiar las 224 identidades ni las variantes de otros lenguajes:
+
+- La búsqueda lineal se separó de búsqueda/ordenación y se sitúa tras listas y tuplas, como primer recorrido con índice. La búsqueda binaria y la ordenación algorítmica siguen en intermedio.
+- La explicación de copia exterior/interior se adelantó al módulo de referencias, antes de agrupación y academia. `logica-copia-anidada` sigue después de matrices y su descripción ya no la presenta como primera introducción.
+- El inventario se ordena como acumulación por producto (`logica-inventario`), reglas de stock (`logica-saldo`, en bases), módulos, persistencia y valoración (`python-inventario-valora`). Los enunciados distinguen saldo con negativos de stock no negativo.
+- Iteradores, generadores, `map` y `filter` pasan tras comprensiones; contactos y transformación quedan después de diccionarios, copias y validación.
+- El tramo intermedio se agrupa visualmente en «Colecciones y transformación», «Proyectos y persistencia» y «Algoritmos y estructuras». La agrupación es de presentación; los módulos y las cuatro rutas se conservan.
+- Los prerrequisitos dejan de ser la cadena del ejercicio anterior. Cada módulo declara dependencias relevantes; dentro del módulo se conserva el orden. La validación exige que sean anteriores y sin ciclos.
+- Las categorías visibles de Python se proyectan desde la secuencia (`Fundamentos`, `Colecciones`, `Proyectos`, `Algoritmos`, `Estructuras`, `Grafos`) sin escribir `Exercise.category`, que sigue siendo compartido. El catálogo, las tarjetas, las recomendaciones y el progreso usan la misma proyección.
+- Las cifras por nivel pasan a 32/74/82/36: la búsqueda lineal se reclasifica como principiante y su versión Python lo refleja.
+
+La huella de esta entrega de fuentes está registrada en `prisma/python-releases.ts`. La base activa no se ha modificado en esta revisión: la publicación atómica con `content:python -- --apply` sigue pendiente y debe coordinarse con el despliegue de las fuentes para no mostrar orden nuevo sobre contenido antiguo.
 
 ## Destino del documento de referencia
 
@@ -97,11 +110,11 @@ Sin opciones valida fuentes sin conectarse a la base. `--prepare` crea borradore
 
 En Docker, respaldar con `npm run docker:backup` y ejecutar `node scripts/docker.mjs exec -T app npm run content:python -- --apply` sobre una imagen actualizada. No usar `content:replace` para esta ampliación. Una versión local distinta o un borrador ajeno bloquean la preparación: resolver la discrepancia explícitamente, nunca resetear la base.
 
-`prisma/python-releases.ts` conserva las huellas normalizadas de entregas verificadas. Una publicación conocida puede recibir una revisión posterior desde fuentes sin perder protección frente a ediciones locales; una huella desconocida no autoriza sobrescribirlas. Registrar una nueva huella solo tras verificar y activar la entrega completa, manteniendo las anteriores.
+`prisma/python-releases.ts` conserva las huellas normalizadas de entregas verificadas. Una publicación conocida puede recibir una revisión posterior desde fuentes sin perder protección frente a ediciones locales; una huella desconocida no autoriza sobrescribirlas. La huella de una entrega de fuentes se registra cuando la suite y el build la verifican; la activación real sigue siendo el paso que publica el catálogo y debe conservar las huellas anteriores.
 
 ## Verificación y límites
 
-- `tests/python-curriculum.test.ts`: identidades, orden, cobertura, compatibilidad, referencias fijas y plantillas nuevas.
+- `tests/python-curriculum.test.ts`: identidades, orden, grupos, categorías proyectadas, prerrequisitos anteriores y sin ciclos, cobertura, compatibilidad, referencias fijas y plantillas nuevas.
 - `tests/python-install.test.ts`: doble transaccional para idempotencia, conservación y conflictos; no sustituye PostgreSQL real.
 - `tests/catalog-loading.test.ts`: revisiones por lenguaje sin ocultar otros metadatos ni compartir actividad entre cuentas.
 - La validación real pasa por `src/server/execution/piston.ts`. Pruebas locales de referencias no acreditan publicación ni sandbox.
@@ -118,3 +131,5 @@ Las siete comprobaciones nuevas de navegador aprobaron navegación, aislamiento 
 La suite Docker completa produjo 47 aprobadas y tres fallidas: dos expectativas antiguas del denominador (30 en lugar de los 32 pasos Python) y un clic de diagnóstico sin petición POST registrada. Se adaptó el fixture del dashboard al recorrido por lenguaje, sin quitar sus aserciones. Los seis casos de dashboard/onboarding aprobaron al repetir ambos archivos completos; el fallo de diagnóstico no se reprodujo y no se modificó su código para ocultarlo. No se presenta esa repetición como una ejecución completa de 50/50.
 
 Lint, tipos, suite unitaria completa (364/364, sin omisiones) y builds finales de Windows/Docker aprobados. Un build intermedio detectó una incompatibilidad de tipos en la comparación de huellas, corregida antes de cerrar; un intento Windows agotó su límite de 120 segundos y el reintento completo aprobó. La huella normalizada del catálogo publicado coincide con la entrega registrada, incluida la normalización del orden de propiedades JSON de PostgreSQL. Al terminar se detuvieron los servicios y Ubuntu quedó apagado, como al inicio; `docker-iniciar` recupera la imagen actualizada y el catálogo activado.
+
+El 30 de octubre de 2026 se revisaron las fuentes del orden, los metadatos y los prerrequisitos descritos arriba. Esta revisión no se ha preparado ni activado en la base: la instantánea publicada sigue siendo la del 27 de octubre. La entrega de fuentes se valida con `npm run content:python`; la activación requiere Piston y el procedimiento de publicación atómica.

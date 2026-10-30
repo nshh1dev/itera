@@ -3,10 +3,11 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { logicExercises } from "../prisma/logic-content";
 import { seedVersionContent } from "../prisma/editorial-revision";
-import { pythonCurriculumUnits, pythonCurriculumSlugs, pythonStepSlug, hasPythonCurriculum } from "../src/lib/python-curriculum";
+import { pythonCurriculumUnits, pythonCurriculumSlugs, pythonStepSlug, hasPythonCurriculum, pythonPrerequisiteSlugs, pythonStepMetadata } from "../src/lib/python-curriculum";
 import { languagePaths, orderLanguageCatalog } from "../src/lib/language-curriculum";
 import { learningPaths } from "../src/lib/learning-paths";
 import { modulesForPath, moduleForExercise, learningModules } from "../src/lib/learning-modules";
+import { categories } from "../src/lib/types";
 
 test("Python conserva las 176 identidades y añade 48 pasos exclusivos sin cambiar las otras fuentes", async () => {
   const before = JSON.stringify(logicExercises.map(seedVersionContent));
@@ -17,9 +18,9 @@ test("Python conserva las 176 identidades y añade 48 pasos exclusivos sin cambi
   assert.equal(new Set(pythonCurriculumSlugs).size, 224);
   for (const exercise of logicExercises) assert.ok(pythonCurriculumSlugs.includes(exercise.slug), exercise.slug);
   assert.deepEqual(pythonCatalog.map(entry => entry.slug), pythonCurriculumSlugs);
-  for (const [index, entry] of pythonCatalog.entries()) {
+  for (const entry of pythonCatalog) {
     assert.deepEqual(entry.content.variants.map(variant => variant.language), ["python"]);
-    assert.deepEqual(entry.content.prerequisiteSlugs, index ? [pythonCatalog[index - 1].slug] : []);
+    assert.deepEqual(entry.content.prerequisiteSlugs, pythonPrerequisiteSlugs(entry.slug));
     if (entry.baseline) {
       assert.deepEqual(entry.content.variants[0].tests, entry.baseline.variants[0].tests);
       assert.equal(entry.content.runtimeMode, entry.baseline.runtimeMode);
@@ -30,6 +31,44 @@ test("Python conserva las 176 identidades y añade 48 pasos exclusivos sin cambi
     for (const path of learningPaths) assert.deepEqual(modulesForPath(path.slug, language), learningModules.filter(module => module.path === path.slug));
     assert.equal(moduleForExercise("python-union", language), undefined);
   }
+});
+
+test("el recorrido intermedio agrupa colecciones, proyectos y algoritmos con dependencias relevantes", async () => {
+  const { pythonCatalog } = await import("../prisma/python-content");
+  const position = new Map(pythonCurriculumSlugs.map((slug, index) => [slug, index]));
+  for (const entry of pythonCatalog) {
+    for (const prerequisite of entry.content.prerequisiteSlugs) {
+      assert.ok(position.has(prerequisite), `${entry.slug}: ${prerequisite} no existe`);
+      assert.ok(position.get(prerequisite)! < position.get(entry.slug)!, `${entry.slug}: ${prerequisite} debe ir antes`);
+    }
+  }
+  assert.ok(pythonPrerequisiteSlugs("python-comprension").length >= 2);
+  assert.ok(pythonPrerequisiteSlugs("python-academia-inscribe").length >= 3);
+  assert.ok(position.get("logica-filtra-lista")! < position.get("logica-busqueda-lineal")!);
+  assert.ok(position.get("logica-busqueda-lineal")! < position.get("logica-busqueda-binaria")!);
+  assert.ok(position.get("logica-copia-anidada")! > position.get("logica-transpuesta")!);
+  assert.ok(position.get("logica-inventario")! < position.get("logica-inventario-modular")!);
+  assert.ok(position.get("logica-inventario-persistente")! < position.get("python-inventario-valora")!);
+
+  const modules = modulesForPath("pensar-en-soluciones", "python");
+  assert.deepEqual([...new Set(modules.map(module => module.group))], ["Colecciones y transformación", "Proyectos y persistencia", "Algoritmos y estructuras"]);
+  const referencias = pythonCurriculumUnits.find(unit => unit.slug === "referencias")!;
+  assert.match(referencias.theory, /copia exterior/);
+  assert.ok(pythonCurriculumUnits.findIndex(unit => unit.slug === "referencias") < pythonCurriculumUnits.findIndex(unit => unit.slug === "python-agrupacion"));
+
+  assert.equal(pythonStepMetadata("python-union")?.category, "Colecciones");
+  assert.equal(pythonStepMetadata("python-academia-inscribe")?.category, "Proyectos");
+  assert.equal(pythonStepMetadata("logica-celda")?.category, "Algoritmos");
+  assert.equal(pythonStepMetadata("logica-pila")?.category, "Estructuras");
+  assert.equal(pythonStepMetadata("logica-dijkstra")?.category, "Grafos");
+  assert.equal(pythonStepMetadata("python-constante")?.activityType, "GUIDED");
+  assert.equal(pythonStepMetadata("python-constante")?.minutes, 5);
+  assert.equal(pythonStepMetadata("python-academia-resume")?.activityType, "INTEGRATION");
+
+  // La categoría persistida sigue siendo una del catálogo compartido para no
+  // romper el editor; la proyección Python es la que ve el estudiante.
+  for (const entry of pythonCatalog) assert.ok((categories as readonly string[]).includes(entry.category), `${entry.slug}: ${entry.category}`);
+  assert.notEqual(pythonCatalog.find(entry => entry.slug === "python-academia-inscribe")?.category, "Proyectos");
 });
 
 test("los puentes Python preceden a su primer uso y no adelantan persistencia ni recursión", () => {

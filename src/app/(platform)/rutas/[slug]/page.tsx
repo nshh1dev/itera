@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { db } from "@/server/db";
@@ -40,16 +41,20 @@ export default async function PathPage({ params, searchParams }: { params: Promi
     {completed && <PathCompletion language={language} count={exercises.length} />}
     <p className="mt-6 mb-3 px-3 text-xs text-muted-foreground">{exercises.filter(e => e.solved).length} de {exercises.length} completados · Sin prisa, sin bloqueos</p>
     <div className="route-content mt-6">
-    {modules.map(module => {
+    {modules.map((module, index) => {
       const entries = module.slugs.flatMap(slug => exercises.filter(exercise => exercise.slug === slug));
       if (!entries.length) return null;
       const active = entries.some(exercise => exercise.id === nextExercise?.id);
-      return <Disclosure key={`${language}-${module.slug}-${active}`} defaultOpen={active} className={`route-module rounded-xl${active ? " route-module-active" : ""}`} title={<span className="flex flex-1 flex-wrap items-center justify-between gap-2"><span>{module.title}{active && <span className="ml-2 text-xs font-normal text-primary-text">En curso</span>}</span><span className="text-xs font-normal tabular-nums text-muted-foreground">{entries.filter(exercise => exercise.solved).length} / {entries.length}</span></span>}>
+      const group = module.group && module.group !== modules[index - 1]?.group ? module.group : undefined;
+      return <Fragment key={`${language}-${module.slug}-${active}`}>
+        {group && <h2 className="mt-8 mb-3 px-3 text-sm font-semibold">{group}</h2>}
+        <Disclosure defaultOpen={active} className={`route-module rounded-xl${active ? " route-module-active" : ""}`} title={<span className="flex flex-1 flex-wrap items-center justify-between gap-2"><span>{module.title}{active && <span className="ml-2 text-xs font-normal text-primary-text">En curso</span>}</span><span className="text-xs font-normal tabular-nums text-muted-foreground">{entries.filter(exercise => exercise.solved).length} / {entries.length}</span></span>}>
         <section id={`module-${module.slug}`} aria-label={module.title}>
         <p className="learning-copy mt-2 text-muted-foreground">{module.objective.charAt(0).toUpperCase()}{module.objective.slice(1)}</p>
         {entries.map(exercise => <ExerciseRow key={exercise.id} exercise={{ ...exercise, order: exercises.findIndex(entry => entry.id === exercise.id) }} language={language} pathSlug={slug} recommended={exercise.id === nextExercise?.id} />)}
         </section>
-      </Disclosure>;
+      </Disclosure>
+      </Fragment>;
     })}
     {exercises.filter(exercise => !modules.some(module => module.slugs.includes(exercise.slug))).map(exercise => <ExerciseRow key={exercise.id} exercise={exercise} language={language} pathSlug={slug} />)}
     {modules.length > 0 && <PathReview pathSlug={slug} language={language} modules={modules} exercises={exercises} next={next} />}

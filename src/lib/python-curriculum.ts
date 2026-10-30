@@ -64,18 +64,61 @@ const common = (slug: string) => {
   if (!entry) throw new Error(`Falta el bloque ${slug}`);
   return { ...entry, steps: [...entry.steps] };
 };
+
+// Pasos compartidos que el recorrido Python separa de su bloque original para
+// acercarlos a las herramientas que necesitan. Conservan su identidad.
+const busquedaBase = common("busqueda");
+const busquedaLineal: CurriculumUnit = {
+  slug: "python-busqueda-lineal", title: "Búsqueda lineal en una lista", path: "primeros-pasos", level: "BEGINNER",
+  theory: "Para buscar en una lista sin orden, revisa las posiciones de izquierda a derecha. Devuelve el índice de la primera coincidencia, no el valor. Si terminas sin encontrarla, devuelve -1. enumerate permite obtener índice y valor en la misma vuelta; range(len(...)) también sirve si prefieres recorrer posiciones.",
+  readiness: ["Puedo recorrer una lista comparando cada valor con un objetivo.", "Puedo devolver la primera posición o -1 sin confundir índice y valor."],
+  examples: { python: "for indice, valor in enumerate([4, 9, 2]):\n    if valor == 2:\n        print(indice)", javascript: "", typescript: "" },
+  steps: [busquedaBase.steps.find(step => step.key === "busqueda-lineal")!],
+};
+const busquedaBinaria: CurriculumUnit = {
+  ...busquedaBase,
+  theory: "La búsqueda binaria necesita datos ordenados y descarta mitades: O(log n). Ordenar puede facilitar consultas posteriores, pero también cuesta trabajo. Inserción desplaza valores hasta colocar cada elemento. Define límites que se acerquen sin salir del intervalo y criterios de desempate deterministas. La búsqueda lineal ya practicada revisa posiciones una a una; esta solo puede descartar cuando el orden está garantizado.",
+  steps: busquedaBase.steps.filter(step => step.key !== "busqueda-lineal"),
+};
+const integracionIntermediaBase = common("integracion-intermedia");
+const acumulacionInventario: CurriculumUnit = {
+  slug: "python-acumulacion-inventario", title: "Acumulación por producto", path: "pensar-en-soluciones", level: "INTERMEDIATE",
+  theory: "Un diccionario puede acumular un saldo por producto. Cada movimiento suma su cambio al valor anterior; un producto nuevo empieza en cero. Este modelo conserva también los saldos negativos y los ceros: es una acumulación, no una política de stock. El ejercicio de saldo, anterior, sí rechaza los movimientos que dejarían el saldo negativo. No mezcles ambos contratos.",
+  readiness: ["Puedo acumular cambios por clave sin perder productos.", "Puedo distinguir una acumulación de una regla de stock no negativo."],
+  examples: { python: "saldos = {}\nfor producto, cambio in [('pan', 3), ('pan', -1)]:\n    saldos[producto] = saldos.get(producto, 0) + cambio", javascript: "", typescript: "" },
+  steps: [integracionIntermediaBase.steps.find(step => step.key === "inventario")!],
+};
+const integracionIntermedia: CurriculumUnit = {
+  ...integracionIntermediaBase,
+  steps: integracionIntermediaBase.steps.filter(step => step.key !== "inventario"),
+};
+// La explicación de copia exterior/interior llega antes de agrupar y de academia.
+// La actividad que la aplica sobre matrices sigue después de ese bloque.
+const referenciasConCopias: CurriculumUnit = (() => {
+  const base = common("referencias");
+  return {
+    ...base,
+    theory: "En Python, asignar una lista o un diccionario a otro nombre no copia su contenido: ambos nombres designan el mismo objeto. Mutar cambia ese objeto; reasignar cambia el nombre. list(...) y dict(...) crean una copia superficial: basta para una lista plana o un registro de campos simples, pero no para estructuras anidadas. Si una lista contiene listas, o un diccionario contiene diccionarios, la copia exterior comparte los interiores; copia también cada nivel que vayas a modificar. Los textos y las tuplas son inmutables. Aplicarás esta copia por niveles al trabajar con matrices, después de practicar agrupaciones y registros.",
+    examples: { ...base.examples, python: "original = {'ana': {'nota': None}}\ncopia = dict(original)\ncopia['ana'] = dict(original['ana'])\ncopia['ana']['nota'] = 0" },
+  };
+})();
+
 const sequence = [
   common("instrucciones"), common("variables"), common("operaciones"), additions.constantes,
   common("entrada"), additions.decimales, common("tipos-comparaciones"), common("funciones"), common("seguimiento"), common("integracion-inicial"),
-  common("decisiones"), additions.decisiones, common("repeticion"), additions.bucles, common("listas"), common("textos"), additions.secuencias, additions.tuplas,
-  common("funciones-datos"), common("alcance"), common("referencias"), additions.identidad, additions.diccionarios,
+  common("decisiones"), additions.decisiones, common("repeticion"), additions.bucles,
+  common("listas"), busquedaLineal, common("textos"), additions.secuencias, additions.tuplas,
+  common("funciones-datos"), common("alcance"), referenciasConCopias, additions.identidad, additions.diccionarios,
   common("errores"), common("pruebas"), common("integracion-bases"), common("integracion-gastos"),
   additions.conjuntos, { ...common("mapas"), steps: common("mapas").steps.filter(step => step.key !== "agrupa-registros") },
   { ...additions.agrupacion, steps: [...additions.agrupacion.steps, common("mapas").steps.find(step => step.key === "agrupa-registros")!] },
-  additions.comprensiones, additions.agregacion, additions.formato, additions.anidados, additions.academia,
-  common("modulos"), common("archivos"), common("integracion-inventario"), common("busqueda"), common("recorridos"), common("matrices"), common("copias-anidadas"),
-  common("estado-recursion"), common("integracion-intermedia"), common("integracion-agenda"), additions.funcional, additions.reporte,
-  { ...additions.contactos, steps: [...additions.contactos.steps.slice(0, 2), { key: "python-contactos-borra", title: "Contactos: borra sin afectar otras fichas" }, ...additions.contactos.steps.slice(2)] }, additions.transformacion,
+  additions.comprensiones, additions.funcional, additions.agregacion, additions.formato, additions.anidados, acumulacionInventario,
+  common("modulos"), common("archivos"), common("integracion-inventario"), additions.reporte,
+  additions.academia,
+  { ...additions.contactos, steps: [...additions.contactos.steps.slice(0, 2), { key: "python-contactos-borra", title: "Contactos: borra sin afectar otras fichas" }, ...additions.contactos.steps.slice(2)] },
+  common("integracion-agenda"), additions.transformacion,
+  busquedaBinaria, common("recorridos"), common("matrices"), common("copias-anidadas"),
+  common("estado-recursion"), integracionIntermedia,
   ...curriculumUnits.filter(unit => unit.level === "ADVANCED"),
 ];
 const positions = new Map<string, number>();
@@ -86,3 +129,104 @@ export const pythonCurriculumUnits = sequence.map(unit => {
 });
 export function pythonStepSlug(key: string) { return key.startsWith("python-") ? key : curriculumSlug(key); }
 export const pythonCurriculumSlugs = pythonCurriculumUnits.flatMap(unit => unit.steps.map(step => pythonStepSlug(step.key)));
+
+export type PythonActivityType = "GUIDED" | "PRACTICE" | "INTEGRATION";
+type PythonUnitMetadata = { category: string; group?: string; minutes: number; activityType: PythonActivityType };
+
+// Metadatos explícitos por módulo. Los ejercicios compartidos conservan los suyos
+// salvo las excepciones puntuales de prisma/python-content.ts.
+const unitMetadata: Record<string, Pick<PythonUnitMetadata, "minutes" | "activityType">> = {
+  "python-constantes": { minutes: 5, activityType: "GUIDED" },
+  "python-decimales": { minutes: 5, activityType: "PRACTICE" },
+  "python-expresion-condicional": { minutes: 10, activityType: "PRACTICE" },
+  "python-control-bucle": { minutes: 10, activityType: "PRACTICE" },
+  "python-secuencias": { minutes: 10, activityType: "PRACTICE" },
+  "python-tuplas": { minutes: 10, activityType: "PRACTICE" },
+  "python-identidad": { minutes: 10, activityType: "PRACTICE" },
+  "python-diccionarios": { minutes: 10, activityType: "PRACTICE" },
+  "python-conjuntos": { minutes: 10, activityType: "PRACTICE" },
+  "python-agrupacion": { minutes: 10, activityType: "PRACTICE" },
+  "python-comprensiones": { minutes: 10, activityType: "PRACTICE" },
+  "python-iteradores": { minutes: 10, activityType: "PRACTICE" },
+  "python-agregacion": { minutes: 10, activityType: "PRACTICE" },
+  "python-formato": { minutes: 10, activityType: "PRACTICE" },
+  "python-registros-anidados": { minutes: 10, activityType: "PRACTICE" },
+  "python-academia": { minutes: 20, activityType: "INTEGRATION" },
+  "python-contactos": { minutes: 20, activityType: "INTEGRATION" },
+  "python-reporte-inventario": { minutes: 15, activityType: "PRACTICE" },
+  "python-transformacion": { minutes: 20, activityType: "INTEGRATION" },
+};
+const categoriesByUnit: Record<string, string> = {
+  "python-conjuntos": "Colecciones", mapas: "Colecciones", "python-agrupacion": "Colecciones",
+  "python-comprensiones": "Colecciones", "python-iteradores": "Colecciones", "python-agregacion": "Colecciones",
+  "python-formato": "Colecciones", "python-registros-anidados": "Colecciones", "python-acumulacion-inventario": "Colecciones",
+  modulos: "Proyectos", archivos: "Proyectos", "integracion-inventario": "Proyectos", "python-reporte-inventario": "Proyectos",
+  "python-academia": "Proyectos", "python-contactos": "Proyectos", "integracion-agenda": "Proyectos", "python-transformacion": "Proyectos",
+  busqueda: "Algoritmos", recorridos: "Algoritmos", matrices: "Algoritmos", "copias-anidadas": "Algoritmos",
+  "integracion-intermedia": "Algoritmos", exploracion: "Algoritmos", dinamica: "Algoritmos", "integracion-avanzada": "Algoritmos",
+  "estado-recursion": "Estructuras", arboles: "Estructuras", prioridades: "Estructuras",
+  grafos: "Grafos",
+};
+const groupByUnit: Record<string, string> = {
+  "python-conjuntos": "Colecciones y transformación", mapas: "Colecciones y transformación", "python-agrupacion": "Colecciones y transformación",
+  "python-comprensiones": "Colecciones y transformación", "python-iteradores": "Colecciones y transformación",
+  "python-agregacion": "Colecciones y transformación", "python-formato": "Colecciones y transformación",
+  "python-registros-anidados": "Colecciones y transformación", "python-acumulacion-inventario": "Colecciones y transformación",
+  modulos: "Proyectos y persistencia", archivos: "Proyectos y persistencia", "integracion-inventario": "Proyectos y persistencia",
+  "python-reporte-inventario": "Proyectos y persistencia", "python-academia": "Proyectos y persistencia",
+  "python-contactos": "Proyectos y persistencia", "integracion-agenda": "Proyectos y persistencia",
+  "python-transformacion": "Proyectos y persistencia",
+  busqueda: "Algoritmos y estructuras", recorridos: "Algoritmos y estructuras", matrices: "Algoritmos y estructuras",
+  "copias-anidadas": "Algoritmos y estructuras", "estado-recursion": "Algoritmos y estructuras",
+  "integracion-intermedia": "Algoritmos y estructuras",
+};
+const unitPrerequisites: Record<string, readonly string[]> = {
+  instrucciones: [], variables: ["instrucciones"], operaciones: ["variables"], "python-constantes": ["operaciones"],
+  entrada: ["python-constantes"], "python-decimales": ["entrada"], "tipos-comparaciones": ["python-decimales"],
+  funciones: ["tipos-comparaciones"], seguimiento: ["funciones"], "integracion-inicial": ["seguimiento"],
+  decisiones: ["integracion-inicial"], "python-expresion-condicional": ["decisiones"], repeticion: ["python-expresion-condicional"],
+  "python-control-bucle": ["repeticion"], listas: ["python-control-bucle"], "python-busqueda-lineal": ["listas"],
+  textos: ["listas"], "python-secuencias": ["textos"], "python-tuplas": ["python-secuencias"], "funciones-datos": ["python-tuplas"],
+  alcance: ["funciones-datos"], referencias: ["alcance"], "python-identidad": ["referencias"], "python-diccionarios": ["python-identidad"],
+  errores: ["python-diccionarios"], pruebas: ["errores"], "integracion-bases": ["pruebas"], "integracion-gastos": ["integracion-bases"],
+  "python-conjuntos": ["integracion-gastos"], mapas: ["python-conjuntos"], "python-agrupacion": ["mapas"],
+  "python-comprensiones": ["python-agrupacion", "listas"], "python-iteradores": ["python-comprensiones", "funciones"],
+  "python-agregacion": ["python-agrupacion", "python-comprensiones"], "python-formato": ["python-decimales", "python-agregacion"],
+  "python-registros-anidados": ["python-diccionarios", "python-agrupacion"], "python-acumulacion-inventario": ["mapas"],
+  modulos: ["pruebas"], archivos: ["modulos"], "integracion-inventario": ["archivos", "python-acumulacion-inventario"],
+  "python-reporte-inventario": ["integracion-inventario", "python-agregacion"],
+  "python-academia": ["python-registros-anidados", "python-agregacion", "python-formato"],
+  "python-contactos": ["python-diccionarios", "errores"], "integracion-agenda": ["archivos", "integracion-bases"],
+  "python-transformacion": ["python-contactos", "referencias"],
+  busqueda: ["listas", "python-busqueda-lineal"], recorridos: ["busqueda"], matrices: ["listas", "repeticion"],
+  "copias-anidadas": ["matrices", "referencias"], "estado-recursion": ["pruebas", "listas"],
+  "integracion-intermedia": ["recorridos", "estado-recursion"],
+  arboles: ["estado-recursion"], prioridades: ["estado-recursion", "python-agregacion"],
+  exploracion: ["estado-recursion"], dinamica: ["python-agregacion"], grafos: ["estado-recursion", "recorridos"],
+  "integracion-avanzada": ["dinamica", "grafos"],
+};
+const unitBySlug = new Map(pythonCurriculumUnits.map(unit => [unit.slug, unit]));
+const metadataBySlug = new Map<string, PythonUnitMetadata & { unitSlug: string }>();
+const prerequisitesBySlug = new Map<string, string[]>();
+for (const unit of pythonCurriculumUnits) {
+  const metadata = unitMetadata[unit.slug];
+  const category = categoriesByUnit[unit.slug] ?? (unit.level === "ADVANCED" ? "Algoritmos" : "Fundamentos");
+  const activityType = metadata?.activityType ?? (unit.level === "INITIATION" ? "GUIDED" : "PRACTICE");
+  const minutes = metadata?.minutes ?? (unit.level === "INITIATION" ? 5 : unit.level === "BEGINNER" ? 10 : 15);
+  for (const step of unit.steps) {
+    const slug = pythonStepSlug(step.key);
+    metadataBySlug.set(slug, { unitSlug: unit.slug, category, group: groupByUnit[unit.slug], minutes, activityType });
+  }
+  unit.steps.forEach((step, index) => {
+    const slug = pythonStepSlug(step.key);
+    if (index > 0) { prerequisitesBySlug.set(slug, [pythonStepSlug(unit.steps[index - 1].key)]); return; }
+    const prior = (unitPrerequisites[unit.slug] ?? []).flatMap(prerequisite => {
+      const target = unitBySlug.get(prerequisite);
+      return target ? [pythonStepSlug(target.steps.at(-1)!.key)] : [];
+    });
+    prerequisitesBySlug.set(slug, [...new Set(prior)]);
+  });
+}
+export function pythonStepMetadata(slug: string) { return metadataBySlug.get(slug); }
+export function pythonPrerequisiteSlugs(slug: string) { return prerequisitesBySlug.get(slug) ?? []; }
+export function pythonGroupForUnit(unitSlug: string) { return groupByUnit[unitSlug]; }
