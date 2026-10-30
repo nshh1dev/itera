@@ -25,6 +25,7 @@ export function DiagnosticWorkspace(props: Props) {
   const hydrated = useSyncExternalStore(subscribe, () => true, () => false);
   const [index, setIndex] = useState(0);
   return <>{props.onboarding && <OnboardingProgress step={3} />}<h1 className="page-title">Encuentra un punto de partida</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">{languageNames[props.language]} · Dos retos y un tercero opcional. Orienta dónde practicar, no certifica tu nivel ni cuenta como práctica completada. Puedes terminar sin responder.</p>
+    {props.language === "python" && <p className="mt-3 text-sm leading-6 text-muted-foreground">Algunas tareas tienen una plantilla guiada. Completarlas permite orientar la práctica con ayuda, no comprobar que puedas resolver por tu cuenta toda una etapa.</p>}
     {hydrated ? <DiagnosticEditor key={`${props.userId}:${props.items[index].id}`} {...props} item={props.items[index]} index={index} onNavigate={setIndex} /> : <p role="status" className="mt-8">Preparando el diagnóstico…</p>}
   </>;
 }

@@ -27,6 +27,13 @@ Estado: implementación iniciada en `feat/experiencia-recorrido-python`. No inic
 - Añadidas pruebas sin servicios para agrupación, continuidad, paginación y aislamiento, y un recorrido E2E de enlaces antiguos, foco y edición pendiente. La ejecución E2E y la revisión visual siguen pendientes de entorno autorizado.
 - Verificación del lote: lint, tipos, 378 pruebas y build correctos. Se corrigieron los dobles y aserciones de las pruebas nuevas durante el desarrollo. No se iniciaron servicios ni se modificó el catálogo publicado.
 
+### Avance del cuarto lote
+
+- Revisadas las 12 plantillas Python usadas por el diagnóstico; la matriz de capacidades y límites queda en `docs/learning-personalization.md`. Se conserva la selección y no se modifica el contenido publicado.
+- Las nuevas sesiones Python fijan reglas v2: tres aciertos no hacen saltar automáticamente de etapa. El contraste permite explorar, no certifica dominio. Las sesiones v1 y los otros lenguajes conservan sus reglas históricas.
+- La finalización usa `rulesVersion` persistida y conserva reanudación e idempotencia. No requiere migración ni escribe progreso. Verificación en navegador y Piston real pendiente.
+- Verificación del lote: lint, tipos, 384 pruebas y build correctos. No se iniciaron servicios ni se modificó el catálogo publicado.
+
 ## 1. Objetivo, alcance y cierre
 
 Corregir las incoherencias de navegación, simplificar el acceso a la práctica y alinear los objetivos, enunciados, plantillas, ayudas y evaluaciones de Python. Mantener la dirección visual actual y mejorar la jerarquía de información.
@@ -105,11 +112,11 @@ Implementación y pruebas sin servicios completadas; aceptación en navegador pe
 
 ### B2. Ajustar la promesa y las reglas del diagnóstico
 
-- [ ] Cambiar «Descubre tu nivel» por «Encuentra un punto de partida» y diferenciar declaración, orientación y ejercicios completados.
-- [ ] Revisar la selección Python: identificar cuánto resuelven las plantillas y qué competencias permiten observar realmente los dos retos y el contraste opcional.
-- [ ] Evitar recomendar saltar una etapa completa basándose únicamente en tres correcciones muy guiadas; proponer explorar o reforzar una ruta con una razón concreta.
-- [ ] Si cambian reglas o selección, versionarlas con el mecanismo existente y conservar las sesiones/resultados anteriores bajo su interpretación original. No modificar la selección educativa de otros lenguajes.
-- [ ] Mantener errores de infraestructura, retos omitidos y ejecuciones de ejemplos fuera de los fallos de conocimiento y del progreso.
+- [x] Cambiar «Descubre tu nivel» por «Encuentra un punto de partida» y diferenciar declaración, orientación y ejercicios completados.
+- [x] Revisar la selección Python: identificar cuánto resuelven las plantillas y qué competencias permiten observar realmente los dos retos y el contraste opcional.
+- [x] Evitar recomendar saltar una etapa completa basándose únicamente en tres correcciones muy guiadas; proponer explorar o reforzar una ruta con una razón concreta.
+- [x] Si cambian reglas o selección, versionarlas con el mecanismo existente y conservar las sesiones/resultados anteriores bajo su interpretación original. No modificar la selección educativa de otros lenguajes.
+- [x] Mantener errores de infraestructura, retos omitidos y ejecuciones de ejemplos fuera de los fallos de conocimiento y del progreso.
 
 ### B3. Configuración y Progreso
 

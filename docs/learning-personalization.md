@@ -13,8 +13,9 @@ previo aplicable puede ajustar el destino y se conserva al guardar.
 
 El diagnóstico se ofrece como alternativa secundaria tras guardar la selección,
 y sigue disponible desde Configuración → Aprendizaje. Se presenta como orientación
-para encontrar un punto de partida, no como certificación del nivel. Sus reglas v1
-no cambian con esta simplificación del flujo.
+para encontrar un punto de partida, no como certificación del nivel. Las sesiones
+conservan su versión de reglas; los nuevos diagnósticos Python usan v2, como se
+detalla más abajo.
 
 La bienvenida no bloquea el catálogo: se puede salir y retomarla desde Inicio.
 Las cuentas con `onboardingStep = 0` quedan exentas y `/bienvenida` las dirige a
@@ -57,12 +58,43 @@ El dashboard prioriza la actividad pendiente del lenguaje preferido, luego su
 continuidad habitual; sin actividad propone la ruta del perfil. El progreso de
 otros lenguajes permanece disponible desde Progreso.
 
-## Diagnóstico v1
+## Diagnóstico: selección y reglas versionadas
 
 `src/lib/learning-profile.ts` contiene la selección editorial: dos retos del nivel
 declarado y un tercero opcional de contraste. Se usan las últimas versiones
 publicadas al crear la sesión y sus identificadores se fijan para todo el recorrido.
 Si falta contenido publicado, la interfaz permite continuar sin diagnóstico.
+
+La selección no cambia en esta revisión. Las variantes publicadas se fijan al crear
+la sesión, por lo que el contenido instalado puede diferir de las fuentes. Ninguna
+de estas tareas, por sí sola, comprueba dominio de toda una etapa.
+
+### Revisión de las plantillas Python
+
+Inspección estática de las fuentes del catálogo, sin ejecutar Python ni consultar
+la publicación activa:
+
+| Etapa | Actividad | Qué aporta la plantilla y qué queda por observar |
+| --- | --- | --- |
+| Iniciación | `logica-saludo` | Archivo vacío: escribir una salida fija. No observa entrada ni resolución variable. |
+| Iniciación | `logica-actualiza-puntos` | Variable, segunda asignación e impresión ya presentes: corregir la actualización. No equivale a diseñar un programa. |
+| Iniciación | `logica-elige-mensaje` | Función, condición y respuesta alternativa dadas: completar la otra respuesta. No demuestra elegir la estructura de control. |
+| Bases | `logica-signo` | Las tres ramas y dos respuestas ya resueltas: completar el caso cero. No permite inferir dominio general de condiciones. |
+| Bases | `logica-suma-lista` | Función, acumulador y retorno dados: implementar la acumulación. No cubre por sí sola búsqueda, filtrado ni gestión de estado. |
+| Bases | `logica-repetido` | Esqueleto mínimo: detectar repetición. El retorno no prueba que se haya utilizado un conjunto ni una complejidad concreta. |
+| Intermedio | `logica-frecuencias` | Diccionario y retorno preparados, con el recorrido sugerido: construir frecuencias. No cubre todas las operaciones de colecciones. |
+| Intermedio | `logica-busqueda-binaria` | Extracción de datos y extremos del intervalo dados: completar la búsqueda. Las salidas no certifican descarte de mitades ni coste logarítmico. |
+| Intermedio | `logica-cuenta-nodos` | Esqueleto mínimo: contar una estructura de árbol. No observa otros recorridos ni acredita una estrategia recursiva. |
+| Avanzado | `logica-altura` | Esqueleto mínimo: obtener altura. No cubre árboles generales ni grafos. |
+| Avanzado | `logica-potencia` | Esqueleto mínimo con objetivo de dividir por dos: calcular potencia. El resultado no certifica la estrategia rápida. |
+| Avanzado | `logica-escalera` | Esqueleto mínimo: contar combinaciones. El resultado no certifica memorización ni diseño general de estados. |
+
+Se conserva la selección para evitar confundir esta corrección de orientación con
+una revisión editorial completa o una nueva prueba de nivel. La interfaz Python
+explica el papel de las plantillas guiadas. La revisión del currículo sigue siendo
+independiente y solo se activa mediante el procedimiento editorial habitual.
+
+### Reglas v1: sesiones antiguas y JavaScript/TypeScript
 
 Reglas orientativas, no psicométricas ni certificadoras:
 
@@ -72,6 +104,28 @@ Reglas orientativas, no psicométricas ni certificadoras:
 - Ambos y el tercero superados: probar el siguiente nivel, con máximo Avanzado.
 - `ERROR`, `RUNNING` y retos no evaluados no se convierten en fallos de conocimiento.
 - Se usa la última comprobación completa de cada reto, no sus ejecuciones de ejemplos.
+
+### Reglas v2: nuevas sesiones Python
+
+- Menos de dos primeros retos evaluados válidamente: sin nueva sugerencia; se
+  conserva la declaración. Errores de infraestructura, omisiones y ejemplos no
+  se convierten en fallos de conocimiento.
+- Ninguno superado: se propone la ruta anterior como refuerzo, con mínimo
+  Iniciación y sin bloquear la ruta declarada.
+- Uno o dos superados: se conserva la ruta declarada, también con contraste
+  superado. Los tres aciertos invitan a explorar la siguiente ruta libremente,
+  pero no cambian automáticamente el punto de partida a otra etapa.
+- La razón distingue práctica con ayuda de resolución independiente. El tercer
+  reto sigue siendo voluntario y no penaliza si se omite o falla su infraestructura.
+
+`Diagnostic.rulesVersion` ya existe: el inicio escribe 2 únicamente para una
+nueva sesión Python y 1 para JavaScript/TypeScript, sin migraciones. Una sesión
+abierta se retoma con su versión y variantes originales. La finalización despacha
+según la versión persistida, no según las reglas actuales del lenguaje; las sesiones
+v1 abiertas conservan su promoción histórica. Reintentar un cierre no recalcula
+resultados finalizados y los resúmenes siguen leyendo la recomendación guardada.
+Una versión desconocida finaliza sin sugerencia nueva, conservando la declaración
+y explicando que no se puede interpretar, en vez de aplicar v1 silenciosamente.
 
 Piston, el editor y la comparación de resultados son los mismos que en práctica.
 No se muestran soluciones durante el diagnóstico. Los casos ocultos se filtran
@@ -107,8 +161,8 @@ utiliza. En Docker: reconstruir la imagen y ejecutar la migración mediante
 `node scripts/docker.mjs run --rm --no-deps app npm run db:migrate` antes de
 iniciar la app nueva. No ejecutar reset ni seed para esta actualización.
 
-Pruebas unitarias: `tests/learning-profile.test.ts` y
-`tests/practice-navigation.test.ts`. Recorridos reales:
+Pruebas unitarias: `tests/learning-profile.test.ts`, `tests/diagnostic-rules.test.ts`,
+`tests/diagnostic-authorization.test.ts` y `tests/practice-navigation.test.ts`. Recorridos reales:
 `tests/real/onboarding.spec.ts`, con cuentas temporales, Piston real, comprobaciones
 de propiedad, idempotencia, casos ocultos y ausencia de progreso. La configuración
 Docker incluye además las suites de cuenta y navegación visual, que no dependen

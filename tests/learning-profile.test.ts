@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { diagnosticExercises, diagnosticRecommendation, effectiveLevel } from "../src/lib/learning-profile";
+import { diagnosticExercises, diagnosticRecommendation, diagnosticRulesVersion, effectiveLevel } from "../src/lib/learning-profile";
 import { personalizedPractice, type PracticeEntry } from "../src/lib/practice-navigation";
 import { levels, languages, type ExerciseCard } from "../src/lib/types";
 import { logicExercises } from "../prisma/logic-content";
@@ -37,7 +37,7 @@ test("omitir o interrumpir no se interpreta como un nivel bajo", () => {
   }
 });
 
-test("las recomendaciones son conservadoras y solo avanzan con el tercer reto superado", () => {
+test("las reglas v1 conservan su recomendación histórica, incluido el avance con contraste", () => {
   assert.equal(diagnosticRecommendation("INITIATION", ["FAILED", "FAILED"]).level, "INITIATION");
   assert.equal(diagnosticRecommendation("INTERMEDIATE", ["FAILED", "FAILED"]).level, "BEGINNER");
   assert.equal(diagnosticRecommendation("BEGINNER", ["PASSED", "FAILED"]).level, "BEGINNER");
@@ -51,6 +51,33 @@ test("cambiar el nivel declarado deja de aplicar un diagnóstico de otra declara
   assert.equal(effectiveLevel(undefined), "INITIATION");
   assert.equal(effectiveLevel("BEGINNER", { declaredLevel: "BEGINNER", suggestedLevel: "INTERMEDIATE" }), "INTERMEDIATE");
   assert.equal(effectiveLevel("INITIATION", { declaredLevel: "BEGINNER", suggestedLevel: "INTERMEDIATE" }), "INITIATION");
+});
+
+test("solo las nuevas sesiones Python eligen reglas v2, sin salto automático de etapa", () => {
+  assert.equal(diagnosticRulesVersion("python"), 2);
+  assert.equal(diagnosticRulesVersion("javascript"), 1);
+  assert.equal(diagnosticRulesVersion("typescript"), 1);
+  for (const level of levels) {
+    const result = diagnosticRecommendation(level, ["PASSED", "PASSED", "PASSED"], 2);
+    assert.equal(result.level, level);
+    assert.match(result.reason, /no bastan para saltar/);
+    for (const outcome of ["PASSED", "FAILED", "ERROR", "RUNNING", null] as const) {
+      assert.equal(diagnosticRecommendation(level, ["PASSED", "PASSED", outcome], 2).level, level);
+      assert.equal(diagnosticRecommendation(level, ["FAILED", "PASSED", outcome], 2).level, level);
+    }
+  }
+  assert.equal(diagnosticRecommendation("BEGINNER", ["PASSED", "PASSED", "PASSED"], 1).level, "INTERMEDIATE");
+});
+
+test("v2 separa los fallos evaluados de errores, omisiones y versiones desconocidas", () => {
+  for (const level of levels) {
+    for (const outcomes of [[], [null, null], ["PASSED", "ERROR"], ["RUNNING", "FAILED"], ["ERROR", "ERROR"], ["FAILED", null]] as const) {
+      assert.equal(diagnosticRecommendation(level, outcomes, 2).level, null);
+    }
+  }
+  assert.equal(diagnosticRecommendation("INITIATION", ["FAILED", "FAILED"], 2).level, "INITIATION");
+  assert.equal(diagnosticRecommendation("INTERMEDIATE", ["FAILED", "FAILED"], 2).level, "BEGINNER");
+  assert.equal(diagnosticRecommendation("BEGINNER", ["PASSED", "PASSED", "PASSED"], 99).level, null);
 });
 
 test("el punto de partida distingue un diagnóstico inconcluso de no haberlo hecho", () => {

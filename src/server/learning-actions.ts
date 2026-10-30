@@ -6,7 +6,7 @@ import { requireUser } from "./auth";
 import { db } from "./db";
 import { languageSchema } from "@/lib/validation";
 import { levels } from "@/lib/types";
-import { diagnosticExercises, diagnosticRecommendation } from "@/lib/learning-profile";
+import { diagnosticExercises, diagnosticRecommendation, diagnosticRulesVersion } from "@/lib/learning-profile";
 import { getLearningSummary } from "@/server/learning";
 
 const learningSchema = z.object({ language: languageSchema, level: z.enum(levels), finishOnboarding: z.boolean().optional() });
@@ -63,7 +63,7 @@ export async function startDiagnostic(input: unknown) {
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(742901)`;
     const existing = await tx.diagnostic.findFirst({ where: { userId: user.id, language, declaredLevel: profile.declaredLevel, finishedAt: null }, orderBy: { createdAt: "desc" } });
     if (existing) return existing;
-    return tx.diagnostic.create({ data: { userId: user.id, language, declaredLevel: profile.declaredLevel, items: { create: variants.map((variant, position) => ({ variantId: variant!.id, code: variant!.starter, position })) } } });
+    return tx.diagnostic.create({ data: { userId: user.id, language, declaredLevel: profile.declaredLevel, rulesVersion: diagnosticRulesVersion(language), items: { create: variants.map((variant, position) => ({ variantId: variant!.id, code: variant!.starter, position })) } } });
   });
   return { id: diagnostic.id };
 }
@@ -88,7 +88,7 @@ export async function finishDiagnostic(input: unknown) {
     if (diagnostic.finishedAt) return { success: true };
     const running = await tx.submission.count({ where: { diagnosticItem: { diagnosticId: diagnostic.id }, status: "RUNNING" } });
     if (running) return { error: "Espera a que termine la evaluación antes de finalizar." };
-    const recommendation = diagnosticRecommendation(diagnostic.declaredLevel, diagnostic.items.map(item => item.submissions[0]?.status ?? null));
+    const recommendation = diagnosticRecommendation(diagnostic.declaredLevel, diagnostic.items.map(item => item.submissions[0]?.status ?? null), diagnostic.rulesVersion);
     await tx.diagnostic.update({ where: { id: diagnostic.id }, data: { finishedAt: new Date(), suggestedLevel: recommendation.level, reason: recommendation.reason } });
     await tx.user.updateMany({ where: { id: user.id, onboardingStep: 3 }, data: { onboardingStep: 4 } });
     return { success: true };
