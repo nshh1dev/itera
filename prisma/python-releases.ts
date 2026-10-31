@@ -44,4 +44,6 @@ export const knownPythonReleases: readonly string[] = [
   "4fa39e0b364efbc4e2d3d12c8f365c92488889b2f833841e288dfd39c48d1ba9",
   // Quinto lote editorial: listas, textos y funciones auxiliares de principiante.
   "c69c06fa65d18b7608bac0bd2b982fea01d18d8ff08bd1b6dc5c360a22cd7e34",
+  // Sexto lote editorial: alias, copias, validación, errores y pruebas.
+  "6b51d6ac7847a8c3072752fa224b44a0c38fad7a146c0866ecc1821f96381ac2",
 ];

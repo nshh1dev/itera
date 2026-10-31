@@ -5,6 +5,126 @@ const statement = (task: string, input: string, output: string) =>
   `Tu tarea\n${task}\n\nEntrada\n${input}\n\nResultado esperado\n${output}`;
 
 export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
+  "logica-encadena-retornos": { statement: statement(
+    "Pasa datos entre funciones sin variables compartidas: escribe una auxiliar que calcule el producto de precio y unidades y otra que añada 2 de embalaje al subtotal. La plantilla solo prepara solve(data).",
+    "data es un diccionario con precio y unidades, enteros entre -1000 y 1000.",
+    "Devuelve el entero obtenido al añadir 2 al producto recibido de la primera auxiliar. Usa los retornos para pasar el resultado entre funciones, no print. Los casos comprueban el resultado, no certifican la organización interna.",
+  ) },
+  "logica-dos-nombres-lista": { statement: statement(
+    "Observa un alias: asigna la misma lista a otro nombre y añade nuevo mediante ese alias. No hagas una copia en esta actividad. La plantilla solo prepara solve(data).",
+    "data es un diccionario con valores, una lista de hasta 100 enteros, y nuevo, un entero. Los enteros están entre -1000 y 1000.",
+    "Devuelve la lista consultada desde el nombre original: debe contener los valores recibidos seguidos de nuevo. Aquí se pide modificar intencionalmente la lista compartida, incluso si estaba vacía. La salida muestra el efecto, pero no certifica identidad por sí sola.",
+  ) },
+  "logica-reasigna-o-muta": { statement: statement(
+    "Distingue reasignación y mutación: conserva la lista en original, asigna su referencia a alias y después reasigna alias a una lista nueva que solo contenga nuevo. La plantilla solo prepara solve(data).",
+    "data es un diccionario con valores, una lista de hasta 100 enteros, y nuevo, un entero. Los enteros están entre -1000 y 1000.",
+    "Devuelve un diccionario con original y alias. original conserva todos los valores recibidos, sin cambios; alias contiene únicamente nuevo. Una entrada vacía conserva original como []. Los casos muestran los contenidos, no certifican la identidad de las listas.",
+  ) },
+  "logica-copia-plana": { statement: statement(
+    "Copia la lista recibida con list(valores) y añade nuevo solo al final de la copia. Practica una copia independiente, no un alias.",
+    "data es un diccionario con valores, una lista de enteros que puede estar vacía, y nuevo, otro entero.",
+    "Devuelve un diccionario con original y copia. original conserva los valores recibidos sin el elemento nuevo; copia contiene esos valores seguidos de nuevo. La copia debe ser independiente también con entrada vacía. La comparación de contenidos no certifica identidad por sí sola.",
+  ) },
+  "logica-conserva-entrada": { statement: statement(
+    "Escribe una transformación que conserve su entrada. La plantilla solo prepara solve(data); construye el resultado sin cambiar la lista recibida.",
+    "data es un diccionario con valores, una lista de hasta 100 enteros, e incremento, un entero. Los enteros están entre -1000 y 1000.",
+    "Devuelve un diccionario con original y ajustados. original conserva la lista recibida; ajustados contiene cada valor más incremento en el mismo orden. Si valores está vacía, ambas listas son []. No cambies valores. El resultado muestra contenidos, no certifica ausencia de cualquier mutación intermedia.",
+  ) },
+  "logica-registro-compartido": { statement: statement(
+    "Crea un alias de ficha y suma cambio a alias['cantidad']. Aquí se pide modificar intencionalmente el diccionario compartido: ambos nombres observan la misma cantidad.",
+    "data es un diccionario con ficha, otro diccionario que contiene cantidad, y cambio. cantidad y cambio son enteros entre -1000 y 1000.",
+    "Devuelve una lista con ficha['cantidad'] y alias['cantidad'], en ese orden, después del cambio. Ambos valores deben reflejar la cantidad actualizada. La salida muestra el efecto, pero no certifica identidad por sí sola.",
+  ) },
+  "python-identidad": { statement: statement(
+    "Compara contenido e identidad: == compara contenido; is pregunta si es el mismo objeto. Construye original = list(data['valores']), alias = original y copia = list(original). Conserva antes = list(original) y añade nuevo solo al alias. list(...) crea otra lista; asignar alias no la copia.",
+    "data es un diccionario con valores, una lista de hasta 100 elementos, y nuevo, el elemento que se añade. No modifiques data.",
+    "Devuelve un diccionario con antes, original, copia, igual, misma y copiaMisma. antes y copia conservan los valores previos; original refleja el añadido mediante alias. igual compara original y copia por contenido; misma indica si alias is original; copiaMisma indica si copia is original (False). Los booleanos Python True y False se muestran como true y false en JSON. El JSON muestra los efectos; la identidad se entiende revisando el código y sus comparaciones is.",
+  ) },
+  "python-opcional-seguro": { statement: statement(
+    "Define agregar(valor, base=None) para crear una lista nueva cuando se omite base. Llámala una vez por entero sin pasar base. Los valores predeterminados se calculan al definir la función: base=[] compartiría una lista entre llamadas; None permite crearla dentro de cada llamada.",
+    "data es una lista de exactamente dos enteros.",
+    "Devuelve una lista con los resultados de ambas llamadas, en el mismo orden. Cada resultado contiene solo el entero de esa llamada; la segunda no hereda el primero. Los casos comprueban las listas devueltas, no certifican la firma ni la técnica interna.",
+  ) },
+  "python-actualiza-diccionario": { statement: statement(
+    "Actualiza una copia de un diccionario sin cambiar el original. dict(original) copia un diccionario plano; asignar copia[clave] sirve tanto para insertar como para reemplazar, sin eliminar primero la clave.",
+    "data es un diccionario con valores, un diccionario de hasta 100 claves de texto a enteros, clave, un texto, y nuevo, un entero.",
+    "Devuelve una copia de valores con clave asociada a nuevo: reemplaza su valor si ya existía o añade la pareja si faltaba. Conserva las demás parejas y no modifiques el original. Los casos no certifican la técnica interna empleada.",
+  ) },
+  "python-borra-clave": { statement: statement(
+    "Elimina una clave de una copia del diccionario. pop(clave, None) elimina y devuelve el valor si existe o devuelve None sin error si falta. Un valor eliminado igual a cero no indica que faltase la clave.",
+    "data es un diccionario con valores, un diccionario de hasta 100 claves de texto a enteros, y clave, el texto que quieres borrar.",
+    "Devuelve una copia de valores sin clave. Si no existe, conserva todas las parejas. No modifiques el original; si no quedan parejas, devuelve un diccionario vacío. Los casos no certifican el uso de pop.",
+  ) },
+  "python-recorre-pares": { statement: statement(
+    "Recorre las parejas de un diccionario. items ofrece parejas; keys y values ofrecen vistas de claves y valores. sorted(d.items()) ordena primero por clave; puedes desempaquetar cada pareja durante el recorrido.",
+    "data es un diccionario de hasta 100 claves formadas por letras a-z y valores enteros; puede estar vacío.",
+    "Devuelve una lista de textos con el formato 'clave: valor', ordenados por clave ascendente. Respeta los dos puntos y el espacio posterior, sin añadir comillas ni saltos de línea. Para un diccionario vacío devuelve []. Los casos no certifican el uso de items.",
+  ) },
+  "python-lista-registros": { statement: statement(
+    "Suma las cantidades de una lista de registros. En el recorrido, cada ficha es un diccionario: ficha['cantidad'] consulta ese campo, no una posición de la lista. Un acumulador se prepara antes del recorrido y se devuelve al terminar.",
+    "data es una lista de hasta 100 diccionarios con nombre, un texto, y cantidad, un entero no negativo. Puede estar vacía.",
+    "Devuelve el total de cantidades como entero. Cada registro cuenta, aunque se repita el nombre o el registro completo: no agrupes ni elimines repeticiones. Para la lista vacía devuelve 0.",
+  ) },
+  "logica-valida-divisor": { statement: statement(
+    "Valida el divisor antes de calcular un cociente. Distingue un divisor cero de un total cero válido.",
+    "data es un diccionario con total y divisor, enteros entre -1000 y 1000. Cuando divisor no es cero, el cociente es entero.",
+    "Devuelve None si divisor es cero; en otro caso devuelve total / divisor. Un total cero con divisor válido devuelve 0. None se representa como null en JSON; no escribas null en el código Python.",
+  ) },
+  "logica-valido-cero-ausente": { statement: statement(
+    "Distingue una cantidad ausente, una inválida y una válida. La clave siempre existe: un valor ausente no es una clave que falta.",
+    "data es un diccionario con cantidad, un entero entre -1000 y 1000 o None (null en JSON).",
+    "Devuelve exactamente el texto ausente si cantidad es None, invalido si es negativa y valido en los demás casos, incluido cero. No añadas tildes, comillas ni espacios a esas etiquetas.",
+  ) },
+  "logica-localiza-error": { statement: statement(
+    "Localiza un error sin provocarlo: el fragmento conceptual consulta valores[indice] sin comprobar límites. La plantilla solo prepara solve(data); escribe la comprobación antes de consultar la posición.",
+    "data es un diccionario con valores, una lista de hasta 100 enteros, e indice, un entero. Los enteros están entre -1000 y 1000.",
+    "Devuelve el elemento si 0 ≤ indice < longitud de valores. Si indice es negativo o alcanza o supera la longitud, devuelve exactamente el texto indice fuera de rango. Aquí no se aceptan los índices negativos de Python. Una lista vacía no tiene posiciones válidas.",
+  ) },
+  "logica-captura-conversion": { statement: statement(
+    "Define una auxiliar que lance ValueError ante un formato inválido y captura solo ese error desde solve. Convierte con int, sin pasar por float.",
+    "data es un texto. Tras quitar espacios exteriores con strip, un entero válido contiene un signo + o - opcional y una o más cifras ASCII del 0 al 9. Se admiten ceros iniciales. Rechaza vacío, palabras, punto decimal, exponentes y guiones bajos.",
+    "Devuelve el entero convertido o None si el formato es inválido (null en JSON). Un signo sin cifras no es un entero válido. La comprobación evalúa el resultado; no certifica el uso exacto de try/except.",
+  ) },
+  "logica-error-dominio": { statement: statement(
+    "Define validar(edad): si la edad es negativa, debe lanzar un error con el mensaje edad negativa. Desde solve, llama a esa función y captura ese error para devolver su mensaje.",
+    "data es una edad entera.",
+    "Devuelve exactamente el texto edad negativa para una edad negativa y aceptada para una edad igual o mayor que cero. La comprobación observa el mensaje; no certifica el uso de raise.",
+  ) },
+  "logica-recupera-elementos": { statement: statement(
+    "Convierte cada texto de forma independiente, capturando solo ValueError por elemento. Usa int sin float; un fallo no debe impedir procesar los siguientes.",
+    "data es una lista de hasta 100 textos. Tras strip, cada entero válido tiene un signo + o - opcional y una o más cifras ASCII del 0 al 9. Se admiten ceros iniciales; rechaza vacío, signos sin cifras, palabras, decimales, exponentes y guiones bajos.",
+    "Devuelve un diccionario con validos, los enteros convertidos en orden, y rechazados, el número de textos inválidos. Para una lista vacía, validos es [] y rechazados es 0. La comprobación evalúa lista y conteo; no certifica el alcance exacto del try.",
+  ) },
+  "logica-asercion-normal": { statement: statement(
+    "Define una auxiliar triple(n) que multiplique por tres. Dentro de solve, antes de atender data, escribe una aserción que compruebe triple(4) igual a 12. Una aserción fallida interrumpe el programa; imprimir un mensaje de aprobado no la sustituye.",
+    "data es un entero.",
+    "Devuelve triple(data), no el resultado de la aserción ni un contador de pruebas. La comprobación evalúa el resultado; no certifica que la aserción esté presente.",
+  ) },
+  "logica-pruebas-limites": { statement: statement(
+    "La función mayor de la plantilla contiene un defecto. Escribe aserciones para [], [-4] y [-8, -2], localiza qué supuesto falla y corrige la implementación.",
+    "data es la lista de números cuyo máximo debes calcular; puede estar vacía o contener solo negativos.",
+    "Devuelve el mayor valor de data o None si está vacía (null en JSON). Las pruebas oficiales cambian la entrada y comparan el resultado; no cuentan las aserciones ni los mensajes que declares.",
+  ) },
+  "logica-reproduce-fallo": { statement: statement(
+    "Reproduce con un caso mínimo el fallo del contador de la plantilla, explica qué supuesto es incorrecto y corrígelo. Debe contar elementos estrictamente positivos.",
+    "data es una lista de números que puede estar vacía y contener ceros o negativos.",
+    "Devuelve cuántos elementos son mayores que cero. No cuentes el cero ni sumes los valores; para una lista vacía devuelve 0. Un mensaje que declare que las pruebas pasan no acredita la corrección; los casos comprueban el conteo, no certifican tu explicación del fallo.",
+  ) },
+  "logica-conserva-regresion": { statement: statement(
+    "Implementa un descuento y conserva pruebas de sus límites. La plantilla solo prepara solve(data), no contiene una implementación defectuosa. Añade aserciones para total 10, limite 10 → 8 y total 0, limite 0 → 0.",
+    "data es un diccionario con total y limite, enteros entre 0 y 1000.",
+    "Devuelve el importe después de descontar 2 si total alcanza limite, incluida la igualdad, sin bajar de cero. Si no alcanza el límite, conserva total. La comprobación evalúa el resultado; no certifica que las aserciones de regresión estén presentes.",
+  ) },
+  "logica-factorial": { statement: statement(
+    "Completa el recorrido de la plantilla para calcular un factorial. Ya prepara producto = 1; conserva ese acumulador y devuelve su valor después del bucle.",
+    "data es un entero n entre 0 y 15.",
+    "Devuelve el producto de los enteros desde 1 hasta n, incluido. Por ejemplo, para 4 es 1 * 2 * 3 * 4 = 24. El factorial de cero se define como 1: no hay vueltas y se conserva el valor inicial.",
+  ) },
+  "logica-fizzbuzz": { statement: statement(
+    "Completa la decisión dentro del bucle de la plantilla para construir FizzBuzz. El recorrido ya está preparado; añade un único valor por número y devuelve la lista al terminar.",
+    "data es un entero n entre 0 y 100.",
+    "Devuelve una lista para los números de 1 a n, incluidos y en orden: sustituye múltiplos de 3 por el texto Fizz, múltiplos de 5 por Buzz y múltiplos de ambos por FizzBuzz. Conserva los demás como números, no textos. Por ejemplo, 15 debe producir FizzBuzz, no solo Fizz. Para cero devuelve []. Respeta las mayúsculas indicadas.",
+  ) },
   "logica-posicion": { statement: statement(
     "Consulta el elemento situado en una posición de una lista. Distingue la posición del valor que contiene.",
     "data es un diccionario con numbers, una lista no vacía de hasta 100 enteros, e index, una posición válida numerada desde cero.",

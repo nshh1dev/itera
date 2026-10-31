@@ -223,9 +223,52 @@ las 24 identidades, formatos, índices, vacíos, ausencia y alcance de auxiliare
 | `logica-llamadas-independientes` | Contador propio por llamada, límites no negativos y cero incrementos. |
 | `logica-sin-estado-global` | Base fija como argumento, tasas independientes y lista vacía. |
 
+## Sexto lote: 24 enunciados de estado, validación y pruebas
+
+Otras 24 prácticas de principiante separan tarea, entrada y resultado. Los
+ejercicios de alias conservan sus mutaciones intencionales; los de copia y
+conservación mantienen sus requisitos sin prometer que comparar contenidos
+demuestre identidad o ausencia de cualquier mutación intermedia. Las técnicas
+de funciones, excepciones y aserciones siguen como objetivos de práctica, con
+sus límites de certificación explícitos. Se mantienen introducciones a is,
+valores predeterminados, diccionarios y recorrido de registros.
+
+La huella de evaluación de las 224 actividades continúa intacta: no cambian
+plantillas, referencias, casos ni ejemplos. Tampoco cambian ayudas, minutos,
+orden o límites. Donde el enunciado anterior no fijaba un límite numérico, no
+se inventa uno. Las pruebas editoriales comprueban las 24 identidades, mensajes,
+formatos de conversión, estado compartido y límites de las garantías.
+
+| Actividad | Revisión editorial |
+| --- | --- |
+| `logica-encadena-retornos` | Diccionario, dos auxiliares y producto seguido de embalaje fijo. |
+| `logica-dos-nombres-lista` | Alias sin copia y mutación intencional, incluso en vacío. |
+| `logica-reasigna-o-muta` | Reasignación a lista nueva y diccionario original/alias. |
+| `logica-copia-plana` | list(valores), copia independiente y original conservado. |
+| `logica-conserva-entrada` | Original/ajustados, orden y límite de observación de mutaciones. |
+| `logica-registro-compartido` | Diccionario anidado, cambio intencional y dos consultas actualizadas. |
+| `python-identidad` | Campos exactos, is frente a ==, instantánea anterior y entrada intacta. |
+| `python-opcional-seguro` | Firma base=None, riesgo del valor mutable y llamadas independientes. |
+| `python-actualiza-diccionario` | Copia plana, inserción/reemplazo y demás parejas conservadas. |
+| `python-borra-clave` | Clave opcional, pop con respaldo y cero como valor válido. |
+| `python-recorre-pares` | items/keys/values, orden por clave y formato exacto con espacio. |
+| `python-lista-registros` | Consulta de cantidad, acumulación y repeticiones que también cuentan. |
+| `logica-valida-divisor` | Divisor cero frente a total cero y None frente a JSON. |
+| `logica-valido-cero-ausente` | Clave presente, tres etiquetas exactas y cero válido. |
+| `logica-localiza-error` | Comprobación previa, mensaje exacto e índices negativos rechazados. |
+| `logica-captura-conversion` | Gramática completa, int sin float y captura exclusiva de ValueError. |
+| `logica-error-dominio` | Auxiliar validar, mensaje de dominio y aceptación de cero. |
+| `logica-recupera-elementos` | Conversión por elemento, orden, conteo y continuación tras fallos. |
+| `logica-asercion-normal` | Caso conocido 4 → 12 y retorno del triple, sin certificar la aserción. |
+| `logica-pruebas-limites` | Casos [], [-4], [-8, -2], reparación y máximo ausente. |
+| `logica-reproduce-fallo` | Reproducción mínima y explicación solicitada, sin anticipar su diagnóstico. |
+| `logica-conserva-regresion` | Implementación no defectuosa, igualdad y descuento sin negativos. |
+| `logica-factorial` | Completar recorrido, acumulador inicial y factorial de cero. |
+| `logica-fizzbuzz` | Completar decisión, prioridad del caso doble y números frente a textos. |
+
 ## Pendientes y límites
 
-- Los cinco lotes cubren **108/224 enunciados**, no el cierre editorial del recorrido.
+- Los seis lotes cubren **132/224 enunciados**, no el cierre editorial del recorrido.
 - Quedan los demás enunciados, teoría local y de módulos, vocabulario en otras
   ayudas y objetivos, revisión de ejemplos ya explicados, tiempos y textos de rutas.
 - PROGRAM no se normaliza como FUNCTION. Los proyectos conservan sus contratos

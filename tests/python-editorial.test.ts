@@ -4,9 +4,9 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonEditorialRevisions } from "../prisma/python-editorial";
 
-test("los lotes editoriales estructuran 108 prácticas sin tocar programas ni proyectos", () => {
+test("los lotes editoriales estructuran 132 prácticas sin tocar programas ni proyectos", () => {
   const slugs = Object.keys(pythonEditorialRevisions);
-  assert.equal(slugs.length, 108);
+  assert.equal(slugs.length, 132);
   for (const slug of slugs) {
     const entry = pythonCatalog.find(item => item.slug === slug)!;
     assert.ok(entry, slug);
@@ -153,6 +153,47 @@ test("listas, textos y auxiliares conservan orden, formatos, ayudas conceptuales
   assert.match(text("logica-parametro-exterior"), /No cambies exterior/);
   assert.match(text("logica-llamadas-independientes"), /segunda llamada no hereda.*entre 0 y 1000/s);
   assert.match(text("logica-sin-estado-global"), /No acumules las tasas.*tasas vacía devuelve \[\]/);
+});
+
+test("alias, validación y pruebas conservan mutaciones intencionales y límites de sus garantías", () => {
+  const text = (slug: string) => pythonEditorialRevisions[slug].statement;
+  const slugs = ["logica-encadena-retornos", "logica-dos-nombres-lista", "logica-reasigna-o-muta", "logica-copia-plana", "logica-conserva-entrada", "logica-registro-compartido", "python-identidad", "python-opcional-seguro", "python-actualiza-diccionario", "python-borra-clave", "python-recorre-pares", "python-lista-registros", "logica-valida-divisor", "logica-valido-cero-ausente", "logica-localiza-error", "logica-captura-conversion", "logica-error-dominio", "logica-recupera-elementos", "logica-asercion-normal", "logica-pruebas-limites", "logica-reproduce-fallo", "logica-conserva-regresion", "logica-factorial", "logica-fizzbuzz"];
+  for (const slug of slugs) {
+    const entry = pythonCatalog.find(item => item.slug === slug)!;
+    assert.equal(entry.content.level, "BEGINNER", slug);
+    assert.equal(entry.content.statement, text(slug), slug);
+  }
+  assert.match(text("logica-encadena-retornos"), /sin variables compartidas.*añada 2/s);
+  for (const slug of ["logica-dos-nombres-lista", "logica-registro-compartido"]) {
+    assert.match(text(slug), /modificar intencionalmente/, slug);
+    assert.match(text(slug), /no certifica identidad/, slug);
+  }
+  assert.match(text("logica-reasigna-o-muta"), /original conserva.*alias contiene únicamente/);
+  assert.match(text("logica-copia-plana"), /list\(valores\).*independiente.*vacía/s);
+  assert.match(text("logica-conserva-entrada"), /no certifica ausencia de cualquier mutación intermedia/);
+  assert.match(text("python-identidad"), /== compara contenido; is.*antes, original, copia, igual, misma y copiaMisma/s);
+  assert.match(text("python-identidad"), /No modifiques data/);
+  assert.match(text("python-opcional-seguro"), /base=\[\].*compartiría.*segunda no hereda/s);
+  assert.match(text("python-actualiza-diccionario"), /reemplaza.*añade.*no modifiques/);
+  assert.match(text("python-borra-clave"), /cero no indica que faltase/);
+  assert.match(text("python-recorre-pares"), /'clave: valor'.*clave ascendente/);
+  assert.match(text("python-lista-registros"), /no agrupes ni elimines repeticiones/);
+  assert.match(text("logica-valida-divisor"), /cociente es entero.*Devuelve None.*total cero.*0/s);
+  assert.match(text("logica-valido-cero-ausente"), /ausente.*invalido.*valido.*incluido cero/s);
+  assert.match(text("logica-localiza-error"), /no se aceptan los índices negativos/);
+  for (const slug of ["logica-captura-conversion", "logica-recupera-elementos"]) {
+    assert.match(text(slug), /solo ValueError|solo ese error/, slug);
+    assert.match(text(slug), /int.*float/, slug);
+    assert.match(text(slug), /cifras ASCII.*ceros iniciales.*exponentes y guiones bajos/, slug);
+  }
+  assert.match(text("logica-error-dominio"), /edad negativa.*aceptada.*no certifica el uso de raise/s);
+  assert.match(text("logica-recupera-elementos"), /fallo no debe impedir.*validos.*rechazados/s);
+  assert.match(text("logica-asercion-normal"), /triple\(4\) igual a 12.*no certifica/s);
+  assert.match(text("logica-pruebas-limites"), /\[\], \[-4\] y \[-8, -2\].*None.*null/s);
+  assert.match(text("logica-reproduce-fallo"), /No cuentes el cero.*no certifican tu explicación/);
+  assert.match(text("logica-conserva-regresion"), /incluida la igualdad, sin bajar de cero/);
+  assert.match(text("logica-factorial"), /entre 0 y 15.*factorial de cero se define como 1/s);
+  assert.match(text("logica-fizzbuzz"), /Conserva los demás como números, no textos.*Para cero devuelve \[\]/);
 });
 
 test("grafos y optimización conservan direcciones, desempates, límites y casos frontera", () => {
