@@ -204,6 +204,10 @@ Archivos principales: `src/lib/python-curriculum.ts`, `src/lib/language-curricul
 
 **Verificación del bloque de iniciación:** lint, tipos, 391 pruebas sin omisiones, build y `content:python` sin conexión aprobados. La prueba nueva recorre los 102 casos existentes del bloque para referencias, plantillas y errores fijos. No se iniciaron servicios ni se modificó la base; Piston, E2E y revisión visual siguen pendientes de autorización. Se conserva la huella anterior y se añade la revisión de enunciados.
 
+**Segundo bloque D2, principiante:** [auditoria-python.md](auditoria-python.md) registra las 74 actividades: 59 mantenidas y 15 revisadas. Se aclaran vocabulario, ausencia, alias y actividades que partían de una plantilla vacía descrita como defectuosa. Se elimina el paso por float en la conversión de enteros Python y se explicita su gramática. Se añaden 12 casos ocultos sin modificar los anteriores. Cuatro errores representativos pasaban todos los casos previos y ahora se detectan: media truncada, último artículo, vocales acentuadas y formato decimal aceptado por float. La prueba local ejecuta 74 referencias, plantillas y errores fijos sobre 321 casos; distingue las dos mutaciones intencionales y comprueba los archivos/pruebas de referencia de los dos proyectos de gastos, sin simular que esto valida Piston. Quedan 118 actividades por auditar individualmente (82 intermedias y 36 avanzadas). D2 y el resto de E/F siguen abiertos.
+
+**Verificación del bloque de principiante:** lint, tipos, 393 pruebas sin omisiones, build y `content:python` sin conexión aprobados. La validación inicial detectó que conversión superaba diez casos; se mantuvo el límite existente y se distribuyó la cobertura con recuperación por elementos. Se conserva la huella anterior y se añade la entrega verificada. No se iniciaron servicios ni se modificó la base. Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
+
 ## 7. Fase E — Claridad editorial y ayudas
 
 - [ ] Reescribir las revisiones Python con estructura consistente: tarea, entrada, resultado, reglas relevantes y ejemplos. Mantener el reto separado de la receta de resolución.

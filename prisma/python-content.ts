@@ -13,6 +13,7 @@ function pythonOnly(content: VersionContent): VersionContent {
   return { ...content, variants: content.variants.filter(variant => variant.language === "python") };
 }
 const reference = (body: string) => `def solve(data):\n${body.split("\n").map(line => `    ${line}`).join("\n")}\n`;
+const pythonIntegerConversion = "def convertir(texto):\n    texto = texto.strip()\n    digitos = texto\n    if texto.startswith('+') or texto.startswith('-'):\n        digitos = texto[1:]\n    if digitos == '':\n        raise ValueError('numero invalido')\n    for caracter in digitos:\n        if caracter not in '0123456789':\n            raise ValueError('numero invalido')\n    return int(texto)";
 const bridges: Record<string, string> = {
   "logica-ordena-registros": "sorted crea una lista nueva. key recibe una función que obtiene la clave: lambda item: (-item['puntos'], item['nombre']) equivale a una auxiliar con ese return. La tupla compara primero puntos negados y después nombre. Así se invierte solo la puntuación; cuando ambos campos coinciden, la ordenación estable conserva el orden original.",
   "logica-intervalos-suma": "Empieza con prefijos = [0] y añade cada suma acumulada. La consulta [inicio, fin] tiene extremos incluidos: resta prefijos[inicio] a prefijos[fin + 1]. for inicio, fin in consultas desempaqueta cada pareja. La comprensión construye una respuesta por consulta; también puedes usar un bucle con append. La consulta vacía produce [].",
@@ -50,6 +51,62 @@ const balancedTree = (depth: number, value = 1): Json => depth === 0 ? null : {
   right: balancedTree(depth - 1, value * 2 + 1),
 };
 const pythonOverrides: Record<string, PythonOverride> = {
+  "logica-signo": { objective: "Seleccionar entre varios bloques usando if, elif y else." },
+  "logica-alternativas": {
+    objective: "Combinar alternativas con or y excluir un bloqueo con not.",
+    statement: "data es un diccionario con invitacion, entrada y bloqueado, valores booleanos True o False en Python (true o false en JSON). Permite acceder si hay invitación o entrada comprada, pero nunca si la persona está bloqueada. Devuelve un booleano. En Python, or combina alternativas y not niega una condición.",
+    hints: ["El bloqueo invalida cualquiera de las dos formas de acceso.", "Agrupa las alternativas antes de aplicar la condición adicional.", "Combina las alternativas con or y exige además not bloqueado mediante and."],
+  },
+  "logica-ausencia": {
+    hints: ["Comprueba la ausencia antes de sumar.", "No confundas cero con False: ambos son distintos de None.", "Si data is None, devuelve -1; en otro caso devuelve data + 1. JSON representa None como null."],
+  },
+  "logica-valida-divisor": {
+    statement: "data es un diccionario con total y divisor, enteros entre -1000 y 1000. Devuelve None si divisor es cero; en otro caso devuelve total / divisor. Los cocientes válidos son enteros. Un total cero sí es válido. None se representa como null en JSON; no escribas null en el código Python.",
+  },
+  "logica-valido-cero-ausente": {
+    statement: "data es un diccionario con cantidad, un entero entre -1000 y 1000 o None (null en JSON). Devuelve el texto 'ausente' si es None, 'invalido' si es negativo y 'valido' en los demás casos, incluido cero. La clave siempre existe: distingue su valor ausente de una clave que falta.",
+  },
+  "logica-sin-estado-global": {
+    statement: "Construye una auxiliar que reciba base y tasa como argumentos, sin depender de una tasa exterior fija. data es un diccionario con base y tasas, una lista de hasta 100 enteros. Los enteros están entre -1000 y 1000. Devuelve una lista con base + tasa para cada tasa en orden, usando siempre la misma base. La plantilla no contiene aún la auxiliar. La comprobación evalúa los resultados, no la organización interna.",
+  },
+  "logica-registro-compartido": {
+    statement: "data es un diccionario con ficha (otro diccionario que contiene cantidad) y cambio. Los enteros están entre -1000 y 1000. Crea un alias de ficha y suma cambio a alias['cantidad']. Devuelve [ficha['cantidad'], alias['cantidad']]. Aquí se pide modificar intencionalmente el diccionario compartido: ambos nombres observan la misma cantidad. La salida muestra el efecto; no certifica identidad por sí sola.",
+  },
+  "logica-conserva-regresion": {
+    statement: "Implementa un descuento y conserva pruebas de sus límites. data es un diccionario con total y limite, enteros entre 0 y 1000. Descuenta 2 si total alcanza limite, incluida la igualdad, sin bajar de cero. Devuelve el importe. La plantilla solo prepara solve(data), no contiene una implementación defectuosa. Añade aserciones para total 10, limite 10 → 8 y total 0, limite 0 → 0. La comprobación evalúa el resultado; no certifica que las aserciones de regresión estén presentes.",
+  },
+  "logica-captura-conversion": {
+    statement: "Recibes un texto. Tras quitar espacios exteriores, un entero válido contiene un signo + o - opcional y una o más cifras ASCII del 0 al 9. Se admiten ceros iniciales. Rechaza vacío, palabras, punto decimal, exponentes y guiones bajos. Devuelve el entero o None (null en JSON) si es inválido. Define una auxiliar que lance ValueError y captura solo ese error desde solve. Usa int para la conversión, sin pasar por float. La comprobación evalúa el resultado; no certifica que uses exactamente el mismo try/except.",
+    hints: ["Quita los espacios exteriores y comprueba el formato completo antes de convertir.", "Si empieza por + o -, comprueba las cifras del tramo texto[1:]. Debe quedar al menos una cifra.", "Recorre las cifras y rechaza las que no pertenezcan a '0123456789' con ValueError. Convierte con int(texto) y captura solo ValueError en solve."],
+    variant: {
+      solution: reference(`${pythonIntegerConversion}\ntry:\n    return convertir(data)\nexcept ValueError:\n    return None`),
+      explanation: "strip retira espacios exteriores. startswith comprueba si el texto empieza por un signo; texto[1:] permite revisar el resto sin el signo. Debe quedar al menos una cifra y todas deben pertenecer a '0123456789'. int convierte el texto original directamente, conservando su signo y sin redondearlo mediante float. La auxiliar lanza ValueError ante un formato inválido y solve captura solo ese error. Las pruebas observan el valor, no certifican la técnica de excepciones.",
+    },
+    extraTests: [
+      { input: " +007 ", expected: 7, explanation: "Signo, ceros iniciales y espacios exteriores no alteran el entero 7." },
+      { input: "3.0", expected: null, explanation: "El punto invalida el formato de entero aunque el valor numérico sea integral." },
+      { input: "1.5", expected: null, explanation: "Una fracción no cumple el formato de entero." },
+      { input: "1e2", expected: null, explanation: "La notación exponencial no forma parte del formato aceptado." },
+      { input: "1_0", expected: null, explanation: "Los separadores con guion bajo no son cifras ASCII." },
+    ],
+  },
+  "logica-recupera-elementos": {
+    statement: "Recibes una lista de hasta 100 textos. Aplica a cada uno la regla de captura-conversion: tras strip, signo + o - opcional y una o más cifras ASCII; no se admiten decimales, exponentes ni guiones bajos. Convierte los válidos con int, sin float. Devuelve un diccionario con validos (enteros en orden) y rechazados (número de textos inválidos). Un fallo no impide procesar los siguientes. Captura solo ValueError por elemento. La comprobación evalúa lista y conteo; no certifica el alcance exacto del try.",
+    variant: {
+      solution: reference(`${pythonIntegerConversion}\nvalidos = []\nrechazados = 0\nfor texto in data:\n    try:\n        validos.append(convertir(texto))\n    except ValueError:\n        rechazados += 1\nreturn {'validos': validos, 'rechazados': rechazados}`),
+      explanation: "La auxiliar quita espacios, separa el signo opcional y comprueba que queden solo cifras ASCII, igual que captura-conversion. Convierte con int, sin float. El try de cada vuelta conserva los enteros posteriores a un rechazo. Solo ValueError aumenta rechazados; no se ocultan otros errores. Devolver validos y rechazados muestra la recuperación, pero no demuestra el uso interno de try/except.",
+    },
+    hints: ["Trata cada texto por separado para no perder valores posteriores.", "Usa la misma validación completa y conversión con int que en captura-conversion.", "Añade solo después de convertir; ante ValueError incrementa rechazados y sigue con el siguiente texto."],
+    extraTests: [{ input: ["3.0", " +007 ", "1e2", "-2", "1_0", "+", "１２", "0"], expected: { validos: [7, -2, 0], rechazados: 5 }, explanation: "Solo +007, -2 y 0 cumplen el formato; los cinco rechazos no impiden conservar los válidos posteriores." }],
+  },
+  "python-empareja": { extraTests: [
+    { input: { a: [1, 2], b: [] }, expected: [], explanation: "Sin valores en b no se puede completar ninguna pareja." },
+    { input: { a: [1, 2], b: [3, 4] }, expected: [[1, 3], [2, 4]], explanation: "Con igual longitud se emparejan todas las posiciones, sin perder la última." },
+  ] },
+  "logica-vocales": { extraTests: [{ input: "áéíóú AE", expected: 2, explanation: "Solo A y E cuentan; las vocales acentuadas quedan fuera del contrato." }] },
+  "logica-carrito": { extraTests: [{ input: { items: [{ precio: 3, cantidad: 2 }, { precio: 5, cantidad: 1 }], descuento: 50 }, expected: 5.5, explanation: "Los subtotales 6 y 5 suman 11; descontar el 50 % deja 5.5." }] },
+  "logica-notas": { extraTests: [{ input: [4, 5], expected: { aprobados: 1, media: 4.5 }, explanation: "Solo 5 aprueba; la media de ambas notas es 9 / 2, sin truncar a 4." }] },
+  "logica-gastos-validacion": { extraTests: [{ input: [{ categoria: "otra", importe: 9 }, { categoria: "casa", importe: 2 }], expected: { total: 2, porCategoria: { casa: 2 }, rechazados: 1 }, explanation: "Rechazar otra no debe impedir aceptar los 2 céntimos de casa posteriores." }] },
   "logica-booleano": {
     statement: "Cambia el valor de listo a True, el booleano verdadero de Python, no el texto 'True'. Conserva la impresión preparada: convierte el valor a texto en minúsculas para mostrar true. No necesitas modificar str ni lower.",
   },
@@ -123,10 +180,7 @@ const pythonOverrides: Record<string, PythonOverride> = {
   },
   "logica-ancestro": { statementNote: "Cada nodo de tree es un diccionario con value, left y right; left y right son otro nodo o None." },
   "logica-asercion-normal": { statementNote: "La comprobación evalúa el resultado; no certifica que la aserción esté presente en tu código." },
-  "logica-conserva-regresion": { statementNote: "La comprobación evalúa el resultado; no certifica que las aserciones de regresión estén presentes." },
-  "logica-captura-conversion": { statementNote: "La comprobación evalúa la conversión y el valor devuelto; no certifica que el código use exactamente el mismo try/except." },
   "logica-error-dominio": { statementNote: "La comprobación observa el mensaje; no certifica que uses raise." },
-  "logica-recupera-elementos": { statementNote: "La comprobación evalúa la lista y el conteo; no certifica el alcance exacto del try." },
   "logica-inventario": {
     description: "Acumula los cambios por producto y conserva saldos cero o negativos.",
     statementNote: "Este ejercicio acumula saldos por producto y admite valores negativos. No aplica la regla de stock no negativo del ejercicio de saldo.",
@@ -191,6 +245,12 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
     if (override.hints) content.hints = override.hints;
     if (override.constraints) content.constraints = override.constraints;
     if (override.variant) content.variants[0] = { ...content.variants[0], ...override.variant };
+    if (override.extraTests && !override.tree) {
+      const tests = content.variants[0].tests;
+      content.variants[0].tests = [...tests, ...override.extraTests.map((test, index) => ({
+        ...test, order: tests.length + index, visible: false, explanation: test.explanation ?? "",
+      }))];
+    }
     if (override.tree) {
       const baseTests = content.variants[0].tests.map(test => ({ ...test, input: renameTreeKeys(test.input as Json) }));
       const extraTests = (override.extraTests ?? []).map((test, index) => ({

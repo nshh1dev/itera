@@ -25,7 +25,8 @@ test("Python conserva las 176 identidades y añade 48 pasos exclusivos sin cambi
     if (entry.baseline) {
       if (!contractRevisions.has(entry.slug)) {
         const withoutExplanation = (tests: typeof entry.content.variants[0]["tests"]) => tests.map(test => ({ ...test, explanation: undefined }));
-        assert.deepEqual(withoutExplanation(entry.content.variants[0].tests), withoutExplanation(entry.baseline.variants[0].tests));
+        assert.ok(entry.content.variants[0].tests.length >= entry.baseline.variants[0].tests.length, `${entry.slug}: casos históricos conservados`);
+        assert.deepEqual(withoutExplanation(entry.content.variants[0].tests.slice(0, entry.baseline.variants[0].tests.length)), withoutExplanation(entry.baseline.variants[0].tests));
       }
       assert.equal(entry.content.runtimeMode, entry.baseline.runtimeMode);
       assert.equal(entry.content.conceptRule, entry.baseline.conceptRule);
