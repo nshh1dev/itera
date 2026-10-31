@@ -4,13 +4,14 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonEditorialRevisions } from "../prisma/python-editorial";
 
-test("los lotes editoriales estructuran 180 prácticas sin tocar programas ni proyectos", () => {
+test("los lotes editoriales estructuran las 206 prácticas sin proyectos y respetan sus modalidades", () => {
   const slugs = Object.keys(pythonEditorialRevisions);
-  assert.equal(slugs.length, 180);
+  assert.equal(slugs.length, 206);
+  assert.deepEqual(new Set(slugs), new Set(pythonCatalog.filter(entry => !entry.content.variants[0].project).map(entry => entry.slug)));
   for (const slug of slugs) {
     const entry = pythonCatalog.find(item => item.slug === slug)!;
     assert.ok(entry, slug);
-    assert.equal(entry.content.runtimeMode, "FUNCTION", slug);
+    assert.ok(["FUNCTION", "PROGRAM"].includes(entry.content.runtimeMode), slug);
     assert.equal(entry.content.variants[0].project, undefined, slug);
     assert.equal(entry.content.statement, pythonEditorialRevisions[slug].statement);
     assert.equal(entry.content.variants[0].statement, entry.content.statement);
@@ -268,6 +269,49 @@ test("registros, búsquedas y matrices conservan claves, fronteras y modelos de 
   assert.match(text("logica-vecinos"), /no incluyas diagonales ni la propia celda/);
   assert.match(text("logica-copia-anidada"), /No modifiques las filas originales.*no certifican/);
   assert.match(text("logica-delimitadores"), /texto vacío está equilibrado.*misma cantidad.*no basta/s);
+});
+
+test("los programas conservan entrada estándar, impresión y textos exactos sin convertirse en funciones", () => {
+  const programs = pythonCatalog.filter(entry => entry.content.runtimeMode === "PROGRAM");
+  assert.equal(programs.length, 22);
+  for (const entry of programs) {
+    const revision = pythonEditorialRevisions[entry.slug];
+    assert.ok(revision, entry.slug);
+    const [task, input, output] = revision.statement.split(/\n\n(?:Entrada|Resultado esperado)\n/);
+    assert.ok(task && input && output, entry.slug);
+    assert.match(input, /No hay datos de entrada|entrada estándar/, entry.slug);
+    assert.match(output, /Muestra/, entry.slug);
+    assert.doesNotMatch(output, /Devuelve/, entry.slug);
+    assert.match(output, /línea/, entry.slug);
+  }
+  const text = (slug: string) => pythonEditorialRevisions[slug].statement;
+  assert.match(text("logica-saludo"), /Hola, mundo!.*coma, espacio y exclamación/);
+  assert.match(text("logica-dos-lineas"), /Primera.*primera línea.*Segunda.*segunda/);
+  assert.match(text("logica-texto-calculo"), /10 en la primera línea.*4 \+ 6 en la segunda/);
+  assert.match(text("logica-actualiza-puntos"), /valor actual.*en lugar de escribir directamente el resultado/s);
+  assert.match(text("logica-intercambia"), /variable auxiliar/);
+  assert.match(text("python-constante"), /Python no impide reasignarlo.*no certifica/s);
+  assert.match(text("logica-lee-nombre"), /variable nombre.*Hola, seguido de un espacio/s);
+  assert.match(text("logica-mensaje-resultado"), /Destino: seguido de un espacio.*espacios interiores/);
+  assert.match(text("python-decimal"), /representación habitual de print.*incluido .0/);
+  assert.match(text("logica-booleano"), /listo a True.*texto true en la salida/s);
+  assert.match(text("logica-igualdad"), /Muestra true.*false.*no las representaciones True y False/);
+  assert.match(text("logica-alcanza"), /incluida la cantidad 10.*false/);
+});
+
+test("las cuatro últimas funciones conservan historial, índices, contigüidad y ranking", () => {
+  const text = (slug: string) => pythonEditorialRevisions[slug].statement;
+  for (const slug of ["logica-deshacer", "logica-busqueda-recursiva", "logica-sin-repeticiones", "logica-ranking"]) {
+    const entry = pythonCatalog.find(item => item.slug === slug)!;
+    assert.equal(entry.content.runtimeMode, "FUNCTION", slug);
+    assert.equal(entry.content.level, "INTERMEDIATE", slug);
+  }
+  assert.match(text("logica-deshacer"), /diccionario con operaciones.*hasta 100 operaciones/s);
+  assert.match(text("logica-deshacer"), /restaura y retira.*Si no hay historial.*no cambia nada/);
+  assert.match(text("logica-busqueda-recursiva"), /1000 enteros distintos.*índices empiezan en cero/s);
+  assert.match(text("logica-busqueda-recursiva"), /-1.*no certifican el uso de recursión/);
+  assert.match(text("logica-sin-repeticiones"), /No se permite saltar posiciones.*ASCII.*10000/s);
+  assert.match(text("logica-ranking"), /menor valor numérico, también con negativos/);
 });
 
 test("grafos y optimización conservan direcciones, desempates, límites y casos frontera", () => {

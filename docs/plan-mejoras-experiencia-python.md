@@ -288,6 +288,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del octavo lote editorial:** lint, tipos, 418 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Las pruebas focalizadas comprueban las 24 identidades nuevas, sus modelos y fronteras; se corrigió una expresión de la prueba que buscaba «no borres» donde el enunciado dice «ni borres». La huella de evaluación y ejemplos de las 224 actividades sigue intacta. Se registra la huella nueva sin retirar las históricas. No se iniciaron servicios ni se modificó la base; Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
 
+**Noveno lote editorial E:** cuatro funciones intermedias y los 22 programas completos separan Tu tarea / Entrada / Resultado esperado. Los programas conservan entrada estándar, impresión, textos exactos, líneas, formatos numéricos y true/false en minúsculas donde son salida requerida. Las funciones aclaran historial, índices, contigüidad y desempates. [claridad-python.md](claridad-python.md) registra las decisiones: van 206/224 enunciados, todas las prácticas sin proyecto; quedan 18 proyectos. Evaluación, ejemplos, ayudas, límites, minutos y orden no cambian. E y F siguen abiertas.
+
+**Verificación del noveno lote editorial:** lint, tipos, 420 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Las pruebas comprueban la cobertura exacta de las 206 prácticas sin proyecto, entrada/impresión en los 22 programas y contratos de las últimas cuatro funciones. Se ajustó una expresión de prueba a «en lugar de escribir directamente»; la suite completa aprobó después. La huella de evaluación y ejemplos de las 224 actividades sigue intacta y se conserva el historial de revisiones. No se iniciaron servicios ni se modificó la base; Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.

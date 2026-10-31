@@ -347,12 +347,61 @@ ausentes frente a cero, consultas válidas y conservación de matrices.
 | `logica-copia-anidada` | Copia de cada fila, cambio único y límite de garantías de identidad. |
 | `logica-delimitadores` | Booleanos Python, anidamiento, tipos y texto vacío equilibrado. |
 
+## Noveno lote: cuatro funciones y 22 programas completos
+
+Se completa la estructura de las **206 prácticas sin proyecto**: 184 FUNCTION
+y 22 PROGRAM. Los programas distinguen ausencia de entrada de lectura por
+entrada estándar y piden impresión, no retorno desde solve(data). Conservan
+textos exactos, líneas terminadas, mayúsculas, espacios y representaciones
+numéricas. true/false siguen en minúsculas donde son el texto de salida exigido,
+sin confundirlos con los booleanos True/False del código Python.
+
+Se mantienen instrucciones de construcción y reparación, variable auxiliar,
+constante y conversión float como objetivos de práctica. Las últimas funciones
+aclaran historial, índices originales, contigüidad y desempate numérico. No se
+cambian soluciones, plantillas, casos, ejemplos, ayudas, límites, minutos ni
+orden; la huella de evaluación de las 224 actividades sigue siendo idéntica.
+
+| Actividad | Revisión editorial |
+| --- | --- |
+| `logica-saludo` | Programa sin entrada y saludo con puntuación exacta. |
+| `logica-dos-lineas` | Primera/Segunda en líneas terminadas separadas. |
+| `logica-orden-mensaje` | Reorganización de plantilla y orden Preparar/Mezclar/Servir. |
+| `logica-texto-calculo` | Expresión numérica frente a texto y espacios del signo +. |
+| `logica-guarda-nombre` | Uso de variable para mostrar Ada, no su nombre. |
+| `logica-guarda-cantidad` | Reparación de impresión, asignación conservada. |
+| `logica-actualiza-puntos` | Actualización sobre valor actual en vez de reemplazo o resultado fijo. |
+| `logica-intercambia` | Variable auxiliar y orden de las dos líneas. |
+| `logica-suma-cantidades` | Variables numéricas y suma, salida escalar. |
+| `logica-cambio` | Variables de precio/pago y resta. |
+| `logica-precio-unidades` | Variables de precio/unidades y multiplicación. |
+| `logica-parentesis` | Reparación de precedencia y dos alternativas de agrupación. |
+| `python-constante` | Convención de mayúsculas y límite de certificación de la constante. |
+| `logica-lee-nombre` | Entrada de una línea, nombre preparado y saludo con espacio. |
+| `logica-lee-doble` | Lectura/conversión preparadas y doble numérico, no texto repetido. |
+| `logica-lee-suma` | Dos líneas, conversión y suma frente a concatenación. |
+| `logica-mensaje-resultado` | Prefijo Destino: y ciudad con espacios interiores conservados. |
+| `python-decimal` | float, incremento 0.5 y representación habitual de print, incluido .0. |
+| `logica-numero-texto` | Construcción de dos expresiones y salida 6/42. |
+| `logica-booleano` | True como dato y true como texto exacto de impresión preparada. |
+| `logica-igualdad` | Comparación, formato preparado y true/false sin traducir. |
+| `logica-alcanza` | Frontera inclusiva de 10 y salida textual en minúsculas. |
+| `logica-deshacer` | Diccionario con operaciones, restauración que consume historial y vacío. |
+| `logica-busqueda-recursiva` | Índice original, -1 y recursión como objetivo no certificado. |
+| `logica-sin-repeticiones` | Subcadena contigua, longitud y caracteres ASCII. |
+| `logica-ranking` | Valores únicos, frecuencia descendente y desempate numérico con negativos. |
+
+Las pruebas exigen las 206 identidades sin proyecto, distinguen ambas
+modalidades y comprueban que todos los programas pidan impresión y describan
+su entrada. La huella de evaluación conserva íntegros los textos esperados de
+PROGRAM; estas comprobaciones locales no equivalen a Piston real.
+
 ## Pendientes y límites
 
-- Los ocho lotes cubren **180/224 enunciados**, no el cierre editorial del recorrido.
+- Los nueve lotes cubren **206/224 enunciados**; quedan los **18 proyectos**.
 - Quedan los demás enunciados, teoría local y de módulos, vocabulario en otras
   ayudas y objetivos, revisión de ejemplos ya explicados, tiempos y textos de rutas.
-- PROGRAM no se normaliza como FUNCTION. Los proyectos conservan sus contratos
+- PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos conservan sus contratos
   de archivos y persistencia; su repetición editorial se revisa por separado.
 - No modifica el componente de presentación ni acredita revisión visual o
   accesibilidad. La jerarquía visual, teoría desplegable y ergonomía siguen en F.

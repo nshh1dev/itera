@@ -5,6 +5,136 @@ const statement = (task: string, input: string, output: string) =>
   `Tu tarea\n${task}\n\nEntrada\n${input}\n\nResultado esperado\n${output}`;
 
 export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
+  "logica-saludo": { statement: statement(
+    "Escribe una instrucción que muestre el saludo Hola, mundo! en pantalla. Escribe el texto entre comillas en el código, pero no imprimas esas comillas.",
+    "No hay datos de entrada. Escribe un programa completo, no una función solve(data).",
+    "Muestra una sola línea con Hola, mundo!, respetando coma, espacio y exclamación. Termina la línea sin añadir texto ni líneas vacías.",
+  ) },
+  "logica-dos-lineas": { statement: statement(
+    "Practica el orden de las instrucciones mostrando dos textos en líneas distintas.",
+    "No hay datos de entrada. Escribe un programa completo.",
+    "Muestra Primera en la primera línea y Segunda en la segunda, con esas mayúsculas y sin comillas. Termina cada línea sin añadir otras líneas ni texto.",
+  ) },
+  "logica-orden-mensaje": { statement: statement(
+    "Reorganiza las instrucciones de la plantilla: las etapas de la receta están en un orden incorrecto.",
+    "No hay datos de entrada. Trabaja sobre el programa completo de la plantilla.",
+    "Muestra Preparar, Mezclar y Servir, en ese orden, cada palabra en su propia línea terminada. Conserva las mayúsculas y no añadas comillas ni otras líneas.",
+  ) },
+  "logica-texto-calculo": { statement: statement(
+    "Distingue una expresión numérica de un texto: utiliza la suma de 4 y 6 sin comillas para calcular y entre comillas para mostrar sus caracteres.",
+    "No hay datos de entrada. Corrige el orden del programa de la plantilla.",
+    "Muestra 10 en la primera línea y el texto 4 + 6 en la segunda, con un espacio a cada lado de +. Termina ambas líneas, sin comillas ni texto adicional.",
+  ) },
+  "logica-guarda-nombre": { statement: statement(
+    "Guarda el texto Ada en una variable y utiliza esa variable para mostrar su valor; no vuelvas a escribir el texto en la impresión.",
+    "No hay datos de entrada. Completa el programa de la plantilla.",
+    "Muestra Ada en una sola línea terminada, sin comillas ni texto adicional. La salida muestra el valor, no el nombre de la variable.",
+  ) },
+  "logica-guarda-cantidad": { statement: statement(
+    "Corrige la impresión de la plantilla: puntos ya guarda 8, pero el programa muestra la palabra puntos en vez de su valor.",
+    "No hay datos de entrada. Conserva la asignación preparada en el programa.",
+    "Muestra 8 en una sola línea terminada. No muestres puntos ni añadas comillas o texto adicional.",
+  ) },
+  "logica-actualiza-puntos": { statement: statement(
+    "Corrige la actualización de puntos: empieza en 8 y debe aumentar en 3, no reemplazarse por 3. Utiliza el valor actual de la variable para calcular, en lugar de escribir directamente el resultado.",
+    "No hay datos de entrada. Trabaja sobre el programa de la plantilla.",
+    "Muestra el valor actualizado de puntos: una línea terminada con 11, sin texto adicional.",
+  ) },
+  "logica-intercambia": { statement: statement(
+    "Guarda 3 en una variable y 8 en otra. Intercambia sus valores usando una variable auxiliar y después muestra la primera y la segunda.",
+    "No hay datos de entrada. Escribe un programa completo.",
+    "Muestra 8 en la primera línea y 3 en la segunda. Termina ambas líneas sin comillas ni texto adicional.",
+  ) },
+  "logica-suma-cantidades": { statement: statement(
+    "Guarda 7 y 5 en dos variables numéricas. Calcula la suma utilizando esas variables y muestra el resultado.",
+    "No hay datos de entrada. Escribe un programa completo.",
+    "Muestra una línea terminada con 12, sin comillas ni texto adicional.",
+  ) },
+  "logica-cambio": { statement: statement(
+    "Guarda en variables el precio de una compra, 13, y el pago, 20. Calcula el cambio usando una resta entre esos valores.",
+    "No hay datos de entrada. Escribe un programa completo.",
+    "Muestra el cambio en una línea terminada con 7, sin comillas ni texto adicional.",
+  ) },
+  "logica-precio-unidades": { statement: statement(
+    "Guarda en variables el precio por unidad, 4, y la cantidad comprada, 6. Utiliza una multiplicación entre esos valores para calcular el total.",
+    "No hay datos de entrada. Escribe un programa completo.",
+    "Muestra el total en una línea terminada con 24, sin comillas ni texto adicional.",
+  ) },
+  "logica-parentesis": { statement: statement(
+    "Corrige la expresión de la plantilla para calcular el doble de la suma de 4 y 3: debe sumar primero y multiplicar después. Puedes usar paréntesis o guardar la suma en una variable.",
+    "No hay datos de entrada. Conserva el programa completo de la plantilla.",
+    "Muestra una línea terminada con 14, sin comillas ni texto adicional. Multiplicar solo el 3 no cumple el cálculo pedido.",
+  ) },
+  "python-constante": { statement: statement(
+    "Guarda LAPICES_POR_CAJA = 6 y cajas = 3 y calcula el total con esos nombres. Un nombre en MAYÚSCULAS comunica una equivalencia fija por convención: Python no impide reasignarlo. En otro problema, IVA = 0.21 y precio * IVA seguirían el mismo patrón.",
+    "No hay datos de entrada. Completa el programa de la plantilla; se compara lo que muestra, no un retorno.",
+    "Muestra el total de lápices en una línea terminada con 18, sin texto adicional. La comprobación observa el resultado y no certifica que hayas escrito la constante; esa convención requiere revisar el código.",
+  ) },
+  "logica-lee-nombre": { statement: statement(
+    "Completa el saludo usando la variable nombre que ya crea la plantilla.",
+    "La entrada estándar contiene un nombre en una línea. La plantilla ya lo lee; no añadas mensajes para pedirlo.",
+    "Muestra una línea con Hola, seguido de un espacio y el nombre recibido. Conserva sus mayúsculas y minúsculas, termina la línea y no añadas comillas ni texto adicional.",
+  ) },
+  "logica-lee-doble": { statement: statement(
+    "Completa la impresión para calcular el doble usando numero. La lectura y la conversión a entero ya están preparadas; consérvalas.",
+    "La entrada estándar contiene un entero entre -1000 y 1000 en una línea.",
+    "Muestra su doble numérico en una línea terminada, no el texto repetido. Cero produce 0. No añadas mensajes para pedir datos ni texto adicional.",
+  ) },
+  "logica-lee-suma": { statement: statement(
+    "Corrige la plantilla: lee dos valores como texto. Convierte ambos a número para sumar, en vez de unir sus dígitos.",
+    "La entrada estándar contiene dos enteros entre -100 y 100, uno por línea.",
+    "Muestra la suma numérica en una sola línea terminada. No muestres la concatenación de los textos ni añadas mensajes para pedir datos.",
+  ) },
+  "logica-mensaje-resultado": { statement: statement(
+    "Completa el programa para construir un mensaje de destino usando la ciudad que ya lee la plantilla.",
+    "La entrada estándar contiene una ciudad en una línea, sin espacios en los extremos. Puede tener espacios interiores.",
+    "Muestra una línea con Destino: seguido de un espacio y la ciudad recibida. Conserva sus mayúsculas y espacios interiores. Termina la línea sin añadir comillas, mensajes de petición ni otras líneas.",
+  ) },
+  "python-decimal": { statement: statement(
+    "Convierte el texto a float, súmale 0.5 y muestra el resultado. float('1.5') produce 1.5; int no acepta ese texto decimal. print muestra 2.0 al sumar 1.5 + 0.5 porque el resultado es float.",
+    "La entrada estándar contiene un decimal finito entre -100 y 100 en una línea, con punto como separador. Siempre es válido. La plantilla ya lee el texto, pero no lo convierte.",
+    "Muestra el resultado en una línea terminada, con la representación habitual de print para un float, incluido .0 cuando corresponde. No apliques un formato decimal fijo ni añadas mensajes para pedir datos. Escribe un programa completo: se compara su salida, no un retorno.",
+  ) },
+  "logica-numero-texto": { statement: statement(
+    "Construye dos expresiones: suma los números 4 y 2 y une los textos '4' y '2'. No escribas directamente sus resultados.",
+    "No hay datos de entrada. Escribe un programa completo.",
+    "Muestra 6 en la primera línea y 42 en la segunda. Termina ambas líneas sin comillas ni texto adicional: la primera es una suma numérica y la segunda una unión de textos.",
+  ) },
+  "logica-booleano": { statement: statement(
+    "Cambia listo a True, el booleano verdadero de Python, no el texto 'True'. Conserva la impresión preparada con str y lower; no necesitas modificarla.",
+    "No hay datos de entrada. Corrige solo el valor asignado en el programa de la plantilla.",
+    "Muestra true en una línea terminada, en minúsculas y sin comillas. Aunque el valor Python se escribe True, este programa exige el texto true en la salida.",
+  ) },
+  "logica-igualdad": { statement: statement(
+    "Completa la comparación de igualdad. La plantilla ya prepara los números y el formato de salida; conserva ambas partes.",
+    "La entrada estándar contiene dos enteros entre -1000 y 1000, uno por línea.",
+    "Muestra true si son iguales y false si son distintos, en una sola línea terminada y sin comillas. Son los textos exactos en minúsculas que exige este programa, no las representaciones True y False de Python. No añadas mensajes para pedir datos.",
+  ) },
+  "logica-alcanza": { statement: statement(
+    "Comprueba si una cantidad alcanza para pagar algo que cuesta 10. La plantilla ya prepara la lectura y el formato de salida; consérvalos.",
+    "La entrada estándar contiene una cantidad entera entre 0 y 100 en una línea.",
+    "Muestra true si alcanza, incluida la cantidad 10, y false si no alcanza. Usa una sola línea terminada, en minúsculas y sin comillas: se exigen esos textos, no True o False. No añadas mensajes para pedir datos.",
+  ) },
+  "logica-deshacer": { statement: statement(
+    "Procesa operaciones con historial para poder restaurar estados anteriores. Empieza con valor cero.",
+    "data es un diccionario con operaciones, una lista de hasta 100 operaciones. Cada una es una lista [\"sumar\", numero] o [\"deshacer\"].",
+    "Devuelve el valor final. Sumar guarda el estado anterior y añade numero; deshacer restaura y retira el último estado guardado. Si no hay historial, deshacer no cambia nada. Sin operaciones devuelve 0.",
+  ) },
+  "logica-busqueda-recursiva": { statement: statement(
+    "Encuentra un objetivo practicando búsqueda binaria recursiva. Las ayudas permiten repasar cómo reducir el intervalo y resolver su caso vacío.",
+    "data es un diccionario con numbers, una lista ordenada de hasta 1000 enteros distintos, y target, el objetivo. La lista puede estar vacía; los índices empiezan en cero.",
+    "Devuelve el índice de target en la lista original o -1 si no aparece. No devuelvas el valor almacenado en esa posición. Los casos comprueban el resultado, no certifican el uso de recursión.",
+  ) },
+  "logica-sin-repeticiones": { statement: statement(
+    "Encuentra la longitud de la subcadena contigua más larga sin caracteres repetidos. No se permite saltar posiciones dentro de una subcadena.",
+    "data es un texto ASCII de hasta 10000 caracteres; puede estar vacío.",
+    "Devuelve la longitud máxima como entero, no el propio texto. Cada carácter cuenta, incluidos espacios y signos. Para el texto vacío devuelve 0.",
+  ) },
+  "logica-ranking": { statement: statement(
+    "Ordena los valores distintos de una lista según su frecuencia. Elige cómo contar y después cómo ordenar.",
+    "data es una lista de 0 a 1000 enteros entre -100 y 100.",
+    "Devuelve cada valor distinto una sola vez, por frecuencia de mayor a menor. Si empatan, coloca primero el menor valor numérico, también con negativos. Para [4, 2, 4, 2, 7] devuelve [2, 4, 7]. Para la lista vacía devuelve [].",
+  ) },
   "python-lambda-desempate": { statement: statement(
     "Ordena con dos criterios practicando lambda. lambda palabra: expresion equivale a una auxiliar que devuelve esa expresión. Las tuplas se comparan por su primer componente y después por el segundo; negar una longitud permite invertir solo ese criterio.",
     "data es una lista de hasta 100 palabras formadas por letras a-z; puede estar vacía.",
