@@ -562,11 +562,21 @@ La reducción de repetición de estas explicaciones está completa; sigue pendie
 la revisión entre teoría local, teoría de módulos, condiciones y otras ayudas,
 así como el conjunto de ejemplos y explicaciones restantes.
 
+## Revisión de tiempos
+
+[tiempos-python.md](tiempos-python.md) registra la revisión de las 224 actividades:
+54 ajustes y 170 estimaciones conservadas. El presupuesto contempla lectura,
+resolución y comprobación; no se confunde con tiempo de CPU ni con aprendizaje
+medido. `prisma/python-timing.ts` aplica solo los ajustes explícitos sobre Python,
+con valores anteriores y motivos. Una huella protege todos los otros campos y
+los tiempos conservados; JavaScript/TypeScript y el catálogo activo no cambian.
+Se completa el punto de tiempos de E, no la revisión editorial global.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Quedan teoría local y de módulos, vocabulario en otras
-  ayudas y objetivos, revisión de ejemplos ya explicados, tiempos y textos de rutas.
+  ayudas y objetivos, revisión de ejemplos ya explicados y textos de rutas.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
   conservan sus contratos de archivos y persistencia; se retiraron repeticiones
   internas, no se revisaron aún todas las superficies de ayuda y teoría.

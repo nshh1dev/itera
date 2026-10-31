@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonEditorialRevisions } from "../prisma/python-editorial";
 import { validateProjectDefinition, validateExpectedProjectFiles } from "../src/lib/project";
+import { beforePythonTiming } from "./python-timing-baseline";
 
 test("los lotes editoriales estructuran las 224 actividades y respetan sus modalidades", () => {
   const slugs = Object.keys(pythonEditorialRevisions);
@@ -50,7 +51,7 @@ test("el lote editorial conserva íntegra la evaluación, los ejemplos y los met
   // Complementa las pruebas ejecutables; no genera respuestas con las soluciones.
   const payload = pythonCatalog.map(entry => ({
     slug: entry.slug, category: entry.category, level: entry.content.level,
-    minutes: entry.content.minutes, activityType: entry.content.activityType,
+    minutes: beforePythonTiming(entry.slug, entry.content).minutes, activityType: entry.content.activityType,
     runtimeMode: entry.content.runtimeMode, conceptRule: entry.content.conceptRule,
     variants: entry.content.variants.map(variant => {
       const { statement: _statement, explanation: _explanation, ...assessment } = variant;

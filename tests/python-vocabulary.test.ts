@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonVocabularyRevisions } from "../prisma/python-vocabulary";
+import { beforePythonTiming } from "./python-timing-baseline";
 
 const fields = ["description", "objective", "constraints", "hints", "commonErrors", "practiceGoals"] as const;
 
@@ -45,7 +46,7 @@ test("las ayudas y descripciones distinguen listas, claves y ausencia de represe
 
 test("el vocabulario no cambia enunciados, evaluación, archivos, orden, niveles ni tiempos", () => {
   const payload = pythonCatalog.map(entry => {
-    const { description, objective, hints, constraints, practiceGoals, commonErrors, ...content } = entry.content;
+    const { description, objective, hints, constraints, practiceGoals, commonErrors, ...content } = beforePythonTiming(entry.slug, entry.content);
     void [description, objective, hints, constraints, practiceGoals, commonErrors];
     return { slug: entry.slug, category: entry.category, content: { ...content, variants: content.variants.map(variant => {
       const { explanation, ...rest } = variant;

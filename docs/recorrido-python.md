@@ -94,6 +94,8 @@ El vocabulario de metadatos y ayudas se revisa mediante `prisma/python-vocabular
 
 El mismo archivo separa `pythonSolutionExplanations`, con 28 revisiones de la prosa de solución, incluidos los 18 proyectos. Explica el código real, sus casos frontera y los límites de comparar resultados; en suma máxima declara O(n) auxiliar por el slice de la referencia, sin alterar el código. Los proyectos distinguen responsabilidades, recursos protegidos, artefactos y reapertura en el mismo proceso frente a segunda llamada oficial en proceso nuevo, sin recetas de otros retos. Huellas previas protegen todos los demás campos y la conservación del primer lote de diez explicaciones al revisar los proyectos. La revisión completa de teoría y explicaciones sigue abierta.
 
+Los minutos orientativos se revisan en [tiempos-python.md](tiempos-python.md): 54 ajustes explícitos de `prisma/python-timing.ts` y 170 valores conservados tras revisar las 224 actividades. Distinguen tareas breves, integraciones y proyectos con persistencia; estiman lectura, resolución y comprobación, no tiempo del ejecutor ni dominio medido. Solo se modifica `content.minutes` de las identidades enumeradas, sin cambiar otras variantes, niveles, orden ni progreso. Los minutos revisados requieren la preparación/activación del catálogo para llegar a una base existente.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

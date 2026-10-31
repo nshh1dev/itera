@@ -10,6 +10,7 @@ import { pythonMistakes, pythonCaseHelp, pythonSharedCaseHelp } from "./python-h
 import { pythonCosts } from "./python-costs";
 import { pythonEditorialRevisions } from "./python-editorial";
 import { pythonVocabularyRevisions, pythonSolutionExplanations } from "./python-vocabulary";
+import { pythonTimingRevisions } from "./python-timing";
 import { validateProjectDefinition, validateProjectSolution } from "../src/lib/project";
 
 function pythonOnly(content: VersionContent): VersionContent {
@@ -442,6 +443,7 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
   const vocabulary = pythonVocabularyRevisions[slug];
   if (vocabulary) content = { ...content, ...vocabulary };
   if (slug in pythonSolutionExplanations) content.variants[0].explanation = pythonSolutionExplanations[slug];
+  if (slug in pythonTimingRevisions) content.minutes = pythonTimingRevisions[slug].minutes;
   if (slug in pythonCosts) content.complexity = pythonCosts[slug];
   const exampleHelp = pythonSharedCaseHelp[slug];
   if (exampleHelp) content.variants[0].tests = content.variants[0].tests.map(test => ({

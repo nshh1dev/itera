@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonSolutionExplanations } from "../prisma/python-vocabulary";
 import { validateProjectDefinition, validateExpectedProjectFiles } from "../src/lib/project";
+import { beforePythonTiming } from "./python-timing-baseline";
 
 const slugs = ["logica-dos-parametros", "python-desempaqueta", "logica-ficha-resultado", "python-recorre-pares", "logica-notas", "python-contactos-edita", "logica-prefijos", "logica-copia-anidada", "logica-suma-maxima", "logica-cuenta-nodos"];
 
@@ -31,7 +32,7 @@ test("diez explicaciones de solución usan vocabulario Python y justifican la re
 test("los dos lotes solo cambian 28 explicaciones y conservan todos los demás campos del catálogo", () => {
   const revised = Object.keys(pythonSolutionExplanations);
   assert.equal(revised.length, 28);
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: entry.content.variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonTiming(entry.slug, entry.content), variants: entry.content.variants.map(variant => {
     if (!revised.includes(entry.slug)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;
@@ -86,7 +87,7 @@ test("las 18 explicaciones de proyectos distinguen módulos, artefactos, pruebas
 });
 
 test("el segundo lote conserva las diez explicaciones previas y todo salvo la prosa de los 18 proyectos", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: entry.content.variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonTiming(entry.slug, entry.content), variants: entry.content.variants.map(variant => {
     if (!variant.project) return variant;
     const { explanation, ...rest } = variant;
     void explanation;
