@@ -256,6 +256,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del lote de Coste:** lint, tipos, 389 pruebas sin omisiones, build y `content:python` sin conexión aprobados. La validación inicial detectó notas mayores de 200 caracteres; se acortaron sin cambiar el límite. Se conserva la huella anterior y se registra la revisión nueva. No se ejecutaron E2E, revisión visual ni Piston real: requieren autorización de arranque. No se iniciaron servicios ni se modificó o activó la base.
 
+**Primer lote editorial E:** se revisan 24 enunciados de diccionarios, listas y recorridos con estructura Tu tarea / Entrada / Resultado esperado. Se definen fichas como diccionarios y se distinguen los valores Python de su representación JSON; se corrigen tres juegos de pistas y las restricciones/objetivo de cantidad opcional. Se retiran recetas repetidas del reto sin eliminar pistas ni explicación de la referencia. [claridad-python.md](claridad-python.md) registra decisiones y alcance. La evaluación completa, los ejemplos y sus ayudas, tiempos, orden y modalidades conservan su huella previa. Esto cubre 24/224 enunciados, no cierra E ni implica activación o revisión visual.
+
+**Verificación del primer lote editorial:** lint, tipos, 411 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Las pruebas distinguen literales Python de salida PROGRAM, comprueban las tres secciones, vacíos/desempates y conservación de evaluación y ejemplos. Se conserva la huella anterior y se registra la revisión nueva. No se iniciaron servicios ni se modificó la base; Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.

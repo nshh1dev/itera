@@ -8,6 +8,7 @@ import { prerequisiteIssue } from "../src/lib/curriculum";
 import type { Json } from "../src/lib/types";
 import { pythonMistakes, pythonCaseHelp, pythonSharedCaseHelp } from "./python-help";
 import { pythonCosts } from "./python-costs";
+import { pythonEditorialRevisions } from "./python-editorial";
 import { validateProjectDefinition, validateProjectSolution } from "../src/lib/project";
 
 function pythonOnly(content: VersionContent): VersionContent {
@@ -428,6 +429,14 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
       }
       content.variants[0].explanation = `${content.variants[0].explanation}\n\n${model} No uses v, izq o der en esta variante.`;
     }
+  }
+  const editorial = pythonEditorialRevisions[slug];
+  if (editorial) {
+    content.statement = editorial.statement;
+    content.variants[0].statement = editorial.statement;
+    if (editorial.hints) content.hints = editorial.hints;
+    if (editorial.constraints) content.constraints = editorial.constraints;
+    if (editorial.objective) content.objective = editorial.objective;
   }
   if (slug in pythonCosts) content.complexity = pythonCosts[slug];
   const exampleHelp = pythonSharedCaseHelp[slug];

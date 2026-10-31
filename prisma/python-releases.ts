@@ -34,4 +34,6 @@ export const knownPythonReleases: readonly string[] = [
   "7c89dd30c5f3b99da03d19766021debaa54de6a68c80460a4ff1b922d9c1c359",
   // Cierre de la auditoría individual: grafos, recorridos y optimización.
   "edbd51807108ca247f9b072cc3d815eccbaa77c44fe012b79c7e618e3ad0430a",
+  // Primer lote editorial: 24 enunciados con estructura y vocabulario Python.
+  "7df05db75ed75ec16cff3771d1a3a530cf5840dcc47b2d7594c1cc1f064960e6",
 ];
