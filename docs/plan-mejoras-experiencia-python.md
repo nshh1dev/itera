@@ -205,7 +205,7 @@ Archivos principales: `src/lib/python-curriculum.ts`, `src/lib/language-curricul
 - [ ] Reescribir las revisiones Python con estructura consistente: tarea, entrada, resultado, reglas relevantes y ejemplos. Mantener el reto separado de la receta de resolución.
 - [ ] Usar `None`, `True`, `False`, lista y diccionario en instrucciones Python; explicar su representación `null`/`true`/`false` en JSON sin mezclarla con código ejecutable.
 - [ ] Definir ficha/registro como datos representados mediante diccionarios; evitar alternar términos sin explicación.
-- [ ] Añadir explicación a todos los ejemplos públicos que carezcan de ella, priorizando primero inicio y estructuras complejas. Cada explicación debe justificar la salida, no repetirla con otras palabras.
+- [x] Añadir explicación a todos los ejemplos públicos que carezcan de ella, priorizando primero inicio y estructuras complejas. Cada explicación debe justificar la salida, no repetirla con otras palabras.
 - [ ] Revisar los ejemplos ya explicados: coherencia con la variante, límites, secuencia y vocabulario aprendido.
 - [ ] Reducir repetición entre objetivo, teoría local, teoría del módulo, condiciones y solución. Mantener pistas escalonadas y trasladar allí las soluciones anticipadas de retos independientes.
 - [ ] Sustituir el texto genérico de Coste por una explicación concreta de la estrategia cuando aporte valor; omitirlo en actividades donde solo añada ruido. No atribuir esa complejidad a cualquier solución aceptada.
@@ -215,6 +215,10 @@ Archivos principales: `src/lib/python-curriculum.ts`, `src/lib/language-curricul
 Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `prisma/python-help.ts` y proyecciones Python de teoría y metadatos.
 
 **Aceptación:** cero ejemplos públicos Python sin explicación editorial; los enunciados usan una terminología coherente; las ayudas no contradicen el contrato ni convierten inadvertidamente un desafío independiente en una receta completa.
+
+**Lote de ejemplos:** los 433 ejemplos públicos de las 224 actividades tienen explicación editorial (antes faltaban 278 ejemplos en 153 actividades). Se empezó por las 32 actividades de iniciación y las 12 de árboles/matrices, y se completaron después los otros bloques. Las ayudas justifican operaciones, límites, recorridos, índices, estados iniciales, normalización y conservación de copias. Los booleanos distinguen `True`/`False` de la representación exigida en la salida. Las ayudas se proyectan solo sobre Python, conservando entradas, respuestas, orden, visibilidad y ayudas ocultas. Se redactaron a partir de los contratos, recursos y casos, no ejecutando las referencias para generar respuestas. La prueba exige cero ejemplos públicos sin ayuda y correspondencia por orden; no certifica por sí sola la calidad pedagógica de cada explicación. El resto de E sigue pendiente.
+
+**Verificación del lote de ejemplos:** lint, tipos, 387 pruebas sin omisiones, build y `content:python` sin conexión aprobados sobre la entrega completa. Se conserva la huella del lote anterior y se registra la nueva. Los avisos esperados de Better Auth no son fallos nuevos. No se ejecutó E2E, revisión visual ni Piston real por falta de autorización de arranque; no se modificó la base ni se activó el catálogo.
 
 ## 8. Fase F — Jerarquía visual y ergonomía
 

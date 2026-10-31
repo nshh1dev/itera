@@ -23,7 +23,10 @@ test("Python conserva las 176 identidades y añade 48 pasos exclusivos sin cambi
     assert.deepEqual(entry.content.variants.map(variant => variant.language), ["python"]);
     assert.deepEqual(entry.content.prerequisiteSlugs, pythonPrerequisiteSlugs(entry.slug));
     if (entry.baseline) {
-      if (!contractRevisions.has(entry.slug)) assert.deepEqual(entry.content.variants[0].tests, entry.baseline.variants[0].tests);
+      if (!contractRevisions.has(entry.slug)) {
+        const withoutExplanation = (tests: typeof entry.content.variants[0]["tests"]) => tests.map(test => ({ ...test, explanation: undefined }));
+        assert.deepEqual(withoutExplanation(entry.content.variants[0].tests), withoutExplanation(entry.baseline.variants[0].tests));
+      }
       assert.equal(entry.content.runtimeMode, entry.baseline.runtimeMode);
       assert.equal(entry.content.conceptRule, entry.baseline.conceptRule);
     }
@@ -208,4 +211,41 @@ test("las actividades prioritarias hacen observable el contrato y no anticipan e
     assert.ok(!JSON.stringify(variant.tests.map(test => test.input)).includes('"v"'), `${slug}: entrada antigua`);
   }
   assert.match(pythonCatalog.find(entry => entry.slug === "logica-ancestro")!.content.statement, /value, left y right/);
+});
+
+test("las 224 actividades explican sus ejemplos públicos sin cambiar casos ni ayudas ocultas", async () => {
+  const { pythonCatalog } = await import("../prisma/python-content");
+  const { pythonSharedCaseHelp } = await import("../prisma/python-help");
+  const entries = pythonCatalog;
+  assert.equal(entries.length, 224);
+  for (const entry of entries) {
+    for (const test of entry.content.variants[0].tests.filter(test => test.visible)) {
+      assert.ok(test.explanation?.trim(), `${entry.slug}: ejemplo ${test.order} sin explicación`);
+      assert.notEqual(test.explanation, JSON.stringify(test.expected), `${entry.slug}: repetir la salida no la explica`);
+    }
+  }
+  for (const [slug, explanations] of Object.entries(pythonSharedCaseHelp)) {
+    const entry = pythonCatalog.find(entry => entry.slug === slug)!;
+    assert.ok(entry?.baseline, `${slug}: ayuda de una actividad compartida existente`);
+    const tests = entry.content.variants[0].tests;
+    assert.equal(explanations.length, tests.filter(test => test.visible).length, `${slug}: cobertura de ejemplos`);
+    for (const test of tests) {
+      if (test.visible) assert.equal(test.explanation, explanations[test.order], `${slug}: orden del ejemplo`);
+      else {
+        const baselineTest: { explanation?: string } | undefined = entry.baseline!.variants[0].tests.find(candidate => candidate.order === test.order);
+        if (baselineTest) assert.equal(test.explanation, baselineTest.explanation, `${slug}: ayuda oculta conservada`);
+        else assert.ok(test.explanation?.trim(), `${slug}: caso adicional explicado`);
+      }
+    }
+  }
+  const comparison = pythonCatalog.find(entry => entry.slug === "logica-igualdad")!.content.variants[0].tests;
+  assert.match(comparison[0].explanation!, /True/);
+  assert.match(comparison[1].explanation!, /False/);
+  const copy = pythonCatalog.find(entry => entry.slug === "logica-copia-anidada")!.content.variants[0].tests;
+  assert.deepEqual(copy[0].expected, { original: [[1, 2], [3, 4]], copia: [[1, 9], [3, 4]] });
+  assert.match(copy[0].explanation!, /solo en la copia/);
+  const write = pythonCatalog.find(entry => entry.slug === "logica-escribe-archivo")!.content.variants[0].tests;
+  assert.equal(write[0].input, " Ada");
+  assert.equal(write[0].expected, "Hola Ada");
+  assert.match(write[0].explanation!, /espacio inicial/);
 });

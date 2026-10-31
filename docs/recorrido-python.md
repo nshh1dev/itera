@@ -129,6 +129,12 @@ En Docker, respaldar con `npm run docker:backup` y ejecutar `node scripts/docker
 
 ## Verificación y límites
 
+### Explicaciones de ejemplos públicos
+
+`pythonSharedCaseHelp`, en `prisma/python-help.ts`, contiene explicaciones editoriales para las revisiones Python de actividades compartidas. Se aplican por slug y orden del caso, solo a ejemplos visibles, sin modificar entradas, respuestas, visibilidad ni explicaciones de casos ocultos. Las fuentes y variantes de JavaScript/TypeScript permanecen intactas. Una prueba comprueba la correspondencia entre órdenes y ayudas y exige cobertura del bloque revisado; las explicaciones no se generan ejecutando soluciones.
+
+Los 433 ejemplos públicos de las 224 actividades tienen explicación (se completaron 278 antes vacíos). Se explican las operaciones concretas, límites, orden de visita, índices, efectos sobre las copias y estados iniciales de proyectos y persistencia. En los programas que imprimen `true`/`false`, se distingue ese texto de los valores Python `True`/`False`; en FUNCTION se aclara la representación JSON cuando resulta relevante. No se presenta la observación de una salida como certificación de la técnica interna. La prueba exige cobertura completa y conservación de los casos; no acredita la calidad pedagógica por sí sola. El resto de la revisión editorial sigue pendiente en el plan.
+
 - `tests/python-curriculum.test.ts`: identidades, orden, grupos, categorías proyectadas, prerrequisitos anteriores y sin ciclos, cobertura, compatibilidad, referencias fijas, contratos prioritarios, modelo de árboles y plantillas nuevas.
 - `tests/python-install.test.ts`: doble transaccional para idempotencia, conservación y conflictos; no sustituye PostgreSQL real.
 - `tests/catalog-loading.test.ts`: revisiones por lenguaje sin ocultar otros metadatos ni compartir actividad entre cuentas.

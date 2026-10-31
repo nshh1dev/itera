@@ -6,7 +6,7 @@ import { editorialSchema, publicationMetadataSchema } from "../src/lib/editorial
 import { editorialTestsIssue } from "../src/lib/editorial-tests";
 import { prerequisiteIssue } from "../src/lib/curriculum";
 import type { Json } from "../src/lib/types";
-import { pythonMistakes, pythonCaseHelp } from "./python-help";
+import { pythonMistakes, pythonCaseHelp, pythonSharedCaseHelp } from "./python-help";
 
 function pythonOnly(content: VersionContent): VersionContent {
   return { ...content, variants: content.variants.filter(variant => variant.language === "python") };
@@ -188,6 +188,11 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
       content.variants[0].explanation = `${content.variants[0].explanation}\n\n${model} No uses v, izq o der en esta variante.`;
     }
   }
+  const exampleHelp = pythonSharedCaseHelp[slug];
+  if (exampleHelp) content.variants[0].tests = content.variants[0].tests.map(test => ({
+    ...test,
+    explanation: test.visible ? exampleHelp[test.order] ?? test.explanation : test.explanation,
+  }));
   // `Exercise.category` se persiste con un valor del catálogo compartido para no
   // romper el editor; la categoría visible de Python se proyecta en el catálogo.
   return { slug, category: existing?.category ?? "Fundamentos", content, baseline };

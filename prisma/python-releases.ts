@@ -14,4 +14,6 @@ export const knownPythonReleases: readonly string[] = [
   "49335ee4acfc5e699bd2bcdd1e3a793847daf7ea5500a80ad035a79f6ed74c5f",
   // Reordenación, contratos prioritarios y modelo de árboles (octubre de 2026).
   "e2cd539e00a8cacad4bc7d5619b3f9c7445d704d666928236d0e03ef1833c29e",
+  // Explicaciones de todos los ejemplos públicos del recorrido Python.
+  "158b71f24f4c58e7094e02005764008b2726c611a1e48cb7e24a145b9c13bcd0",
 ];
