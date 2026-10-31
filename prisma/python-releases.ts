@@ -54,4 +54,6 @@ export const knownPythonReleases: readonly string[] = [
   "e210c5aaa0da5d16f6fbca0f1da9e3691ddf8fda90783bf149d6a9aa00cd6d0c",
   // Décimo lote editorial: los 18 proyectos completan los 224 enunciados.
   "bcf406df5e6d37068e7e85c6f07f3e2cf17cf37964e27ff5b9b0d2abf3ee53a4",
+  // Vocabulario Python en descripciones, objetivos, restricciones y ayudas.
+  "64197867bfcd9bc043a55f704fdb41ed435e3971e312450e4bf81f973961dfc2",
 ];

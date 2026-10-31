@@ -440,6 +440,49 @@ vocabulario de ayudas y objetivos, ejemplos anteriores, repeticiones entre
 superficies, tiempos y textos de rutas/módulos. La base continúa sin preparar ni
 activar las revisiones.
 
+## Vocabulario de metadatos y ayudas: 22 revisiones
+
+`prisma/python-vocabulary.ts` proyecta revisiones explícitas sobre descripción,
+objetivo, restricciones, pistas, errores comunes y objetivos de práctica. No
+realiza sustituciones en código, enunciados, ejemplos ni salidas PROGRAM. Se
+aplica únicamente al catálogo Python, después de la revisión de enunciados.
+
+| Actividad | Campos y decisión |
+| --- | --- |
+| `logica-booleano` | Descripción: True en Python y true como texto exacto exigido, sin mezclar explicaciones de otros lenguajes. |
+| `logica-dos-parametros` | Objetivo: claves de diccionario en lugar de propiedades. |
+| `logica-perimetro` | Descripción: diccionario y perímetro explícitos. |
+| `logica-mayor-tres` | Descripción: diccionario y mayor de tres. |
+| `logica-alternativas` | Restricciones: claves y booleanos Python/JSON; objetivos: or y not. |
+| `logica-indices` | Última pista: append, no alternativa push de otro lenguaje. |
+| `logica-ficha-producto` | Pistas y objetivo: ficha como diccionario y consulta por clave. |
+| `logica-ausencia` | Restricciones, errores y objetivos: None frente a JSON; no descartar cero ni adelantar terminología de uniones de tipos. |
+| `logica-reasigna-o-muta` | Pista: reasignación del alias frente a append en la lista compartida. |
+| `logica-valido-cero-ausente` | Descripción: None frente a null en JSON y cero válido. |
+| `logica-mediciones` | Objetivo de práctica: diccionario de resumen con claves. |
+| `logica-carrito` | Descripción: items como lista de diccionarios y límites conservados. |
+| `logica-frecuencias` | Descripción: diccionario, sin alternar con objeto. |
+| `logica-ordena-insercion` | Descripción: lista en vez de arreglo. |
+| `logica-combina` | Descripción: dos listas y resultado ordenado. |
+| `logica-prefijos` | Descripción: lista de sumas. |
+| `logica-filas` | Descripción: lista de totales por fila. |
+| `logica-suma-recursiva` | Descripción: lista y recursión. |
+| `logica-une-intervalos` | Descripción: lista de intervalos. |
+| `logica-suma-maxima` | Descripción: lista y tramo contiguo no vacío. |
+| `logica-cuenta-nodos` | Descripción: árbol con diccionarios y None/null en JSON. |
+| `logica-mezcla` | Descripción: lista en vez de arreglo. |
+
+Las pruebas recorren esos seis campos en las 224 actividades: no admiten
+arreglo/subarreglo, push ni propiedad como terminología heredada; toda mención
+de null exige explicar None y JSON en el mismo texto. Se conserva «objeto» para
+identidad Python, el objeto map y objetos físicos de mochila. Estas reglas
+acotadas no certifican todo el vocabulario pedagógico ni revisan fragmentos de
+teoría o explicaciones de solución.
+
+Una huella previa conserva todos los campos ajenos al lote, incluidos los 224
+enunciados, variantes completas, proyectos, ejemplos, niveles, tiempos y orden.
+La revisión no activa contenido ni cambia las variantes de otros lenguajes.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
