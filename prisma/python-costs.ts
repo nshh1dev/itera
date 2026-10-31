@@ -1,6 +1,7 @@
 // Coste orientativo de la referencia, no de cualquier solución aceptada.
 // Vacío omite el apartado sin foco algorítmico. Máximo editorial: 200 caracteres.
 export const pythonCosts: Record<string, string> = {
+  "logica-distancias": "La referencia usa tiempo O(n + m) y memoria total O(n + m), incluyendo las conexiones. Los vectores y la cola solos ocupan O(n); n son nodos y m aristas.",
   "python-constante": "",
   "python-decimal": "",
   "python-condicional": "",

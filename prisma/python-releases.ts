@@ -32,4 +32,6 @@ export const knownPythonReleases: readonly string[] = [
   "b91fdc75b85b194b17b93eb57f9c504bbfadd71e304e983e167f6b307616147d",
   // Auditoría avanzada de combinatoria y programación dinámica; salida acotada.
   "7c89dd30c5f3b99da03d19766021debaa54de6a68c80460a4ff1b922d9c1c359",
+  // Cierre de la auditoría individual: grafos, recorridos y optimización.
+  "edbd51807108ca247f9b072cc3d815eccbaa77c44fe012b79c7e618e3ad0430a",
 ];

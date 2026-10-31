@@ -15,7 +15,9 @@ revisadas). Estos bloques suman **188 actividades**, incluido todo intermedio.
 Se añaden las primeras **12 avanzadas de estructuras y selección** (cinco
 mantenidas y siete revisadas). Otras **12 avanzadas de combinatoria y programación
 dinámica** (cuatro mantenidas y ocho revisadas) elevan el total a **212/224**.
-Quedan **12 avanzadas** por revisar individualmente.
+Las últimas **12 avanzadas de grafos y optimización** (tres mantenidas y nueve
+revisadas) completan **224/224 actividades** con decisión individual. Quedan
+abiertas la validación real del ejecutor, las limitaciones de no mutación y E/F.
 Se leyeron objetivo, enunciado, plantilla, referencia, pistas, casos y reglas
 conceptuales. Se mantienen modalidades, entradas, respuestas esperadas,
 visibilidad, reglas conceptuales e identidades; no se añaden casos por volumen.
@@ -476,11 +478,64 @@ se afirma validación real de tiempo, memoria, salida o aislamiento de Piston.
 | `logica-mochila` | **Aclarar dominio y añadir caso** de capacidad cero con dos objetos de peso cero. | Retornar cero antes de considerar objetos gratuitos. |
 | `logica-subsecuencia-comun` | **Añadir dos casos**: letras repetidas y orden inverso. | Contar la intersección de caracteres distintos. |
 
-## Límites y siguiente bloque
+## Avanzado: grafos, recorridos y optimización (12 actividades)
+
+Se revisaron objetivos, contratos, límites, plantillas completas, referencias,
+pistas, explicaciones y casos de las últimas doce actividades. Tres se mantienen
+y nueve se revisan. `tests/python-advanced-graphs-audit.test.ts` ejecuta **67
+casos** con doce referencias, doce plantillas ejecutables e incompletas y doce
+errores fijos. Ocho errores antes aceptados fallan con **ocho casos ocultos nuevos**,
+sin reemplazar casos históricos. Las referencias y plantillas conservan las
+entradas en estas comprobaciones; marcar visitas sobre una copia es compatible,
+pero el juez no certifica no mutación en programas arbitrarios.
+
+Se aclaran la numeración y los ciclos de alcanzables, la cuadrícula rectangular
+vacía de islas y la deduplicación de vecinos. El contrato de adyacencia ya pedía
+eliminar aristas duplicadas, pero las restricciones las prohibían: ahora se
+permiten explícitamente, incluso invertidas, sin bucles. Se acota a **4000 aristas**
+con hasta 1000 nodos para que el JSON de vecinos quepa en los 65536 bytes de salida
+configurados en Docker. El contrato anterior admitía grafos completos cuya
+salida no cabía. La prueba contrasta 4000 aristas con una salida independiente y
+comprueba el exceso anterior, sin elevar límites globales. La memoria total de
+distancias se corrige a O(n + m), incluyendo las conexiones, tanto en coste como
+en explicación. Solo cambian fuentes Python de revisiones nuevas.
+
+Las pruebas adicionales cubren los límites locales de 1000 nodos, ciclo dirigido
+y planificación de 100, Dijkstra de 200, islas 300×300, laberinto 200×200, edición
+de 200 caracteres y subsecuencia creciente de 500. Capacidad ensaya además una
+entrada representativa de 10000 paquetes, sin inventar un máximo que su contrato
+no declara. Se comprueban islas vacías, meta bloqueada, ciclo desconectado en
+dependencias y ciclo de duración cero en planificación.
+
+Los oráculos independientes enumeran órdenes topológicos de grafos de tres
+nodos, contrastan Dijkstra con Floyd-Warshall para los 64 grafos no dirigidos
+simples de cuatro nodos y enumeran particiones contiguas para capacidad y
+subsecuencias por índices para crecimiento estricto. Se preservan los casos
+previos y una prueba comprueba que las tablas de este documento contienen
+exactamente las 224 identidades, una vez cada una. Este inventario acompaña la
+revisión individual, no la sustituye ni acredita ejecución real en Piston.
+
+| Actividad | Decisión y fundamento | Error representativo detectado |
+| --- | --- | --- |
+| `logica-adyacencia` | **Aclarar, acotar y añadir caso** con duplicados invertidos; vecinos únicos, ordenados y aislados conservados. | Conservar vecinos duplicados en listas. |
+| `logica-alcanzables` | **Aclarar y añadir caso** de ciclo con nodo aislado; numeración y visita única. | Evitar solo volver al padre sin recordar visitas globales. |
+| `logica-distancias` | **Corregir coste/explicación y añadir caso** con dos caminos de distinta longitud. | Fijar la distancia del primer recorrido en profundidad. |
+| `logica-ciclo-dirigido` | Mantener: ciclo, descendiente compartido, vacío y lazo en otra componente; límite 100 local. | Tratar un nodo terminado como antecesor activo. |
+| `logica-dependencias` | **Añadir caso** donde se libera una tarea menor que otra ya disponible. | Usar FIFO en lugar del mínimo disponible en cada paso. |
+| `logica-dijkstra` | **Añadir caso** de arista escrita en sentido inverso; costes y desconexión ya cubiertos. | Interpretar las aristas como dirigidas. |
+| `logica-islas` | **Aclarar** rectangularidad, cuadrícula vacía y conservación de entrada; límites y vacíos locales. | Conectar también las diagonales. |
+| `logica-laberinto` | **Añadir caso** de pasillo que obliga a moverse a la izquierda y excede la distancia Manhattan. | Permitir solo derecha y abajo. |
+| `logica-capacidad` | Mantener: orden, capacidad al menos del paquete mayor y frontera; particiones independientes locales. | Devolver solo el máximo entre el peso mayor y la media redondeada. |
+| `logica-edicion` | **Añadir caso** donde borrar e insertar supera a sustituir posiciones alineadas. | Contar diferencias por posición y longitud. |
+| `logica-subsecuencia-creciente` | Mantener: estricta, no contigua, repetidos, vacío y orden descendente; enumeración independiente. | Contar todos los valores distintos. |
+| `logica-planifica-tareas` | **Añadir caso** de cadena de tres tareas, además de paralelismo, ciclos y cero. | Propagar solo la duración de una dependencia directa. |
+
+## Límites y siguientes fases
 
 - No se amplía AST, esquema, dependencias ni modalidades.
 - La ejecución local no verifica sandbox, serialización del ejecutor ni publicación.
 - La revisión de tiempos, teoría duplicada y ergonomía sigue abierta en E/F.
-- Continuar con las doce actividades avanzadas restantes, desde `logica-adyacencia`.
-  Registrar decisiones individuales y errores relevantes, no solo
-  recuentos de casos o cobertura de campos.
+- La auditoría individual de las 224 actividades está registrada; no equivale al
+  cierre de D2. Completar las garantías y límites del ejecutor real con autorización.
+- Continuar E/F: estructura editorial, vocabulario, explicaciones y ayudas,
+  tiempos, jerarquía visual y accesibilidad. No eliminar el plan antes del cierre.

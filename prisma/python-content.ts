@@ -52,6 +52,25 @@ const balancedTree = (depth: number, value = 1): Json => depth === 0 ? null : {
   right: balancedTree(depth - 1, value * 2 + 1),
 };
 const pythonOverrides: Record<string, PythonOverride> = {
+  "logica-adyacencia": {
+    statement: "Recibes n, entre 1 y 1000, y hasta 4000 aristas [a, b] de un grafo no dirigido. Los nodos se numeran de 0 a n - 1 y los extremos son válidos y distintos. Puede haber aristas repetidas, incluso escritas al revés. Devuelve una lista de longitud n con los vecinos distintos de cada nodo en orden numérico ascendente. Un nodo aislado tiene []. No modifiques la entrada.",
+    constraints: ["1 ≤ n ≤ 1000; hasta 4000 aristas válidas sin bucles. Se permiten aristas duplicadas, que no duplican vecinos en la salida."],
+    extraTests: [{ input: { n: 3, aristas: [[0, 1], [1, 0], [0, 1]] }, expected: [[1], [0], []], explanation: "Las tres aristas describen la misma conexión no dirigida. Cada vecino aparece una vez y el nodo 2 queda aislado." }],
+  },
+  "logica-alcanzables": {
+    statementNote: "Los nodos se numeran de 0 a n - 1. inicio y los extremos de las aristas son índices válidos. El grafo puede contener ciclos; cada nodo debe aparecer una sola vez en el resultado.",
+    extraTests: [{ input: { n: 4, aristas: [[0, 1], [1, 2], [2, 0]], inicio: 0 }, expected: [0, 1, 2], explanation: "El ciclo conecta 0, 1 y 2 sin duplicar visitas; el nodo aislado 3 no es alcanzable." }],
+  },
+  "logica-distancias": {
+    variant: { explanation: "La cola procesa los nodos por distancia creciente. Marca inicio con cero y cada vecino al descubrirlo, para no asignarle después un camino más largo. La referencia construye ambas direcciones de cada arista y usa un índice sobre la cola. Tiempo O(n + m) y memoria total O(n + m), incluyendo las conexiones; los vectores y la cola solos ocupan O(n). Los resultados no certifican que se haya usado una cola." },
+    extraTests: [{ input: { n: 5, aristas: [[0, 1], [1, 2], [2, 3], [0, 4], [4, 3]], inicio: 0 }, expected: [0, 1, 2, 2, 1], explanation: "Hasta 3 hay un camino de tres aristas por 1 y 2, pero el camino 0 → 4 → 3 usa dos. Debe conservarse la distancia mínima." }],
+  },
+  "logica-dependencias": { extraTests: [{ input: { n: 3, dependencies: [[0, 1]] }, expected: [0, 1, 2], explanation: "Tras completar 0 se libera 1 y debe elegirse antes que 2, aunque 2 ya estuviera disponible. El mínimo se decide en cada paso." }] },
+  "logica-dijkstra": { extraTests: [{ input: { n: 3, aristas: [[1, 0, 2], [1, 2, 3]], destino: 2 }, expected: 5, explanation: "La arista [1, 0, 2] también permite ir de 0 a 1, porque el grafo no es dirigido. El coste hasta 2 es 2 + 3." }] },
+  "logica-islas": { statementNote: "La cuadrícula es rectangular y sus valores son enteros 0 o 1. Puede no tener filas o tener filas vacías: en ambos casos devuelve 0. No modifiques la cuadrícula recibida; el agua y la tierra originales deben conservarse." },
+  "logica-laberinto": { extraTests: [{ input: [[0, 0, 0, 0, 0], [1, 1, 1, 1, 0], [0, 0, 0, 0, 0], [0, 1, 1, 1, 1], [0, 0, 0, 0, 0]], expected: 16, explanation: "El único pasillo obliga a ir derecha, abajo, izquierda, abajo y derecha. Son 4 + 2 + 4 + 2 + 4 = 16 movimientos; limitarse a derecha/abajo no llega." }] },
+  "logica-edicion": { extraTests: [{ input: { a: "abc", b: "bca" }, expected: 2, explanation: "Eliminar la a inicial e insertarla al final cuesta dos operaciones. Sustituir las tres posiciones costaría tres y no es mínimo." }] },
+  "logica-planifica-tareas": { extraTests: [{ input: { duraciones: [2, 3, 4], dependencias: [[0, 1], [1, 2]] }, expected: 9, explanation: "Las tres tareas forman una cadena: cada una espera a la anterior. El tiempo total es 2 + 3 + 4, no solo la pareja de mayor duración." }] },
   "logica-potencia": { extraTests: [{ input: { base: 3, exponente: 5 }, expected: 243, explanation: "3 elevado a 5 es 243; no se puede descartar el factor pendiente de un exponente impar." }] },
   "logica-subconjuntos": { extraTests: [{ input: [-1, 0, 2], expected: [[], [-1], [0], [-1, 0], [2], [-1, 2], [0, 2], [-1, 0, 2]], explanation: "Cada paso añade las copias con el nuevo elemento después de todos los subconjuntos anteriores; no se agrupan por longitud." }] },
   "logica-permutaciones": {
