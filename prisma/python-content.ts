@@ -52,6 +52,27 @@ const balancedTree = (depth: number, value = 1): Json => depth === 0 ? null : {
   right: balancedTree(depth - 1, value * 2 + 1),
 };
 const pythonOverrides: Record<string, PythonOverride> = {
+  "logica-potencia": { extraTests: [{ input: { base: 3, exponente: 5 }, expected: 243, explanation: "3 elevado a 5 es 243; no se puede descartar el factor pendiente de un exponente impar." }] },
+  "logica-subconjuntos": { extraTests: [{ input: [-1, 0, 2], expected: [[], [-1], [0], [-1, 0], [2], [-1, 2], [0, 2], [-1, 0, 2]], explanation: "Cada paso añade las copias con el nuevo elemento después de todos los subconjuntos anteriores; no se agrupan por longitud." }] },
+  "logica-permutaciones": {
+    statement: "Recibes hasta 6 enteros distintos entre -1000 y 1000, en orden ascendente. Devuelve todas sus permutaciones: cada una utiliza todos los elementos exactamente una vez. Ordena las permutaciones lexicográficamente por sus valores numéricos: compara el primer elemento diferente, no los números convertidos a texto. Por ejemplo, [2, 10] va antes de [10, 2]. Para una entrada vacía devuelve [[]].",
+    constraints: ["Hasta 6 enteros distintos entre -1000 y 1000. La salida completa debe caber en el límite del ejecutor."],
+    extraTests: [{ input: [-1, 2, 10], expected: [[-1, 2, 10], [-1, 10, 2], [2, -1, 10], [2, 10, -1], [10, -1, 2], [10, 2, -1]], explanation: "El orden es numérico: primero las permutaciones que empiezan por -1, luego por 2 y finalmente por 10; no se comparan textos." }],
+  },
+  "logica-combinaciones": {
+    statementNote: "El orden lexicográfico compara los valores numéricos del primer elemento diferente, no su representación como texto. numbers puede estar vacío y no necesita venir ordenado.",
+    extraTests: [{ input: { numbers: [12, 10, 2], target: 12 }, expected: [[2, 10], [12]], explanation: "2 + 10 y 12 alcanzan el objetivo; [2, 10] precede a [12] por comparar 2 con 12 numéricamente." }],
+  },
+  "logica-escalera": { statementNote: "El orden de los pasos distingue formas: para tres escalones, [1, 2] y [2, 1] son formas diferentes, además de [1, 1, 1]. n es un entero entre 0 y 45." },
+  "logica-monedas": { statementNote: "coins puede estar vacío y sus denominaciones son enteros positivos. amount es un entero entre 0 y 1000. Para amount igual a cero devuelve 0 incluso sin denominaciones; sin monedas y con importe positivo devuelve -1. Se minimiza la cantidad de monedas, no se cuenta el número de combinaciones." },
+  "logica-mochila": {
+    statementNote: "pesos y valores son listas de enteros no negativos de la misma longitud, hasta 200 objetos. capacidad es un entero entre 0 y 1000. Un objeto de peso cero también puede elegirse, pero solo una vez. Puedes no elegir ninguno; no es necesario llenar exactamente la capacidad. No modifiques las listas recibidas.",
+    extraTests: [{ input: { pesos: [0, 0, 2], valores: [4, 3, 10], capacidad: 0 }, expected: 7, explanation: "Con capacidad cero caben los dos objetos de peso cero, una vez cada uno: 4 + 3 = 7. El objeto de peso 2 no cabe." }],
+  },
+  "logica-subsecuencia-comun": { extraTests: [
+    { input: { a: "aaa", b: "aa" }, expected: 2, explanation: "Se pueden emparejar dos apariciones de a en orden; contar solo letras distintas daría uno." },
+    { input: { a: "ab", b: "ba" }, expected: 1, explanation: "Los textos comparten a y b, pero en orden contrario: una subsecuencia común no puede contener ambos." },
+  ] },
   "logica-cuenta-nodos": { extraTests: [{ input: { value: 0, left: { value: 0, left: null, right: null }, right: { value: 0, left: null, right: null } }, expected: 3, explanation: "Los tres nodos cuentan aunque todos guarden el mismo valor cero; no se cuentan valores distintos." }] },
   "logica-k-mayores": { extraTests: [{ input: { numbers: [-2, 0, -2, 5], k: 4 }, expected: [5, 0, -2, -2], explanation: "Si k es la longitud, se devuelven todos los elementos ordenados, incluidas las repeticiones y los negativos." }] },
   "logica-actividades": {

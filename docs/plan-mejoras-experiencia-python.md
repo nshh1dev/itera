@@ -224,6 +224,10 @@ Archivos principales: `src/lib/python-curriculum.ts`, `src/lib/language-curricul
 
 **Verificación del subbloque avanzado de estructuras:** lint, tipos, 403 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Se conserva la huella anterior y se registra la nueva. No se iniciaron servicios ni se modificó la base. Piston real, E2E, revisión visual y activación siguen pendientes de autorización; las pruebas locales no los sustituyen.
 
+**Avanzado, combinatoria y programación dinámica D2:** se auditan otras doce actividades: cuatro mantenidas y ocho revisadas, con decisiones individuales en [auditoria-python.md](auditoria-python.md). Siete casos ocultos distinguen exponente impar, orden de subconjuntos, orden numérico de permutaciones/combinaciones, objetos gratuitos y multiplicidad/orden de subsecuencias. Se aclaran monedas, escalera y mochila. El contrato Python de permutaciones baja de ocho a seis elementos entre −1000 y 1000: la salida anterior supera los límites existentes de Docker y del adaptador; no se elevan límites globales ni se tocan otras variantes. Se comprueban 68 casos y límites locales con oráculos independientes. Van 212/224 actividades; quedan doce avanzadas desde `logica-adyacencia`. D2 y validación real siguen abiertas; sin activación ni cambios en la base.
+
+**Verificación del subbloque de combinatoria y DP:** lint, tipos, 405 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Una ejecución focalizada detectó un escape incorrecto de salto de línea en el nuevo comprobador de serialización; se corrigió antes de ejecutar la suite completa. Se conserva la huella anterior y se registra la nueva. Sin servicios ni escrituras en la base; Piston real, E2E, revisión visual y activación continúan pendientes de autorización.
+
 ## 7. Fase E — Claridad editorial y ayudas
 
 - [ ] Reescribir las revisiones Python con estructura consistente: tarea, entrada, resultado, reglas relevantes y ejemplos. Mantener el reto separado de la receta de resolución.

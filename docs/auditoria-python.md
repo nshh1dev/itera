@@ -13,8 +13,9 @@ También se revisaron **26 intermedias de proyectos y registros** (18 mantenidas
 8 revisadas) y las últimas **29 intermedias de algoritmos** (21 mantenidas y ocho
 revisadas). Estos bloques suman **188 actividades**, incluido todo intermedio.
 Se añaden las primeras **12 avanzadas de estructuras y selección** (cinco
-mantenidas y siete revisadas): **200/224 actividades** auditadas. Quedan
-**24 avanzadas** por revisar individualmente.
+mantenidas y siete revisadas). Otras **12 avanzadas de combinatoria y programación
+dinámica** (cuatro mantenidas y ocho revisadas) elevan el total a **212/224**.
+Quedan **12 avanzadas** por revisar individualmente.
 Se leyeron objetivo, enunciado, plantilla, referencia, pistas, casos y reglas
 conceptuales. Se mantienen modalidades, entradas, respuestas esperadas,
 visibilidad, reglas conceptuales e identidades; no se añaden casos por volumen.
@@ -419,11 +420,67 @@ memoria/tiempo ni serialización del sandbox. No se inician servicios.
 | `logica-actividades` | **Aclarar y añadir caso** de horarios negativos; contacto compatible y entrada conservada. | Inicializar último fin en cero. |
 | `logica-combina-archivos` | Mantener: vacío, único, cero y reinserción de tamaños combinados. | Contar solo una vez la suma inicial. |
 
+## Avanzado: divide y vencerás, combinatoria y programación dinámica (12 actividades)
+
+Se revisaron objetivos, contratos, límites, referencias completas, plantillas,
+pistas, explicaciones y casos de las doce actividades siguientes, desde potencia
+hasta subsecuencia común. Cuatro se mantienen y ocho se revisan.
+`tests/python-advanced-dynamic-audit.test.ts` ejecuta **68 casos** con doce
+referencias, plantillas incompletas y errores educativos fijos. Las referencias
+y plantillas conservan la entrada en estas comprobaciones; esto no añade una
+garantía general de no mutación al juez.
+
+Se conservan los casos históricos y se añaden **siete casos ocultos**. Seis
+errores fijos pasaban todos los casos anteriores y ahora fallan: descartar el
+factor impar en potencia, agrupar subconjuntos por longitud, ordenar
+permutaciones/combinaciones como textos, devolver cero para toda mochila con
+capacidad cero y contar letras distintas en vez de subsecuencias. En esta última
+se separan dos motivos: multiplicidad y orden. Monedas aclara importe cero sin
+denominaciones; escalera distingue secuencias de pasos de combinaciones sin orden.
+Mochila explicita longitudes iguales, pesos/valores enteros no negativos,
+capacidad entre 0 y 1000 y que cada objeto de peso cero se usa como máximo una vez.
+
+**Límite de salida de permutaciones:** el contrato Python anterior permitía ocho
+elementos, cuya salida de 40320 permutaciones de 0 a 7 supera incluso los 262144
+caracteres que acepta el adaptador (`src/server/execution/piston.ts`), además de
+los 65536 bytes configurados en `docker/compose.yaml`. Se reduce solo la revisión
+Python a **seis enteros distintos entre −1000 y 1000**: sus 720 permutaciones,
+serializadas con el formato del conductor Python, caben holgadamente en 65536
+bytes. Se comprueba el caso de valores de mayor anchura permitida y el exceso
+anterior. No se eleva ningún límite global; JavaScript/TypeScript y versiones
+históricas no cambian. Esta evidencia estática no sustituye la prueba en Piston.
+
+Las pruebas editoriales adicionales usan máscaras para subconjuntos,
+`itertools` para permutaciones/combinaciones y enumeración de subsecuencias de
+todos los textos binarios de longitud hasta cuatro para contrastar la DP de LCS.
+Se comprueban límites locales: mezcla de 10000 elementos, 1024 subconjuntos,
+720 permutaciones, 15 candidatos de combinaciones, los ocho tamaños de reinas,
+Fibonacci 40, escalera 45, tablero libre 15×15, importe 1000, mochila de 200
+objetos/capacidad 1000 y dos textos de 500 caracteres. Las respuestas se redactan
+independientemente o se derivan de enumeraciones distintas de la referencia.
+No se ejecuta código de alumnos, no se mide complejidad de sus programas y no
+se afirma validación real de tiempo, memoria, salida o aislamiento de Piston.
+
+| Actividad | Decisión y fundamento | Error representativo detectado |
+| --- | --- | --- |
+| `logica-potencia` | **Añadir caso** con base distinta de uno y exponente impar positivo. | Truncar el exponente al par anterior. |
+| `logica-mezcla` | Mantener: vacío, negativos, duplicados y longitud impar; 10000 local. | Ordenar un conjunto y perder repeticiones. |
+| `logica-subconjuntos` | **Añadir caso** de tres elementos con cero y negativo para fijar el orden por duplicación. | Agrupar resultados por longitud. |
+| `logica-permutaciones` | **Acotar contrato y añadir caso** de orden numérico con negativo y dos cifras; seis elementos para respetar la salida. | Ordenar representaciones textuales. |
+| `logica-combinaciones` | **Aclarar y añadir caso** de comparación numérica de listas; candidatos desordenados y sin reutilización. | Ordenar combinaciones por su texto. |
+| `logica-reinas` | Mantener: sin solución, simetrías distintas y límite ocho; recuentos conocidos para todos los tamaños. | Ignorar diagonales y contar todas las permutaciones de columnas. |
+| `logica-fibonacci` | Mantener: F(0), F(1), crecimiento y límite 40. La memoria interna no queda certificada por JSON. | Desplazar la secuencia a F(n+1). |
+| `logica-escalera` | **Aclarar** que el orden de los pasos distingue formas y conservar bases; límite 45 local. | Devolver F(n) en vez de F(n+1). |
+| `logica-caminos-obstaculos` | Mantener: inicio/meta bloqueados, una celda y obstáculo interior; filas/columnas cortadas y 15×15 local. | Contar como si no hubiera obstáculos interiores. |
+| `logica-monedas` | **Aclarar** lista vacía, importe cero y objetivo de mínimo, no número de combinaciones. | Elegir siempre la moneda mayor. |
+| `logica-mochila` | **Aclarar dominio y añadir caso** de capacidad cero con dos objetos de peso cero. | Retornar cero antes de considerar objetos gratuitos. |
+| `logica-subsecuencia-comun` | **Añadir dos casos**: letras repetidas y orden inverso. | Contar la intersección de caracteres distintos. |
+
 ## Límites y siguiente bloque
 
 - No se amplía AST, esquema, dependencias ni modalidades.
 - La ejecución local no verifica sandbox, serialización del ejecutor ni publicación.
 - La revisión de tiempos, teoría duplicada y ergonomía sigue abierta en E/F.
-- Continuar con las 24 actividades avanzadas restantes, desde `logica-potencia`.
+- Continuar con las doce actividades avanzadas restantes, desde `logica-adyacencia`.
   Registrar decisiones individuales y errores relevantes, no solo
   recuentos de casos o cobertura de campos.

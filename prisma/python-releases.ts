@@ -30,4 +30,6 @@ export const knownPythonReleases: readonly string[] = [
   "314b074743f5fac57aeb6ebd979893d93d2b542ba814345a6416044e9ce93d7d",
   // Auditoría avanzada de árboles, montículos y selección voraz.
   "b91fdc75b85b194b17b93eb57f9c504bbfadd71e304e983e167f6b307616147d",
+  // Auditoría avanzada de combinatoria y programación dinámica; salida acotada.
+  "7c89dd30c5f3b99da03d19766021debaa54de6a68c80460a4ff1b922d9c1c359",
 ];
