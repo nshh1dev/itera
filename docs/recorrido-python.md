@@ -129,6 +129,12 @@ En Docker, respaldar con `npm run docker:backup` y ejecutar `node scripts/docker
 
 ## Verificación y límites
 
+### Coste orientativo
+
+`prisma/python-costs.ts` decide explícitamente el coste o su omisión para las 48 actividades exclusivas y 18 actividades compartidas de proyectos, módulos y archivos. Hay 53 notas concretas y 13 omisiones; se eliminan las dos fórmulas genéricas anteriores sin cambiar las fuentes JavaScript/TypeScript. El resto conserva su coste previo.
+
+Las notas describen la referencia, no cualquier solución aceptada: distinguen recorridos, copias, memoria auxiliar y salida, caracteres comparados, operaciones hash de coste esperado y lectura/escritura completa. Mantienen el límite editorial de 200 caracteres. Las pruebas comprueban cobertura, límites y conservación de fuentes; no miden código del alumno ni certifican su complejidad.
+
 ### Explicaciones de ejemplos públicos
 
 `pythonSharedCaseHelp`, en `prisma/python-help.ts`, contiene explicaciones editoriales para las revisiones Python de actividades compartidas. Se aplican por slug y orden del caso, solo a ejemplos visibles, sin modificar entradas, respuestas, visibilidad ni explicaciones de casos ocultos. Las fuentes y variantes de JavaScript/TypeScript permanecen intactas. Una prueba comprueba la correspondencia entre órdenes y ayudas y exige cobertura del bloque revisado; las explicaciones no se generan ejecutando soluciones.

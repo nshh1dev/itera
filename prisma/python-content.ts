@@ -7,6 +7,7 @@ import { editorialTestsIssue } from "../src/lib/editorial-tests";
 import { prerequisiteIssue } from "../src/lib/curriculum";
 import type { Json } from "../src/lib/types";
 import { pythonMistakes, pythonCaseHelp, pythonSharedCaseHelp } from "./python-help";
+import { pythonCosts } from "./python-costs";
 
 function pythonOnly(content: VersionContent): VersionContent {
   return { ...content, variants: content.variants.filter(variant => variant.language === "python") };
@@ -128,6 +129,7 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
   if (addition) {
     const key = slug.replace(/^python-/, "");
     if (!pythonMistakes[key] || !pythonCaseHelp[key]) throw new Error(`${slug}: falta ayuda editorial específica.`);
+    if (!(slug in pythonCosts)) throw new Error(`${slug}: falta decidir el coste orientativo o su omisión.`);
     const projection = pythonStepMetadata(slug);
     if (!projection) throw new Error(`${slug}: falta proyección Python.`);
     const metadata = {
@@ -136,7 +138,7 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
       level: unit.level, minutes: projection.minutes,
       prerequisites: ["Las prácticas anteriores de este bloque y los conceptos ya presentados en la ruta de Python."],
       practiceGoals: [addition.objective], prerequisiteSlugs: [], activityType: projection.activityType,
-      runtimeMode: addition.runtimeMode, conceptRule: "", complexity: unit.level === "INITIATION" ? "" : "Explica cuántos datos recorres y qué contenedores nuevos construyes; el resultado no certifica una complejidad concreta.",
+      runtimeMode: addition.runtimeMode, conceptRule: "", complexity: "",
       commonErrors: pythonMistakes[key],
       hints: addition.hints, constraints: ["Listas y diccionarios de hasta 100 elementos por nivel, salvo límites más específicos del enunciado.", "Las pruebas oficiales comprueban el resultado; no certifican la técnica interna empleada."],
     };
@@ -188,6 +190,7 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
       content.variants[0].explanation = `${content.variants[0].explanation}\n\n${model} No uses v, izq o der en esta variante.`;
     }
   }
+  if (slug in pythonCosts) content.complexity = pythonCosts[slug];
   const exampleHelp = pythonSharedCaseHelp[slug];
   if (exampleHelp) content.variants[0].tests = content.variants[0].tests.map(test => ({
     ...test,

@@ -16,4 +16,6 @@ export const knownPythonReleases: readonly string[] = [
   "e2cd539e00a8cacad4bc7d5619b3f9c7445d704d666928236d0e03ef1833c29e",
   // Explicaciones de todos los ejemplos públicos del recorrido Python.
   "158b71f24f4c58e7094e02005764008b2726c611a1e48cb7e24a145b9c13bcd0",
+  // Coste concreto u omisión explícita en actividades propias y proyectos Python.
+  "0aadf92e9a9d76acc7ccb74e749b8444720b4ac17458bb212cc4a34d0897e4e5",
 ];

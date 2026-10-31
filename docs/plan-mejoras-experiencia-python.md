@@ -208,7 +208,7 @@ Archivos principales: `src/lib/python-curriculum.ts`, `src/lib/language-curricul
 - [x] Añadir explicación a todos los ejemplos públicos que carezcan de ella, priorizando primero inicio y estructuras complejas. Cada explicación debe justificar la salida, no repetirla con otras palabras.
 - [ ] Revisar los ejemplos ya explicados: coherencia con la variante, límites, secuencia y vocabulario aprendido.
 - [ ] Reducir repetición entre objetivo, teoría local, teoría del módulo, condiciones y solución. Mantener pistas escalonadas y trasladar allí las soluciones anticipadas de retos independientes.
-- [ ] Sustituir el texto genérico de Coste por una explicación concreta de la estrategia cuando aporte valor; omitirlo en actividades donde solo añada ruido. No atribuir esa complejidad a cualquier solución aceptada.
+- [x] Sustituir el texto genérico de Coste por una explicación concreta de la estrategia cuando aporte valor; omitirlo en actividades donde solo añada ruido. No atribuir esa complejidad a cualquier solución aceptada.
 - [ ] Revisar minutos orientativos por actividad y hacerlos coherentes con la cantidad de trabajo, especialmente proyectos frente a ejercicios de una operación.
 - [ ] Revisar títulos y descripciones de rutas/módulos para reflejar el recorrido Python actualizado sin cambiar los textos educativos de otros lenguajes.
 
@@ -219,6 +219,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 **Lote de ejemplos:** los 433 ejemplos públicos de las 224 actividades tienen explicación editorial (antes faltaban 278 ejemplos en 153 actividades). Se empezó por las 32 actividades de iniciación y las 12 de árboles/matrices, y se completaron después los otros bloques. Las ayudas justifican operaciones, límites, recorridos, índices, estados iniciales, normalización y conservación de copias. Los booleanos distinguen `True`/`False` de la representación exigida en la salida. Las ayudas se proyectan solo sobre Python, conservando entradas, respuestas, orden, visibilidad y ayudas ocultas. Se redactaron a partir de los contratos, recursos y casos, no ejecutando las referencias para generar respuestas. La prueba exige cero ejemplos públicos sin ayuda y correspondencia por orden; no certifica por sí sola la calidad pedagógica de cada explicación. El resto de E sigue pendiente.
 
 **Verificación del lote de ejemplos:** lint, tipos, 387 pruebas sin omisiones, build y `content:python` sin conexión aprobados sobre la entrega completa. Se conserva la huella del lote anterior y se registra la nueva. Los avisos esperados de Better Auth no son fallos nuevos. No se ejecutó E2E, revisión visual ni Piston real por falta de autorización de arranque; no se modificó la base ni se activó el catálogo.
+
+**Lote de Coste:** se sustituyen los textos genéricos de las 48 actividades exclusivas y 18 compartidas de proyectos/módulos/archivos por 53 notas concretas y 13 omisiones explícitas. Se distingue la referencia de cualquier solución aceptada, incluidos textos, copias, listas materializadas y persistencia completa. Cada nota respeta los 200 caracteres del contrato editorial; no se amplían límites ni se mide código enviado. El resto de los costes conserva su contenido anterior. Este lote no cierra la auditoría D2 ni el resto de E.
+
+**Verificación del lote de Coste:** lint, tipos, 389 pruebas sin omisiones, build y `content:python` sin conexión aprobados. La validación inicial detectó notas mayores de 200 caracteres; se acortaron sin cambiar el límite. Se conserva la huella anterior y se registra la revisión nueva. No se ejecutaron E2E, revisión visual ni Piston real: requieren autorización de arranque. No se iniciaron servicios ni se modificó o activó la base.
 
 ## 8. Fase F — Jerarquía visual y ergonomía
 
