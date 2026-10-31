@@ -10,7 +10,9 @@ Bloques revisados: **32 actividades de iniciación** (25 mantenidas y 7 con
 aclaraciones), **74 de principiante** (59 mantenidas y 15 revisadas) y las primeras
 **27 intermedias**, de colecciones (19 mantenidas y 8 revisadas).
 También se revisaron **26 intermedias de proyectos y registros** (18 mantenidas y
-8 revisadas). Quedan **65 actividades** por auditar: 29 intermedias y 36 avanzadas.
+8 revisadas) y las últimas **29 intermedias de algoritmos** (21 mantenidas y ocho
+revisadas). Están revisadas **188/224 actividades**, incluido todo intermedio.
+Quedan **36 avanzadas** por auditar individualmente.
 Se leyeron objetivo, enunciado, plantilla, referencia, pistas, casos y reglas
 conceptuales. Se mantienen modalidades, entradas, respuestas esperadas,
 visibilidad, reglas conceptuales e identidades; no se añaden casos por volumen.
@@ -302,11 +304,78 @@ envíos, escritura atómica ni recuperación ante cortes de alimentación.
 | `python-transforma-campo` | Mantener: campo seleccionado, campos ajenos y clave ausente. | Transformar todos los campos. |
 | `python-transforma-registros` | **Añadir caso** de decimal inválido, campo ajeno y registro válido posterior. | Pasar por float y truncar antes de devolver el entero. |
 
+## Intermedio: búsquedas, ventanas, matrices y recursión (29 actividades)
+
+Se revisaron los objetivos, contratos, límites, plantillas completas, referencias,
+pistas y explicaciones de las últimas 29 actividades intermedias. Se mantienen
+21 y se revisan ocho. `tests/python-intermediate-algorithms-audit.test.ts` ejecuta
+**145 casos**, con referencias, plantillas y 29 errores fijos independientes.
+Las referencias y plantillas no modifican la entrada en esas comprobaciones;
+el error de copia superficial sí la modifica y altera el original devuelto.
+Esto no impide que otro programa mute y restaure o construya una instantánea:
+el juez sigue observando resultados, no identidad de objetos ni técnica.
+
+Se conservan todos los casos anteriores y se añaden **seis casos ocultos**.
+Cinco errores fijos pasaban todos los casos previos y ahora fallan: eliminar
+signos al comprobar un palíndromo, elegir la última pareja válida, omitir filas
+vacías intercaladas, comparar solo ventanas extremas y devolver uno para una
+ventana variable sin elementos. En parejas se explicita el criterio que ya
+implementaba la referencia: menor i y, para ese i, mayor j. Dos casos nuevos
+cubren ambos criterios, también con duplicados. Una enumeración
+independiente sobre todas las listas ordenadas de longitud 0–5 con valores de
+−2 a 2 y objetivos de −4 a 4 comprueba ese desempate, incluidos duplicados.
+
+Las pruebas editoriales adicionales ejercitan límites declarados con respuestas
+independientes: suma recursiva de 900 unos, búsquedas con 10000/1000 elementos,
+inserción de 1000 enteros invertidos, ventanas de 100000, mezcla de dos listas
+de 5000 y matriz de vecinos de 20×20. Un prefijo de enteros grandes detecta la
+pérdida de precisión por float. No son nuevos casos publicados ni mediciones de
+complejidad: solo referencias locales fijas. Sigue pendiente repetir los límites
+pertinentes en Piston real, especialmente pila, memoria y serialización.
+
+La estabilidad de registros idénticos por nombre/puntos no se puede distinguir
+por JSON si no hay otro campo que los identifique; no se inventa un campo nuevo
+ni se presenta como certificada. Inserción corrige la afirmación demasiado amplia
+de O(n) con datos «casi ordenados». Suma recursiva explicita memoria cuadrática de
+los tramos retenidos y deja de prometer que 900 elementos nunca agotan la pila.
+
+| Actividad | Decisión y fundamento | Error representativo detectado |
+| --- | --- | --- |
+| `logica-busqueda-binaria` | Mantener: diez casos cubren vacío, único, extremos, ausencia e intervalo par; límite local de 10000. | Devolver valor en lugar de índice. |
+| `logica-insercion-posicion` | Mantener: duplicados, vacío e inserción en ambos extremos. | Buscar después de los iguales. |
+| `logica-ordena-insercion` | **Corregir explicación** del mejor caso; referencia copia, conserva duplicados y ordena 1000 invertidos localmente. | Eliminar duplicados al ordenar. |
+| `logica-ordena-registros` | Mantener: criterio secundario ascendente independiente del principal; estabilidad interna no certificada. | Invertir también los nombres. |
+| `logica-combina` | Mantener: ambas listas pueden agotarse antes, duplicados y negativos; límite local de 5000 por lista. | Convertir la mezcla en un conjunto. |
+| `logica-palindromo` | **Añadir caso** que distingue limpieza de signos de comparación literal. | Eliminar signos antes de comparar. |
+| `logica-pareja` | **Aclarar desempate y añadir dos casos** con varias parejas y duplicados; posiciones distintas y entrada conservada. | Devolver la última pareja válida. |
+| `logica-prefijos` | **Corregir restricción** de doble precisión heredada; Python mantiene enteros exactos. | Omitir el prefijo vacío inicial. |
+| `logica-intervalos-suma` | Mantener: consultas inclusivas, singleton, negativos y orden de consultas. | Excluir el extremo final. |
+| `logica-ventana-fija` | **Añadir caso** con máximo interior distinto de ambas ventanas extremas. | Comparar solo primera y última ventana. |
+| `logica-ventana-suma` | **Aclarar y añadir caso** vacío; objetivo positivo y suma al menos igual. | Devolver longitud uno para entrada vacía. |
+| `logica-celda` | Mantener: orden de índices, filas/columnas únicas y negativos. | Consultar siempre la primera celda. |
+| `logica-filas` | **Añadir caso** de filas vacías intercaladas con otras no vacías. | Omitir las filas vacías salvo cuando todas lo están. |
+| `logica-columnas` | Mantener: rectangular en ambas orientaciones, vacía y cancelación. | Sumar filas en vez de columnas. |
+| `logica-diagonales` | Mantener: tamaño par, impar y uno, centro en ambas salidas. | Invertir la principal para obtener la secundaria. |
+| `logica-transpuesta` | Mantener: rectangular, cuadrada, una fila y una columna. | Copiar la matriz sin intercambiar ejes. |
+| `logica-vecinos` | Mantener: límites, solo ortogonales, celda única y fila única; 20×20 local. | Contar también diagonales. |
+| `logica-copia-anidada` | Mantener: original observable, cambio real y filas independientes. | Copiar solo el contenedor exterior. |
+| `logica-pila` | Mantener: LIFO, extracciones vacías y elementos no extraídos. | Extraer por el principio. |
+| `logica-cola` | Mantener: FIFO y operaciones intercaladas. No se exige deque. | Extraer por el final. |
+| `logica-delimitadores` | Mantener: cierre cruzado, sin apertura, aperturas pendientes y vacío. | Comparar solo cantidades de aperturas/cierres. |
+| `logica-deshacer` | Mantener: cero, negativos, varios deshacer e historial agotado. | Restar repetidamente el último incremento sin pila. |
+| `logica-suma-recursiva` | **Corregir explicación y restricción**: memoria de tramos y límite no garantizado en todo entorno; 900 local. | Sumar valores absolutos. |
+| `logica-busqueda-recursiva` | Mantener: intervalo vacío, retorno propagado y posición original; 1000 local. | Devolver el índice local de una rebanada. |
+| `logica-une-intervalos` | Mantener: contacto exacto, inclusión, desorden, vacío y punto. | Fusionar solo solapamientos estrictos. |
+| `logica-segundo-maximo` | Mantener: distinto, máximo repetido, ausencia, cero y negativos. | Tomar el segundo elemento sin eliminar repeticiones. |
+| `logica-suma-maxima` | Mantener: subarreglo no vacío, todos negativos y reinicio interior. | Permitir suma cero del subarreglo vacío. |
+| `logica-sin-repeticiones` | Mantener: contigüidad, vacío y límite izquierdo que no retrocede en abba. | Contar todos los caracteres distintos del texto. |
+| `logica-ranking` | Mantener: frecuencia descendente, desempate ascendente y negativos. | Invertir el desempate numérico. |
+
 ## Límites y siguiente bloque
 
 - No se amplía AST, esquema, dependencias ni modalidades.
 - La ejecución local no verifica sandbox, serialización del ejecutor ni publicación.
 - La revisión de tiempos, teoría duplicada y ergonomía sigue abierta en E/F.
-- Continuar con las 29 actividades intermedias restantes y 36 avanzadas.
+- Continuar con las 36 actividades avanzadas.
   Registrar decisiones individuales y errores relevantes, no solo
   recuentos de casos o cobertura de campos.

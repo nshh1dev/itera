@@ -52,6 +52,23 @@ const balancedTree = (depth: number, value = 1): Json => depth === 0 ? null : {
   right: balancedTree(depth - 1, value * 2 + 1),
 };
 const pythonOverrides: Record<string, PythonOverride> = {
+  "logica-palindromo": { extraTests: [{ input: "a!a?", expected: false, explanation: "Los signos también cuentan: a y ? son distintos en los extremos; no se limpia el texto." }] },
+  "logica-pareja": {
+    statementNote: "Los índices empiezan en cero. Si hay varias parejas válidas, devuelve la de menor índice i; para ese i, elige el mayor índice j válido. Son dos posiciones distintas, aunque sus valores puedan coincidir. No modifiques la entrada.",
+    extraTests: [
+      { input: { numbers: [1, 2, 3, 4], target: 5 }, expected: [0, 3], explanation: "Son válidas [0, 3] y [1, 2]; se elige [0, 3] por tener el menor primer índice." },
+      { input: { numbers: [1, 1, 2, 2], target: 3 }, expected: [0, 3], explanation: "El menor i válido es 0; entre j = 2 y j = 3 se elige 3, el mayor índice válido." },
+    ],
+  },
+  "logica-filas": { extraTests: [{ input: [[2], [], [-3, 1], []], expected: [2, 0, -2, 0], explanation: "Cada fila conserva su posición: las vacías intercaladas aportan cero, no desaparecen." }] },
+  "logica-ventana-fija": { extraTests: [{ input: { numbers: [1, 9, 8, 0], k: 2 }, expected: 17, explanation: "Las sumas son 10, 17 y 8; el máximo es la ventana interior [9, 8], no una de los extremos." }] },
+  "logica-ventana-suma": {
+    statementNote: "target es un entero positivo. numbers puede estar vacío: en ese caso devuelve 0. Alcanzar significa sumar al menos target, no necesariamente igualarlo.",
+    extraTests: [{ input: { numbers: [], target: 1 }, expected: 0, explanation: "Sin elementos no hay un tramo que alcance el objetivo positivo." }],
+  },
+  "logica-prefijos": { constraints: ["Hasta 10000 enteros. Python conserva las sumas como enteros, sin convertir a float."] },
+  "logica-ordena-insercion": { variant: { explanation: "La referencia copia la entrada, conserva el valor actual, desplaza los mayores y lo coloca en el hueco. El tramo inicial queda ordenado tras cada vuelta. Tiempo O(n²) en el peor caso y O(n) si la entrada ya está ordenada; no se garantiza O(n) para cualquier lista descrita como casi ordenada. Espacio O(n) para la copia. Los casos comprueban el resultado, no que el alumno haya usado inserción ni esa complejidad." } },
+  "logica-suma-recursiva": { constraints: ["Hasta 900 enteros."], variant: { explanation: "La lista vacía aporta cero; cada llamada suma el primer valor y delega el resto. La referencia reduce la lista hasta el caso base. Los tramos valores[1:] crean copias: tiempo y memoria simultánea O(n²), además de profundidad O(n). Pasar índices evitaría esas copias. Python limita la profundidad de llamadas: esta técnica no se generaliza a listas arbitrariamente largas. Los tests de salida no certifican el uso de recursión." } },
   "logica-valida-json": {
     statement: "Recibes un diccionario con documento (valido, negativo, texto, ausente, nulo o booleano) y cantidad entera. Abre documento + '.json'. Todos los recursos contienen JSON sintácticamente válido. Devuelve 'configuracion invalida' si el contenido no es un diccionario con limite entero no negativo; un booleano no es un límite válido, aunque bool sea una subclase de int en Python. Si la configuración es válida, devuelve 'aceptada' para 0 <= cantidad <= limite y 'rechazada' en otro caso.\n\nCompleta solve(data) en main.py y devuelve el texto con return. Conserva los recursos de solo lectura y los nombres de archivo preparados; ausente.json existe, pero no contiene la clave limite. No necesitas input(). Lee y analiza el recurso, no decidas solo por su nombre. Cada caso empieza con sus recursos originales.",
     extraResources: [{ path: "booleano.json", content: '{"limite":true}', readOnly: true }],
