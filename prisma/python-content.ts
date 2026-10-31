@@ -51,6 +51,38 @@ const balancedTree = (depth: number, value = 1): Json => depth === 0 ? null : {
   right: balancedTree(depth - 1, value * 2 + 1),
 };
 const pythonOverrides: Record<string, PythonOverride> = {
+  "logica-repetido": {
+    statement: "Recibes una lista de hasta 1000 enteros. Devuelve True si algún valor aparece más de una vez y False en otro caso. La lista vacía no tiene repeticiones. True y False son booleanos de Python; en JSON se muestran como true y false, sin comillas.",
+  },
+  "logica-frecuencias": {
+    objective: "Acumular frecuencias usando cada carácter como clave de un diccionario.",
+    statement: "Recibes un texto de entre 0 y 1000 letras de a a z. Devuelve un diccionario que asocie cada letra presente con su cantidad de apariciones. El orden de las claves no importa. Para el texto vacío devuelve {}. La plantilla prepara el diccionario: completa el recorrido y la actualización de los contadores.",
+  },
+  "logica-primer-unico": {
+    statement: "Recibes un texto de letras a-z de hasta 1000 caracteres. Devuelve el primer carácter que aparece exactamente una vez, según su posición en el texto, no el orden alfabético. Si no existe, devuelve None, representado como null en JSON.",
+    extraTests: [{ input: "cbba", expected: "c", explanation: "c y a aparecen una vez, pero c está antes en el texto aunque a preceda alfabéticamente." }],
+  },
+  "logica-agrupa-registros": {
+    statement: "Recibes una lista de hasta 100 registros. Cada registro es un diccionario con categoria y nombre, textos no vacíos de letras a-z. Devuelve un diccionario cuyas claves sean las categorías y cuyos valores sean listas de nombres en orden de aparición. Conserva los nombres repetidos. Sin registros devuelve {}.",
+  },
+  "python-crea-grupo": { extraTests: [{
+    input: { grupos: { a: ["ana"], b: ["luz", "sol"] }, categoria: "a", nombre: "bea" },
+    expected: { a: ["ana", "bea"], b: ["luz", "sol"] },
+    explanation: "Añadir bea al grupo a conserva también los dos nombres del grupo b, en su orden original.",
+  }] },
+  "python-filter": {
+    statementNote: "Cada registro es un diccionario con las claves nombre y edad. Un menor se omite, pero no termina el recorrido: puede haber adultos después.",
+    extraTests: [{
+      input: [{ nombre: "menor", edad: 12 }, { nombre: "ana", edad: 18 }, { nombre: "bea", edad: 17 }, { nombre: "ana", edad: 30 }],
+      expected: ["ana", "ana"],
+      explanation: "Los registros menores se omiten sin detener el filtro; las dos apariciones adultas de ana se conservan en orden.",
+    }],
+  },
+  "python-consulta-anidada": { extraTests: [{
+    input: { registro: { ana: { mate: 75, arte: 0 }, bea: { mate: 90 } }, alumno: "ana", curso: "mate" },
+    expected: 75,
+    explanation: "La consulta selecciona mate de ana, no arte ni la nota de bea; una nota presente puede ser distinta de cero.",
+  }] },
   "logica-signo": { objective: "Seleccionar entre varios bloques usando if, elif y else." },
   "logica-alternativas": {
     objective: "Combinar alternativas con or y excluir un bloqueo con not.",
@@ -183,7 +215,7 @@ const pythonOverrides: Record<string, PythonOverride> = {
   "logica-error-dominio": { statementNote: "La comprobación observa el mensaje; no certifica que uses raise." },
   "logica-inventario": {
     description: "Acumula los cambios por producto y conserva saldos cero o negativos.",
-    statementNote: "Este ejercicio acumula saldos por producto y admite valores negativos. No aplica la regla de stock no negativo del ejercicio de saldo.",
+    statement: "Recibes una lista de hasta 100 movimientos. Cada movimiento es un diccionario con producto, texto de letras a-z, y cambio, entero entre -100 y 100. Devuelve un diccionario con el saldo acumulado por producto. Incluye productos cuyo saldo final sea cero y permite negativos. Sin movimientos devuelve {}. Este ejercicio no aplica la regla de stock no negativo del ejercicio de saldo.",
   },
   "logica-saldo": {
     description: "Aplica movimientos a un saldo sin permitir que quede negativo.",

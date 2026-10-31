@@ -22,4 +22,6 @@ export const knownPythonReleases: readonly string[] = [
   "525bb2fd44a0485e8474c0aa7ae87c05ba7c64ef7a8fab51b9dca9bbbfd0d550",
   // Auditoría de principiante: conversiones Python y casos discriminantes.
   "a076fff6c27b83d86483946b95d5b9dd347a2c692ac2c0953647a563626fd407",
+  // Auditoría intermedia de colecciones: conservación, orden y selección.
+  "e59cbd277aa70f38b783ccdfa346e4b730c100bf46cee4dacfac7b9ea9f13b02",
 ];

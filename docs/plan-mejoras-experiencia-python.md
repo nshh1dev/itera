@@ -208,6 +208,10 @@ Archivos principales: `src/lib/python-curriculum.ts`, `src/lib/language-curricul
 
 **Verificación del bloque de principiante:** lint, tipos, 393 pruebas sin omisiones, build y `content:python` sin conexión aprobados. La validación inicial detectó que conversión superaba diez casos; se mantuvo el límite existente y se distribuyó la cobertura con recuperación por elementos. Se conserva la huella anterior y se añade la entrega verificada. No se iniciaron servicios ni se modificó la base. Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
 
+**Intermedio, subbloque de colecciones D2:** [auditoria-python.md](auditoria-python.md) registra las primeras 27 actividades: 19 mantenidas y ocho revisadas. Cuatro casos ocultos distinguen errores que pasaban todos los casos previos (pérdida de grupos ajenos, filtro detenido por un menor, nota siempre cero y primer único alfabético). Se aclaran diccionarios y valores Python/JSON sin cambiar las entradas ni salidas históricas. Referencias, plantillas y 27 errores fijos se ejecutan sobre 103 casos; todas las referencias y plantillas conservan la entrada en esa comprobación local. El juez no certifica toda no mutación: se documenta expresamente la limitación de la copia superficial en crea-grupo. Quedan 91 actividades por auditar (55 intermedias y 36 avanzadas); los proyectos y archivos no se dan por revisados al inventariarlos. D2 sigue abierta.
+
+**Verificación del subbloque intermedio de colecciones:** lint, tipos, 395 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Se conserva la huella anterior y se registra la revisión nueva. No se iniciaron servicios ni se modificó la base; Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
+
 ## 7. Fase E — Claridad editorial y ayudas
 
 - [ ] Reescribir las revisiones Python con estructura consistente: tarea, entrada, resultado, reglas relevantes y ejemplos. Mantener el reto separado de la receta de resolución.

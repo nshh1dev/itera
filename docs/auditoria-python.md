@@ -7,8 +7,9 @@ No usar la validación estructural como sustituto de esta revisión.
 ## Alcance y evidencia
 
 Bloques revisados: **32 actividades de iniciación** (25 mantenidas y 7 con
-aclaraciones) y **74 de principiante** (59 mantenidas y 15 revisadas).
-Quedan **118 actividades** por auditar individualmente.
+aclaraciones), **74 de principiante** (59 mantenidas y 15 revisadas) y las primeras
+**27 intermedias**, de colecciones (19 mantenidas y 8 revisadas).
+Quedan **91 actividades** por auditar individualmente: 55 intermedias y 36 avanzadas.
 Se leyeron objetivo, enunciado, plantilla, referencia, pistas, casos y reglas
 conceptuales. Se mantienen modalidades, entradas, respuestas esperadas,
 visibilidad, reglas conceptuales e identidades; no se añaden casos por volumen.
@@ -179,11 +180,67 @@ variantes compartidas e intentos históricos conservan sus contratos anteriores.
 | `logica-gastos-registro` | Mantener: categorías repetidas, cero y vacío; proyecto preparado sin exigir módulos nuevos. | Reemplazar el subtotal de categoría. |
 | `logica-gastos-validacion` | **Añadir caso** válido después de un rechazo. Las pruebas propias preparadas no certifican calidad de tests. | Interrumpir al primer rechazo. |
 
+## Intermedio: colecciones, transformación y agregación (27 de 82)
+
+Se revisaron objetivos, enunciados, plantillas, referencias, pistas y casos de
+este subbloque. No se da por auditado el resto de intermedio por haber leído su
+inventario. Las decisiones sobre módulos, archivos, persistencia, academia,
+contactos, matrices y algoritmos se registrarán en los siguientes subbloques.
+
+`tests/python-intermediate-collections-audit.test.ts` ejecuta las 27 referencias,
+plantillas y errores fijos. Todos los casos previos se conservan, sin alterar
+entradas, respuestas, orden ni visibilidad. Se añaden cuatro casos ocultos con
+respuestas independientes. Cuatro errores pasaban todos sus casos anteriores y
+ahora fallan: primer único alfabético, pérdida de grupos ajenos, filtro que se
+detiene ante un menor y consulta que devuelve cero para cualquier nota presente.
+
+Las referencias y plantillas conservan la entrada en estos casos locales.
+Eso no añade una garantía al juez para alumnos. En particular, una copia solo
+exterior en `python-crea-grupo` puede producir la salida correcta mutando una
+lista interior del original; el contrato actual devuelve únicamente la copia y
+no observa el original. La comprobación local protege nuestra referencia, no
+certifica que todo programa aceptado conserve las listas.
+
+No se certifica uso de conjuntos, comprensiones, iteradores, generadores, map,
+filter, lambdas ni estabilidad interna: se observan los valores y el orden
+requeridos. El formato decimal sigue las reglas de float de Python, no redondeo
+financiero. Los casos de agotamiento distinguen efectos, no la sintaxis usada.
+
+| Actividad | Decisión y fundamento | Error representativo detectado |
+| --- | --- | --- |
+| `python-conjunto-seguro` | Mantener: duplicados, elemento ausente y agregar igual a quitar. | Quitar antes de agregar. |
+| `python-union` | Mantener: exclusivos de ambos lados, común, negativos, duplicados y vacío. | Calcular intersección. |
+| `python-interseccion` | Mantener: duplicados, lista vacía y orden numérico explícito. | Calcular unión. |
+| `python-diferencia` | Mantener: dirección, repetidos y vacío. | Restar requeridos a disponibles. |
+| `python-simetrica` | Mantener: exclusivos de ambos lados y exclusión de comunes. | Conservar solo los exclusivos de a. |
+| `python-subconjunto` | Mantener: igualdad, requisitos repetidos, ausencia y vacío. | Pedir subconjunto propio con <. |
+| `logica-repetido` | **Aclarar** True/False en Python frente a true/false en JSON. | Considerar repetida cualquier lista no vacía. |
+| `logica-deduplica` | Mantener: orden de primera aparición observable y repetidos. | Ordenar los valores al deduplicar. |
+| `logica-frecuencias` | **Aclarar** diccionario en objetivo y enunciado, sin alternar ficha/objeto. | Guardar siempre frecuencia uno. |
+| `logica-primer-unico` | **Aclarar** None y orden de aparición; añadir caso cbba. | Elegir el único alfabéticamente menor. |
+| `logica-anagramas` | Mantener: cantidades, normalización, espacios, vacío y letras en ambos sentidos. | Comparar conjuntos sin frecuencias. |
+| `python-crea-grupo` | **Añadir caso** con dos categorías para conservar también grupos ajenos. No certifica no mutación del alumno. | Devolver solo la categoría actualizada. |
+| `logica-agrupa-registros` | **Aclarar** registro como diccionario y diccionario de salida; conservar orden/repetidos. | Reemplazar el grupo en cada registro. |
+| `python-comprension` | Mantener: negativos, cero, repeticiones y tamaño de salida. | Aplicar valor absoluto en vez de cuadrado. |
+| `python-comprension-filtro` | Mantener: mayúsculas, vocales repetidas, ausencia y vacío. | Filtrar sin normalizar. |
+| `python-comprension-condicional` | Mantener: negativos reemplazados sin perder posiciones. | Filtrar los negativos. |
+| `python-comprension-dict` | Mantener: palabras repetidas y palabra vacía, clave distinta de posición. | Asignar siempre longitud uno. |
+| `python-iterador` | Mantener: agotamiento tras consumir todos los valores y entrada vacía. | Crear un segundo iterador. |
+| `python-generador` | Mantener: cuadrados de signos distintos, cero y repeticiones. | Elevar al cuadrado la suma. |
+| `python-map` | Mantener: conversión preparada como objetivo, cero y negativos válidos. | Convertir sin duplicar. |
+| `python-filter` | **Añadir caso** con adultos después de menores y aclarar registro como diccionario. | Detenerse ante el primer menor. |
+| `python-agrega` | Mantener: negativos, extremos ausentes y cero presente. | Introducir cero como extremo. |
+| `python-clave-longitud` | Mantener: empate no alfabético verifica el orden estable requerido. | Desempatar alfabéticamente. |
+| `python-lambda-desempate` | Mantener: direcciones distintas de criterios y repeticiones. | Invertir también el alfabético. |
+| `python-formato-decimal` | Mantener: texto, ceros finales, precisión cero y empates binarios positivos/negativos. | Convertir round a texto sin asegurar ceros. |
+| `python-consulta-anidada` | **Añadir caso** con nota 75 y campos ajenos, además de cero y ausencias ya cubiertos. | Devolver cero para toda nota presente. |
+| `logica-inventario` | **Aclarar** movimientos y salida como diccionarios; mantener modelo con negativos y ceros. | Eliminar saldos cero. |
+
 ## Límites y siguiente bloque
 
 - No se amplía AST, esquema, dependencias ni modalidades.
 - La ejecución local no verifica sandbox, serialización del ejecutor ni publicación.
 - La revisión de tiempos, teoría duplicada y ergonomía sigue abierta en E/F.
-- Continuar con las 82 actividades intermedias y 36 avanzadas.
+- Continuar con las 55 actividades intermedias restantes y 36 avanzadas.
   Registrar decisiones individuales y errores relevantes, no solo
   recuentos de casos o cobertura de campos.
