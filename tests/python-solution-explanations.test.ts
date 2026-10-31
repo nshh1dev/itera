@@ -3,11 +3,13 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonSolutionExplanations } from "../prisma/python-vocabulary";
+import { validateProjectDefinition, validateExpectedProjectFiles } from "../src/lib/project";
 
 const slugs = ["logica-dos-parametros", "python-desempaqueta", "logica-ficha-resultado", "python-recorre-pares", "logica-notas", "python-contactos-edita", "logica-prefijos", "logica-copia-anidada", "logica-suma-maxima", "logica-cuenta-nodos"];
 
 test("diez explicaciones de solución usan vocabulario Python y justifican la referencia", () => {
-  assert.deepEqual(new Set(Object.keys(pythonSolutionExplanations)), new Set(slugs));
+  const projects = pythonCatalog.filter(entry => entry.content.variants[0].project).map(entry => entry.slug);
+  assert.deepEqual(new Set(Object.keys(pythonSolutionExplanations)), new Set([...slugs, ...projects]));
   for (const slug of slugs) {
     const entry = pythonCatalog.find(item => item.slug === slug)!;
     const text = entry.content.variants[0].explanation;
@@ -26,12 +28,69 @@ test("diez explicaciones de solución usan vocabulario Python y justifican la re
   assert.match(pythonSolutionExplanations["logica-cuenta-nodos"], /antes de consultar claves.*value no interviene/s);
 });
 
-test("solo cambian las diez explicaciones: se conservan todos los demás campos del catálogo", () => {
+test("los dos lotes solo cambian 28 explicaciones y conservan todos los demás campos del catálogo", () => {
+  const revised = Object.keys(pythonSolutionExplanations);
+  assert.equal(revised.length, 28);
   const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: entry.content.variants.map(variant => {
-    if (!slugs.includes(entry.slug)) return variant;
+    if (!revised.includes(entry.slug)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;
     return rest;
   }) } }));
-  assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "8e1b81eec7e2574fc026c8e38c26185962e9a9a06e821235f7831ae4e639ffff");
+  // Huella previa ampliada antes de editar proyectos; la del primer lote era
+  // 8e1b81eec7e2574fc026c8e38c26185962e9a9a06e821235f7831ae4e639ffff.
+  assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "0a6bdb1da736d3a1ef256b70566d1e416994170bee66c11fdb90ae6db035551d");
+});
+
+test("las 18 explicaciones de proyectos distinguen módulos, artefactos, pruebas propias y segundo proceso", () => {
+  const projects = pythonCatalog.filter(entry => entry.content.variants[0].project);
+  assert.equal(projects.length, 18);
+  for (const entry of projects) {
+    const variant = entry.content.variants[0];
+    const project = validateProjectDefinition(variant.project);
+    const text = variant.explanation;
+    assert.equal(text, pythonSolutionExplanations[entry.slug], entry.slug);
+    assert.match(text, /main.py/, entry.slug);
+    assert.doesNotMatch(text, /Plan: separa las operaciones|Si hay un archivo de pruebas|stock inicial.*en tareas/s, entry.slug);
+    if (project.testEntrypoint) {
+      assert.ok(text.includes(project.testEntrypoint), entry.slug);
+      assert.match(text, /pruebas propias no concede progreso/, entry.slug);
+    }
+    if (project.verifyPersistence) {
+      assert.match(text, /solve\(\[\]\).*proceso nuevo/, entry.slug);
+      assert.match(text, /solo ante FileNotFoundError.*estado.json/, entry.slug);
+      assert.match(text, /mismo contenido exacto tras ambas llamadas/, entry.slug);
+      assert.match(text, /no hay persistencia entre casos ni envíos/, entry.slug);
+    } else {
+      assert.doesNotMatch(text, /La segunda llamada solve/, entry.slug);
+    }
+    for (const testCase of variant.tests) {
+      for (const file of validateExpectedProjectFiles(project, testCase.expectedFiles ?? [])) {
+        assert.ok(text.includes(file.path), `${entry.slug}: ${file.path}`);
+        assert.match(text, /UTF-8|utf-8/, entry.slug);
+        assert.match(text, /sin salto final|ni salto final|no añade salto final/, entry.slug);
+        assert.match(text, /juez comprueba.*(?:además|también)/i, entry.slug);
+      }
+    }
+  }
+  assert.match(pythonSolutionExplanations["logica-gastos-registro"], /no usa disco ni un archivo de pruebas/);
+  assert.match(pythonSolutionExplanations["logica-lee-archivo"], /splitlines.*índice -1/s);
+  assert.doesNotMatch(pythonSolutionExplanations["logica-lee-archivo"], /json\.load|json\.dump/);
+  assert.match(pythonSolutionExplanations["logica-valida-json"], /type\(limite\) is int.*excluye booleanos.*ausente.json existe/s);
+  assert.match(pythonSolutionExplanations["logica-recupera-archivo-invalido"], /FileNotFoundError.*json.JSONDecodeError/s);
+  assert.doesNotMatch(pythonSolutionExplanations["logica-guarda-recupera"], /stock|titulo|hecha/);
+  assert.match(pythonSolutionExplanations["logica-inventario-persistente"], /rechazados igual a 0.*no crea por sí sola un proceso nuevo/s);
+  assert.doesNotMatch(pythonSolutionExplanations["logica-inventario-persistente"], /titulo|hecha/);
+  assert.match(pythonSolutionExplanations["logica-agenda-regresion"], /mismo proceso.*no sustituyen.*proceso nuevo/s);
+  assert.doesNotMatch(pythonSolutionExplanations["logica-agenda-almacenamiento"], /stock|rechazados/);
+});
+
+test("el segundo lote conserva las diez explicaciones previas y todo salvo la prosa de los 18 proyectos", () => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: entry.content.variants.map(variant => {
+    if (!variant.project) return variant;
+    const { explanation, ...rest } = variant;
+    void explanation;
+    return rest;
+  }) } }));
+  assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "44c744619828c94150891e9eb2c44abbe690ef398621c434ed3291e1c4e606ce");
 });

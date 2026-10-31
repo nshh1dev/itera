@@ -58,4 +58,6 @@ export const knownPythonReleases: readonly string[] = [
   "64197867bfcd9bc043a55f704fdb41ed435e3971e312450e4bf81f973961dfc2",
   // Diez explicaciones de solución: vocabulario y razonamiento de la referencia.
   "a1a31447dba2f99772dd5d541ab3bbc513098141f2c2b5a3666f1dd51fdf7419",
+  // Explicaciones individuales de los 18 proyectos, sin cambiar sus contratos.
+  "f9837a6f57e136fb496bed5892f9173ea9e5de2f4d70fd80096dcc09f27ad9b3",
 ];

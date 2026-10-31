@@ -92,7 +92,7 @@ La revisión editorial posterior se registra en [claridad-python.md](claridad-py
 
 El vocabulario de metadatos y ayudas se revisa mediante `prisma/python-vocabulary.ts`: 22 revisiones explícitas usan listas y claves de diccionario, append y None con su representación JSON, sin sustituir código ni salidas. Se conservan usos correctos de objeto para identidad y entidades del problema. Una huella protege todos los campos ajenos a ese lote; las explicaciones y teoría quedan fuera de esta comprobación acotada.
 
-El mismo archivo separa `pythonSolutionExplanations`, con diez revisiones de la prosa de solución. Explica el código real, sus casos frontera y los límites de comparar resultados; en suma máxima declara O(n) auxiliar por el slice de la referencia, sin alterar el código. Una huella previa protege todo salvo las diez explicaciones enumeradas, incluidos los ejemplos y las otras 214 explicaciones. La revisión completa de teoría y explicaciones sigue abierta.
+El mismo archivo separa `pythonSolutionExplanations`, con 28 revisiones de la prosa de solución, incluidos los 18 proyectos. Explica el código real, sus casos frontera y los límites de comparar resultados; en suma máxima declara O(n) auxiliar por el slice de la referencia, sin alterar el código. Los proyectos distinguen responsabilidades, recursos protegidos, artefactos y reapertura en el mismo proceso frente a segunda llamada oficial en proceso nuevo, sin recetas de otros retos. Huellas previas protegen todos los demás campos y la conservación del primer lote de diez explicaciones al revisar los proyectos. La revisión completa de teoría y explicaciones sigue abierta.
 
 ## Destino del documento de referencia
 

@@ -304,6 +304,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del primer lote de explicaciones:** lint, tipos, 426 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Se conserva el historial de huellas de publicación. No se iniciaron servicios ni se modificó la base; las pruebas ejecutan código fijo del repositorio y no acreditan Piston real. E2E, revisión visual, validación real y activación siguen pendientes de autorización.
 
+**Segundo lote de explicaciones de solución E:** los 18 proyectos tienen explicaciones individuales ajustadas a sus archivos reales, sin párrafos genéricos ni condiciones de inventario/agenda en retos ajenos. Se distingue lectura de texto, JSON y validación, artefactos exactos, pruebas propias en el mismo proceso y segunda llamada oficial en proceso nuevo solo donde el manifiesto lo declara. Las decisiones individuales constan en [claridad-python.md](claridad-python.md). Van 28 explicaciones revisadas; una huella previa excluye solo la prosa de los proyectos y conserva las diez anteriores y todos los demás campos. No cambian contratos, archivos, evaluación, ejemplos ni ayudas; no se cierra la revisión global de ejemplos/explicaciones ni la reducción de repetición entre todas las superficies de E.
+
+**Verificación de las explicaciones de proyectos:** lint, tipos, 428 pruebas sin omisiones, build y `content:python` sin conexión aprobados. La suite focalizada comprobó las referencias fijas, plantillas, artefactos y persistencia local; se corrigió una aserción editorial para admitir la expresión «ni salto final», sin modificar los contratos. Se añade la huella de publicación sin retirar históricas. No se iniciaron servicios ni se modificó la base; Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.

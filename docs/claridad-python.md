@@ -515,6 +515,53 @@ Este lote no constituye una revisión completa de las 224 explicaciones ni de
 los 433 ejemplos. Quedan especialmente las repeticiones y condiciones ajenas en
 explicaciones de proyectos, además de teoría local y de módulos.
 
+## Explicaciones de solución: los 18 proyectos
+
+El segundo lote de `pythonSolutionExplanations` sustituye la explicación de cada
+proyecto por una lectura de sus archivos reales. El total asciende a **28
+explicaciones revisadas**. Se retiran los párrafos comunes de planificación,
+instrucciones de arranque ya dadas en el enunciado y condiciones de otros retos.
+No se anticipa esta explicación en pistas ni se cambia la solución ejecutable.
+
+| Actividad | Decisión |
+| --- | --- |
+| `logica-gastos-registro` | Acumuladores, get y categoría con cero; no atribuirle un archivo de pruebas que no tiene. |
+| `logica-gastos-validacion` | Validar antes de sumar, continue y alcance de las tres aserciones propias. |
+| `logica-importa-preparado` | Importación de transformar desde el módulo protegido y llamada con data. |
+| `logica-extrae-modulo` | Cuadrado en reglas y llamada desde main; coincidencia de nombres y firmas. |
+| `logica-separa-reglas-io` | Cálculo más tres en reglas y formato Total: en main. |
+| `logica-repara-importacion` | Nombre disponible cuadrado frente al fragmento conceptual defectuoso y suma de uno. |
+| `logica-organiza-modulos` | Flujo main → cuadrado → etiqueta, sin dependencia circular. |
+| `logica-lee-archivo` | read/splitlines, cierre e índice -1; sin receta de escritura ni de JSON. |
+| `logica-escribe-archivo` | Leer, concatenar, escribir/cerrar y reabrir texto exacto; sin receta JSON. |
+| `logica-valida-json` | Análisis frente a estructura, tipo int estricto para excluir bool y clave ausente frente a archivo ausente. |
+| `logica-guarda-recupera` | Lista ordenada/repetida y JSON exacto en un solo proceso, sin instrucciones sobre claves de tareas o stock. |
+| `logica-recupera-archivo-invalido` | Lectura real y captura específica de FileNotFoundError/JSONDecodeError. |
+| `logica-actualiza-persistidos` | Historial conservado y nueva instantánea, sin garantizar durabilidad ni escritura atómica. |
+| `logica-inventario-modular` | Mutación intencional, rechazo sin asignación, saldo cero y producto ausente. |
+| `logica-inventario-persistente` | Cargar/aplicar/guardar/recargar, rechazos por llamada y pruebas propias distintas de la segunda invocación oficial. |
+| `logica-agenda-operaciones` | Lista sin disco, creación y marcado sin crear una tarea al completar un título ausente. |
+| `logica-agenda-almacenamiento` | Conservar leer y el estado final; orden de tareas y claves, sin instrucciones de stock. |
+| `logica-agenda-regresion` | Conexión con cargar, completar dos veces y pruebas de integración en el mismo proceso, distintas de la invocación oficial nueva. |
+
+Solo los tres proyectos con `verifyPersistence` comparten una nota de segunda
+llamada; sus retornos se explican por separado para inventario y agenda. Las
+instrucciones de JSON exacto se limitan a proyectos que lo guardan. Las pruebas
+leen manifiestos y artefactos esperados y comprueban que cada explicación
+identifique sus archivos, pruebas propias y modalidad de persistencia.
+
+Una huella calculada antes de este lote excluye solo la prosa de los 18
+proyectos: conserva las diez explicaciones anteriores y todos los demás campos.
+La huella conjunta excluye las 28 explicaciones y protege el resto del catálogo;
+se conserva documentada la del primer lote. No cambian manifiestos, recursos,
+plantillas, soluciones, pruebas, ejemplos, ayudas, metadatos ni otras variantes.
+La simulación local de proyectos ejecuta solo referencias fijas del repositorio;
+no certifica Piston real ni aislamiento operativo.
+
+La reducción de repetición de estas explicaciones está completa; sigue pendiente
+la revisión entre teoría local, teoría de módulos, condiciones y otras ayudas,
+así como el conjunto de ejemplos y explicaciones restantes.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
