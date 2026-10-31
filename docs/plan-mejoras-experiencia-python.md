@@ -234,7 +234,7 @@ Archivos principales: `src/lib/python-curriculum.ts`, `src/lib/language-curricul
 
 ## 7. Fase E — Claridad editorial y ayudas
 
-- [ ] Reescribir las revisiones Python con estructura consistente: tarea, entrada, resultado, reglas relevantes y ejemplos. Mantener el reto separado de la receta de resolución.
+- [x] Reescribir las revisiones Python con estructura consistente: tarea, entrada, resultado, reglas relevantes y ejemplos. Mantener el reto separado de la receta de resolución.
 - [ ] Usar `None`, `True`, `False`, lista y diccionario en instrucciones Python; explicar su representación `null`/`true`/`false` en JSON sin mezclarla con código ejecutable.
 - [ ] Definir ficha/registro como datos representados mediante diccionarios; evitar alternar términos sin explicación.
 - [x] Añadir explicación a todos los ejemplos públicos que carezcan de ella, priorizando primero inicio y estructuras complejas. Cada explicación debe justificar la salida, no repetirla con otras palabras.
@@ -291,6 +291,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 **Noveno lote editorial E:** cuatro funciones intermedias y los 22 programas completos separan Tu tarea / Entrada / Resultado esperado. Los programas conservan entrada estándar, impresión, textos exactos, líneas, formatos numéricos y true/false en minúsculas donde son salida requerida. Las funciones aclaran historial, índices, contigüidad y desempates. [claridad-python.md](claridad-python.md) registra las decisiones: van 206/224 enunciados, todas las prácticas sin proyecto; quedan 18 proyectos. Evaluación, ejemplos, ayudas, límites, minutos y orden no cambian. E y F siguen abiertas.
 
 **Verificación del noveno lote editorial:** lint, tipos, 420 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Las pruebas comprueban la cobertura exacta de las 206 prácticas sin proyecto, entrada/impresión en los 22 programas y contratos de las últimas cuatro funciones. Se ajustó una expresión de prueba a «en lugar de escribir directamente»; la suite completa aprobó después. La huella de evaluación y ejemplos de las 224 actividades sigue intacta y se conserva el historial de revisiones. No se iniciaron servicios ni se modificó la base; Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
+
+**Décimo lote editorial E:** los 18 proyectos completan la estructura de los 224 enunciados. Se retiran párrafos repetidos y condiciones ajenas a cada ejercicio; se conservan reglas por proyecto, módulos, archivos protegidos, pruebas propias sin progreso, artefactos exactos y persistencia declarada entre procesos. [claridad-python.md](claridad-python.md) registra las decisiones. La huella de evaluación conserva manifiestos, plantillas, soluciones, recursos, casos y persistencia; ayudas, minutos y orden no cambian. Solo se cierra el punto de estructura: vocabulario global, ejemplos anteriores, repeticiones entre superficies, tiempos y rutas/módulos mantienen E abierta, al igual que F y la validación real.
+
+**Verificación del décimo lote editorial:** lint, tipos, 421 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Las pruebas focalizadas de proyectos comprueban referencias, plantillas, artefactos y segundo proceso mediante el conductor local de código fijo; no equivalen a Piston real. La prueba editorial valida los 18 manifiestos y exige instrucciones de segunda llamada solo donde se declara persistencia; se corrigió el tratamiento de casos sin artefactos esperados usando una lista vacía. La huella de evaluación de las 224 actividades permanece intacta y se conserva el historial de revisiones. No se iniciaron servicios ni se modificó la base; Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
 
 ## 8. Fase F — Jerarquía visual y ergonomía
 

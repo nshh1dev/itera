@@ -3,16 +3,16 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonEditorialRevisions } from "../prisma/python-editorial";
+import { validateProjectDefinition, validateExpectedProjectFiles } from "../src/lib/project";
 
-test("los lotes editoriales estructuran las 206 prácticas sin proyectos y respetan sus modalidades", () => {
+test("los lotes editoriales estructuran las 224 actividades y respetan sus modalidades", () => {
   const slugs = Object.keys(pythonEditorialRevisions);
-  assert.equal(slugs.length, 206);
-  assert.deepEqual(new Set(slugs), new Set(pythonCatalog.filter(entry => !entry.content.variants[0].project).map(entry => entry.slug)));
+  assert.equal(slugs.length, 224);
+  assert.deepEqual(new Set(slugs), new Set(pythonCatalog.map(entry => entry.slug)));
   for (const slug of slugs) {
     const entry = pythonCatalog.find(item => item.slug === slug)!;
     assert.ok(entry, slug);
     assert.ok(["FUNCTION", "PROGRAM"].includes(entry.content.runtimeMode), slug);
-    assert.equal(entry.content.variants[0].project, undefined, slug);
     assert.equal(entry.content.statement, pythonEditorialRevisions[slug].statement);
     assert.equal(entry.content.variants[0].statement, entry.content.statement);
     assert.deepEqual([...entry.content.statement.matchAll(/^(Tu tarea|Entrada|Resultado esperado)\n/gm)].map(match => match[1]), ["Tu tarea", "Entrada", "Resultado esperado"], slug);
@@ -312,6 +312,50 @@ test("las cuatro últimas funciones conservan historial, índices, contigüidad 
   assert.match(text("logica-busqueda-recursiva"), /-1.*no certifican el uso de recursión/);
   assert.match(text("logica-sin-repeticiones"), /No se permite saltar posiciones.*ASCII.*10000/s);
   assert.match(text("logica-ranking"), /menor valor numérico, también con negativos/);
+});
+
+test("los 18 proyectos conservan archivos, responsabilidades, artefactos y persistencia explícita", () => {
+  const projects = pythonCatalog.filter(entry => entry.content.variants[0].project);
+  assert.equal(projects.length, 18);
+  for (const entry of projects) {
+    const project = validateProjectDefinition(entry.content.variants[0].project);
+    const text = pythonEditorialRevisions[entry.slug].statement;
+    assert.equal(entry.content.runtimeMode, "FUNCTION", entry.slug);
+    assert.match(text, /solve\(data\) en main.py.*return.*sin input\(\)/, entry.slug);
+    assert.match(text, /solo los archivos editables.*recursos de solo lectura/, entry.slug);
+    assert.match(text, /disco aislado limpio.*sandbox.*no del navegador/, entry.slug);
+    assert.match(text, /no se conservan entre casos o envíos/, entry.slug);
+    if (project.testEntrypoint) {
+      assert.ok(text.includes(project.testEntrypoint), entry.slug);
+      assert.match(text, /pruebas.*no concede|pruebas.*no sustituye/, entry.slug);
+    }
+    if (project.verifyPersistence) {
+      assert.match(text, /solve\(\[\]\) en un proceso nuevo/, entry.slug);
+      assert.match(text, /preferir guardado.json.*estado.json solo antes del primer guardado/, entry.slug);
+      assert.match(text, /contenido exacto de guardado.json tras ambas llamadas/, entry.slug);
+    } else {
+      assert.doesNotMatch(text, /Persistencia entre procesos:/, entry.slug);
+    }
+    for (const testCase of entry.content.variants[0].tests) {
+      for (const file of validateExpectedProjectFiles(project, testCase.expectedFiles ?? [])) {
+        assert.ok(text.includes(file.path), `${entry.slug}: artefacto ${file.path}`);
+        assert.match(text, /contenido.*además del retorno|tanto el archivo como el retorno/, entry.slug);
+        assert.match(text, /UTF-8.*sin.*salto final/, entry.slug);
+      }
+    }
+  }
+  const text = (slug: string) => pythonEditorialRevisions[slug].statement;
+  assert.match(text("logica-gastos-validacion"), /casa u ocio.*mayor o igual que cero.*rechazados/s);
+  assert.match(text("logica-importa-preparado"), /reglas.py.*solo lectura.*sin copiar/s);
+  assert.match(text("logica-lee-archivo"), /índice -1, 0 o 1.*datos.txt.*Sol y Luna/s);
+  assert.match(text("logica-valida-json"), /ausente.json existe.*bool sea subclase de int/s);
+  assert.match(text("logica-guarda-recupera"), /mismo proceso, no una prueba de persistencia/);
+  assert.match(text("logica-recupera-archivo-invalido"), /falta.json no existe/);
+  assert.match(text("logica-actualiza-persistidos"), /no promete.*escritura atómica/);
+  assert.match(text("logica-inventario-modular"), /sin almacenamiento.*modifica stock intencionalmente/s);
+  assert.match(text("logica-inventario-persistente"), /segunda llamada.*rechazados igual a 0/);
+  assert.match(text("logica-agenda-almacenamiento"), /titulo antes de hecha/);
+  assert.match(text("logica-agenda-regresion"), /Completar dos veces.*una sola vez/);
 });
 
 test("grafos y optimización conservan direcciones, desempates, límites y casos frontera", () => {

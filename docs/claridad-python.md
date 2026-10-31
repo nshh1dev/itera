@@ -396,13 +396,58 @@ modalidades y comprueban que todos los programas pidan impresión y describan
 su entrada. La huella de evaluación conserva íntegros los textos esperados de
 PROGRAM; estas comprobaciones locales no equivalen a Piston real.
 
+## Décimo lote: los 18 proyectos
+
+Los **224 enunciados** tienen Tu tarea, Entrada y Resultado esperado. El lote de
+proyectos elimina párrafos repetidos dentro de cada reto y condiciones ajenas
+al ejercicio (por ejemplo, orden de claves de tareas en una lista de enteros).
+Un bloque común conserva el punto de entrada, archivos editables/protegidos y
+aislamiento; los requisitos de artefactos y de segunda llamada se incluyen solo
+cuando el proyecto realmente los declara. Cada reto conserva su contrato y sus
+responsabilidades de módulos, sin convertirlo en una función de un solo archivo.
+
+Los 18 manifiestos, recursos, soluciones privadas, plantillas, pruebas propias,
+casos, artefactos esperados y respuestas de persistencia no cambian. La huella de
+evaluación de las 224 actividades sigue siendo la anterior al primer lote. Las
+pruebas editoriales verifican los archivos evaluados a partir de su contrato y
+exigen la explicación de persistencia solo en los tres proyectos que la activan.
+La comprobación local de referencias usa código fijo del repositorio y no
+certifica Piston real ni aislamiento operativo.
+
+| Actividad | Revisión editorial |
+| --- | --- |
+| `logica-gastos-registro` | Fichas como diccionarios, céntimos, categorías presentes y vacío. |
+| `logica-gastos-validacion` | Rechazos sin interrupción, cero válido y pruebas propias sin progreso. |
+| `logica-importa-preparado` | Reglas protegidas, importación y uso sin copiar implementación. |
+| `logica-extrae-modulo` | Dos archivos editables, nombre y firma de cuadrado conservados. |
+| `logica-separa-reglas-io` | Regla sin E/S y texto Total: a cargo del adaptador. |
+| `logica-repara-importacion` | Nombre incorrecto conceptual, recurso protegido y cuadrado más uno. |
+| `logica-organiza-modulos` | Tres responsabilidades, etiqueta y ausencia de imports circulares. |
+| `logica-lee-archivo` | Archivo real protegido, índice -1 y retorno sin salto. |
+| `logica-escribe-archivo` | Recurso Hola, sufijo y artefacto UTF-8 exacto verificado además del retorno. |
+| `logica-valida-json` | JSON sintácticamente válido frente a estructura, bool excluido y nombres de recursos. |
+| `logica-guarda-recupera` | JSON compacto y reapertura en el mismo proceso sin prometer persistencia entre procesos. |
+| `logica-recupera-archivo-invalido` | Archivo ausente frente a análisis inválido y captura solo de fallos esperados. |
+| `logica-actualiza-persistidos` | Historial conservado, instantánea nueva y límite de durabilidad/atomicidad. |
+| `logica-inventario-modular` | Mutación intencional, stock no negativo y producto cero conservado. |
+| `logica-inventario-persistente` | Preferencia de guardado, stock inicial, rechazos por llamada y segundo proceso. |
+| `logica-agenda-operaciones` | Diccionario de tarea, booleanos Python y acciones sin almacenamiento. |
+| `logica-agenda-almacenamiento` | Reglas completas, recurso leer, orden de claves y recuperación en segundo proceso. |
+| `logica-agenda-regresion` | Conexión sin reiniciar estado, pruebas de reapertura y completar dos veces. |
+
+La estructura de enunciados está completa, no la fase E: todavía se revisan
+vocabulario de ayudas y objetivos, ejemplos anteriores, repeticiones entre
+superficies, tiempos y textos de rutas/módulos. La base continúa sin preparar ni
+activar las revisiones.
+
 ## Pendientes y límites
 
-- Los nueve lotes cubren **206/224 enunciados**; quedan los **18 proyectos**.
-- Quedan los demás enunciados, teoría local y de módulos, vocabulario en otras
+- Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
+- Quedan teoría local y de módulos, vocabulario en otras
   ayudas y objetivos, revisión de ejemplos ya explicados, tiempos y textos de rutas.
-- PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos conservan sus contratos
-  de archivos y persistencia; su repetición editorial se revisa por separado.
+- PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
+  conservan sus contratos de archivos y persistencia; se retiraron repeticiones
+  internas, no se revisaron aún todas las superficies de ayuda y teoría.
 - No modifica el componente de presentación ni acredita revisión visual o
   accesibilidad. La jerarquía visual, teoría desplegable y ergonomía siguen en F.
 - Las revisiones están en fuentes, no preparadas ni activadas en la base. La

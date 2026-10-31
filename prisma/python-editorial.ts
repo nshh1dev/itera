@@ -3,8 +3,105 @@
 type EditorialRevision = { statement: string; hints?: string[]; constraints?: string[]; objective?: string };
 const statement = (task: string, input: string, output: string) =>
   `Tu tarea\n${task}\n\nEntrada\n${input}\n\nResultado esperado\n${output}`;
+const projectStatement = (task: string, input: string, output: string) => statement(
+  `${task}\n\nCompleta solo los archivos editables; conserva las firmas, los nombres públicos y los recursos de solo lectura. Define solve(data) en main.py y entrega la respuesta con return: la aplicación proporciona data, sin input().`,
+  input,
+  `${output}\n\nCada caso parte de un disco aislado limpio dentro del sandbox, no del navegador, del servidor web ni de la base de datos de Itera. Los archivos no se conservan entre casos o envíos. No instales paquetes. Comprueba los límites y casos vacíos aplicables al contrato.`,
+);
+const compactJson = "Genera guardado.json durante la ejecución, no como recurso inicial. Se evalúa su contenido además del retorno: JSON UTF-8 compacto, sin espacios de separación ni salto final. Usa ensure_ascii=False y separators=(',', ':') al guardar con json.dump. Conserva el recurso inicial sin modificar.";
+const persistence = "Persistencia entre procesos: cada caso llama primero a solve con sus comandos y después a solve([]) en un proceso nuevo sobre el mismo directorio, sin reconstruir recursos. cargar() debe preferir guardado.json si existe y usar estado.json solo antes del primer guardado. Recupera desde el archivo, no desde variables globales; conserva el contenido exacto de guardado.json tras ambas llamadas. El siguiente caso reinicia el disco; no se conserva entre envíos.";
 
 export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
+  "logica-gastos-registro": { statement: projectStatement(
+    "Gestor de gastos, hito 1: registra y resume movimientos. Es un registro de gastos, no un saldo que rechaza retiradas. Usa enteros en céntimos para evitar redondeos; no necesitas archivos de datos ni módulos propios todavía.",
+    "data es una lista de hasta 100 fichas, cada una un diccionario con categoria (casa u ocio) e importe, un entero no negativo en céntimos. Se aplica el límite general de enteros hasta 1000.",
+    "Devuelve un diccionario con total y porCategoria: suma global y sumas de las categorías presentes. Cero es válido; no añadas categorías ausentes. Para la lista vacía devuelve {'total': 0, 'porCategoria': {}}.",
+  ) },
+  "logica-gastos-validacion": { statement: projectStatement(
+    "Gestor de gastos, hito 2: valida y resume movimientos. Completa pruebas.py para vacío, cero y rechazo; conserva la importación de solve ya preparada. continue salta el resto de la vuelta actual. Este hito tiene contrato e identidad independientes: copia explícitamente archivos del anterior o empieza con la plantilla, sin sobrescribir el original. No necesitas módulos propios ni archivos de datos.",
+    "data es una lista de hasta 100 fichas, diccionarios con categoria, un texto, e importe, un entero en céntimos entre -1000 y 1000.",
+    "Acepta solo casa u ocio con importe mayor o igual que cero; rechaza los demás sin interrumpir el recorrido. Devuelve un diccionario con total, porCategoria y rechazados: suma aceptada, sumas por categoría aceptada presente y cantidad rechazada. Cero es válido. Vacío devuelve {'total': 0, 'porCategoria': {}, 'rechazados': 0}. Ejecutar tus pruebas no sustituye los casos oficiales ni concede finalización.",
+  ) },
+  "logica-importa-preparado": { statement: projectStatement(
+    "Importa transformar desde reglas.py, que ya está preparado y es de solo lectura. Un módulo es un archivo real con nombres reutilizables: importa y llama su función sin copiar su implementación en main.py. Para importar un nombre se usa from reglas import nombre.",
+    "data es un entero entre -1000 y 1000.",
+    "Devuelve el resultado de transformar(data), que multiplica el entero por cuatro. Conserva separados main.py y reglas.py. Los casos comprueban el resultado; no certifican por sí solos la organización de los módulos.",
+  ) },
+  "logica-extrae-modulo": { statement: projectStatement(
+    "Separa cuadrado en reglas.py y úsala desde main.py. Completa ambos archivos editables, conservando sus firmas. El nombre que ofrece el módulo debe coincidir con el importado; from reglas import nombre permite reutilizarlo sin copiarlo.",
+    "data es un entero entre -1000 y 1000.",
+    "Devuelve el cuadrado del entero recibido mediante la función de reglas.py. Mantén separadas la regla y su llamada desde main.py; comparar el retorno no certifica por sí solo esa separación.",
+  ) },
+  "logica-separa-reglas-io": { statement: projectStatement(
+    "Separa negocio y adaptación de entrada/salida. main.py recibe los datos, llama a coste de reglas.py y construye el texto; reglas.py calcula precio por unidades más 3 fijos, sin imprimir ni leer entrada. Una regla pura puede probarse sin terminal ni disco; no la dupliques entre archivos.",
+    "data es un diccionario con precio y unidades, enteros entre -1000 y 1000.",
+    "Devuelve el texto Total: seguido de un espacio y el coste calculado, sin salto final ni comillas. Conserva la función coste(precio, unidades) y el punto de entrada solve(data); la comparación del texto no certifica por sí sola la separación interna.",
+  ) },
+  "logica-repara-importacion": { statement: projectStatement(
+    "Resuelve un nombre importado incorrecto: el fragmento conceptual pide transformarCuadrado a reglas, pero reglas.py ofrece cuadrado. La plantilla no ejecuta ese import defectuoso; añade la importación correcta. Distingue una ruta inexistente de un nombre no exportado; no sustituyas un módulo local por un paquete.",
+    "data es un entero entre -1000 y 1000. reglas.py está preparado y es de solo lectura.",
+    "Devuelve cuadrado(data) + 1 desde main.py, usando el nombre disponible en reglas.py. Conserva el recurso preparado y no copies su implementación.",
+  ) },
+  "logica-organiza-modulos": { statement: projectStatement(
+    "Organiza tres módulos: reglas.py calcula el cuadrado, formato.py construye una etiqueta y main.py conecta ambos. Conserva cuadrado(n) y etiqueta(n). La dependencia va del adaptador a reglas y formato; evita imports circulares y trabajo de entrada/salida al importar. No necesitas paquetes externos.",
+    "data es un entero entre -1000 y 1000.",
+    "Devuelve el texto Resultado: seguido de un espacio y el cuadrado del entero, sin comillas ni salto final. Usa las funciones de los módulos; el retorno no certifica por sí solo su organización.",
+  ) },
+  "logica-lee-archivo": { statement: projectStatement(
+    "Lee el archivo real datos.txt preparado. No sustituyas su lectura por respuestas escritas en el código. with open(ruta, encoding='utf-8') as archivo permite leer texto y cierra el recurso incluso ante un error.",
+    "data es el índice -1, 0 o 1. datos.txt es de solo lectura y contiene Sol y Luna en líneas distintas, con salto tras cada línea.",
+    "Devuelve la línea seleccionada sin su salto final. El índice -1 indica la última línea. La respuesta debe proceder del archivo leído, no de una lista fija en el código.",
+  ) },
+  "logica-escribe-archivo": { statement: projectStatement(
+    "Lee mensaje.txt, concatena el sufijo, escribe resultado.txt, ciérralo y vuelve a abrirlo. with open cierra el recurso; el modo 'w' reemplaza el contenido. Lee y escribe texto con encoding='utf-8'.",
+    "data es el texto del sufijo. mensaje.txt es de solo lectura y contiene Hola, sin salto final.",
+    "Devuelve el contenido exacto recuperado de resultado.txt. Ese archivo debe crearse durante la ejecución, no como recurso inicial, y contener el mensaje más el sufijo en UTF-8 sin añadir salto final. Se comprueba tanto el archivo como el retorno: devolver el resultado sin escribir no basta. No modifiques mensaje.txt.",
+  ) },
+  "logica-valida-json": { statement: projectStatement(
+    "Lee y analiza el recurso documento + '.json', y después valida su estructura. No decidas por el nombre del archivo: analizar JSON no valida sus datos. json.load permite analizar un archivo de texto abierto con encoding='utf-8'.",
+    "data es un diccionario con documento (valido, negativo, texto, ausente, nulo o booleano) y cantidad, un entero entre -1000 y 1000. Todos esos archivos existen, son de solo lectura y contienen JSON sintácticamente válido. ausente.json existe, pero no contiene la clave limite.",
+    "Devuelve exactamente configuracion invalida si el contenido no es un diccionario con limite entero no negativo. Un booleano no es un límite válido, aunque bool sea subclase de int en Python. Si la configuración es válida, devuelve aceptada cuando 0 ≤ cantidad ≤ limite y rechazada en otro caso. Conserva los recursos iniciales y los textos sin tildes ni comillas adicionales.",
+  ) },
+  "logica-guarda-recupera": { statement: projectStatement(
+    "Guarda una lista como JSON, cierra y reabre guardado.json y analiza el texto recuperado. json.dump guarda y json.load analiza; with cierra cada recurso. Aquí controlas los datos escritos: la reapertura es en el mismo proceso, no una prueba de persistencia entre procesos o envíos.",
+    "data es una lista de hasta 100 enteros entre -1000 y 1000; puede estar vacía.",
+    `Devuelve la lista recuperada del archivo, no directamente data. Conserva su orden y sus repeticiones; vacío guarda [] y devuelve []. ${compactJson}`,
+  ) },
+  "logica-recupera-archivo-invalido": { statement: projectStatement(
+    "Recupera errores esperados de lectura: archivo ausente o JSON que no se puede analizar. Lee y analiza el recurso elegido, sin devolver respuestas fijas por su nombre. No ocultes todos los errores: los fallos de programación deben seguir visibles.",
+    "data es el modo ausente, roto o valido. Selecciona respectivamente falta.json, roto.json o valido.json. falta.json no existe; los recursos de solo lectura roto.json y valido.json contienen texto inválido y el número 7, respectivamente.",
+    "Devuelve el entero leído o 0 si el archivo no existe o su JSON está roto. Son errores diferentes que requieren recuperación; no modifiques los recursos preparados.",
+  ) },
+  "logica-actualiza-persistidos": { statement: projectStatement(
+    "Actualiza sin perder registros: carga historial.json, añade las entradas en orden, guarda una instantánea nueva en guardado.json y reábrela. Leer-modificar-escribir conserva el recurso inicial. Esta reapertura ocurre en el mismo proceso: no promete persistencia entre procesos, durabilidad ante fallos ni escritura atómica.",
+    "data es una lista de hasta 100 enteros entre -1000 y 1000. historial.json es de solo lectura y empieza en [2,4].",
+    `Devuelve todos los registros recuperados, incluidos los anteriores y los nuevos en su orden. Sin entradas nuevas conserva [2,4]. ${compactJson}`,
+  ) },
+  "logica-inventario-modular": { statement: projectStatement(
+    "Inventario persistente, hito 1: separa reglas y adaptador, todavía sin almacenamiento. aplicar(stock, movimientos) de reglas.py modifica stock intencionalmente y devuelve el número de rechazos; main.py consulta el estado final. No es la actividad inventario que solo suma cambios y admite negativos.",
+    "data es una lista de hasta 100 movimientos, diccionarios con producto (pan o sal) y cambio, un entero entre -1000 y 1000. Empieza con un diccionario stock vacío; un producto sin registrar tiene cero existencias.",
+    "Procesa en orden: rechaza sin aplicar un cambio si dejaría existencias negativas; si se acepta, conserva el producto aunque termine en cero. Devuelve un diccionario con stock y rechazados. Sin movimientos devuelve {'stock': {}, 'rechazados': 0}. Mantén la mutación declarada y las reglas separadas del adaptador.",
+  ) },
+  "logica-inventario-persistente": { statement: projectStatement(
+    "Inventario persistente, hito 2: conecta reglas y almacenamiento. aplicar modifica stock intencionalmente sin leer archivos; almacenamiento.py ofrece cargar() y guardar(datos). Puedes copiar explícitamente el hito anterior sin sobrescribirlo. Conserva pruebas.py con sus importaciones y comprobaciones de rechazo, cero y almacenamiento; ejecutar pruebas propias no concede progreso.",
+    "data es una lista de hasta 100 movimientos, diccionarios con producto (pan o sal) y cambio, entero entre -1000 y 1000. Carga guardado.json si existe; si no, estado.json, recurso de solo lectura con {'pan': 2}. Los productos ausentes empiezan en cero.",
+    `Procesa en orden rechazando, sin aplicar, los cambios que dejarían existencias negativas; conserva productos aceptados con saldo cero. Guarda y reabre la instantánea. Devuelve un diccionario con stock completo y rechazados de esta llamada, no acumulados. No empieces con stock vacío. ${compactJson} Conserva el orden de inserción: stock inicial antes de productos nuevos. ${persistence} La segunda llamada devuelve el mismo stock y rechazados igual a 0.`,
+  ) },
+  "logica-agenda-operaciones": { statement: projectStatement(
+    "Agenda, hito 1: diseña crear y completar sin disco. Separa las reglas en aplicar(tareas, comandos) de reglas.py y conecta main.py. Probar reglas sin almacenamiento permite revisar cada responsabilidad. El acceso libre permite empezar con una plantilla propia.",
+    "data es una lista de hasta 100 comandos, diccionarios con accion y titulo. Empieza sin tareas. Los títulos al crear son no vacíos y únicos.",
+    "Devuelve la lista de tareas en orden de creación, cada una un diccionario con titulo y hecha, un booleano Python. crear añade al final una tarea con hecha igual a False; completar marca con True las tareas de ese título sin crear ninguna si falta. Ignora acciones desconocidas. Sin comandos devuelve []. True/False se muestran como true/false en JSON.",
+  ) },
+  "logica-agenda-almacenamiento": { statement: projectStatement(
+    "Agenda, hito 2: separa reglas y disco. Continúa mediante una copia explícita del hito anterior, sin sobrescribirlo. almacenamiento.py ofrece cargar() y guardar(datos); aplica las reglas a las tareas cargadas, no a una lista vacía.",
+    "data es una lista de hasta 100 comandos, diccionarios con accion y titulo. Los títulos nuevos son no vacíos y únicos. Carga guardado.json si existe; si no, estado.json, de solo lectura, con una tarea de titulo leer y hecha igual a False.",
+    `crear añade al final un diccionario con titulo y hecha igual a False; completar pone hecha en True en las tareas de ese título sin crear ninguna si falta. Ignora acciones desconocidas. Guarda, reabre y devuelve todas las tareas en orden de creación, incluidas las anteriores. True/False se representan como true/false en JSON. ${compactJson} Conserva el orden de las tareas y las claves titulo antes de hecha. ${persistence} La segunda llamada devuelve las mismas tareas finales.`,
+  ) },
+  "logica-agenda-regresion": { statement: projectStatement(
+    "Agenda, hito 3: corrige la conexión y conserva pruebas. El fragmento defectuoso aplicar([], comandos) pierde el estado: conecta cargar con aplicar antes de guardar y reabrir. La plantilla mantiene ese fragmento fuera de ejecución. Conserva pruebas.py y sus importaciones; mantén pruebas de reglas y de escritura/reapertura y comprueba completar dos veces sin duplicar ni borrar. Ejecutar pruebas propias no concede progreso ni sustituye los casos oficiales; copia explícitamente archivos del hito anterior sin sobrescribirlo.",
+    "data es una lista de hasta 100 comandos, diccionarios con accion y titulo. Los títulos nuevos son no vacíos y únicos. Carga guardado.json si existe; si no, estado.json, de solo lectura, con la tarea leer pendiente (hecha igual a False).",
+    `crear añade al final un diccionario con titulo y hecha igual a False; completar pone hecha en True en las tareas del título, sin crear otras. Ignora acciones desconocidas. Devuelve todas las tareas recuperadas en orden de creación; sin comandos conserva el estado cargado, incluida leer pendiente en el primer arranque. Completar dos veces deja la tarea completada una sola vez. True/False se representan como true/false en JSON. ${compactJson} Conserva las claves titulo antes de hecha y el orden de tareas. ${persistence} La segunda llamada devuelve las mismas tareas finales.`,
+  ) },
   "logica-saludo": { statement: statement(
     "Escribe una instrucción que muestre el saludo Hola, mundo! en pantalla. Escribe el texto entre comillas en el código, pero no imprimas esas comillas.",
     "No hay datos de entrada. Escribe un programa completo, no una función solve(data).",

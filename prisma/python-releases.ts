@@ -52,4 +52,6 @@ export const knownPythonReleases: readonly string[] = [
   "bd1d23a9655f7846214c9511b983997874552840c78f13d658b44a1885c31e3d",
   // Noveno lote editorial: cuatro funciones y los 22 programas completos.
   "e210c5aaa0da5d16f6fbca0f1da9e3691ddf8fda90783bf149d6a9aa00cd6d0c",
+  // Décimo lote editorial: los 18 proyectos completan los 224 enunciados.
+  "bcf406df5e6d37068e7e85c6f07f3e2cf17cf37964e27ff5b9b0d2abf3ee53a4",
 ];
