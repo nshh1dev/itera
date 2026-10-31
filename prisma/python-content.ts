@@ -8,6 +8,7 @@ import { prerequisiteIssue } from "../src/lib/curriculum";
 import type { Json } from "../src/lib/types";
 import { pythonMistakes, pythonCaseHelp, pythonSharedCaseHelp } from "./python-help";
 import { pythonCosts } from "./python-costs";
+import { validateProjectDefinition, validateProjectSolution } from "../src/lib/project";
 
 function pythonOnly(content: VersionContent): VersionContent {
   return { ...content, variants: content.variants.filter(variant => variant.language === "python") };
@@ -24,7 +25,7 @@ const bridges: Record<string, string> = {
 // Excepciones Python sobre actividades compartidas. No cambian el contenido ni
 // las variantes de JavaScript o TypeScript.
 type PythonVariantOverride = { starter?: string; solution?: string; explanation?: string; statement?: string; tests?: VersionContent["variants"][number]["tests"] };
-type PythonOverride = { level?: VersionContent["level"]; minutes?: number; description?: string; objective?: string; statement?: string; statementNote?: string; hints?: string[]; constraints?: string[]; tree?: boolean; extraTests?: { input: Json; expected: Json; explanation?: string }[]; variant?: PythonVariantOverride };
+type PythonOverride = { level?: VersionContent["level"]; minutes?: number; description?: string; objective?: string; statement?: string; statementNote?: string; hints?: string[]; constraints?: string[]; tree?: boolean; extraResources?: { path: string; content: string; readOnly: true }[]; extraTests?: { input: Json; expected: Json; explanation?: string }[]; variant?: PythonVariantOverride };
 
 const renameTreeKeys = (value: Json): Json => {
   if (Array.isArray(value)) return value.map(renameTreeKeys);
@@ -51,6 +52,49 @@ const balancedTree = (depth: number, value = 1): Json => depth === 0 ? null : {
   right: balancedTree(depth - 1, value * 2 + 1),
 };
 const pythonOverrides: Record<string, PythonOverride> = {
+  "logica-valida-json": {
+    statement: "Recibes un diccionario con documento (valido, negativo, texto, ausente, nulo o booleano) y cantidad entera. Abre documento + '.json'. Todos los recursos contienen JSON sintácticamente válido. Devuelve 'configuracion invalida' si el contenido no es un diccionario con limite entero no negativo; un booleano no es un límite válido, aunque bool sea una subclase de int en Python. Si la configuración es válida, devuelve 'aceptada' para 0 <= cantidad <= limite y 'rechazada' en otro caso.\n\nCompleta solve(data) en main.py y devuelve el texto con return. Conserva los recursos de solo lectura y los nombres de archivo preparados; ausente.json existe, pero no contiene la clave limite. No necesitas input(). Lee y analiza el recurso, no decidas solo por su nombre. Cada caso empieza con sus recursos originales.",
+    extraResources: [{ path: "booleano.json", content: '{"limite":true}', readOnly: true }],
+    extraTests: [{ input: { documento: "booleano", cantidad: 0 }, expected: "configuracion invalida", explanation: "True no se admite como límite entero, aunque isinstance(True, int) sea verdadero en Python." }],
+  },
+  "python-academia-inscribe": { extraTests: [{
+    input: { registro: { ana: { mate: 0 }, bea: { arte: 90 } }, alumno: "ana", curso: "leng" },
+    expected: { ana: { mate: 0, leng: null }, bea: { arte: 90 } },
+    explanation: "La inscripción nueva de ana no reemplaza su nota cero ni los cursos de bea.",
+  }] },
+  "python-academia-califica": { extraTests: [{
+    input: { registro: { ana: { mate: 8, arte: null }, bea: { mate: 90 } }, alumno: "ana", curso: "mate", nota: 75 },
+    expected: { ana: { mate: 75, arte: null }, bea: { mate: 90 } },
+    explanation: "Solo cambia mate de ana; se conservan su curso pendiente y la nota del otro alumno.",
+  }] },
+  "python-academia-resume": { extraTests: [{
+    input: { ana: {}, bea: { mate: 0 } },
+    expected: { medias: { ana: null, bea: 0 }, clasificacion: ["bea"] },
+    explanation: "Un alumno sin cursos sigue en medias con None; la nota cero de bea sí da un promedio y lugar en la clasificación.",
+  }] },
+  "python-contactos-crea": { extraTests: [{
+    input: { agenda: { bea: { telefono: "004", correo: "b@x" } }, nombre: " ANA ", telefono: "012", correo: "a@x" },
+    expected: { bea: { telefono: "004", correo: "b@x" }, ana: { telefono: "012", correo: "a@x" } },
+    explanation: "Crear ana conserva la ficha de bea y los ceros iniciales de ambos teléfonos.",
+  }] },
+  "python-contactos-edita": { extraTests: [{
+    input: { agenda: { ana: { telefono: "1", correo: "x" }, bea: { telefono: "004", correo: "b@x" } }, nombre: " ANA ", cambios: { correo: "nuevo@x" } },
+    expected: { ana: { telefono: "1", correo: "nuevo@x" }, bea: { telefono: "004", correo: "b@x" } },
+    explanation: "Editar el correo de ana conserva su teléfono y toda la ficha ajena de bea.",
+  }] },
+  "python-contactos-busca": {
+    statementNote: "Cada ficha es un diccionario. telefono y correo pueden faltar; cuando existen, sus valores son textos. Un campo filtrado que falta no equivale a un texto vacío: rechaza esa ficha.",
+    variant: { explanation: "La auxiliar recorre todos los filtros y devuelve False ante un campo ausente o un fragmento que no coincide. Los campos presentes son textos según el contrato; lower normaliza solo para comparar y no cambia la agenda. Sin filtros, todas las fichas cumplen. Se ordenan los nombres aceptados; no basta con que coincida un solo filtro." },
+    extraTests: [{
+      input: { agenda: { ana: { telefono: "12" }, bea: { telefono: "12", correo: "EX@es" } }, filtros: { correo: "ex" } },
+      expected: ["bea"], explanation: "La ficha sin correo se rechaza; EX de bea coincide sin distinguir mayúsculas.",
+    }],
+  },
+  "python-transforma-registros": { extraTests: [{
+    input: { registros: [{ edad: "3.0", nombre: " X ", extra: " Y " }, { edad: " -7 " }], reglas: { edad: "numerico", nombre: "trim" } },
+    expected: [{ edad: null, nombre: "X", extra: " Y " }, { edad: -7 }],
+    explanation: "int rechaza 3.0 sin impedir limpiar nombre ni conservar extra; el siguiente registro convierte -7 correctamente.",
+  }] },
   "logica-repetido": {
     statement: "Recibes una lista de hasta 1000 enteros. Devuelve True si algún valor aparece más de una vez y False en otro caso. La lista vacía no tiene repeticiones. True y False son booleanos de Python; en JSON se muestran como true y false, sin comillas.",
   },
@@ -277,6 +321,17 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
     if (override.hints) content.hints = override.hints;
     if (override.constraints) content.constraints = override.constraints;
     if (override.variant) content.variants[0] = { ...content.variants[0], ...override.variant };
+    if (override.extraResources) {
+      const variant = content.variants[0];
+      if (!variant.project || !variant.solutionFiles) throw new Error(`${slug}: los recursos adicionales requieren un proyecto y su solución.`);
+      const project = validateProjectDefinition(variant.project);
+      const solution = validateProjectSolution(project, variant.solutionFiles);
+      const revisedProject = validateProjectDefinition({ ...project, files: [...project.files, ...override.extraResources] });
+      content.variants[0] = { ...variant,
+        project: revisedProject,
+        solutionFiles: validateProjectSolution(revisedProject, [...solution, ...override.extraResources]),
+      };
+    }
     if (override.extraTests && !override.tree) {
       const tests = content.variants[0].tests;
       content.variants[0].tests = [...tests, ...override.extraTests.map((test, index) => ({

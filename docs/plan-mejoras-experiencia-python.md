@@ -212,6 +212,10 @@ Archivos principales: `src/lib/python-curriculum.ts`, `src/lib/language-curricul
 
 **Verificación del subbloque intermedio de colecciones:** lint, tipos, 395 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Se conserva la huella anterior y se registra la revisión nueva. No se iniciaron servicios ni se modificó la base; Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
 
+**Intermedio, proyectos y registros D2:** [auditoria-python.md](auditoria-python.md) registra otras 26 actividades: 18 mantenidas y ocho revisadas. Ocho casos ocultos nuevos distinguen errores antes aceptados: pérdida de alumnos/contactos ajenos, omisión de alumnos sin cursos, búsqueda con campo ausente, decimal convertido mediante float y booleano aceptado como límite. Este último usa un recurso Python nuevo de solo lectura, sin tocar otras variantes. Se comprueban 107 casos, incluidos 59 de los 16 proyectos, con el conductor/comparador del producto para retornos, archivos y segundo proceso, además de pruebas propias de referencia. Sigue siendo simulación local fija, no Piston ni aislamiento. Quedan 65 actividades por auditar (29 intermedias y 36 avanzadas); D2 sigue abierta.
+
+**Verificación del subbloque de proyectos y registros:** lint, tipos, 398 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Tipos detectó inicialmente accesos directos a JSON sin validar; se corrigieron usando los validadores existentes de manifiestos, soluciones y archivos esperados. Las simulaciones locales limpian sus directorios temporales y no inician servicios. Se conserva la huella anterior y se añade esta revisión. Sin cambios en la base ni activación; Piston real, E2E y revisión visual siguen pendientes de autorización.
+
 ## 7. Fase E — Claridad editorial y ayudas
 
 - [ ] Reescribir las revisiones Python con estructura consistente: tarea, entrada, resultado, reglas relevantes y ejemplos. Mantener el reto separado de la receta de resolución.

@@ -9,7 +9,8 @@ No usar la validación estructural como sustituto de esta revisión.
 Bloques revisados: **32 actividades de iniciación** (25 mantenidas y 7 con
 aclaraciones), **74 de principiante** (59 mantenidas y 15 revisadas) y las primeras
 **27 intermedias**, de colecciones (19 mantenidas y 8 revisadas).
-Quedan **91 actividades** por auditar individualmente: 55 intermedias y 36 avanzadas.
+También se revisaron **26 intermedias de proyectos y registros** (18 mantenidas y
+8 revisadas). Quedan **65 actividades** por auditar: 29 intermedias y 36 avanzadas.
 Se leyeron objetivo, enunciado, plantilla, referencia, pistas, casos y reglas
 conceptuales. Se mantienen modalidades, entradas, respuestas esperadas,
 visibilidad, reglas conceptuales e identidades; no se añaden casos por volumen.
@@ -236,11 +237,76 @@ financiero. Los casos de agotamiento distinguen efectos, no la sintaxis usada.
 | `python-consulta-anidada` | **Añadir caso** con nota 75 y campos ajenos, además de cero y ausencias ya cubiertos. | Devolver cero para toda nota presente. |
 | `logica-inventario` | **Aclarar** movimientos y salida como diccionarios; mantener modelo con negativos y ceros. | Eliminar saldos cero. |
 
+## Intermedio: módulos, archivos, persistencia y registros (26 actividades)
+
+Este subbloque comprende los 16 proyectos intermedios y diez actividades de
+registros anidados, desde módulos hasta transformación de registros. Se leyeron
+contratos, plantillas, referencias, pistas y casos; en proyectos se revisaron
+además manifiestos, recursos, archivos esperados, segundo proceso y pruebas propias.
+
+`tests/python-intermediate-records-audit.test.ts` recorre **107 casos** (59 de
+proyectos). Para proyectos reutiliza `projectExecutionFiles`, `judgeProject` y
+`judgeOwnTests` del producto: ejecuta referencias, plantillas y errores fijos en
+directorios temporales independientes, comprobando retorno, archivos y segundo
+proceso donde corresponde. Compila también los módulos Python que una plantilla
+incompleta todavía no importa y ejecuta las pruebas propias de referencia de
+inventario persistente y agenda de regresión. Los directorios se eliminan en
+`finally`; no se inicia la aplicación ni se usa la base.
+
+Esto es una simulación local de código fijo del repositorio, no Piston ni una
+verificación de aislamiento. Nunca se usa para programas enviados por alumnos.
+Las diez referencias y plantillas de registros conservan la entrada en la
+comprobación local; el juez no recibe con ello una nueva garantía general de no
+mutación. Las mutaciones sobre stock/tareas cargados son internas al proyecto.
+
+Se añaden **ocho casos ocultos**, conservando los anteriores. Los ocho errores
+ensayados para las actividades revisadas pasaban todos sus casos anteriores y
+ahora fallan. Un recurso nuevo `booleano.json` permite distinguir `True` de un
+entero de configuración: `isinstance(True, int)` no basta. Se añade como solo
+lectura al manifiesto Python y su solución; no modifica las otras variantes.
+La búsqueda de contactos explicita que los campos presentes son textos y pueden
+faltar; se corrige una explicación que mencionaba isinstance sin usarlo.
+
+Las actividades que exigen escribir no se dan por resueltas solo por devolver
+un valor correcto: los errores fijos de escribir/guardar devuelven la respuesta
+esperada pero fallan porque no producen el archivo. La persistencia declarada
+comprueba la segunda llamada `solve([])` en otro proceso, no durabilidad entre
+envíos, escritura atómica ni recuperación ante cortes de alimentación.
+
+| Actividad | Decisión y fundamento | Error representativo detectado |
+| --- | --- | --- |
+| `logica-importa-preparado` | Mantener: módulo de solo lectura, enteros positivos, cero y negativos. Importación como objetivo humano. | Duplicar en vez de multiplicar por cuatro. |
+| `logica-extrae-modulo` | Mantener: dos archivos editables, contrato cuadrado y signos distintos. | Devolver valor absoluto. |
+| `logica-separa-reglas-io` | Mantener: regla numérica y formato separados, coste fijo incluso sin unidades. | Omitir cargo fijo. |
+| `logica-repara-importacion` | Mantener: enunciado aclara que el import defectuoso es conceptual, plantilla ejecutable. | Omitir el incremento posterior al cuadrado. |
+| `logica-organiza-modulos` | Mantener: tres responsabilidades y nombres preparados, valores cero/negativo. | Devolver el cálculo sin prefijo. |
+| `logica-lee-archivo` | Mantener: recurso protegido y tres índices posibles, incluido -1. La lectura interna requiere revisión humana. | Devolver siempre la primera línea. |
+| `logica-escribe-archivo` | Mantener: recurso, archivo nuevo y texto exacto independientes del retorno. | Devolver el texto sin escribir. |
+| `logica-valida-json` | **Añadir recurso/caso** booleano y aclarar diccionario, bool/int y documento ausente de clave, no de disco. | Aceptar True como entero mediante isinstance. |
+| `logica-guarda-recupera` | Mantener: archivo compacto observado, vacío, negativos y cero. No certifica reapertura interna solo por artefacto. | Devolver data sin crear el archivo. |
+| `logica-recupera-archivo-invalido` | Mantener: ausencia de disco, JSON roto y lectura válida diferenciados. | Devolver siempre respaldo cero. |
+| `logica-actualiza-persistidos` | Mantener: estado inicial protegido, datos previos y nuevos, formato exacto. | Devolver solo los datos nuevos. |
+| `logica-inventario-modular` | Mantener: stock local mutable, rechazos, cero conservado y movimiento posterior. | Ignorar todos los movimientos. |
+| `logica-inventario-persistente` | Mantener: carga previa, stock ajeno, rechazos por llamada, archivo y segundo proceso. | Reiniciar el stock a vacío en main. |
+| `python-inventario-valora` | Mantener: importes enteros, cálculo, empate de valor cero y nombre ascendente. | Invertir también el nombre al ordenar. |
+| `python-academia-inscribe` | **Añadir caso** de inscripción con otro alumno y nota cero previa. | Conservar solo el alumno actualizado. |
+| `python-academia-califica` | **Añadir caso** con otro alumno y curso pendiente, además de los límites D1 existentes. | Descartar alumnos ajenos. |
+| `python-academia-resume` | **Añadir caso** con alumno sin cursos y otro con media cero. | Omitir del resumen los alumnos sin cursos. |
+| `python-contactos-crea` | **Añadir caso** de contacto nuevo junto a uno existente. | Devolver solo la ficha creada. |
+| `python-contactos-edita` | **Añadir caso** de edición con otro contacto en agenda. | Perder las fichas ajenas al editar. |
+| `python-contactos-borra` | Mantener: coincidencia completa frente a anabel, normalización y ausente. | Borrar todas las claves con el prefijo. |
+| `python-contactos-busca` | **Añadir caso y aclarar** ficha sin campo filtrado, tipos de campos y comparación insensible a mayúsculas. | Ignorar un filtro cuyo campo falta. |
+| `logica-agenda-operaciones` | Mantener: crear/completar, inexistente y orden, reglas sin disco. | Devolver siempre agenda vacía. |
+| `logica-agenda-almacenamiento` | Mantener: estado anterior, nuevas tareas, archivo y segundo proceso. | Aplicar comandos sobre lista vacía. |
+| `logica-agenda-regresion` | Mantener: vacío, completar dos veces, nueva tarea, artefactos y pruebas propias. | Perder el estado cargado al integrar. |
+| `python-transforma-campo` | Mantener: campo seleccionado, campos ajenos y clave ausente. | Transformar todos los campos. |
+| `python-transforma-registros` | **Añadir caso** de decimal inválido, campo ajeno y registro válido posterior. | Pasar por float y truncar antes de devolver el entero. |
+
 ## Límites y siguiente bloque
 
 - No se amplía AST, esquema, dependencias ni modalidades.
 - La ejecución local no verifica sandbox, serialización del ejecutor ni publicación.
 - La revisión de tiempos, teoría duplicada y ergonomía sigue abierta en E/F.
-- Continuar con las 55 actividades intermedias restantes y 36 avanzadas.
+- Continuar con las 29 actividades intermedias restantes y 36 avanzadas.
   Registrar decisiones individuales y errores relevantes, no solo
   recuentos de casos o cobertura de campos.

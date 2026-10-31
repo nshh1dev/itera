@@ -24,4 +24,6 @@ export const knownPythonReleases: readonly string[] = [
   "a076fff6c27b83d86483946b95d5b9dd347a2c692ac2c0953647a563626fd407",
   // Auditoría intermedia de colecciones: conservación, orden y selección.
   "e59cbd277aa70f38b783ccdfa346e4b730c100bf46cee4dacfac7b9ea9f13b02",
+  // Auditoría de proyectos y registros anidados: conservación y validación.
+  "78e7420aa7ce987b8091aa4187c921fd69083a996c5380d227e47c7d92a0ab46",
 ];
