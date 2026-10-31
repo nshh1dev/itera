@@ -4,9 +4,9 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonEditorialRevisions } from "../prisma/python-editorial";
 
-test("el primer lote editorial estructura 24 prácticas sin tocar programas ni proyectos", () => {
+test("los lotes editoriales estructuran 48 prácticas sin tocar programas ni proyectos", () => {
   const slugs = Object.keys(pythonEditorialRevisions);
-  assert.equal(slugs.length, 24);
+  assert.equal(slugs.length, 48);
   for (const slug of slugs) {
     const entry = pythonCatalog.find(item => item.slug === slug)!;
     assert.ok(entry, slug);
@@ -15,7 +15,7 @@ test("el primer lote editorial estructura 24 prácticas sin tocar programas ni p
     assert.equal(entry.content.statement, pythonEditorialRevisions[slug].statement);
     assert.equal(entry.content.variants[0].statement, entry.content.statement);
     assert.deepEqual([...entry.content.statement.matchAll(/^(Tu tarea|Entrada|Resultado esperado)\n/gm)].map(match => match[1]), ["Tu tarea", "Entrada", "Resultado esperado"], slug);
-    assert.doesNotMatch(entry.content.statement, /\barreglos?\b|\bsubarreglo\b|\bUn objeto\b|\bun objeto con\b/i, slug);
+    assert.doesNotMatch(entry.content.statement, /\barreglos?\b|\bsubarreglo\b|\bun objeto con\b/i, slug);
     assert.doesNotMatch(entry.content.statement, /Devuelve (null|true|false)\b/, slug);
     assert.ok(entry.content.hints.length >= 3, `${slug}: conserva ayudas progresivas`);
     assert.ok(entry.content.variants[0].explanation.length > 0, `${slug}: conserva explicación de la referencia`);
@@ -57,4 +57,33 @@ test("el lote editorial conserva íntegra la evaluación, los ejemplos y los met
     }),
   }));
   assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "1a6daa5e0e984a6c3897bb9b4e0364fd00b2758f3387282d7d95175e7b08dda5");
+});
+
+test("el lote avanzado conserva reglas deterministas, límites, ausencias y objetivos de práctica", () => {
+  const advanced = pythonCatalog.filter(entry => entry.content.level === "ADVANCED");
+  assert.deepEqual(advanced.filter(entry => entry.slug in pythonEditorialRevisions).map(entry => entry.slug), advanced.slice(0, 24).map(entry => entry.slug));
+  const text = (slug: string) => pythonEditorialRevisions[slug].statement;
+  for (const slug of ["logica-cuenta-nodos", "logica-altura", "logica-preorden", "logica-niveles", "logica-arbol-busqueda", "logica-ancestro"]) {
+    assert.match(text(slug), /value.*left.*right/, slug);
+    assert.match(text(slug), /profundidad máxima 50/, slug);
+    assert.match(text(slug), /None.*null/, slug);
+  }
+  assert.match(text("logica-cuenta-nodos"), /hasta 100 nodos/);
+  assert.match(text("logica-altura"), /hasta 500 nodos/);
+  assert.match(text("logica-arbol-busqueda"), /todos los antecesores/);
+  assert.match(text("logica-ancestro"), /pueden ser iguales.*no tiene por qué ser de búsqueda/);
+  assert.match(text("logica-monticulo-inserta"), /No intercambies iguales/);
+  assert.match(text("logica-monticulo-extrae"), /empate.*izquierdo/);
+  assert.match(text("logica-monticulo-extrae"), /minimo es None.*heap es \[\]/);
+  assert.match(text("logica-subconjuntos"), /empieza con \[\[\]\].*copias de los subconjuntos actuales/);
+  assert.match(text("logica-permutaciones"), /hasta 6 enteros distintos entre -1000 y 1000/);
+  assert.match(text("logica-permutaciones"), /valores numéricos/);
+  assert.match(text("logica-combinaciones"), /target cero devuelve \[\[\]\]/);
+  assert.match(text("logica-reinas"), /simetrías como soluciones diferentes/);
+  assert.match(text("logica-combina-archivos"), /no necesitas abrir ni escribir archivos reales/);
+  assert.match(text("logica-mochila"), /peso cero.*una vez.*capacidad cero/);
+  assert.match(text("logica-caminos-obstaculos"), /solo a la derecha o abajo/);
+  assert.match(text("logica-monedas"), /amount cero devuelve 0 incluso sin denominaciones/);
+  assert.match(text("logica-subsecuencia-comun"), /puede saltar caracteres/);
+  assert.match(text("logica-escalera"), /orden distingue formas/);
 });

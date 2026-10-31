@@ -64,9 +64,57 @@ vocabulario, excepciones relevantes y una huella previa de la evaluación de las
 | `logica-segundo-maximo` | Valor distinto y ausencia como None, representada por null en JSON. |
 | `logica-suma-maxima` | Tramo no vacío y consecutivo; conserva el caso completamente negativo. |
 
+## Segundo lote: 24 enunciados avanzados
+
+Las primeras 24 actividades avanzadas usan ahora la misma estructura. Se
+definen los árboles y tareas mediante diccionarios, las colecciones mediante
+listas y la ausencia mediante None, explicando null en JSON. Se separa la regla
+del problema de su implementación: altura como longitud del camino más largo,
+subsecuencia como selección que conserva orden y mochila como selección 0/1,
+sin adelantar sus transiciones ni fórmulas de actualización.
+
+Se conservan deliberadamente los pasos que **definen una salida única**:
+reparación y empate del montículo, orden de duplicación de subconjuntos y orden
+lexicográfico numérico. No son recetas eliminables mientras el contrato exija
+esa representación exacta. Las técnicas recomendadas de mezcla, potencia,
+memorización y selección de candidatos siguen como objetivos; no se certifican
+por comparar JSON. No cambian pistas, explicaciones, límites, casos ni minutos.
+
+Las pruebas verifican esas reglas y que el lote avanzado coincide exactamente
+con las primeras 24 identidades del nivel. La huella de evaluación previa al
+primer lote sigue siendo idéntica para las 224 actividades. El componente de
+presentación y los ejemplos públicos permanecen sin cambios.
+
+| Actividad | Revisión editorial |
+| --- | --- |
+| `logica-cuenta-nodos` | Diccionario de nodo, None/JSON y cuenta por nodo, no por valor distinto. |
+| `logica-altura` | Altura como nodos del camino más largo, sin recetar la combinación recursiva. |
+| `logica-preorden` | Modelo Python y orden completo raíz/izquierda/derecha, incluidos repetidos. |
+| `logica-niveles` | Orden de niveles e izquierda/derecha, sin convertir la cola en requisito certificado. |
+| `logica-arbol-busqueda` | True/False, límites de todos los antecesores y ausencia válida. |
+| `logica-ancestro` | Diccionario exterior, objetivos existentes/iguales y árbol no necesariamente de búsqueda. |
+| `logica-monticulo-inserta` | Padre, ascenso estricto y representación concreta preservados. |
+| `logica-monticulo-extrae` | Diccionario de salida, mínimo ausente y empate izquierdo preservados. |
+| `logica-prioridad` | Tareas como diccionarios, comparación numérica y desempate por id. |
+| `logica-k-mayores` | Colecciones y k explícitos; repeticiones, cero y longitud completa. |
+| `logica-actividades` | Intervalos y contacto compatibles, sin revelar elección por hora de fin en el reto. |
+| `logica-combina-archivos` | Tamaños abstractos diferenciados de archivos reales; coste y reinserción del resultado. |
+| `logica-potencia` | Diccionario y límites preservados, incluido 0 elevado a 0. |
+| `logica-mezcla` | Objetivo de divide y vencerás sin receta completa ni promesa sobre cualquier solución. |
+| `logica-subconjuntos` | Orden de generación conservado como parte de la salida evaluada. |
+| `logica-permutaciones` | Límite seis, comparación numérica y vacío, sin anticipar backtracking. |
+| `logica-combinaciones` | Entrada desordenada, uso único, orden numérico y objetivo cero. |
+| `logica-reinas` | Escalar n, cantidad en vez de tableros y simetrías como soluciones diferentes. |
+| `logica-fibonacci` | Secuencia definida y memoria como objetivo, sin repetir la receta del diccionario. |
+| `logica-escalera` | Secuencias de pasos y caso cero sin adelantar la transición de la tabla. |
+| `logica-caminos-obstaculos` | Lista de listas, movimientos restringidos, esquinas y una celda libre. |
+| `logica-monedas` | Diccionario, disponibilidad ilimitada, mínimo y bases sin confundir combinaciones. |
+| `logica-mochila` | Objetos del dominio frente a diccionario de entrada; uso único y pesos cero. |
+| `logica-subsecuencia-comun` | Definición de subsecuencia, longitud, repeticiones y vacíos, sin recetar DP. |
+
 ## Pendientes y límites
 
-- El lote cubre **24/224 enunciados**, no el cierre editorial de todo el recorrido.
+- Los dos lotes cubren **48/224 enunciados**, no el cierre editorial del recorrido.
 - Quedan los demás enunciados, teoría local y de módulos, vocabulario en otras
   ayudas y objetivos, revisión de ejemplos ya explicados, tiempos y textos de rutas.
 - PROGRAM no se normaliza como FUNCTION. Los proyectos conservan sus contratos

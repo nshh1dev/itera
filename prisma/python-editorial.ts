@@ -5,6 +5,126 @@ const statement = (task: string, input: string, output: string) =>
   `Tu tarea\n${task}\n\nEntrada\n${input}\n\nResultado esperado\n${output}`;
 
 export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
+  "logica-cuenta-nodos": { statement: statement(
+    "Cuenta los nodos de un árbol binario, aunque varios tengan el mismo valor.",
+    "data es un árbol binario de hasta 100 nodos y profundidad máxima 50, o None si está vacío. Cada nodo es un diccionario con value (entero), left y right (otro nodo o None). En JSON, None se representa como null.",
+    "Devuelve el número de nodos. El árbol vacío tiene 0 nodos; cuenta los nodos, no la cantidad de valores distintos.",
+  ) },
+  "logica-altura": { statement: statement(
+    "Calcula la altura de un árbol binario contando nodos, no enlaces.",
+    "data es un árbol binario de hasta 500 nodos y profundidad máxima 50, o None si está vacío. Cada nodo es un diccionario con value (entero), left y right (otro nodo o None). En JSON, None se representa como null.",
+    "Devuelve la cantidad de nodos del camino más largo desde la raíz hasta una hoja. Un árbol vacío tiene altura 0 y una hoja, altura 1.",
+  ) },
+  "logica-preorden": { statement: statement(
+    "Obtén los valores de un árbol binario en preorden.",
+    "data es un árbol binario de hasta 500 nodos y profundidad máxima 50, o None si está vacío. Cada nodo es un diccionario con value (entero), left y right (otro nodo o None). En JSON, None se representa como null.",
+    "Devuelve una lista con el valor de la raíz, después todos los del subárbol izquierdo y finalmente todos los del derecho, siguiendo ese mismo orden en cada subárbol. Conserva valores repetidos. Para el árbol vacío devuelve [].",
+  ) },
+  "logica-niveles": { statement: statement(
+    "Obtén los valores de un árbol binario nivel a nivel.",
+    "data es un árbol binario de hasta 500 nodos y profundidad máxima 50, o None si está vacío. Cada nodo es un diccionario con value (entero), left y right (otro nodo o None). En JSON, None se representa como null.",
+    "Devuelve una lista empezando por la raíz y continuando por niveles, de izquierda a derecha dentro de cada nivel. Conserva valores repetidos. Para el árbol vacío devuelve [].",
+  ) },
+  "logica-arbol-busqueda": { statement: statement(
+    "Comprueba si un árbol binario cumple la propiedad de búsqueda en todos sus nodos.",
+    "data es un árbol binario con valores enteros distintos, hasta 500 nodos y profundidad máxima 50, o None si está vacío. Cada nodo es un diccionario con value, left y right; los hijos son otro nodo o None. En JSON, None se representa como null.",
+    "Devuelve True si, para cada nodo, todos los valores de su subárbol izquierdo son estrictamente menores que su value y todos los del derecho son estrictamente mayores. Los límites de todos los antecesores importan, no solo los hijos inmediatos. En otro caso devuelve False. El árbol vacío cumple la propiedad. True y False se muestran como true y false en JSON.",
+  ) },
+  "logica-ancestro": { statement: statement(
+    "Encuentra el ancestro común más cercano de dos nodos. Un nodo es ancestro de sí mismo.",
+    "data es un diccionario con tree, a y b. tree es un árbol binario no vacío de hasta 100 nodos, profundidad máxima 50 y valores enteros únicos. Cada nodo es un diccionario con value, left y right; sus hijos son otro nodo o None (null en JSON). a y b son valores de nodos existentes y pueden ser iguales. El árbol no tiene por qué ser de búsqueda.",
+    "Devuelve el valor del ancestro común más profundo de los nodos a y b. La relación depende de las ramas del árbol, no de ordenar sus valores.",
+  ) },
+  "logica-monticulo-inserta": { statement: statement(
+    "Inserta un valor en un montículo mínimo y devuelve su representación tras reparar el camino hacia la raíz.",
+    "data es un diccionario con heap, una lista que representa un montículo mínimo válido de hasta 100 enteros, y value, el entero que se inserta. Para un índice i mayor que cero, su padre está en (i - 1) // 2.",
+    "Devuelve la lista obtenida al añadir value al final y ascenderlo mientras sea estrictamente menor que su padre, intercambiando ambos valores. Detente en la raíz o si el padre es menor o igual. No intercambies iguales. Se pide esta representación concreta, no cualquier lista ordenada ni cualquier montículo válido.",
+  ) },
+  "logica-monticulo-extrae": { statement: statement(
+    "Retira el mínimo de un montículo y devuelve también su representación reparada.",
+    "data es una lista que representa un montículo mínimo válido de hasta 100 enteros; puede estar vacía.",
+    "Devuelve un diccionario con minimo y heap. Si está vacío, minimo es None (null en JSON) y heap es []. En otro caso, retira la raíz y coloca el último valor en ella; desciéndelo intercambiando con el hijo menor hasta recuperar la propiedad. En empate entre hijos elige el izquierdo; no intercambies iguales. Se pide la lista concreta resultante de esa reparación, no cualquier montículo equivalente.",
+  ) },
+  "logica-prioridad": { statement: statement(
+    "Determina el orden de atención de un lote de tareas según su prioridad.",
+    "data es una lista de hasta 100 tareas. Cada tarea es un diccionario con id, un entero único, y prioridad, un entero.",
+    "Devuelve la lista de ids: menor prioridad numérica primero y, si empatan, menor id. Una lista vacía de tareas devuelve []. La comparación es numérica, no textual.",
+  ) },
+  "logica-k-mayores": { statement: statement(
+    "Selecciona los k valores mayores de una lista, practicando cómo limitar los candidatos conservados.",
+    "data es un diccionario con numbers, una lista de hasta 1000 enteros, y k, un entero entre cero y su longitud.",
+    "Devuelve una lista con los k mayores en orden descendente, conservando repeticiones. Para k igual a cero devuelve []; si k es la longitud, incluye todos los valores.",
+  ) },
+  "logica-actividades": { statement: statement(
+    "Calcula el máximo número de actividades compatibles, sin solapamientos.",
+    "data es una lista de hasta 10000 actividades. Cada una es una lista [inicio, fin] de enteros, con inicio menor que fin. Los extremos pueden ser negativos y la entrada no tiene que estar ordenada.",
+    "Devuelve la mayor cantidad de actividades que puedes elegir. Una actividad puede empezar justo cuando termina otra: compartir ese extremo no es solaparse. Si no hay actividades, devuelve 0. No modifiques la entrada.",
+  ) },
+  "logica-combina-archivos": { statement: statement(
+    "Encuentra el coste total mínimo de combinar todos los archivos en uno solo.",
+    "data es una lista de hasta 100 tamaños enteros entre 0 y 1000. Son tamaños abstractos: no necesitas abrir ni escribir archivos reales.",
+    "Combinar dos archivos cuesta la suma de sus tamaños y crea un archivo de ese tamaño, que puede participar en combinaciones posteriores. Devuelve el menor coste total posible. Con cero o un archivo no hay combinaciones y el coste es 0.",
+  ) },
+  "logica-potencia": { statement: statement(
+    "Calcula una potencia practicando la reducción del exponente por mitades.",
+    "data es un diccionario con base, un entero entre 0 y 10, y exponente, un entero entre 0 y 100. Las entradas garantizan que el resultado no supera 9007199254740991.",
+    "Devuelve base elevada a exponente como entero. Para exponente cero devuelve 1, también si base es cero. Las pruebas de resultado no certifican el método de cálculo.",
+  ) },
+  "logica-mezcla": { statement: statement(
+    "Ordena una lista practicando la ordenación por mezcla: divide el problema en mitades y combina las partes ordenadas.",
+    "data es una lista de hasta 10000 enteros. Puede estar vacía y contener negativos o repeticiones.",
+    "Devuelve una lista nueva ordenada de menor a mayor, con todos los elementos y sus repeticiones. No modifiques la lista original. La estrategia se desarrolla en las ayudas; los casos comprueban la salida, no certifican la técnica ni su complejidad.",
+  ) },
+  "logica-subconjuntos": { statement: statement(
+    "Genera todos los subconjuntos de una lista, incluido el vacío.",
+    "data es una lista de hasta 10 enteros distintos en orden ascendente.",
+    "Devuelve una lista de listas en este orden concreto: empieza con [[]]; para cada número de la entrada, añade al final copias de los subconjuntos actuales con ese número al final de cada copia. Para [1, 2], el orden es [[], [1], [2], [1, 2]]. No agrupes por longitud ni elimines el subconjunto vacío.",
+  ) },
+  "logica-permutaciones": { statement: statement(
+    "Genera todos los órdenes posibles de los elementos de una lista.",
+    "data es una lista de hasta 6 enteros distintos entre -1000 y 1000, en orden ascendente.",
+    "Devuelve una lista con todas las permutaciones, cada una como una lista que utiliza todos los elementos exactamente una vez. Ordénalas lexicográficamente por valores numéricos: compara el primer elemento diferente, no su texto. Por ejemplo, [2, 10] va antes de [10, 2]. Para una entrada vacía devuelve [[]].",
+  ) },
+  "logica-combinaciones": { statement: statement(
+    "Encuentra todas las combinaciones que suman un objetivo, sin reutilizar elementos.",
+    "data es un diccionario con numbers, una lista de hasta 15 enteros positivos distintos, y target, un entero entre 0 y 100. numbers puede estar vacía y no necesita venir ordenada.",
+    "Devuelve una lista de combinaciones que sumen exactamente target; cada elemento se usa como máximo una vez por combinación. Ordena los valores dentro de cada combinación y la lista exterior lexicográficamente por valores numéricos, no por texto. Para target cero devuelve [[]]; si no hay soluciones, devuelve [].",
+  ) },
+  "logica-reinas": { statement: statement(
+    "Cuenta las colocaciones válidas de n reinas en un tablero de n por n.",
+    "data es el entero n, entre 1 y 8.",
+    "Devuelve cuántas formas hay de colocar n reinas sin compartir fila, columna ni diagonal. Cuenta las simetrías como soluciones diferentes. Si no hay ninguna colocación válida, devuelve 0; no devuelvas los tableros.",
+  ) },
+  "logica-fibonacci": { statement: statement(
+    "Calcula un término de Fibonacci practicando la reutilización de resultados ya obtenidos.",
+    "data es un entero n entre 0 y 40.",
+    "Devuelve F(n), con F(0) = 0, F(1) = 1 y cada término posterior igual a la suma de los dos anteriores. Las ayudas desarrollan la memoria de resultados; los casos no certifican cómo los guardas.",
+  ) },
+  "logica-escalera": { statement: statement(
+    "Cuenta las formas de subir una escalera dando pasos de uno o dos escalones.",
+    "data es un entero n entre 0 y 45, el número de escalones.",
+    "Devuelve el número de secuencias de pasos que llegan exactamente al escalón n. El orden distingue formas: [1, 2] y [2, 1] son distintas. Con cero escalones hay una única forma de no subir, por lo que devuelve 1.",
+  ) },
+  "logica-caminos-obstaculos": { statement: statement(
+    "Cuenta caminos que no atraviesen obstáculos, desde la esquina superior izquierda hasta la inferior derecha.",
+    "data es una matriz rectangular no vacía de hasta 15 por 15, representada como una lista de listas. Cada celda contiene el entero 0 (libre) o 1 (obstáculo).",
+    "Devuelve la cantidad de caminos moviéndote solo a la derecha o abajo. No se puede pisar ningún obstáculo, tampoco en el inicio o la meta. Si no hay camino, devuelve 0. Una única celda libre tiene un camino sin movimientos.",
+  ) },
+  "logica-monedas": { statement: statement(
+    "Encuentra el mínimo número de monedas necesario para formar un importe.",
+    "data es un diccionario con coins, una lista de hasta 20 denominaciones enteras positivas, y amount, un entero entre 0 y 1000. coins puede estar vacía. Cada denominación puede usarse tantas veces como haga falta.",
+    "Devuelve la menor cantidad de monedas que suma exactamente amount, o -1 si es imposible. Para amount cero devuelve 0 incluso sin denominaciones. No se pide contar combinaciones de monedas.",
+  ) },
+  "logica-mochila": { statement: statement(
+    "Elige un subconjunto de objetos que maximice el valor sin superar la capacidad. Cada objeto puede elegirse como máximo una vez.",
+    "data es un diccionario con pesos y valores, listas de enteros no negativos de la misma longitud, hasta 200 objetos, y capacidad, un entero entre 0 y 1000. Las posiciones correspondientes de las listas describen el peso y valor de cada objeto.",
+    "Devuelve el mayor valor total posible. Puedes no elegir ningún objeto y no es necesario llenar exactamente la capacidad. Los objetos de peso cero también pueden elegirse una vez cada uno, incluso con capacidad cero. No modifiques las listas recibidas.",
+  ) },
+  "logica-subsecuencia-comun": { statement: statement(
+    "Calcula la longitud de la subsecuencia común más larga de dos textos. Una subsecuencia conserva el orden, pero puede saltar caracteres: no tiene que ser un tramo consecutivo.",
+    "data es un diccionario con a y b, textos de hasta 500 caracteres; cualquiera puede estar vacío.",
+    "Devuelve la longitud máxima, no el propio texto. Las apariciones repetidas cuentan si respetan el orden en ambos textos. Si alguno está vacío o no comparten ninguna subsecuencia no vacía, devuelve 0.",
+  ) },
   "logica-mayor-tres": { statement: statement(
     "Encuentra el mayor de tres valores usando comparaciones.",
     "data es un diccionario con las claves a, b y c, enteros entre -1000 y 1000. Puede haber valores repetidos o negativos.",

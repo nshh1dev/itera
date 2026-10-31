@@ -36,4 +36,6 @@ export const knownPythonReleases: readonly string[] = [
   "edbd51807108ca247f9b072cc3d815eccbaa77c44fe012b79c7e618e3ad0430a",
   // Primer lote editorial: 24 enunciados con estructura y vocabulario Python.
   "7df05db75ed75ec16cff3771d1a3a530cf5840dcc47b2d7594c1cc1f064960e6",
+  // Segundo lote editorial: 24 prácticas avanzadas, con evaluación conservada.
+  "b16e5f2cda967e1483898a046472cb55e5652a5a0d9cc98f2d9117a8f8dac4a8",
 ];
