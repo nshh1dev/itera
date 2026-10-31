@@ -1,4 +1,5 @@
 import { curriculumUnits, curriculumSlug, type CurriculumUnit } from "./curriculum-v2";
+import { pythonModuleCopy } from "./python-route-copy";
 
 // Esta señal se publica junto al lote completo, nunca durante su preparación.
 export const pythonCurriculumMarker = "python-constante";
@@ -125,7 +126,7 @@ const positions = new Map<string, number>();
 export const pythonCurriculumUnits = sequence.map(unit => {
   const position = (positions.get(unit.path) ?? 0) + 1;
   positions.set(unit.path, position);
-  return { ...unit, title: `${position}. ${unit.title.replace(/^\d+\.\s*/, "")}` };
+  return { ...unit, title: `${position}. ${pythonModuleCopy[unit.slug]?.title ?? unit.title.replace(/^\d+\.\s*/, "")}` };
 });
 export function pythonStepSlug(key: string) { return key.startsWith("python-") ? key : curriculumSlug(key); }
 export const pythonCurriculumSlugs = pythonCurriculumUnits.flatMap(unit => unit.steps.map(step => pythonStepSlug(step.key)));

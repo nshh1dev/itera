@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { registerHooks } from "node:module";
 import type { Language, Level } from "../src/lib/types";
 import type { ReactElement } from "react";
+import { pythonCurriculumMarker } from "../src/lib/python-curriculum";
 
 test("la bienvenida guarda y finaliza sin diagnóstico ni progreso y respeta la orientación anterior", async t => {
   let user: { id: string } | null = { id: "cuenta" };
@@ -31,6 +32,10 @@ test("la bienvenida guarda y finaliza sin diagnóstico ni progreso y respeta la 
         writes++;
       } },
       diagnostic: { findFirst: async ({ where }: { where: { userId: string } }) => { owner(where.userId); return diagnostic; } },
+      exercise: { findFirst: async (query: unknown) => {
+        assert.deepEqual(query, { where: { slug: pythonCurriculumMarker, published: true, versions: { some: { published: true, variants: { some: { language: "python" } } } } }, select: { id: true } });
+        return null;
+      } },
       $transaction: async (operations: Promise<unknown>[]) => Promise.all(operations),
     },
   };

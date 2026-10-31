@@ -1,5 +1,6 @@
 import { pythonCurriculumSlugs, pythonCurriculumUnits, hasPythonCurriculum } from "./python-curriculum";
 import type { Language } from "./types";
+import { pythonPathCopy } from "./python-route-copy";
 
 // No proyectar borradores: el catálogo recibido debe contener solo variantes publicadas.
 export function orderLanguageCatalog<T extends { slug: string }>(catalog: T[], language: Language): T[] {
@@ -16,7 +17,7 @@ export function languagePaths<T extends { slug: string; items: { exerciseId: str
     const units = pythonCurriculumUnits.filter(unit => unit.path === path.slug);
     if (!units.length) return path;
     const slugs = units.flatMap(unit => unit.steps.map(step => step.key.startsWith("python-") ? step.key : `logica-${step.key}`));
-    return { ...path, items: [
+    return { ...path, ...pythonPathCopy[path.slug], items: [
       ...slugs.flatMap(slug => ids.has(slug) ? [{ exerciseId: ids.get(slug)! }] : []),
       ...path.items.filter(item => !curriculumIds.has(item.exerciseId)),
     ] };

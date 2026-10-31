@@ -2,9 +2,15 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { registerHooks } from "node:module";
 import type { Level } from "../src/lib/types";
+import { pythonCurriculumMarker } from "../src/lib/python-curriculum";
+import { pythonPathCopy } from "../src/lib/python-route-copy";
+import { learningPaths } from "../src/lib/learning-paths";
 
 test("el resumen respeta el último diagnóstico terminado, incluso inconcluso", async t => {
   let declaredLevel: Level | undefined = "BEGINNER";
+  let activePython = false;
+  let expectedLanguage = "python";
+  let markerQueries = 0;
   type Diagnostic = { id: string; userId: string; language: string; declaredLevel: Level; suggestedLevel: Level | null; reason: string; createdAt: Date; finishedAt: Date | null };
   let diagnostics: Diagnostic[] = [];
   const entry = (id: string, extra: Partial<Diagnostic> = {}): Diagnostic => ({ id, userId: "cuenta", language: "python", declaredLevel: "BEGINNER", suggestedLevel: "INTERMEDIATE", reason: "Puedes avanzar.", createdAt: new Date("2026-10-24"), finishedAt: new Date("2026-10-24"), ...extra });
@@ -12,11 +18,11 @@ test("el resumen respeta el último diagnóstico terminado, incluso inconcluso",
   const globals = globalThis as typeof globalThis & { [key: symbol]: unknown };
   globals[key] = { db: {
     learningProfile: { findUnique: async ({ where }: { where: { userId_language: { userId: string; language: string } } }) => {
-      assert.deepEqual(where.userId_language, { userId: "cuenta", language: "python" });
+      assert.deepEqual(where.userId_language, { userId: "cuenta", language: expectedLanguage });
       return declaredLevel ? { declaredLevel } : null;
     } },
     diagnostic: { findFirst: async ({ where, orderBy }: { where: { userId: string; language: string; suggestedLevel?: unknown }; orderBy: Record<string, string>[] }) => {
-      assert.equal(where.userId, "cuenta"); assert.equal(where.language, "python");
+      assert.equal(where.userId, "cuenta"); assert.equal(where.language, expectedLanguage);
       const matching = diagnostics.filter(item => item.userId === where.userId && item.language === where.language && item.finishedAt && (!where.suggestedLevel || item.suggestedLevel));
       return matching.sort((a, b) => {
         for (const order of orderBy) {
@@ -26,6 +32,11 @@ test("el resumen respeta el último diagnóstico terminado, incluso inconcluso",
         }
         return 0;
       })[0] ?? null;
+    } },
+    exercise: { findFirst: async (query: unknown) => {
+      markerQueries += 1;
+      assert.deepEqual(query, { where: { slug: pythonCurriculumMarker, published: true, versions: { some: { published: true, variants: { some: { language: "python" } } } } }, select: { id: true } });
+      return activePython ? { id: "marcador-publicado" } : null;
     } },
   } };
   const hooks = registerHooks({
@@ -67,6 +78,27 @@ test("el resumen respeta el último diagnóstico terminado, incluso inconcluso",
       declaredLevel = undefined; diagnostics = [];
       const summary = await getLearningSummary("cuenta", "python");
       assert.equal(summary.path.level, "INITIATION"); assert.equal(summary.declaredLevel, null); assert.equal(summary.diagnosticDate, null);
+    });
+    await t.test("solo el marcador publicado de Python activa su descripción en el punto de partida", async () => {
+      declaredLevel = "INTERMEDIATE"; diagnostics = []; activePython = false;
+      const original = learningPaths.find(path => path.level === "INTERMEDIATE")!;
+      assert.equal((await getLearningSummary("cuenta", "python")).path.description, original.description);
+      activePython = true;
+      const summary = await getLearningSummary("cuenta", "python");
+      assert.equal(summary.path.description, pythonPathCopy[original.slug].description);
+      assert.equal(summary.path.title, original.title);
+      assert.equal(summary.path.slug, original.slug);
+      assert.equal(summary.path.level, original.level);
+      assert.equal(summary.declaredLevel, "INTERMEDIATE");
+    });
+    await t.test("el resumen de otros lenguajes conserva los textos y no consulta el marcador Python", async () => {
+      const queries = markerQueries;
+      for (const language of ["javascript", "typescript"] as const) {
+        expectedLanguage = language;
+        const summary = await getLearningSummary("cuenta", language);
+        assert.equal(summary.path, learningPaths.find(path => path.level === "INTERMEDIATE"));
+      }
+      assert.equal(markerQueries, queries);
     });
   } finally { hooks.deregister(); delete globals[key]; }
 });

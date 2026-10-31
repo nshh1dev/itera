@@ -96,6 +96,8 @@ El mismo archivo separa `pythonSolutionExplanations`, con 28 revisiones de la pr
 
 Los minutos orientativos se revisan en [tiempos-python.md](tiempos-python.md): 54 ajustes explícitos de `prisma/python-timing.ts` y 170 valores conservados tras revisar las 224 actividades. Distinguen tareas breves, integraciones y proyectos con persistencia; estiman lectura, resolución y comprobación, no tiempo del ejecutor ni dominio medido. Solo se modifica `content.minutes` de las identidades enumeradas, sin cambiar otras variantes, niveles, orden ni progreso. Los minutos revisados requieren la preparación/activación del catálogo para llegar a una base existente.
 
+Los títulos/descripciones de los 57 módulos y las descripciones de las cuatro rutas tienen proyección propia en `src/lib/python-route-copy.ts`; criterios e integración en [textos-rutas-python.md](textos-rutas-python.md). Se mantienen títulos de ruta, slugs y secuencia. Listado, detalle y punto de partida usan la descripción Python solo con currículo publicado; el resumen verifica el marcador sin consultar progreso adicional ni alterar el nivel. La teoría, los ejemplos y el catálogo de actividades no cambian; las prácticas FUNCTION de academia/contactos se distinguen de los proyectos multarchivo.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

@@ -1,6 +1,7 @@
 import { curriculumSlug, curriculumUnits } from "./curriculum-v2";
 import type { Language } from "./types";
 import { pythonCurriculumUnits, pythonStepSlug, pythonGroupForUnit } from "./python-curriculum";
+import { pythonModuleCopy } from "./python-route-copy";
 
 export type LearningModule = {
   slug: string; path: string; title: string; objective: string; theory: string;
@@ -15,7 +16,7 @@ export const learningModules: LearningModule[] = curriculumUnits.map(unit => ({
 }));
 const pythonModules: LearningModule[] = pythonCurriculumUnits.map(unit => ({
   slug: unit.slug, path: unit.path, title: unit.title, theory: unit.theory, examples: unit.examples,
-  objective: unit.readiness.map(goal => goal.replace(/^Puedo /, "")).join(" · "), readiness: unit.readiness,
+  objective: pythonModuleCopy[unit.slug]?.description ?? unit.readiness.map(goal => goal.replace(/^Puedo /, "")).join(" · "), readiness: unit.readiness,
   slugs: unit.steps.map(step => pythonStepSlug(step.key)), group: pythonGroupForUnit(unit.slug),
 }));
 export function modulesForPath(path: string, language?: Language) { return (language === "python" ? pythonModules : learningModules).filter(unit => unit.path === path); }

@@ -572,11 +572,21 @@ con valores anteriores y motivos. Una huella protege todos los otros campos y
 los tiempos conservados; JavaScript/TypeScript y el catálogo activo no cambian.
 Se completa el punto de tiempos de E, no la revisión editorial global.
 
+## Textos de rutas y módulos
+
+[textos-rutas-python.md](textos-rutas-python.md) registra la revisión de cuatro
+rutas y 57 módulos. Se conservan los títulos de rutas y se diferencian sus
+descripciones por Python publicado; los módulos reciben una descripción propia
+sin concatenar autoevaluaciones. Se corrigen nombres y alcance de frecuencias,
+agrupación, archivos, contactos y prácticas frente a proyectos multarchivo.
+Teoría, ejemplos y actividades conservan sus campos; el resto de E/F sigue
+abierto, incluida la revisión visual de los textos nuevos.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Quedan teoría local y de módulos, vocabulario en otras
-  ayudas y objetivos, revisión de ejemplos ya explicados y textos de rutas.
+  ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
   conservan sus contratos de archivos y persistencia; se retiraron repeticiones
   internas, no se revisaron aún todas las superficies de ayuda y teoría.
