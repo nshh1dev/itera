@@ -4,9 +4,9 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonEditorialRevisions } from "../prisma/python-editorial";
 
-test("los lotes editoriales estructuran 156 prácticas sin tocar programas ni proyectos", () => {
+test("los lotes editoriales estructuran 180 prácticas sin tocar programas ni proyectos", () => {
   const slugs = Object.keys(pythonEditorialRevisions);
-  assert.equal(slugs.length, 156);
+  assert.equal(slugs.length, 180);
   for (const slug of slugs) {
     const entry = pythonCatalog.find(item => item.slug === slug)!;
     assert.ok(entry, slug);
@@ -229,6 +229,45 @@ test("conjuntos y recorridos conservan pertenencia, cantidades, estabilidad y co
   assert.match(text("python-filter"), /al menos 18 años.*sin quitar repeticiones.*no termina/);
   assert.match(text("python-agrega"), /total es 0.*minimo y maximo son None.*null/);
   assert.match(text("python-clave-longitud"), /conserva el orden original, no ordenes alfabéticamente/);
+});
+
+test("registros, búsquedas y matrices conservan claves, fronteras y modelos de datos", () => {
+  const text = (slug: string) => pythonEditorialRevisions[slug].statement;
+  const slugs = ["python-lambda-desempate", "python-formato-decimal", "python-consulta-anidada", "logica-inventario", "python-inventario-valora", "python-academia-inscribe", "python-academia-califica", "python-academia-resume", "python-contactos-crea", "python-contactos-edita", "python-contactos-borra", "python-contactos-busca", "python-transforma-campo", "python-transforma-registros", "logica-busqueda-binaria", "logica-insercion-posicion", "logica-ordena-registros", "logica-intervalos-suma", "logica-celda", "logica-columnas", "logica-transpuesta", "logica-vecinos", "logica-copia-anidada", "logica-delimitadores"];
+  for (const slug of slugs) {
+    const entry = pythonCatalog.find(item => item.slug === slug)!;
+    assert.equal(entry.content.level, "INTERMEDIATE", slug);
+    assert.equal(entry.content.statement, text(slug), slug);
+  }
+  assert.match(text("python-lambda-desempate"), /longitud descendente.*alfabético ascendente/);
+  assert.match(text("python-formato-decimal"), /finito entre -1000 y 1000.*entre 0 y 4/);
+  assert.match(text("python-formato-decimal"), /ceros finales.*redondeo de float, no una regla financiera/);
+  assert.match(text("python-consulta-anidada"), /Cero es una nota válida/);
+  assert.match(text("logica-inventario"), /saldo final sea cero.*no rechaces cambios que produzcan negativos/i);
+  assert.match(text("python-inventario-valora"), /total_centimos y productos.*nombre y valor_centimos.*nombre ascendente/);
+  assert.match(text("python-academia-inscribe"), /conserva su nota, incluso cero/);
+  assert.match(text("python-academia-califica"), /0 ≤ nota ≤ 100.*No inscribas automáticamente/);
+  assert.match(text("python-academia-resume"), /medias y clasificacion.*solo los nombres.*nombre ascendente/);
+  for (const slug of ["python-contactos-crea", "python-contactos-edita", "python-contactos-borra"]) {
+    assert.match(text(slug), /strip y lower/, slug);
+    assert.match(text(slug), /No modifiques la entrada/, slug);
+  }
+  assert.match(text("python-contactos-crea"), /vacío o ya existe.*no cambies nada/);
+  assert.match(text("python-contactos-edita"), /permite texto vacío.*ignora otros campos y None/i);
+  assert.match(text("python-contactos-borra"), /nombre completo.*ni borres otros contactos/s);
+  assert.match(text("python-contactos-busca"), /todos los filtros.*parcial e insensible.*ausente rechaza.*Sin filtros/s);
+  assert.match(text("python-transforma-campo"), /No crees una clave ausente/);
+  assert.match(text("python-transforma-registros"), /ValueError.*None.*int nativo, no la gramática restringida/s);
+  assert.match(text("logica-busqueda-binaria"), /10000 enteros distintos.*índices empiezan en cero.*-1/s);
+  assert.match(text("logica-insercion-posicion"), /primer índice.*mayor o igual.*longitud.*primera posición/);
+  assert.match(text("logica-ordena-registros"), /ambos campos coinciden.*orden original/);
+  assert.match(text("logica-intervalos-suma"), /100 pares.*ambos extremos.*inicio igual a fin/s);
+  assert.match(text("logica-celda"), /20 filas y 20 columnas.*desde cero/);
+  assert.match(text("logica-columnas"), /cada una contiene al menos un elemento/);
+  assert.match(text("logica-transpuesta"), /100 filas y 100 columnas.*al menos una fila y una columna/);
+  assert.match(text("logica-vecinos"), /no incluyas diagonales ni la propia celda/);
+  assert.match(text("logica-copia-anidada"), /No modifiques las filas originales.*no certifican/);
+  assert.match(text("logica-delimitadores"), /texto vacío está equilibrado.*misma cantidad.*no basta/s);
 });
 
 test("grafos y optimización conservan direcciones, desempates, límites y casos frontera", () => {

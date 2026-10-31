@@ -307,9 +307,49 @@ vacíos, estabilidad y consumo del mismo iterador.
 | `python-agrega` | Total cero y extremos ausentes frente a cero como dato válido. |
 | `python-clave-longitud` | Clave len y estabilidad sin desempate alfabético. |
 
+## Octavo lote: 24 enunciados de registros, búsquedas y matrices
+
+Otras 24 prácticas intermedias separan tarea, entrada y resultado. Se conservan
+introducciones a claves compuestas, formato de float, copias, get/setdefault,
+normalización y transformaciones. Cada operación de academia y contactos
+describe su propio modelo, sin depender de haber leído otro reto. Se distingue
+la conversión int nativa de la gramática restringida de captura-conversion.
+
+La evaluación y los ejemplos de las 224 actividades mantienen su huella. No
+cambian ayudas, referencias, plantillas, casos, límites, minutos ni orden. Las
+pruebas editoriales verifican las 24 identidades, claves, desempates, valores
+ausentes frente a cero, consultas válidas y conservación de matrices.
+
+| Actividad | Revisión editorial |
+| --- | --- |
+| `python-lambda-desempate` | Longitud descendente y alfabético ascendente sin invertir ambos criterios. |
+| `python-formato-decimal` | Precisión, ceros finales, salida textual y redondeo float no financiero. |
+| `python-consulta-anidada` | Registro alumno/curso, ausencia en cada nivel y nota cero válida. |
+| `logica-inventario` | Saldos por producto, ceros conservados y negativos permitidos. |
+| `python-inventario-valora` | Fichas como diccionarios, céntimos enteros, campos exactos y desempate. |
+| `python-academia-inscribe` | Inscripción ausente con None y nota previa preservada. |
+| `python-academia-califica` | Existencia previa, rango inclusivo y prohibición de inscribir automáticamente. |
+| `python-academia-resume` | Medias sin None, cero incluido y clasificación de nombres con promedio. |
+| `python-contactos-crea` | Normalización, nombres vacíos/duplicados y teléfonos textuales. |
+| `python-contactos-edita` | Solo campos permitidos de texto, incluido vacío; None ignorado. |
+| `python-contactos-borra` | Nombre completo normalizado y eliminación ausente sin error. |
+| `python-contactos-busca` | Todos los filtros, coincidencia parcial y campo ausente distinto de vacío. |
+| `python-transforma-campo` | Copia de textos inmutables y clave ausente no creada. |
+| `python-transforma-registros` | Reglas exactas, copias en orden y ValueError numérico por campo. |
+| `logica-busqueda-binaria` | Completar plantilla, índices originales y -1, sin ordenar ni cortar. |
+| `logica-insercion-posicion` | Primera posición mayor o igual, duplicados, extremo final y vacío. |
+| `logica-ordena-registros` | Dos criterios y estabilidad cuando ambos coinciden. |
+| `logica-intervalos-suma` | Ambos extremos incluidos, consulta unitaria y vacíos coherentes. |
+| `logica-celda` | Diccionario exterior, lista de listas e índices desde cero. |
+| `logica-columnas` | Rectangularidad, filas no vacías y columnas frente a filas. |
+| `logica-transpuesta` | Dimensiones intercambiadas y correspondencia de posiciones. |
+| `logica-vecinos` | Cuatro direcciones, sin diagonal, propia celda ni vecinos exteriores. |
+| `logica-copia-anidada` | Copia de cada fila, cambio único y límite de garantías de identidad. |
+| `logica-delimitadores` | Booleanos Python, anidamiento, tipos y texto vacío equilibrado. |
+
 ## Pendientes y límites
 
-- Los siete lotes cubren **156/224 enunciados**, no el cierre editorial del recorrido.
+- Los ocho lotes cubren **180/224 enunciados**, no el cierre editorial del recorrido.
 - Quedan los demás enunciados, teoría local y de módulos, vocabulario en otras
   ayudas y objetivos, revisión de ejemplos ya explicados, tiempos y textos de rutas.
 - PROGRAM no se normaliza como FUNCTION. Los proyectos conservan sus contratos

@@ -5,6 +5,126 @@ const statement = (task: string, input: string, output: string) =>
   `Tu tarea\n${task}\n\nEntrada\n${input}\n\nResultado esperado\n${output}`;
 
 export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
+  "python-lambda-desempate": { statement: statement(
+    "Ordena con dos criterios practicando lambda. lambda palabra: expresion equivale a una auxiliar que devuelve esa expresión. Las tuplas se comparan por su primer componente y después por el segundo; negar una longitud permite invertir solo ese criterio.",
+    "data es una lista de hasta 100 palabras formadas por letras a-z; puede estar vacía.",
+    "Devuelve una lista nueva por longitud descendente y, en empate, orden alfabético ascendente. Conserva repeticiones y no cambies la entrada. Los casos comprueban el orden, no certifican el uso de lambda.",
+  ) },
+  "python-formato-decimal": { statement: statement(
+    "Practica el formato decimal de Python. f'{numero:.2f}' produce texto con dos decimales; f'{numero:.{d}f}' permite una precisión variable. round devuelve un número y no garantiza ceros finales al convertirlo a texto.",
+    "data es un diccionario con numero, un número finito entre -1000 y 1000, y decimales, un entero entre 0 y 4.",
+    "Devuelve un texto con exactamente esa cantidad de decimales y punto como separador, siguiendo el formato nativo de Python. Con cero decimales no hay parte decimal. Conserva los ceros finales requeridos. Se usa el redondeo de float, no una regla financiera decimal; los casos no certifican el uso de un f-string.",
+  ) },
+  "python-consulta-anidada": { statement: statement(
+    "Consulta una nota en un registro anidado. get permite dar un respaldo si falta una clave; un diccionario vacío como respaldo permite continuar la consulta. No uses la falsedad de una nota para decidir si está ausente.",
+    "data es un diccionario con registro, alumno y curso. registro asocia alumnos con diccionarios de curso a nota. Cada nota es un entero entre 0 y 100 o None (null en JSON). Los diccionarios tienen hasta 100 elementos por nivel.",
+    "Devuelve la nota del curso, o None si falta el alumno, el curso o su nota. Cero es una nota válida y debe conservarse. Los casos no certifican el uso de get.",
+  ) },
+  "logica-inventario": { statement: statement(
+    "Acumula los movimientos de cada producto. Este ejercicio permite saldos negativos: no aplica la regla de saldo no negativo del ejercicio de saldo.",
+    "data es una lista de hasta 100 movimientos. Cada movimiento es un diccionario con producto, un texto de letras a-z, y cambio, un entero entre -100 y 100.",
+    "Devuelve un diccionario con el saldo acumulado por producto. Incluye también los productos cuyo saldo final sea cero; no rechaces cambios que produzcan negativos. Sin movimientos devuelve {}.",
+  ) },
+  "python-inventario-valora": { statement: statement(
+    "Valora un inventario usando céntimos enteros para evitar redondeo de dinero. El valor de cada ficha es cantidad por precio_centimos; construye filas nuevas sin cambiar stock ni guardar archivos.",
+    "data es una lista de hasta 100 fichas, cada una un diccionario con nombre, cantidad y precio_centimos. Los nombres son únicos y de letras a-z; cantidad y precio_centimos son enteros entre 0 y 10000.",
+    "Devuelve un diccionario con total_centimos y productos. productos contiene diccionarios con nombre y valor_centimos por ficha, ordenados por valor descendente y nombre ascendente en empate. total_centimos suma esos valores. Sin fichas devuelve total_centimos igual a 0 y productos igual a []. No cambies la entrada.",
+  ) },
+  "python-academia-inscribe": { statement: statement(
+    "Inscribe sin sobrescribir notas. El modelo es alumno → curso → nota; copia cada diccionario interior antes de modificarlo. setdefault conserva una clave existente: inscribir no equivale a calificar.",
+    "data es un diccionario con registro, alumno y curso. registro es un diccionario de alumnos a diccionarios de cursos y notas, con hasta 100 elementos por nivel.",
+    "Devuelve una copia del registro inscribiendo al alumno en el curso con nota None (null en JSON) solo si aún no está inscrito. Crea al alumno si falta. Si el curso ya existe, conserva su nota, incluso cero. No modifiques la entrada. Los casos no certifican el uso de setdefault.",
+  ) },
+  "python-academia-califica": { statement: statement(
+    "Califica solo una inscripción existente. Inscripción y calificación tienen reglas distintas: valida existencia y rango antes de asignar. Una condición con and puede evitar consultar un alumno ausente.",
+    "data es un diccionario con registro, alumno, curso y nota, que es entera. registro asocia alumnos con diccionarios de cursos y notas, con hasta 100 elementos por nivel.",
+    "Devuelve una copia: cambia la nota solo si alumno y curso ya existen y 0 ≤ nota ≤ 100, incluidos ambos extremos. En otro caso conserva el registro sin cambios. No inscribas automáticamente ni modifiques la entrada.",
+  ) },
+  "python-academia-resume": { statement: statement(
+    "Resume notas sin confundir cero con ausencia. Excluye solo None al calcular; un promedio necesita al menos una nota. El diccionario de medias puede servir como índice al ordenar nombres.",
+    "data es el registro: un diccionario de alumno a diccionario de curso a nota entera entre 0 y 100 o None (null en JSON). Los nombres son de letras a-z y los diccionarios tienen hasta 100 elementos por nivel.",
+    "Devuelve un diccionario con medias y clasificacion. medias contiene cada alumno con su promedio de notas no None, o None si no tiene ninguna. clasificacion es una lista con solo los nombres de alumnos con promedio, por media descendente y nombre ascendente en empate. Con registro vacío, medias es {} y clasificacion es [].",
+  ) },
+  "python-contactos-crea": { statement: statement(
+    "Añade un contacto sin duplicar nombres normalizados. Normaliza nombre con strip y lower antes de consultar: ' Ana ' y 'ana' identifican el mismo contacto. Copia también las fichas; los teléfonos son textos para conservar ceros iniciales.",
+    "data es un diccionario con agenda, nombre, telefono y correo. agenda usa nombres ya normalizados como claves y diccionarios con telefono y correo como fichas. Los diccionarios tienen hasta 100 elementos por nivel.",
+    "Devuelve una copia de agenda. Si el nombre normalizado queda vacío o ya existe, no cambies nada; en otro caso añade la ficha con telefono y correo recibidos. No modifiques la entrada.",
+  ) },
+  "python-contactos-edita": { statement: statement(
+    "Edita solo los campos permitidos de un contacto existente. Normaliza nombre con strip y lower, como al crear. isinstance(valor, str) distingue un texto de None; comprobar solo su verdad rechazaría un texto vacío válido.",
+    "data es un diccionario con agenda, nombre y cambios. agenda asocia nombres normalizados con fichas de telefono y correo; cambios es un diccionario de campos y valores. Los diccionarios tienen hasta 100 elementos por nivel.",
+    "Devuelve una copia de agenda. Si el contacto existe, actualiza únicamente telefono y correo presentes en cambios con valor de texto; permite texto vacío e ignora otros campos y None (null en JSON). Si falta el contacto, conserva todo sin cambios. No modifiques la entrada.",
+  ) },
+  "python-contactos-borra": { statement: statement(
+    "Elimina un contacto usando la misma normalización que al crear y editar: strip y lower. pop(nombre, None) permite eliminar sin fallar si falta; no se buscan coincidencias parciales.",
+    "data es un diccionario con agenda y nombre. agenda asocia nombres normalizados con fichas que son diccionarios con telefono y correo. Los diccionarios tienen hasta 100 elementos por nivel.",
+    "Devuelve una copia sin el contacto cuyo nombre completo coincida tras normalizar nombre. Si no existe, conserva todas las fichas. No modifiques la entrada ni borres otros contactos. Los casos no certifican el uso de pop.",
+  ) },
+  "python-contactos-busca": { statement: statement(
+    "Busca contactos que cumplan todos los filtros. in sobre textos busca una parte; normaliza solo para comparar, sin cambiar los datos guardados. Una auxiliar puede rechazar una ficha al encontrar la primera condición incumplida.",
+    "data es un diccionario con agenda y filtros. Cada ficha de agenda es un diccionario; telefono y correo pueden faltar y, si existen, son textos. filtros contiene esos campos con valores de texto. Los diccionarios tienen hasta 100 elementos por nivel.",
+    "Devuelve una lista de nombres ordenados a-z que cumplan todos los filtros mediante coincidencia parcial e insensible a mayúsculas. Un campo filtrado ausente rechaza la ficha: no equivale a texto vacío. Sin filtros devuelve todos los nombres. No cambies los datos.",
+  ) },
+  "python-transforma-campo": { statement: statement(
+    "Normaliza solo el campo indicado. dict(registro) basta para copiar aquí porque los valores son textos inmutables; strip y lower producen textos nuevos.",
+    "data es un diccionario con registro, un diccionario de hasta 100 campos con valores de texto, y campo.",
+    "Devuelve una copia donde, si campo existe, su texto quede sin espacios exteriores y en minúsculas. Conserva los demás campos. No crees una clave ausente ni modifiques el registro original.",
+  ) },
+  "python-transforma-registros": { statement: statement(
+    "Aplica reglas a copias de registros. JSON transporta nombres de operaciones, no funciones. Captura ValueError solo en la conversión numérica para que un campo inválido no interrumpa los demás campos o registros.",
+    "data es un diccionario con registros, una lista de diccionarios con valores de texto, y reglas, un diccionario que asocia campos con minusculas, trim o numerico. Listas y diccionarios tienen hasta 100 elementos por nivel.",
+    "Devuelve las copias en el orden recibido. Aplica lower para minusculas, strip para trim e int para numerico; si int lanza ValueError, usa None (null en JSON) en ese campo. El texto numérico admite signo y espacios, no decimales. Conserva campos sin regla e ignora reglas de campos ausentes. No modifiques los originales. Esta conversión usa int nativo, no la gramática restringida de captura-conversion.",
+  ) },
+  "logica-busqueda-binaria": { statement: statement(
+    "Completa la plantilla practicando búsqueda binaria. Conserva los índices originales: no ordenes ni cortes la lista.",
+    "data es un diccionario con numbers, una lista de hasta 10000 enteros distintos en orden ascendente, y target, el objetivo. La lista puede estar vacía; los índices empiezan en cero.",
+    "Devuelve el índice de target o -1 si no aparece. No devuelvas el valor de esa posición. Los casos comprueban la respuesta, no certifican la técnica interna.",
+  ) },
+  "logica-insercion-posicion": { statement: statement(
+    "Encuentra la primera posición donde insertar un valor conservando el orden de una lista.",
+    "data es un diccionario con numbers, una lista ordenada de hasta 1000 enteros que puede contener duplicados o estar vacía, y target, un entero.",
+    "Devuelve el primer índice con valor mayor o igual que target, o la longitud de numbers si no existe. Si ya aparece varias veces, elige su primera posición. Para una lista vacía devuelve 0. No devuelvas cualquier coincidencia ni el valor almacenado.",
+  ) },
+  "logica-ordena-registros": { statement: statement(
+    "Ordena registros respetando dos criterios y la estabilidad de los empates completos.",
+    "data es una lista de hasta 100 registros. Cada registro es un diccionario con nombre, un texto de letras a-z, y puntos, un entero entre 0 y 1000.",
+    "Devuelve los registros por puntos descendentes y, en empate, por nombre ascendente. Si ambos campos coinciden, conserva su orden original. No elimines registros repetidos; una lista vacía devuelve [].",
+  ) },
+  "logica-intervalos-suma": { statement: statement(
+    "Responde consultas de suma sobre intervalos de una lista.",
+    "data es un diccionario con numbers, una lista de hasta 1000 enteros, y consultas, una lista de hasta 100 pares [inicio, fin]. Los índices son válidos e incluyen ambos extremos del intervalo. Si numbers está vacía, consultas también lo está.",
+    "Devuelve una lista con la suma de cada intervalo en el orden de las consultas. Un intervalo con inicio igual a fin contiene ese elemento. Sin consultas devuelve [].",
+  ) },
+  "logica-celda": { statement: statement(
+    "Consulta el valor de una celda de una matriz.",
+    "data es un diccionario con matriz, una matriz rectangular no vacía de enteros con hasta 20 filas y 20 columnas, y fila y columna, índices válidos desde cero. La matriz se representa como una lista de listas.",
+    "Devuelve el entero de la celda indicada por fila y columna, no la fila completa ni sus índices.",
+  ) },
+  "logica-columnas": { statement: statement(
+    "Suma por separado los valores de cada columna de una matriz.",
+    "data es una matriz rectangular de enteros con hasta 20 filas y 20 columnas, representada como una lista de listas. Puede estar vacía; si tiene filas, cada una contiene al menos un elemento.",
+    "Devuelve una lista con la suma de cada columna en su orden original, no las sumas de las filas. Para una matriz vacía devuelve [].",
+  ) },
+  "logica-transpuesta": { statement: statement(
+    "Obtén la transpuesta de una matriz: sus columnas pasan a ser filas. La primera fila del resultado contiene la primera columna de la entrada, y así sucesivamente.",
+    "data es una matriz rectangular de hasta 100 filas y 100 columnas, con al menos una fila y una columna, representada como una lista de listas.",
+    "Devuelve una matriz con tantas filas como columnas tenía la entrada y tantas columnas como filas tenía. El elemento en fila i y columna j de la entrada queda en fila j y columna i del resultado.",
+  ) },
+  "logica-vecinos": { statement: statement(
+    "Cuenta los vecinos con valor uno de cada celda de una matriz.",
+    "data es una matriz rectangular de ceros y unos de hasta 20 filas y 20 columnas, representada como una lista de listas. Puede estar vacía.",
+    "Devuelve una matriz del mismo tamaño con el conteo de cada celda. Solo cuentan sus vecinos válidos arriba, abajo, izquierda y derecha: no incluyas diagonales ni la propia celda. No hay vecinos fuera de la matriz. Para la matriz vacía devuelve [].",
+  ) },
+  "logica-copia-anidada": { statement: statement(
+    "Practica una copia anidada después de aprender matrices: copia cada fila antes de cambiar una celda solo en la copia. Copiar únicamente el contenedor exterior con list o slice no basta. La plantilla solo prepara solve(data); añade las operaciones del reto.",
+    "data es un diccionario con matriz, una matriz rectangular no vacía de filas de enteros, fila y columna, índices válidos, y valor. Los enteros están entre -1000 y 1000 y las colecciones tienen hasta 100 elementos por nivel.",
+    "Devuelve un diccionario con original y copia. original conserva la matriz recibida; copia contiene valor en la celda indicada y conserva todas las demás celdas. No modifiques las filas originales. Los casos muestran contenidos, no certifican la identidad de las filas ni la ausencia de cualquier mutación intermedia.",
+  ) },
+  "logica-delimitadores": { statement: statement(
+    "Comprueba si los delimitadores de un texto están equilibrados: cada apertura debe cerrarse con el mismo tipo y en el orden correcto.",
+    "data es un texto de hasta 1000 caracteres del conjunto ()[]{}; puede estar vacío.",
+    "Devuelve True si todas las aperturas y cierres están bien emparejados y anidados; en otro caso devuelve False. El texto vacío está equilibrado. True y False se representan como true y false en JSON. Tener la misma cantidad de aperturas y cierres no basta si el orden o los tipos no coinciden.",
+  ) },
   "logica-saldo": { statement: statement(
     "Procesa movimientos en orden, rechazando los que dejarían un saldo negativo. Este modelo es distinto de la acumulación por producto, que sí admite saldos negativos.",
     "data es un diccionario con inicial, un entero entre 0 y 1000, y movimientos, una lista de hasta 100 enteros entre -100 y 100.",

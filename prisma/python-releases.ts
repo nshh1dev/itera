@@ -48,4 +48,6 @@ export const knownPythonReleases: readonly string[] = [
   "6b51d6ac7847a8c3072752fa224b44a0c38fad7a146c0866ecc1821f96381ac2",
   // Séptimo lote editorial: conjuntos, conteos, comprensiones e iteradores.
   "10ca72157eaa7448a2329199d28cd21f7677b3c565843aa3f0755e74b93f3b1e",
+  // Octavo lote editorial: registros anidados, búsquedas y matrices.
+  "bd1d23a9655f7846214c9511b983997874552840c78f13d658b44a1885c31e3d",
 ];
