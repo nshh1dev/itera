@@ -4,9 +4,9 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonEditorialRevisions } from "../prisma/python-editorial";
 
-test("los lotes editoriales estructuran 132 prácticas sin tocar programas ni proyectos", () => {
+test("los lotes editoriales estructuran 156 prácticas sin tocar programas ni proyectos", () => {
   const slugs = Object.keys(pythonEditorialRevisions);
-  assert.equal(slugs.length, 132);
+  assert.equal(slugs.length, 156);
   for (const slug of slugs) {
     const entry = pythonCatalog.find(item => item.slug === slug)!;
     assert.ok(entry, slug);
@@ -194,6 +194,41 @@ test("alias, validación y pruebas conservan mutaciones intencionales y límites
   assert.match(text("logica-conserva-regresion"), /incluida la igualdad, sin bajar de cero/);
   assert.match(text("logica-factorial"), /entre 0 y 15.*factorial de cero se define como 1/s);
   assert.match(text("logica-fizzbuzz"), /Conserva los demás como números, no textos.*Para cero devuelve \[\]/);
+});
+
+test("conjuntos y recorridos conservan pertenencia, cantidades, estabilidad y consumo", () => {
+  const text = (slug: string) => pythonEditorialRevisions[slug].statement;
+  const slugs = ["logica-saldo", "python-conjunto-seguro", "python-union", "python-interseccion", "python-diferencia", "python-simetrica", "python-subconjunto", "logica-repetido", "logica-deduplica", "logica-frecuencias", "logica-primer-unico", "logica-anagramas", "python-crea-grupo", "logica-agrupa-registros", "python-comprension", "python-comprension-filtro", "python-comprension-condicional", "python-comprension-dict", "python-iterador", "python-generador", "python-map", "python-filter", "python-agrega", "python-clave-longitud"];
+  for (const slug of slugs) {
+    const entry = pythonCatalog.find(item => item.slug === slug)!;
+    assert.equal(entry.content.level, slug === "logica-saldo" ? "BEGINNER" : "INTERMEDIATE", slug);
+    assert.equal(entry.content.statement, text(slug), slug);
+  }
+  assert.match(text("logica-saldo"), /si lo rechazas, conserva el saldo y continúa.*exactamente cero/);
+  assert.match(text("python-conjunto-seguro"), /añadir agregar y después descartar quitar.*coinciden/);
+  assert.match(text("python-union"), /al menos una entrada.*sin repeticiones/);
+  assert.match(text("python-interseccion"), /ambas entradas.*sin repeticiones/);
+  assert.match(text("python-diferencia"), /requeridos - disponibles.*no sobrantes/);
+  assert.match(text("python-simetrica"), /exactamente una.*compartidos no aparecen/);
+  assert.match(text("python-subconjunto"), /repeticiones no cuentan como unidades.*Sin requisitos devuelve True/);
+  assert.match(text("logica-repetido"), /True.*más de una vez.*False/);
+  assert.match(text("logica-deduplica"), /primera aparición, no el orden numérico/);
+  assert.match(text("logica-frecuencias"), /No añadas letras ausentes.*orden de las claves no importa/);
+  assert.match(text("logica-primer-unico"), /posición en el texto, no el orden alfabético.*None.*null/);
+  assert.match(text("logica-anagramas"), /mismas cantidades.*mayúsculas y espacios normales.*vacío/s);
+  assert.match(text("python-crea-grupo"), /exterior comparte sus listas.*lista nueva por categoría/);
+  assert.match(text("python-crea-grupo"), /nombres repetidos/);
+  assert.match(text("logica-agrupa-registros"), /orden de aparición.*nombres repetidos/);
+  assert.match(text("python-comprension"), /mismas posiciones.*No modifiques/);
+  assert.match(text("python-comprension-filtro"), /minúsculas y en orden de aparición.*repetidas/);
+  assert.match(text("python-comprension-condicional"), /mismo tamaño.*negativo por cero.*No elimines/);
+  assert.match(text("python-comprension-dict"), /palabra como clave.*longitud como valor/);
+  assert.match(text("python-iterador"), /único iterador.*sin crear un segundo.*no reinicia/s);
+  assert.match(text("python-generador"), /bajo demanda.*no el consumo de memoria/s);
+  assert.match(text("python-map"), /enteros válidos entre -100 y 100.*no textos repetidos/s);
+  assert.match(text("python-filter"), /al menos 18 años.*sin quitar repeticiones.*no termina/);
+  assert.match(text("python-agrega"), /total es 0.*minimo y maximo son None.*null/);
+  assert.match(text("python-clave-longitud"), /conserva el orden original, no ordenes alfabéticamente/);
 });
 
 test("grafos y optimización conservan direcciones, desempates, límites y casos frontera", () => {

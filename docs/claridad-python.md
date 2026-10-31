@@ -266,9 +266,50 @@ formatos de conversión, estado compartido y límites de las garantías.
 | `logica-factorial` | Completar recorrido, acumulador inicial y factorial de cero. |
 | `logica-fizzbuzz` | Completar decisión, prioridad del caso doble y números frente a textos. |
 
+## Séptimo lote: 24 enunciados de conjuntos y recorridos
+
+Una práctica de principiante y 23 intermedias separan tarea, entrada y
+resultado. Se conservan las introducciones a conjuntos, comprensiones,
+iteradores, generadores, map/filter y claves de ordenación. Se distingue
+pertenencia de cantidad, primera aparición de orden numérico y filtro de
+transformación que conserva posiciones. No se certifican técnicas internas ni
+consumo de memoria por comparar la salida.
+
+La evaluación y los ejemplos de las 224 actividades conservan su huella. No
+cambian plantillas, soluciones, ayudas, límites, minutos ni orden. Las pruebas
+editoriales cubren las 24 identidades, operaciones de conjuntos, cantidades,
+vacíos, estabilidad y consumo del mismo iterador.
+
+| Actividad | Revisión editorial |
+| --- | --- |
+| `logica-saldo` | Diccionario, rechazo sin aplicar, continuación y saldo cero válido. |
+| `python-conjunto-seguro` | add antes de discard, valor ausente y operaciones coincidentes. |
+| `python-union` | Al menos una entrada, elementos únicos y orden numérico. |
+| `python-interseccion` | Ambas entradas, sin multiplicidad y vacío. |
+| `python-diferencia` | Requeridos menos disponibles, faltantes frente a sobrantes. |
+| `python-simetrica` | Exclusivos de ambos lados y exclusión de compartidos. |
+| `python-subconjunto` | Igualdad incluida, sin cantidades y requisitos vacíos verdaderos. |
+| `logica-repetido` | Booleano Python frente a JSON y lista vacía sin repetidos. |
+| `logica-deduplica` | Completar plantilla, primera aparición y prohibición de ordenar. |
+| `logica-frecuencias` | Completar contadores, solo letras presentes y orden irrelevante de claves. |
+| `logica-primer-unico` | Unicidad global, posición frente a alfabeto y None. |
+| `logica-anagramas` | Completar tablas, multiplicidad, mayúsculas y espacios normales. |
+| `python-crea-grupo` | Copiar listas anidadas, categoría opcional y nombres repetidos. |
+| `logica-agrupa-registros` | Categorías presentes, nombres en orden y registros repetidos. |
+| `python-comprension` | Un cuadrado por posición y entrada conservada. |
+| `python-comprension-filtro` | Vocales en minúscula, orden y repeticiones. |
+| `python-comprension-condicional` | Transformación frente a filtro, sin perder posiciones. |
+| `python-comprension-dict` | Diccionario palabra/longitud y claves repetidas. |
+| `python-iterador` | Único iterador consumible, segunda materialización vacía y entrada conservada. |
+| `python-generador` | Cuadrados bajo demanda, suma vacía y límite de la garantía de memoria. |
+| `python-map` | Textos válidos convertidos y duplicados numéricamente; función sin llamarla. |
+| `python-filter` | Registros no transformados al filtrar, adultos desde 18 y continuación. |
+| `python-agrega` | Total cero y extremos ausentes frente a cero como dato válido. |
+| `python-clave-longitud` | Clave len y estabilidad sin desempate alfabético. |
+
 ## Pendientes y límites
 
-- Los seis lotes cubren **132/224 enunciados**, no el cierre editorial del recorrido.
+- Los siete lotes cubren **156/224 enunciados**, no el cierre editorial del recorrido.
 - Quedan los demás enunciados, teoría local y de módulos, vocabulario en otras
   ayudas y objetivos, revisión de ejemplos ya explicados, tiempos y textos de rutas.
 - PROGRAM no se normaliza como FUNCTION. Los proyectos conservan sus contratos

@@ -46,4 +46,6 @@ export const knownPythonReleases: readonly string[] = [
   "c69c06fa65d18b7608bac0bd2b982fea01d18d8ff08bd1b6dc5c360a22cd7e34",
   // Sexto lote editorial: alias, copias, validación, errores y pruebas.
   "6b51d6ac7847a8c3072752fa224b44a0c38fad7a146c0866ecc1821f96381ac2",
+  // Séptimo lote editorial: conjuntos, conteos, comprensiones e iteradores.
+  "10ca72157eaa7448a2329199d28cd21f7677b3c565843aa3f0755e74b93f3b1e",
 ];

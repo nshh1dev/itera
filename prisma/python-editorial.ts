@@ -5,6 +5,126 @@ const statement = (task: string, input: string, output: string) =>
   `Tu tarea\n${task}\n\nEntrada\n${input}\n\nResultado esperado\n${output}`;
 
 export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
+  "logica-saldo": { statement: statement(
+    "Procesa movimientos en orden, rechazando los que dejarían un saldo negativo. Este modelo es distinto de la acumulación por producto, que sí admite saldos negativos.",
+    "data es un diccionario con inicial, un entero entre 0 y 1000, y movimientos, una lista de hasta 100 enteros entre -100 y 100.",
+    "Devuelve un diccionario con saldo, el saldo final, y rechazados, la cantidad de movimientos no aplicados. Acepta cada movimiento solo si el saldo resultante es no negativo; si lo rechazas, conserva el saldo y continúa. Alcanzar exactamente cero es válido. Sin movimientos conserva inicial y devuelve 0 rechazados.",
+  ) },
+  "python-conjunto-seguro": { statement: statement(
+    "Practica conjuntos: set elimina duplicados, add incorpora un elemento y discard elimina si existe sin fallar si falta, a diferencia de remove. sorted convierte el conjunto en una lista ordenada serializable.",
+    "data es un diccionario con valores, una lista de hasta 100 enteros, y agregar y quitar, dos enteros.",
+    "Devuelve los elementos que quedan tras añadir agregar y después descartar quitar, sin repeticiones y de menor a mayor. Si agregar y quitar coinciden, ese valor no queda en el resultado. Quitar un valor ausente no produce error. Los casos no certifican el uso de set.",
+  ) },
+  "python-union": { statement: statement(
+    "Calcula la unión de dos colecciones. Para conjuntos, A | B incluye lo que está en A, en B o en ambos; los elementos compartidos aparecen una sola vez.",
+    "data es un diccionario con a y b, listas de hasta 100 enteros cada una. Pueden estar vacías.",
+    "Devuelve una lista con todos los valores presentes en al menos una entrada, sin repeticiones y de menor a mayor. Si ambas están vacías, devuelve []. Los casos no certifican el uso de conjuntos ni del operador |.",
+  ) },
+  "python-interseccion": { statement: statement(
+    "Calcula la intersección de dos colecciones. Para conjuntos, A & B conserva solo los elementos compartidos, sin contar sus repeticiones.",
+    "data es un diccionario con a y b, listas de hasta 100 enteros cada una. Pueden estar vacías.",
+    "Devuelve una lista con los valores presentes en ambas entradas, sin repeticiones y de menor a mayor. Si no comparten valores, devuelve []. Una entrada vacía no comparte valores con otra. Los casos no certifican el uso del operador &.",
+  ) },
+  "python-diferencia": { statement: statement(
+    "Encuentra los requisitos que faltan. Para conjuntos, A - B conserva lo que está en A y no en B; el orden importa: requeridos - disponibles representa faltantes, no sobrantes.",
+    "data es un diccionario con disponibles y requeridos, listas de hasta 100 textos de letras a-z cada una. Pueden estar vacías.",
+    "Devuelve una lista con los requeridos que no están disponibles, sin repeticiones y en orden alfabético. Sin requisitos faltantes devuelve []. Los casos no certifican el uso de la resta de conjuntos.",
+  ) },
+  "python-simetrica": { statement: statement(
+    "Calcula la diferencia simétrica. Para conjuntos, A ^ B excluye lo compartido y conserva los exclusivos de ambos lados; no equivale a A - B.",
+    "data es un diccionario con a y b, listas de hasta 100 enteros cada una. Pueden estar vacías.",
+    "Devuelve una lista de valores presentes en exactamente una de las entradas, sin duplicados y de menor a mayor. Los compartidos no aparecen; si no hay exclusivos devuelve []. Los casos no certifican el uso del operador ^.",
+  ) },
+  "python-subconjunto": { statement: statement(
+    "Comprueba si todos los requisitos están disponibles. Para conjuntos, A <= B incluye la igualdad; A < B exige además que no sean iguales. El conjunto vacío es subconjunto de cualquier conjunto.",
+    "data es un diccionario con disponibles y requeridos, listas de hasta 100 textos cada una. Pueden estar vacías.",
+    "Devuelve True si todos los requeridos están disponibles y False en otro caso. Las repeticiones no cuentan como unidades: solo importa la pertenencia. Sin requisitos devuelve True. True y False se representan como true y false en JSON. Los casos no certifican el uso del operador <=.",
+  ) },
+  "logica-repetido": { statement: statement(
+    "Detecta si una lista contiene algún valor repetido.",
+    "data es una lista de hasta 1000 enteros; puede estar vacía.",
+    "Devuelve True si algún valor aparece más de una vez y False en otro caso. La lista vacía no tiene repeticiones. True y False son booleanos de Python; en JSON se muestran como true y false, sin comillas.",
+  ) },
+  "logica-deduplica": { statement: statement(
+    "Completa el recorrido de la plantilla para eliminar repeticiones. Ya prepara un conjunto para recordar valores y una lista para construir el resultado; no ordenes la entrada.",
+    "data es una lista de hasta 1000 enteros; puede estar vacía.",
+    "Devuelve otra lista con cada valor una sola vez, conservando el orden de su primera aparición, no el orden numérico. Para la lista vacía devuelve [].",
+  ) },
+  "logica-frecuencias": { statement: statement(
+    "Completa el recorrido y la actualización de contadores de la plantilla. El diccionario de frecuencias ya está preparado.",
+    "data es un texto de entre 0 y 1000 letras de a a z.",
+    "Devuelve un diccionario que asocie cada letra presente con su cantidad de apariciones. No añadas letras ausentes; el orden de las claves no importa. Para el texto vacío devuelve {}.",
+  ) },
+  "logica-primer-unico": { statement: statement(
+    "Encuentra el primer carácter que aparece exactamente una vez en todo el texto.",
+    "data es un texto de letras a-z de hasta 1000 caracteres; puede estar vacío.",
+    "Devuelve ese carácter según su posición en el texto, no el orden alfabético. Si no existe, devuelve None, representado como null en JSON. Una letra que reaparece después no es única, aunque se haya visto antes que las demás.",
+  ) },
+  "logica-anagramas": { statement: statement(
+    "Completa el conteo y la comparación de la plantilla para reconocer anagramas. Ya prepara dos tablas con las 26 letras.",
+    "data es un diccionario con a y b, textos de hasta 1000 caracteres cada uno, formados por letras ASCII y espacios normales.",
+    "Devuelve True si contienen las mismas letras con las mismas cantidades, aunque cambie su orden; ignora mayúsculas y espacios normales. En otro caso devuelve False. Un texto vacío y otro de espacios cumplen la condición. True y False se representan como true y false en JSON.",
+  ) },
+  "python-crea-grupo": { statement: statement(
+    "Añade un nombre a una categoría conservando las listas originales. Copiar solo el diccionario exterior comparte sus listas: crea una lista nueva por categoría. setdefault(categoria, []) devuelve la lista existente o inserta una vacía; append añade un nombre.",
+    "data es un diccionario con grupos, un diccionario de categorías a listas de nombres, y categoria y nombre. Los diccionarios y listas tienen hasta 100 elementos por nivel.",
+    "Devuelve una copia de grupos con nombre añadido al final de la lista de categoria; crea esa categoría si falta. Conserva las demás categorías, las listas originales y los nombres repetidos. Los casos no certifican el uso de setdefault ni la ausencia de cualquier mutación intermedia.",
+  ) },
+  "logica-agrupa-registros": { statement: statement(
+    "Agrupa registros por categoría conservando el orden de sus nombres.",
+    "data es una lista de hasta 100 registros. Cada registro es un diccionario con categoria y nombre, textos no vacíos de letras a-z.",
+    "Devuelve un diccionario cuyas claves sean las categorías presentes y cuyos valores sean listas de nombres en orden de aparición dentro de cada categoría. Conserva los nombres repetidos. Sin registros devuelve {}.",
+  ) },
+  "python-comprension": { statement: statement(
+    "Calcula cuadrados practicando una comprensión. [n * n for n in valores] obtiene un resultado por cada valor, igual que un bucle que los añade a una lista; sin filtro no elimina posiciones.",
+    "data es una lista de hasta 100 enteros; puede estar vacía.",
+    "Devuelve una lista con sus cuadrados en el mismo orden y con las mismas posiciones, incluidas repeticiones. No modifiques la entrada. Para una lista vacía devuelve []. Los casos comprueban la salida, no certifican el uso de una comprensión.",
+  ) },
+  "python-comprension-filtro": { statement: statement(
+    "Selecciona vocales practicando una comprensión con filtro. El if posterior al for decide qué elementos entran; lower permite reconocer también las vocales mayúsculas.",
+    "data es un texto ASCII; puede estar vacío.",
+    "Devuelve una lista con sus vocales a, e, i, o, u en minúsculas y en orden de aparición. Conserva las vocales repetidas; si no hay vocales devuelve []. Los casos no certifican el uso de una comprensión.",
+  ) },
+  "python-comprension-condicional": { statement: statement(
+    "Sustituye negativos practicando una comprensión condicional. [a if condicion else b for x in valores] obtiene un valor en cada posición; [x for x in valores if condicion] elimina posiciones. Aquí necesitas conservarlas.",
+    "data es una lista de hasta 100 enteros; puede estar vacía.",
+    "Devuelve otra lista del mismo tamaño, sustituyendo cada negativo por cero y conservando los demás valores en sus posiciones. No elimines elementos ni cambies la entrada. Para una lista vacía devuelve []. Los casos no certifican la sintaxis empleada.",
+  ) },
+  "python-comprension-dict": { statement: statement(
+    "Asocia palabras con longitudes practicando una comprensión de diccionario. {clave: valor for elemento in datos} crea un diccionario, no un conjunto. Una clave repetida reemplaza su valor; la longitud de una misma palabra siempre coincide.",
+    "data es una lista de hasta 100 palabras ASCII; puede estar vacía.",
+    "Devuelve un diccionario con cada palabra como clave y su longitud como valor. Una palabra repetida aparece como una sola clave. Para la lista vacía devuelve {}. Los casos no certifican el uso de una comprensión.",
+  ) },
+  "python-iterador": { statement: statement(
+    "Crea un único iterador con iter(data) y materialízalo dos veces, sin crear un segundo iterador. iter(lista) crea un recorrido consumible; list(iterador) lo consume hasta agotarlo. Volver a materializar el mismo iterador no reinicia el recorrido.",
+    "data es una lista de hasta 100 enteros; puede estar vacía.",
+    "Devuelve una lista [primera, resto]: primera contiene todos los elementos al materializar el iterador por primera vez y resto contiene lo que queda al materializarlo de nuevo, es decir, []. La lista original conserva sus elementos. Los casos comprueban los contenidos, no certifican cómo creaste el iterador.",
+  ) },
+  "python-generador": { statement: statement(
+    "Suma cuadrados practicando un generador en lugar de construir una lista intermedia. (n * n for n in valores) entrega cuadrados bajo demanda; sum consume esos valores sin necesitar la lista completa de cuadrados.",
+    "data es una lista de hasta 100 enteros; puede estar vacía y contener negativos.",
+    "Devuelve la suma de los cuadrados como entero. Para una lista vacía devuelve 0. Las pruebas comprueban el resultado, no el consumo de memoria de una implementación alternativa ni el uso de un generador.",
+  ) },
+  "python-map": { statement: statement(
+    "Practica map con una función auxiliar. map(funcion, valores) aplica la función a cada elemento y devuelve un iterador; pasa la función por nombre, sin llamarla. list materializa los valores para devolver JSON.",
+    "data es una lista de hasta 100 textos que representan enteros válidos entre -100 y 100. No requiere recuperación de errores; puede estar vacía.",
+    "Devuelve una lista con esos enteros duplicados en el mismo orden, no textos repetidos. Para la lista vacía devuelve []. Los casos no certifican el uso de map ni de una auxiliar.",
+  ) },
+  "python-filter": { statement: statement(
+    "Selecciona adultos practicando filter y una auxiliar booleana. filter(predicado, registros) conserva los registros cuyo predicado es verdadero, sin transformarlos; después puedes extraer sus nombres.",
+    "data es una lista de hasta 100 registros. Cada registro es un diccionario con nombre y edad, un entero entre 0 y 120.",
+    "Devuelve una lista de nombres de quienes tienen al menos 18 años, en orden original y sin quitar repeticiones. Un menor se omite, pero no termina el recorrido: puede haber adultos después. Sin adultos devuelve []. Los casos no certifican el uso de filter.",
+  ) },
+  "python-agrega": { statement: statement(
+    "Resume una lista con sum, min y max. sum([]) es 0; min y max fallan con un iterable vacío si no se proporciona default. default=None representa un extremo ausente sin inventar cero.",
+    "data es una lista de hasta 100 enteros; puede estar vacía. Los negativos y cero son datos válidos.",
+    "Devuelve un diccionario con total, minimo y maximo: la suma y los dos extremos de la lista. Para una lista vacía, total es 0 y minimo y maximo son None (null en JSON). Los casos no certifican el uso de esas funciones.",
+  ) },
+  "python-clave-longitud": { statement: statement(
+    "Ordena palabras por longitud practicando una clave de ordenación. sorted(palabras, key=len) pasa len sin llamarla: la ordenación la aplica a cada palabra. Es estable: conserva el orden de elementos cuyas claves coinciden.",
+    "data es una lista de hasta 100 palabras ASCII; puede estar vacía.",
+    "Devuelve una lista nueva ordenada por longitud ascendente. Para longitudes iguales conserva el orden original, no ordenes alfabéticamente los empates. No modifiques la entrada. Los casos comprueban el orden resultante, no certifican el uso de key=len.",
+  ) },
   "logica-encadena-retornos": { statement: statement(
     "Pasa datos entre funciones sin variables compartidas: escribe una auxiliar que calcule el producto de precio y unidades y otra que añada 2 de embalaje al subtotal. La plantilla solo prepara solve(data).",
     "data es un diccionario con precio y unidades, enteros entre -1000 y 1000.",
