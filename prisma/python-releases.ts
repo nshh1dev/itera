@@ -40,4 +40,6 @@ export const knownPythonReleases: readonly string[] = [
   "b16e5f2cda967e1483898a046472cb55e5652a5a0d9cc98f2d9117a8f8dac4a8",
   // Tercer lote editorial: doce prácticas de grafos y optimización.
   "6d7ca69cce0a63d6517931bb43d30986ff597f8e5399f35853b495616139b81b",
+  // Cuarto lote editorial: retorno, cálculos, condiciones y primeros bucles.
+  "4fa39e0b364efbc4e2d3d12c8f365c92488889b2f833841e288dfd39c48d1ba9",
 ];

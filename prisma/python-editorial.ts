@@ -5,6 +5,126 @@ const statement = (task: string, input: string, output: string) =>
   `Tu tarea\n${task}\n\nEntrada\n${input}\n\nResultado esperado\n${output}`;
 
 export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
+  "logica-retorno": { statement: statement(
+    "Practica cómo entregar un resultado desde solve(data) usando return.",
+    "data es un entero entre -1000 y 1000. La aplicación proporciona ese valor; no necesitas pedirlo con input().",
+    "Devuelve el mismo entero recibido, sin modificarlo. Mostrarlo con print no sustituye al retorno.",
+  ) },
+  "logica-parametro": { statement: statement(
+    "Modifica el retorno de la plantilla para calcular el doble del número recibido.",
+    "data es un entero entre -100 y 100; puede ser positivo, negativo o cero.",
+    "Devuelve un entero con el doble de data. El doble de cero es cero. Conserva solve(data) y entrega el resultado con return.",
+  ) },
+  "logica-dos-parametros": { statement: statement(
+    "Completa la plantilla para sumar los dos valores recibidos. Ya están guardados en primero y segundo; conserva esos accesos y la función solve(data).",
+    "data es un diccionario con las claves a y b, ambas siempre presentes. Sus valores son enteros entre -1000000 y 1000000; pueden ser positivos, negativos o cero.",
+    "Devuelve la suma de ambos enteros con return. No devuelvas solo uno de ellos ni un texto con la operación.",
+  ) },
+  "logica-imprimir-devolver": { statement: statement(
+    "Corrige la plantilla: calcula el número recibido más uno, pero lo imprime y devuelve cero. Distingue mostrar un valor de devolverlo.",
+    "data es el número que proporciona la aplicación a solve(data).",
+    "Devuelve con return el número recibido más uno. El valor mostrado con print no es el resultado que compara la evaluación.",
+  ) },
+  "logica-predice-valores": { statement: statement(
+    "Antes de ejecutar, predice el resultado de esta secuencia: guarda data en x, suma 3 a x y multiplica el valor actualizado por 2. Implementa la secuencia y contrasta tu predicción con los ejemplos.",
+    "data es un entero entre -1000 y 1000 que proporciona la aplicación.",
+    "Devuelve el entero obtenido al terminar la secuencia. La multiplicación usa el valor posterior a la suma, no el original. La comprobación evalúa el resultado, no si hiciste primero la predicción.",
+  ) },
+  "logica-tabla-valores": { statement: statement(
+    "Construye una tabla de seguimiento: empieza en data, suma 2 y multiplica el valor actualizado por 3. Guarda el estado inicial y cada estado posterior en una variable; no necesitas listas ni bucles.",
+    "data es un entero entre -1000 y 1000.",
+    "Devuelve un texto con los tres estados separados exactamente por ' -> ', con un espacio a cada lado de la flecha. Por ejemplo, desde 2 devuelve el texto 2 -> 4 -> 12, sin comillas ni salto de línea. La comprobación observa esa traza, no cómo guardaste los estados.",
+  ) },
+  "logica-minutos-segundos": { statement: statement(
+    "Convierte una duración expresada en minutos a segundos. Cada minuto tiene 60 segundos.",
+    "data es un entero entre 0 y 1000 que representa la cantidad de minutos.",
+    "Devuelve su equivalencia en segundos como entero, sin texto de unidades. Para cero minutos devuelve 0.",
+  ) },
+  "logica-perimetro": { statement: statement(
+    "Calcula el perímetro de un rectángulo: la suma de sus cuatro lados, no su área.",
+    "data es un diccionario con base y altura, enteros entre 1 y 1000. Puedes consultar las medidas con data['base'] y data['altura'].",
+    "Devuelve el perímetro como entero. Los lados opuestos tienen la misma medida.",
+  ) },
+  "logica-repara-presupuesto": { statement: statement(
+    "Corrige la plantilla de un presupuesto: cobra el envío por cada unidad, pero debe cobrarlo una sola vez.",
+    "data es un diccionario con precio (precio por unidad), unidades y envio. precio y unidades son enteros entre 0 y 1000; envio es un entero entre 0 y 100. Puedes consultar cada valor con su clave, por ejemplo data['envio'].",
+    "Devuelve el coste total como entero: el coste de las unidades más un único envío. Aunque no haya unidades, se cobra el envío.",
+  ) },
+  "logica-merienda": { statement: statement(
+    "Calcula el coste de una compra y construye un mensaje con su total. No hay descuentos ni envío.",
+    "data es un diccionario con unidades y precio, enteros entre 0 y 100. Consulta los valores con data['unidades'] y data['precio']; precio es el importe por unidad.",
+    "Devuelve un texto con 'Total: ' seguido del importe entero, sin comillas ni salto de línea. Respeta la mayúscula y el espacio después de los dos puntos. Con cero unidades o precio cero, el texto es Total: 0.",
+  ) },
+  "logica-elige-mensaje": { statement: statement(
+    "Corrige la respuesta del bloque que comprueba si el número es mayor que cero. Conserva la respuesta ya preparada para los demás números.",
+    "data es un entero entre -100 y 100.",
+    "Devuelve el texto positivo cuando data sea mayor que 0 y no positivo cuando sea 0 o negativo. Conserva exactamente las minúsculas y el espacio de no positivo, sin comillas ni espacios adicionales. Usa return, no print.",
+  ) },
+  "logica-signo": { statement: statement(
+    "Completa la respuesta del último caso de la plantilla. Las respuestas para positivos y negativos ya son correctas.",
+    "data es un entero entre -100 y 100.",
+    "Devuelve exactamente uno de estos textos: positivo si el número es mayor que 0, negativo si es menor que 0, o cero si es 0. No añadas espacios ni cambies las mayúsculas.",
+  ) },
+  "logica-dos-requisitos": { statement: statement(
+    "Completa el retorno de la plantilla para combinar dos requisitos que deben cumplirse al mismo tiempo. Las dos comparaciones ya están calculadas; conserva su estructura.",
+    "data es un entero entre 0 y 100.",
+    "Devuelve True si data es múltiplo de 3 y de 5 a la vez; en otro caso devuelve False. Cero cumple ambas condiciones. Devuelve un booleano, no un texto: en JSON, True y False se representan como true y false.",
+  ) },
+  "logica-alternativas": { statement: statement(
+    "Decide si una persona puede acceder: basta con tener invitación o entrada comprada, pero el bloqueo impide siempre el acceso. Practica cómo combinar alternativas y negar una condición.",
+    "data es un diccionario con invitacion, entrada y bloqueado. Las tres claves siempre existen y contienen booleanos True o False en Python (true o false en JSON).",
+    "Devuelve True si hay al menos una de las dos formas de acceso y la persona no está bloqueada; devuelve False en cualquier otro caso. No devuelvas los textos true o false.",
+  ) },
+  "logica-tarifa": { statement: statement(
+    "Determina la tarifa que corresponde a una edad.",
+    "data es una edad entera entre 0 y 120.",
+    "Devuelve el entero 0 si la edad es menor de 6, 5 si está entre 6 y 17 (ambos incluidos), y 10 desde los 18 años. No devuelvas un texto ni añadas unidades.",
+  ) },
+  "python-condicional": { statement: statement(
+    "Clasifica una edad practicando una expresión condicional sencilla. La forma 'sí' if condicion else 'no' comprueba la condición y obtiene uno de los dos textos; equivale a un if/else con dos retornos, sin anidar expresiones.",
+    "data es una edad entera entre 0 y 120. Conserva solve(data): la aplicación proporciona el valor, sin usar input().",
+    "Devuelve el texto adulto desde los 18 años y menor en otro caso, sin comillas ni espacios adicionales. Usa return. Las pruebas comprueban la respuesta, no certifican el uso de una expresión condicional.",
+  ) },
+  "logica-uno-n": { statement: statement(
+    "Corrige el valor que la plantilla añade a la lista: ya recorre el intervalo necesario, pero añade siempre cero. Conserva la estructura y cambia solo ese paso.",
+    "data es un entero entre 0 y 100 que proporciona la aplicación a solve(data).",
+    "Devuelve la lista de enteros desde 1 hasta data, incluido, en orden ascendente. Para cero devuelve []. Devuelve la lista con return, no cada número por separado.",
+  ) },
+  "logica-cuenta-atras": { statement: statement(
+    "Construye una cuenta atrás que incluya el cero.",
+    "data es un entero entre 0 y 100 que indica el número inicial.",
+    "Devuelve una lista con data, el entero anterior y así sucesivamente hasta 0, incluido. Para cero devuelve [0], no una lista vacía.",
+  ) },
+  "logica-suma-uno-n": { statement: statement(
+    "Completa la actualización del acumulador en la plantilla: ya recorre los números, pero todavía no los añade al total.",
+    "data es un entero entre 0 y 100.",
+    "Devuelve la suma de los enteros desde 1 hasta data, incluido. Para cero devuelve 0. Conserva el recorrido de la plantilla y entrega el total con return.",
+  ) },
+  "logica-tabla": { statement: statement(
+    "Construye la tabla de multiplicar del número recibido.",
+    "data es un entero entre -10 y 10.",
+    "Devuelve una lista de diez enteros: sus productos por 1, 2 y así hasta 10, en ese orden. Conserva los resultados negativos o cero que correspondan; no devuelvas un texto con las operaciones.",
+  ) },
+  "logica-multiplos": { statement: statement(
+    "Cuenta los múltiplos de un divisor en un intervalo. Un múltiplo deja resto cero al dividir por ese divisor.",
+    "data es un diccionario con n, un entero entre 0 y 100, y divisor, un entero entre 1 y 20.",
+    "Devuelve cuántos enteros entre 1 y n, ambos incluidos, son múltiplos de divisor. No incluyas el cero en el intervalo. Para n igual a cero devuelve 0; se pide la cantidad, no la lista de múltiplos.",
+  ) },
+  "logica-bucle-roto": { statement: statement(
+    "Corrige la actualización del contador: la plantilla intenta sumar desde 1 hasta data, pero avanza de dos en dos y omite valores. No elimines el avance: el bucle no terminaría para entradas positivas.",
+    "data es un entero entre 0 y 100.",
+    "Devuelve la suma de todos los enteros desde 1 hasta data, incluido, sin saltarte ninguno. Para cero devuelve 0. Conserva el bucle y corrige su avance.",
+  ) },
+  "python-centinela": { statement: statement(
+    "Recoge los elementos anteriores al primer cero, que actúa como centinela. Practica break: termina inmediatamente el bucle más cercano.",
+    "data es una lista de hasta 100 enteros entre -100 y 100. Puede estar vacía. Conserva solve(data); no necesitas input().",
+    "Devuelve una lista con los elementos anteriores al primer cero, en su orden original. No incluyas ese cero ni los elementos posteriores. Si no hay cero, devuelve todos; para una lista vacía devuelve []. No modifiques la entrada. Las pruebas no certifican el uso de break.",
+  ) },
+  "python-omite-negativos": { statement: statement(
+    "Filtra los valores negativos practicando continue: salta a la siguiente vuelta sin terminar el bucle, a diferencia de break.",
+    "data es una lista de hasta 100 enteros entre -100 y 100. Puede estar vacía. Conserva solve(data); la aplicación proporciona los datos.",
+    "Devuelve una lista con los valores no negativos en su orden original, conservando ceros y repeticiones. Un negativo no impide recoger valores posteriores. Para una lista vacía devuelve []. Las pruebas comprueban la salida, no certifican el uso de continue.",
+  ) },
   "logica-adyacencia": { statement: statement(
     "Representa las conexiones de un grafo no dirigido mediante las listas de vecinos de sus nodos.",
     "data es un diccionario con n, un entero entre 1 y 1000, y aristas, una lista de hasta 4000 aristas en forma de pares [a, b]. Los nodos se numeran de 0 a n - 1; los extremos son válidos y distintos. Puede haber aristas repetidas, incluso escritas al revés. Cada arista conecta ambos sentidos.",

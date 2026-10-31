@@ -4,9 +4,9 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonEditorialRevisions } from "../prisma/python-editorial";
 
-test("los lotes editoriales estructuran 60 prácticas sin tocar programas ni proyectos", () => {
+test("los lotes editoriales estructuran 84 prácticas sin tocar programas ni proyectos", () => {
   const slugs = Object.keys(pythonEditorialRevisions);
-  assert.equal(slugs.length, 60);
+  assert.equal(slugs.length, 84);
   for (const slug of slugs) {
     const entry = pythonCatalog.find(item => item.slug === slug)!;
     assert.ok(entry, slug);
@@ -87,6 +87,36 @@ test("el lote avanzado conserva reglas deterministas, límites, ausencias y obje
   assert.match(text("logica-monedas"), /amount cero devuelve 0 incluso sin denominaciones/);
   assert.match(text("logica-subsecuencia-comun"), /puede saltar caracteres/);
   assert.match(text("logica-escalera"), /orden distingue formas/);
+});
+
+test("retorno y primeros bucles conservan plantillas, formatos y fronteras", () => {
+  const text = (slug: string) => pythonEditorialRevisions[slug].statement;
+  const slugs = ["logica-retorno", "logica-parametro", "logica-dos-parametros", "logica-imprimir-devolver", "logica-predice-valores", "logica-tabla-valores", "logica-minutos-segundos", "logica-perimetro", "logica-repara-presupuesto", "logica-merienda", "logica-elige-mensaje", "logica-signo", "logica-dos-requisitos", "logica-alternativas", "logica-tarifa", "python-condicional", "logica-uno-n", "logica-cuenta-atras", "logica-suma-uno-n", "logica-tabla", "logica-multiplos", "logica-bucle-roto", "python-centinela", "python-omite-negativos"];
+  for (const slug of slugs) {
+    const entry = pythonCatalog.find(item => item.slug === slug)!;
+    assert.ok(["INITIATION", "BEGINNER"].includes(entry.content.level), slug);
+    assert.equal(entry.content.statement, text(slug), slug);
+  }
+  assert.match(text("logica-retorno"), /print no sustituye al retorno/);
+  assert.match(text("logica-dos-parametros"), /primero y segundo.*conserva esos accesos/);
+  assert.match(text("logica-predice-valores"), /no si hiciste primero la predicción/);
+  assert.match(text("logica-tabla-valores"), /' -> '.*espacio.*2 -> 4 -> 12/);
+  assert.match(text("logica-repara-presupuesto"), /Aunque no haya unidades, se cobra el envío/);
+  assert.match(text("logica-merienda"), /'Total: '.*sin comillas ni salto de línea/);
+  assert.match(text("logica-elige-mensaje"), /positivo.*no positivo/);
+  assert.match(text("logica-signo"), /positivo.*negativo.*cero/);
+  assert.match(text("logica-dos-requisitos"), /Cero cumple ambas condiciones.*True y False.*true y false/);
+  assert.match(text("logica-alternativas"), /bloqueo impide siempre/);
+  assert.match(text("logica-tarifa"), /6 y 17 \(ambos incluidos\).*18 años/);
+  assert.match(text("python-condicional"), /'sí' if condicion else 'no'/);
+  assert.match(text("logica-uno-n"), /Para cero devuelve \[\]/);
+  assert.match(text("logica-cuenta-atras"), /Para cero devuelve \[0\]/);
+  assert.match(text("logica-tabla"), /lista de diez enteros/);
+  assert.match(text("logica-multiplos"), /No incluyas el cero/);
+  assert.match(text("logica-bucle-roto"), /No elimines el avance/);
+  assert.match(text("python-centinela"), /No incluyas ese cero ni los elementos posteriores/);
+  assert.match(text("python-centinela"), /No modifiques la entrada/);
+  assert.match(text("python-omite-negativos"), /conservando ceros y repeticiones.*valores posteriores/);
 });
 
 test("grafos y optimización conservan direcciones, desempates, límites y casos frontera", () => {

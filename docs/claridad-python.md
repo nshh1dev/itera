@@ -140,9 +140,51 @@ Las pruebas editoriales cubren esas reglas y la presencia de las 36 avanzadas.
 Las pruebas ejecutables fijas de la auditoría de grafos siguen comprobando sus
 referencias y límites locales; no equivalen a ejecutar Piston real.
 
+## Cuarto lote: 24 enunciados de fundamentos
+
+Diez prácticas de iniciación y catorce de principiante separan tarea, entrada y
+resultado. Se conservan las instrucciones de reparación o completado: no se
+convierten en retos libres que ignoren la plantilla. También se mantienen los
+objetivos de predicción y seguimiento, sin afirmar que el retorno certifique
+ese trabajo previo. La introducción conceptual de expresión condicional,
+break y continue permanece junto a la tarea; las recetas concretas siguen en
+las pistas y explicaciones originales.
+
+No cambian plantillas, soluciones, casos, ejemplos, ayudas, minutos ni orden.
+La misma huella de evaluación de las 224 actividades sigue aprobando. Las
+pruebas editoriales añaden comprobaciones de formatos, cero, límites de edad,
+centinela y conservación de las indicaciones de corrección.
+
+| Actividad | Revisión editorial |
+| --- | --- |
+| `logica-retorno` | Dato proporcionado por la aplicación y retorno frente a print. |
+| `logica-parametro` | Corrección del retorno y doble de negativos y cero. |
+| `logica-dos-parametros` | Claves, límites y nombres primero/segundo conservados. |
+| `logica-imprimir-devolver` | Mantiene el diagnóstico de impresión frente a retorno, sin inventar límites. |
+| `logica-predice-valores` | Predicción previa y orden de actualizaciones, sin certificar la predicción. |
+| `logica-tabla-valores` | Tres estados, variables y separador exacto con espacios. |
+| `logica-minutos-segundos` | Unidades de entrada y entero de salida diferenciados. |
+| `logica-perimetro` | Accesos a medidas y perímetro frente a área. |
+| `logica-repara-presupuesto` | Reparación del envío único, incluso sin unidades. |
+| `logica-merienda` | Mensaje Total: con espacio, sin comillas ni salto de línea. |
+| `logica-elige-mensaje` | Corrección localizada y etiquetas exactas, incluido cero. |
+| `logica-signo` | Último caso de la plantilla y tres textos exactos. |
+| `logica-dos-requisitos` | Comparaciones preparadas, conjunción y cero como múltiplo. |
+| `logica-alternativas` | Bloqueo prioritario, alternativas y booleanos frente a textos. |
+| `logica-tarifa` | Fronteras de 6 y 18 años y tarifas enteras. |
+| `python-condicional` | Conserva la introducción a la expresión sin adelantar la solución de edad. |
+| `logica-uno-n` | Corrección del elemento añadido y cero como lista vacía. |
+| `logica-cuenta-atras` | Extremo cero incluido y salida [0] para entrada cero. |
+| `logica-suma-uno-n` | Completar acumulador manteniendo el recorrido. |
+| `logica-tabla` | Diez productos en orden, incluidos negativos y cero. |
+| `logica-multiplos` | Diccionario y cantidad en vez de lista; intervalo excluye cero. |
+| `logica-bucle-roto` | Reparación del avance, sin quitarlo ni saltarse valores. |
+| `python-centinela` | Concepto de break, prefijo sin centinela y entrada conservada. |
+| `python-omite-negativos` | Concepto de continue, valores posteriores, ceros y repeticiones. |
+
 ## Pendientes y límites
 
-- Los tres lotes cubren **60/224 enunciados**, no el cierre editorial del recorrido.
+- Los cuatro lotes cubren **84/224 enunciados**, no el cierre editorial del recorrido.
 - Quedan los demás enunciados, teoría local y de módulos, vocabulario en otras
   ayudas y objetivos, revisión de ejemplos ya explicados, tiempos y textos de rutas.
 - PROGRAM no se normaliza como FUNCTION. Los proyectos conservan sus contratos
