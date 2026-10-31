@@ -21,9 +21,90 @@ const bridges: Record<string, string> = {
 
 // Excepciones Python sobre actividades compartidas. No cambian el contenido ni
 // las variantes de JavaScript o TypeScript.
-type PythonOverride = { level?: VersionContent["level"]; minutes?: number; description?: string; objective?: string; statementNote?: string };
+type PythonVariantOverride = { starter?: string; solution?: string; explanation?: string; statement?: string; tests?: VersionContent["variants"][number]["tests"] };
+type PythonOverride = { level?: VersionContent["level"]; minutes?: number; description?: string; objective?: string; statement?: string; statementNote?: string; hints?: string[]; constraints?: string[]; tree?: boolean; extraTests?: { input: Json; expected: Json; explanation?: string }[]; variant?: PythonVariantOverride };
+
+const renameTreeKeys = (value: Json): Json => {
+  if (Array.isArray(value)) return value.map(renameTreeKeys);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [
+      key === "v" ? "value" : key === "izq" ? "left" : key === "der" ? "right" : key,
+      renameTreeKeys(item as Json),
+    ]));
+  }
+  return value;
+};
+const pythonTreeCode = (code: string) => code
+  .replaceAll("['v']", "['value']")
+  .replaceAll("['izq']", "['left']")
+  .replaceAll("['der']", "['right']");
+const chainTree = (depth: number): Json => {
+  let node: Json = null;
+  for (let value = depth; value >= 1; value--) node = { value, left: null, right: node };
+  return node;
+};
+const balancedTree = (depth: number, value = 1): Json => depth === 0 ? null : {
+  value,
+  left: balancedTree(depth - 1, value * 2),
+  right: balancedTree(depth - 1, value * 2 + 1),
+};
 const pythonOverrides: Record<string, PythonOverride> = {
   "logica-busqueda-lineal": { level: "BEGINNER", minutes: 12, description: "Recorre una lista sin ordenar y devuelve la primera posición que coincide." },
+  "logica-pruebas-limites": {
+    description: "Reproduce con pruebas los defectos de vacío y negativos y corrige la función.",
+    objective: "Elegir casos que distingan supuestos y corregir una implementación a partir de ellos.",
+    statement: "La función mayor debe devolver el mayor de una lista o None si está vacía. La plantilla contiene un defecto. Escribe aserciones para [], [-4] y [-8,-2], localiza qué supuesto falla, corrige la implementación y devuelve el resultado. Las pruebas oficiales cambian la entrada y comparan el resultado; no cuentan aserciones ni mensajes que declares.",
+    hints: ["Prueba primero la lista vacía y una lista solo con negativos.", "Inicializar el máximo en cero supone que siempre hay un valor mayor o igual que cero.", "Resuelve el vacío y usa el primer elemento real como candidato antes de recorrer."],
+    variant: {
+      starter: "def solve(data):\n    def mayor(valores):\n        actual = 0\n        for n in valores:\n            if n > actual:\n                actual = n\n        return actual\n    return mayor(data)",
+      explanation: "Con actual = 0, la lista vacía devuelve 0 en lugar de None y una lista negativa devuelve 0 aunque el máximo sea negativo. Las aserciones para [], [-4] y [-8,-2] reproducen esos defectos. La corrección comprueba el vacío y usa valores[0] como candidato. Las pruebas oficiales evalúan el resultado, no la calidad de tus aserciones.",
+    },
+  },
+  "logica-reproduce-fallo": {
+    description: "Investiga y corrige un contador que no cumple su contrato.",
+    objective: "Investigar un fallo con un caso mínimo y conservar una regresión.",
+    statement: "Un contador debe devolver cuántos elementos de una lista son estrictamente positivos. La implementación de la plantilla no cumple el contrato. Reproduce el fallo con un caso mínimo, explica qué supuesto es incorrecto y corrígelo. Las pruebas oficiales incluyen listas vacías, ceros y negativos; un mensaje que declare que las pruebas pasan no acredita la corrección.",
+    hints: ["Busca un caso con cero y compáralo con el contrato.", "El caso [0] debería devolver 0; observa qué devuelve la plantilla.", "Ajusta la comparación para excluir el cero y conserva una aserción que lo compruebe."],
+    variant: {
+      explanation: "El caso [0] expone que la comparación n >= 0 incluye el cero; el contrato pide estrictamente positivos. Cambiar a n > 0 corrige el contador y la aserción contar([0]) == 0 conserva la regresión. El diagnóstico se apoya en un caso mínimo, no en un mensaje autodeclarado.",
+    },
+  },
+  "logica-altura": {
+    tree: true,
+    statement: "Recibes un árbol binario o None. Cada nodo es un diccionario con value (entero), left y right (otro nodo o None). La altura cuenta nodos: un árbol vacío tiene 0, una hoja 1 y cada nodo suma uno a la mayor altura de sus hijos. Devuelve la altura del árbol. Hay hasta 500 nodos y profundidad máxima 50.",
+    constraints: ["Hasta 500 nodos y profundidad máxima 50; los casos incluyen una cadena sesgada y un árbol equilibrado."],
+    extraTests: [
+      { input: chainTree(50), expected: 50, explanation: "Una cadena de 50 nodos comprueba que la recursión llega al límite declarado." },
+      { input: balancedTree(5), expected: 5, explanation: "Un árbol equilibrado de altura 5 combina las dos ramas." },
+    ],
+  },
+  "logica-preorden": {
+    tree: true,
+    constraints: ["Hasta 500 nodos y profundidad máxima 50; los casos incluyen una cadena sesgada."],
+    extraTests: [
+      { input: chainTree(50), expected: Array.from({ length: 50 }, (_, index) => index + 1), explanation: "Una cadena derecha produce los valores en orden creciente." },
+    ],
+  },
+  "logica-niveles": {
+    tree: true,
+    constraints: ["Hasta 500 nodos y profundidad máxima 50; los casos incluyen una cadena sesgada."],
+    extraTests: [
+      { input: chainTree(50), expected: Array.from({ length: 50 }, (_, index) => index + 1), explanation: "La cola conserva el orden de una cadena sesgada." },
+    ],
+  },
+  "logica-arbol-busqueda": {
+    tree: true,
+    constraints: ["Hasta 500 nodos, profundidad máxima 50 y valores distintos; los casos incluyen una cadena sesgada válida."],
+    extraTests: [
+      { input: chainTree(50), expected: true, explanation: "Una cadena derecha con valores crecientes respeta el rango heredado." },
+    ],
+  },
+  "logica-ancestro": { statementNote: "Cada nodo de tree es un diccionario con value, left y right; left y right son otro nodo o None." },
+  "logica-asercion-normal": { statementNote: "La comprobación evalúa el resultado; no certifica que la aserción esté presente en tu código." },
+  "logica-conserva-regresion": { statementNote: "La comprobación evalúa el resultado; no certifica que las aserciones de regresión estén presentes." },
+  "logica-captura-conversion": { statementNote: "La comprobación evalúa la conversión y el valor devuelto; no certifica que el código use exactamente el mismo try/except." },
+  "logica-error-dominio": { statementNote: "La comprobación observa el mensaje; no certifica que uses raise." },
+  "logica-recupera-elementos": { statementNote: "La comprobación evalúa la lista y el conteo; no certifica el alcance exacto del try." },
   "logica-inventario": {
     description: "Acumula los cambios por producto y conserva saldos cero o negativos.",
     statementNote: "Este ejercicio acumula saldos por producto y admite valores negativos. No aplica la regla de stock no negativo del ejercicio de saldo.",
@@ -69,14 +150,44 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
     if (bridges[slug]) content.variants[0].explanation = bridges[slug];
   }
   const override = pythonOverrides[slug];
-  if (override) content = {
-    ...content,
-    ...(override.level ? { level: override.level } : {}),
-    ...(override.minutes ? { minutes: override.minutes } : {}),
-    ...(override.description ? { description: override.description } : {}),
-    ...(override.objective ? { objective: override.objective } : {}),
-    ...(override.statementNote ? { statement: `${content.statement}\n\n${override.statementNote}` } : {}),
-  };
+  if (override) {
+    content = {
+      ...content,
+      ...(override.level ? { level: override.level } : {}),
+      ...(override.minutes ? { minutes: override.minutes } : {}),
+      ...(override.description ? { description: override.description } : {}),
+      ...(override.objective ? { objective: override.objective } : {}),
+    };
+    if (override.statement) {
+      content.statement = override.statement;
+      content.variants[0].statement = override.statement;
+    } else if (override.statementNote) {
+      content.statement = `${content.statement}\n\n${override.statementNote}`;
+      if (content.variants[0].statement) content.variants[0].statement = `${content.variants[0].statement}\n\n${override.statementNote}`;
+    }
+    if (override.hints) content.hints = override.hints;
+    if (override.constraints) content.constraints = override.constraints;
+    if (override.variant) content.variants[0] = { ...content.variants[0], ...override.variant };
+    if (override.tree) {
+      const baseTests = content.variants[0].tests.map(test => ({ ...test, input: renameTreeKeys(test.input as Json) }));
+      const extraTests = (override.extraTests ?? []).map((test, index) => ({
+        input: renameTreeKeys(test.input), expected: test.expected,
+        order: baseTests.length + index, visible: false, explanation: test.explanation ?? "",
+      }));
+      content.variants[0].tests = [...baseTests, ...extraTests];
+      content.variants[0].solution = pythonTreeCode(content.variants[0].solution);
+      const model = "En Python, cada nodo usa las claves value (entero), left y right (otro nodo o None).";
+      const limit = "Los casos Python usan hasta 500 nodos y profundidad máxima 50.";
+      const variantStatement = content.variants[0].statement ?? content.statement;
+      content.statement = content.statement.replaceAll("10000 nodos", "500 nodos");
+      content.variants[0].statement = variantStatement.replaceAll("10000 nodos", "500 nodos");
+      if (!content.statement.includes("left")) {
+        content.statement = `${content.statement}\n\n${model} ${limit}`;
+        content.variants[0].statement = `${content.variants[0].statement}\n\n${model} ${limit}`;
+      }
+      content.variants[0].explanation = `${content.variants[0].explanation}\n\n${model} No uses v, izq o der en esta variante.`;
+    }
+  }
   // `Exercise.category` se persiste con un valor del catálogo compartido para no
   // romper el editor; la categoría visible de Python se proyecta en el catálogo.
   return { slug, category: existing?.category ?? "Fundamentos", content, baseline };

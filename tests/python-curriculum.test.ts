@@ -18,11 +18,12 @@ test("Python conserva las 176 identidades y añade 48 pasos exclusivos sin cambi
   assert.equal(new Set(pythonCurriculumSlugs).size, 224);
   for (const exercise of logicExercises) assert.ok(pythonCurriculumSlugs.includes(exercise.slug), exercise.slug);
   assert.deepEqual(pythonCatalog.map(entry => entry.slug), pythonCurriculumSlugs);
+  const contractRevisions = new Set(["logica-altura", "logica-preorden", "logica-niveles", "logica-arbol-busqueda"]);
   for (const entry of pythonCatalog) {
     assert.deepEqual(entry.content.variants.map(variant => variant.language), ["python"]);
     assert.deepEqual(entry.content.prerequisiteSlugs, pythonPrerequisiteSlugs(entry.slug));
     if (entry.baseline) {
-      assert.deepEqual(entry.content.variants[0].tests, entry.baseline.variants[0].tests);
+      if (!contractRevisions.has(entry.slug)) assert.deepEqual(entry.content.variants[0].tests, entry.baseline.variants[0].tests);
       assert.equal(entry.content.runtimeMode, entry.baseline.runtimeMode);
       assert.equal(entry.content.conceptRule, entry.baseline.conceptRule);
     }
@@ -108,9 +109,9 @@ test("la proyección requiere catálogo publicado, conserva rutas ajenas y no pi
   assert.deepEqual(paths[0].items.at(-1), { exerciseId: "custom" });
 });
 
-test("las referencias Python nuevas y los cuatro puentes superan casos; las plantillas terminan sin resolverlos todos", async () => {
+test("las referencias Python nuevas y revisadas superan casos; las plantillas terminan sin resolverlos todos", async () => {
   const { pythonCatalog } = await import("../prisma/python-content");
-  const entries = pythonCatalog.filter(entry => !entry.baseline || ["logica-ordena-registros", "logica-intervalos-suma", "logica-diagonales", "logica-agrupa-registros"].includes(entry.slug));
+  const entries = pythonCatalog.filter(entry => !entry.baseline || ["logica-ordena-registros", "logica-intervalos-suma", "logica-diagonales", "logica-agrupa-registros", "logica-pruebas-limites", "logica-reproduce-fallo", "logica-altura", "logica-preorden", "logica-niveles", "logica-arbol-busqueda"].includes(entry.slug));
   const runner = `import sys,json,copy,contextlib,io
 entries=json.load(sys.stdin)
 results=[]
@@ -145,4 +146,66 @@ print(json.dumps(results,allow_nan=False))`;
     assert.deepEqual(values[index][0], expected, `${entry.slug}: referencia`);
     assert.notDeepEqual(values[index][1], expected, `${entry.slug}: plantilla resuelta`);
   }
+});
+
+test("las actividades prioritarias hacen observable el contrato y no anticipan el diagnóstico", async () => {
+  const { pythonLessons } = await import("../prisma/python-lessons");
+  const identidad = pythonLessons.get("python-identidad")!;
+  assert.ok(identidad.cases.length >= 3);
+  for (const [, expected] of identidad.cases) {
+    const value = expected as { antes: number[]; original: number[]; copia: number[]; igual: boolean; misma: boolean; copiaMisma: boolean };
+    assert.equal(value.igual, false);
+    assert.equal(value.misma, true);
+    assert.equal(value.copiaMisma, false);
+    assert.deepEqual(value.antes, value.copia);
+    assert.notDeepEqual(value.original, value.copia);
+  }
+  const decimal = pythonLessons.get("python-decimal")!;
+  assert.ok(!decimal.starter.includes("float("));
+  assert.ok(decimal.cases.some(([, expected]) => expected === "1.0\n" || expected === "0.0\n"));
+  assert.ok(decimal.cases.some(([input]) => input === "-0.5\n"));
+  const resume = pythonLessons.get("python-academia-resume")!;
+  assert.ok(resume.cases.some(([, expected]) => (expected as { medias: Record<string, number | null> }).medias.ana === 85.5));
+  const califica = pythonLessons.get("python-academia-califica")!;
+  assert.ok(califica.cases.some(([input]) => (input as { nota: number }).nota === 75));
+  assert.ok(califica.cases.some(([input]) => (input as { nota: number }).nota === 100));
+  assert.ok(califica.cases.some(([input]) => (input as { nota: number }).nota === -1));
+  const contactos = pythonLessons.get("python-contactos-edita")!;
+  const cambios = contactos.cases.map(([input]) => (input as { cambios: Record<string, unknown> }).cambios);
+  assert.ok(cambios.some(cambio => cambio.correo === "nuevo@x"));
+  assert.ok(cambios.some(cambio => cambio.telefono === "2" && cambio.correo === "y"));
+  assert.ok(cambios.some(cambio => typeof cambio.correo === "number"));
+
+  const { pythonCatalog } = await import("../prisma/python-content");
+  const fallo = pythonCatalog.find(entry => entry.slug === "logica-reproduce-fallo")!;
+  assert.doesNotMatch(fallo.content.statement, /n >= 0|incluye cero|Cambia la condici[oó]n/i);
+  assert.match(fallo.content.hints[0], /cero/i);
+  const pruebas = pythonCatalog.find(entry => entry.slug === "logica-pruebas-limites")!;
+  assert.doesNotMatch(pruebas.content.variants[0].starter, /len\(valores\)/);
+  assert.match(pruebas.content.variants[0].starter, /actual = 0/);
+  assert.match(pruebas.content.variants[0].statement ?? "", /defecto/i);
+  const constante = pythonLessons.get("python-constante")!;
+  assert.ok(!constante.starter.includes("LAPICES_POR_CAJA"));
+
+  const altura = pythonCatalog.find(entry => entry.slug === "logica-altura")!;
+  assert.ok(altura.content.variants[0].tests.length >= 7);
+  assert.match(altura.content.statement, /500 nodos/);
+  assert.match(altura.content.constraints.join(" "), /cadena sesgada/);
+  const preorden = pythonCatalog.find(entry => entry.slug === "logica-preorden")!;
+  assert.ok(preorden.content.variants[0].tests.some(test => Array.isArray(test.expected) && test.expected.length === 50));
+  for (const slug of ["logica-asercion-normal", "logica-conserva-regresion", "logica-captura-conversion", "logica-error-dominio", "logica-recupera-elementos"]) {
+    assert.match(pythonCatalog.find(entry => entry.slug === slug)!.content.statement, /no certifica/, slug);
+  }
+
+  for (const slug of ["logica-altura", "logica-preorden", "logica-niveles", "logica-arbol-busqueda"]) {
+    const entry = pythonCatalog.find(item => item.slug === slug)!;
+    const variant = entry.content.variants[0];
+    assert.match(variant.solution, /\[['"]left['"]\]/, `${slug}: solución`);
+    assert.doesNotMatch(variant.solution, /\[['"](?:v|izq|der)['"]\]/, `${slug}: claves antiguas`);
+    assert.match(variant.statement ?? "", /value/, `${slug}: enunciado`);
+    assert.doesNotMatch(variant.statement ?? "", /10000 nodos/, `${slug}: límite anterior`);
+    assert.ok(JSON.stringify(variant.tests.map(test => test.input)).includes('"value"'), `${slug}: entradas`);
+    assert.ok(!JSON.stringify(variant.tests.map(test => test.input)).includes('"v"'), `${slug}: entrada antigua`);
+  }
+  assert.match(pythonCatalog.find(entry => entry.slug === "logica-ancestro")!.content.statement, /value, left y right/);
 });

@@ -59,6 +59,21 @@ La secuencia fuente se revisó sin cambiar las 224 identidades ni las variantes 
 
 La huella de esta entrega de fuentes está registrada en `prisma/python-releases.ts`. La base activa no se ha modificado en esta revisión: la publicación atómica con `content:python -- --apply` sigue pendiente y debe coordinarse con el despliegue de las fuentes para no mostrar orden nuevo sobre contenido antiguo.
 
+## Contratos y evaluación (revisión del 30 de octubre de 2026)
+
+La revisión de contratos no cambia identidades ni el contenido de JavaScript/TypeScript. Las variantes Python que necesitan otro contrato conservan la versión anterior y se publican como una revisión nueva; los borradores antiguos siguen accesibles y no se ejecutan con el contrato nuevo.
+
+- `python-constante` es una práctica guiada: la plantilla conserva `cajas` y una salida incorrecta, y el alumno debe construir la equivalencia `LAPICES_POR_CAJA`. La comprobación observa `18`; no certifica el uso de mayúsculas ni de la constante, que se explica como convención y transferencia.
+- `python-decimal` lee el texto sin convertirlo. Los casos incluyen cero, negativos y resultados con `.0`; convertir con `int` o sumar textos no supera la suite.
+- `python-identidad` construye una lista local desde `data`, no muta la entrada y devuelve `antes`, `original`, `copia`, `igual`, `misma` y `copiaMisma`. Así se observa el efecto de mutar un alias y de conservar una copia distinta, sin dos respuestas verdaderas constantes.
+- `python-academia-resume` cubre medias fraccionarias, ausencias, cero y empates próximos. `python-academia-califica` distingue notas válidas intermedias, límites `0` y `100`, negativos y cursos no existentes. `python-contactos-edita` cubre correo, teléfono, ambos, campos no permitidos, valores no textuales y normalización.
+- `logica-pruebas-limites` parte de una implementación defectuosa con `actual = 0`; las pruebas de vacío y negativos descubren el supuesto. `logica-reproduce-fallo` ya no revela en el enunciado que el defecto es `n >= 0`: el caso mínimo y la corrección aparecen en pistas progresivas. En ambas, las aserciones son una ayuda local; la suite evalúa el resultado, no un contador ni un mensaje autodeclarado.
+- Las actividades de aserciones y excepciones distinguen el resultado observable de la técnica recomendada. `logica-asercion-normal` y `logica-conserva-regresion` señalan que la comprobación no certifica la presencia de aserciones; `captura-conversion`, `error-dominio` y `recupera-elementos` mantienen textos válidos, errores previstos y errores de infraestructura separados.
+
+El modelo de árboles de Python se unifica en `value`, `left` y `right` para `logica-altura`, `logica-preorden`, `logica-niveles` y `logica-arbol-busqueda`. `logica-cuenta-nodos` ya lo describía y `logica-ancestro` repite la forma de cada nodo. Las variantes JavaScript/TypeScript conservan `v`, `izq` y `der`. El cambio de entradas y referencias Python crea una revisión nueva; no reinterpreta envíos históricos. Los casos Python limitan los árboles a 500 nodos y profundidad 50, e incluyen una cadena sesgada y un árbol equilibrado; no se elevan límites globales del ejecutor.
+
+Las pruebas de resultado no certifican por sí solas el uso de `break`, `continue`, comprensiones, `map`, `filter`, generadores, aserciones o excepciones. En iteradores, listas nuevas por llamada e identidad, los resultados permiten observar efectos compatibles con la técnica, pero también pueden reproducirse con otras implementaciones. La técnica queda como objetivo de revisión humana. Tampoco se certifican complejidad, precisión decimal general ni dominio de un algoritmo. La auditoría pedagógica individual de las 224 actividades y los límites de árboles en Piston real siguen pendientes en el plan.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.
@@ -114,11 +129,11 @@ En Docker, respaldar con `npm run docker:backup` y ejecutar `node scripts/docker
 
 ## Verificación y límites
 
-- `tests/python-curriculum.test.ts`: identidades, orden, grupos, categorías proyectadas, prerrequisitos anteriores y sin ciclos, cobertura, compatibilidad, referencias fijas y plantillas nuevas.
+- `tests/python-curriculum.test.ts`: identidades, orden, grupos, categorías proyectadas, prerrequisitos anteriores y sin ciclos, cobertura, compatibilidad, referencias fijas, contratos prioritarios, modelo de árboles y plantillas nuevas.
 - `tests/python-install.test.ts`: doble transaccional para idempotencia, conservación y conflictos; no sustituye PostgreSQL real.
 - `tests/catalog-loading.test.ts`: revisiones por lenguaje sin ocultar otros metadatos ni compartir actividad entre cuentas.
 - La validación real pasa por `src/server/execution/piston.ts`. Pruebas locales de referencias no acreditan publicación ni sandbox.
-- Las pruebas de resultado no certifican técnicas internas, complejidad o identidad. Las observaciones de salida fija requieren revisar el código.
+- Las pruebas de resultado no certifican técnicas internas, complejidad, identidad ni presencia de aserciones. Las observaciones de salida fija requieren revisar el código; el modelo de árboles se comprueba con las entradas y referencias de la revisión Python.
 
 ## Activación en la instalación local
 
@@ -132,4 +147,4 @@ La suite Docker completa produjo 47 aprobadas y tres fallidas: dos expectativas 
 
 Lint, tipos, suite unitaria completa (364/364, sin omisiones) y builds finales de Windows/Docker aprobados. Un build intermedio detectó una incompatibilidad de tipos en la comparación de huellas, corregida antes de cerrar; un intento Windows agotó su límite de 120 segundos y el reintento completo aprobó. La huella normalizada del catálogo publicado coincide con la entrega registrada, incluida la normalización del orden de propiedades JSON de PostgreSQL. Al terminar se detuvieron los servicios y Ubuntu quedó apagado, como al inicio; `docker-iniciar` recupera la imagen actualizada y el catálogo activado.
 
-El 30 de octubre de 2026 se revisaron las fuentes del orden, los metadatos y los prerrequisitos descritos arriba. Esta revisión no se ha preparado ni activado en la base: la instantánea publicada sigue siendo la del 27 de octubre. La entrega de fuentes se valida con `npm run content:python`; la activación requiere Piston y el procedimiento de publicación atómica.
+El 30 de octubre de 2026 se revisaron las fuentes del orden, los metadatos, los prerrequisitos, los contratos prioritarios y el modelo de árboles descritos arriba. Esta revisión no se ha preparado ni activado en la base: la instantánea publicada sigue siendo la del 27 de octubre. La entrega de fuentes se valida con `npm run content:python`; la activación requiere Piston y el procedimiento de publicación atómica.
