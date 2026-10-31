@@ -5,6 +5,126 @@ const statement = (task: string, input: string, output: string) =>
   `Tu tarea\n${task}\n\nEntrada\n${input}\n\nResultado esperado\n${output}`;
 
 export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
+  "logica-posicion": { statement: statement(
+    "Consulta el elemento situado en una posición de una lista. Distingue la posición del valor que contiene.",
+    "data es un diccionario con numbers, una lista no vacía de hasta 100 enteros, e index, una posición válida numerada desde cero.",
+    "Devuelve el entero de numbers situado en index, no el propio índice ni una lista de un elemento.",
+  ) },
+  "logica-indices": { statement: statement(
+    "Corrige el acceso de la plantilla: ya recorre las posiciones de la lista, pero copia siempre el primer elemento. Conserva su estructura y copia el valor de la posición actual.",
+    "data es una lista de 0 a 100 enteros entre -1000 y 1000.",
+    "Devuelve una copia con los mismos valores en el mismo orden, incluidas las repeticiones. Para la lista vacía devuelve []. No devuelvas las posiciones en lugar de sus valores.",
+  ) },
+  "logica-suma-lista": { statement: statement(
+    "Completa el recorrido que acumula los valores de una lista. La plantilla ya prepara el total y su devolución.",
+    "data es una lista de hasta 1000 enteros entre -1000 y 1000; puede estar vacía.",
+    "Devuelve la suma de todos sus elementos como entero. Si está vacía, devuelve 0. Suma los valores, no la cantidad de elementos.",
+  ) },
+  "logica-maximo": { statement: statement(
+    "Corrige la comparación de la plantilla: ya guarda un candidato y recorre la lista, pero compara al revés. Conserva su estructura y cambia solo ese paso.",
+    "data es una lista de entre 1 y 100 enteros entre -1000 y 1000. Puede contener negativos y valores repetidos.",
+    "Devuelve el valor máximo, no su posición. El máximo puede ser negativo o aparecer varias veces; devuélvelo una sola vez como entero.",
+  ) },
+  "logica-cuenta-condicion": { statement: statement(
+    "Cuenta los valores estrictamente positivos de una lista.",
+    "data es una lista de hasta 1000 enteros entre -1000 y 1000; puede estar vacía.",
+    "Devuelve cuántos elementos son mayores que cero, no su suma. El cero no cuenta como positivo. Para una lista vacía devuelve 0.",
+  ) },
+  "logica-longitud-texto": { statement: statement(
+    "Calcula la cantidad de caracteres de un texto.",
+    "data es un texto ASCII de hasta 1000 caracteres; puede estar vacío.",
+    "Devuelve su longitud como entero, contando también espacios y signos. El texto vacío tiene longitud 0.",
+  ) },
+  "logica-minusculas": { statement: statement(
+    "Completa el retorno de la plantilla para convertir el texto a minúsculas. Conserva su estructura y cambia solo ese paso.",
+    "data es un texto ASCII de hasta 100 caracteres; puede estar vacío.",
+    "Devuelve el texto en minúsculas, conservando espacios, números y signos. No elimines caracteres ni añadas otros. Usa return para entregar el texto convertido.",
+  ) },
+  "logica-vocales": { statement: statement(
+    "Completa el recorrido y su condición para contar vocales. La plantilla ya prepara la conversión a minúsculas y el contador.",
+    "data es un texto ASCII de hasta 1000 caracteres; puede estar vacío.",
+    "Devuelve cuántas apariciones de a, e, i, o, u contiene, tanto en mayúsculas como en minúsculas. No cuentes otras letras ni vocales acentuadas. El texto vacío devuelve 0.",
+  ) },
+  "logica-invierte": { statement: statement(
+    "Corrige cómo se construye el resultado de la plantilla: ya recorre los caracteres, pero los añade en el orden original.",
+    "data es un texto ASCII de hasta 1000 caracteres; puede estar vacío.",
+    "Devuelve el texto en orden inverso, conservando todos sus caracteres, incluidos espacios, signos y mayúsculas. El texto vacío devuelve un texto vacío.",
+  ) },
+  "logica-elimina-caracter": { statement: statement(
+    "Elimina todas las apariciones de un carácter de un texto.",
+    "data es un diccionario con texto y caracter, ambos textos ASCII. texto tiene hasta 1000 caracteres y caracter tiene exactamente uno.",
+    "Devuelve texto sin ninguna aparición de caracter, conservando el orden y los demás caracteres. Distingue mayúsculas de minúsculas. Si no aparece, devuelve el mismo contenido; si no queda ningún carácter, devuelve un texto vacío.",
+  ) },
+  "logica-palabras": { statement: statement(
+    "Cuenta las palabras de un texto: cada palabra es un grupo no vacío de letras separado por espacios.",
+    "data es un texto ASCII de hasta 1000 caracteres formado por letras y espacios simples. Puede estar vacío o tener varios espacios seguidos y en los extremos.",
+    "Devuelve el número de grupos de letras. Los espacios repetidos no crean palabras vacías. Un texto vacío o formado solo por espacios devuelve 0.",
+  ) },
+  "python-ordena-numeros": { statement: statement(
+    "Ordena números conservando la entrada. En Python, sorted(lista) crea una lista nueva; lista.sort() modifica esa lista y devuelve None. No son intercambiables. Los resultados con nombre se representan con claves de diccionario.",
+    "data es una lista de hasta 100 enteros entre -100 y 100; puede estar vacía.",
+    "Devuelve un diccionario con original y ordenados. original conserva los valores de entrada en su orden; ordenados contiene esos valores de menor a mayor, con sus repeticiones. Para una lista vacía, ambos valores son []. No modifiques la entrada. Los casos no certifican la técnica interna.",
+  ) },
+  "python-recorta": { statement: statement(
+    "Obtén un tramo de una lista practicando el corte: lista[a:b] copia las posiciones desde a hasta antes de b. A diferencia de consultar un índice, el resultado es otra lista.",
+    "data es un diccionario con valores, una lista de hasta 100 enteros, e inicio y fin, enteros que cumplen 0 ≤ inicio ≤ fin ≤ longitud de valores.",
+    "Devuelve la lista del tramo desde inicio incluido hasta fin excluido, en el orden original. Si inicio y fin coinciden, devuelve []. No modifiques valores. Los casos no certifican el uso de la sintaxis de corte.",
+  ) },
+  "python-une-palabras": { statement: statement(
+    "Normaliza los espacios de un texto. En Python, texto.split() sin argumento separa por espacios en blanco y omite grupos vacíos; join une textos con un separador. No equivale a split(' '), que puede conservar posiciones vacías.",
+    "data es un texto ASCII con palabras separadas por espacios, tabulaciones o saltos de línea. Puede no contener palabras.",
+    "Devuelve las mismas palabras separadas por un único espacio, sin espacios en los extremos. Conserva mayúsculas y signos. Si no hay palabras, devuelve un texto vacío. Los casos comprueban el texto, no certifican el uso de split o join.",
+  ) },
+  "python-desempaqueta": { statement: statement(
+    "Desempaqueta los dos valores en a y b y practica su intercambio. a, b = pareja requiere exactamente dos elementos; a, b = b, a calcula primero la derecha y después asigna.",
+    "data es una lista de exactamente dos enteros.",
+    "Devuelve la pareja invertida, primero el segundo valor y después el primero, sin modificar la lista original. Una tupla devuelta se representa como una lista en JSON; el juez comprueba los valores, no la sintaxis usada.",
+  ) },
+  "python-enumera": { statement: statement(
+    "Numera palabras desde uno practicando enumerate. enumerate(valores, 1) entrega parejas de posición y valor; su segundo argumento cambia el inicio de la numeración y cada pareja se puede desempaquetar en el for.",
+    "data es una lista de hasta 100 palabras. Puede estar vacía y contener palabras repetidas.",
+    "Devuelve una lista de parejas [posición, palabra] en el orden original, numeradas desde 1. Conserva cada aparición repetida con su posición correspondiente. Para una lista vacía devuelve []. Los casos no certifican el uso de enumerate.",
+  ) },
+  "python-empareja": { statement: statement(
+    "Empareja posiciones de dos listas practicando zip. zip(a, b) entrega valores correspondientes y termina al agotarse cualquiera de las entradas; las parejas pueden desempaquetarse durante el recorrido.",
+    "data es un diccionario con a y b, listas de hasta 100 enteros cada una. Pueden tener distinta longitud o estar vacías.",
+    "Devuelve una lista de parejas con un elemento de a y otro de b, en ese orden y respetando sus posiciones. Termina al agotarse la lista más corta, sin rellenar posiciones con ceros ni None. Si alguna está vacía, devuelve []. Los casos no certifican el uso de zip.",
+  ) },
+  "python-retorno-multiple": { statement: statement(
+    "Define una función auxiliar que reciba dos enteros y devuelva juntos su suma y su producto. Un return con valores separados por coma devuelve una tupla, que puede desempaquetarse en la llamada; no son dos retornos separados, pues solo se ejecuta el primer return de una llamada.",
+    "data es una lista de exactamente dos enteros. Conserva solve(data) y llama desde ella a la auxiliar.",
+    "Devuelve los dos resultados en este orden: suma y producto. Itera representa la tupla como una lista de dos números en JSON. Los casos comprueban los resultados, no certifican la organización en funciones ni el uso de una tupla.",
+  ) },
+  "logica-ficha-producto": { statement: statement(
+    "Consulta el precio de un producto a partir de su ficha.",
+    "data es una ficha representada por un diccionario con nombre, un texto ASCII, y precio, un entero entre 0 y 1000.",
+    "Devuelve únicamente el precio como entero, incluido 0 si corresponde. El nombre no interviene en el resultado.",
+  ) },
+  "logica-ausencia": { statement: statement(
+    "Distingue un número de la ausencia de valor. Comprueba la ausencia de forma explícita: cero es un número válido, no un dato ausente.",
+    "data es un entero entre -100 y 100 o None. En JSON, None se representa como null.",
+    "Si hay número, devuelve ese número más uno; si está ausente, devuelve -1. En particular, cero debe producir 1. No uses la falsedad del cero como señal de ausencia.",
+  ) },
+  "logica-variable-local": { statement: statement(
+    "Corrige el uso del parámetro en la función auxiliar de la plantilla: utiliza por error un valor local fijo. Conserva la auxiliar y devuelve su resultado desde solve(data).",
+    "data es un entero entre -100 y 100.",
+    "La auxiliar debe devolver el número recibido más uno. Devuelve ese resultado, no el valor local fijo de la plantilla.",
+  ) },
+  "logica-parametro-exterior": { statement: statement(
+    "Escribe dentro de solve(data) una auxiliar llamada doble que utilice su parámetro, no el valor exterior. La plantilla solo prepara solve(data): añade las operaciones y la auxiliar del reto.",
+    "data es un diccionario con exterior y argumento, enteros entre -1000 y 1000.",
+    "Devuelve una lista con dos enteros: el doble de argumento y el valor original de exterior, en ese orden. No cambies exterior. Los casos comprueban los valores, no certifican el uso interno del parámetro.",
+  ) },
+  "logica-llamadas-independientes": { statement: statement(
+    "Escribe una auxiliar cuyo contador empiece en cero en cada llamada y se incremente n veces. Llámala para cada valor recibido: la segunda llamada no hereda el contador de la primera. La plantilla solo prepara solve(data).",
+    "data es una lista de exactamente dos enteros entre 0 y 1000.",
+    "Devuelve una lista con los resultados de ambas llamadas en el mismo orden. Cada resultado cuenta únicamente sus propios incrementos; una llamada con cero incrementos devuelve 0. Los casos comprueban el resultado, no certifican la organización de las llamadas.",
+  ) },
+  "logica-sin-estado-global": { statement: statement(
+    "Construye una auxiliar que reciba base y tasa como argumentos, sin depender de una tasa exterior fija. La plantilla no contiene aún esa auxiliar.",
+    "data es un diccionario con base, un entero, y tasas, una lista de hasta 100 enteros. Todos los enteros están entre -1000 y 1000.",
+    "Devuelve una lista con base más cada tasa, en el orden recibido y usando siempre la misma base. No acumules las tasas unas sobre otras. Para tasas vacía devuelve []. La comprobación evalúa los resultados, no la organización interna.",
+  ) },
   "logica-retorno": { statement: statement(
     "Practica cómo entregar un resultado desde solve(data) usando return.",
     "data es un entero entre -1000 y 1000. La aplicación proporciona ese valor; no necesitas pedirlo con input().",

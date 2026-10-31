@@ -182,9 +182,50 @@ centinela y conservación de las indicaciones de corrección.
 | `python-centinela` | Concepto de break, prefijo sin centinela y entrada conservada. |
 | `python-omite-negativos` | Concepto de continue, valores posteriores, ceros y repeticiones. |
 
+## Quinto lote: 24 enunciados de listas, textos y auxiliares
+
+Otras 24 prácticas de principiante separan tarea, entrada y resultado. Las
+introducciones a sorted/sort, cortes, split/join, desempaquetado, enumerate,
+zip y retorno múltiple permanecen como contexto conceptual. Se conservan las
+instrucciones de completar o reparar plantillas; las recetas de implementación
+siguen disponibles en las pistas y explicaciones, sin convertir la técnica en
+una garantía de la comparación de resultados.
+
+La huella de evaluación de las 224 actividades permanece idéntica a la previa
+al primer lote: no cambian referencias, plantillas, casos ni ejemplos. Tampoco
+se cambian ayudas, límites, minutos ni orden. Las pruebas editoriales cubren
+las 24 identidades, formatos, índices, vacíos, ausencia y alcance de auxiliares.
+
+| Actividad | Revisión editorial |
+| --- | --- |
+| `logica-posicion` | Diccionario exterior, índice válido desde cero y valor frente a posición. |
+| `logica-indices` | Reparación del acceso actual, copia, repeticiones y vacío. |
+| `logica-suma-lista` | Completar acumulación, límites y suma frente a cantidad. |
+| `logica-maximo` | Reparación de comparación y máximo negativo o repetido. |
+| `logica-cuenta-condicion` | Conteo estricto, cero excluido y vacío. |
+| `logica-longitud-texto` | ASCII, espacios/signos y longitud cero. |
+| `logica-minusculas` | Completar conversión conservando números, signos y espacios. |
+| `logica-vocales` | Recorrido incompleto, mayúsculas/minúsculas y vocales admitidas. |
+| `logica-invierte` | Reparación de construcción sin perder espacios, signos ni mayúsculas. |
+| `logica-elimina-caracter` | Diccionario, carácter único, eliminación de todas las apariciones y caso sensible. |
+| `logica-palabras` | Grupos de letras, espacios repetidos y texto sin palabras. |
+| `python-ordena-numeros` | sorted frente a sort, diccionario original/ordenados y entrada conservada. |
+| `python-recorta` | Concepto de corte, fin excluido, límites iguales y lista nueva. |
+| `python-une-palabras` | Espacios en blanco, split frente a split(' '), unión y texto vacío. |
+| `python-desempaqueta` | Dos enteros, intercambio, entrada conservada y tupla representada en JSON. |
+| `python-enumera` | Numeración desde uno, apariciones repetidas y parejas de salida. |
+| `python-empareja` | Diccionario, listas desiguales, salida hasta la más corta sin relleno. |
+| `python-retorno-multiple` | Auxiliar, tupla, orden suma/producto y representación JSON. |
+| `logica-ficha-producto` | Ficha como diccionario y precio escalar, incluido cero. |
+| `logica-ausencia` | None frente a null, ausencia explícita y cero válido. |
+| `logica-variable-local` | Reparación del uso del parámetro frente al valor local fijo. |
+| `logica-parametro-exterior` | Auxiliar doble, parámetro, exterior conservado y orden de resultados. |
+| `logica-llamadas-independientes` | Contador propio por llamada, límites no negativos y cero incrementos. |
+| `logica-sin-estado-global` | Base fija como argumento, tasas independientes y lista vacía. |
+
 ## Pendientes y límites
 
-- Los cuatro lotes cubren **84/224 enunciados**, no el cierre editorial del recorrido.
+- Los cinco lotes cubren **108/224 enunciados**, no el cierre editorial del recorrido.
 - Quedan los demás enunciados, teoría local y de módulos, vocabulario en otras
   ayudas y objetivos, revisión de ejemplos ya explicados, tiempos y textos de rutas.
 - PROGRAM no se normaliza como FUNCTION. Los proyectos conservan sus contratos

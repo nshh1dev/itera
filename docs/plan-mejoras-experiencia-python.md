@@ -272,6 +272,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del cuarto lote editorial:** lint, tipos, 414 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Las pruebas focalizadas y la huella de conservación comprueban estructura, formatos y evaluación intacta. Se registra la huella nueva sin retirar las históricas. No se iniciaron servicios ni se modificó la base; Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
 
+**Quinto lote editorial E:** 24 prácticas de principiante, desde consulta de posición hasta auxiliares sin estado global, separan Tu tarea / Entrada / Resultado esperado. Conservan reparación de plantillas e introducciones a herramientas Python; precisan índices, orden, espacios, vacíos, None y parámetros. [claridad-python.md](claridad-python.md) registra las decisiones: van 108/224 enunciados. La evaluación, ejemplos, ayudas, minutos y orden conservan su huella previa; E y F siguen abiertas.
+
+**Verificación del quinto lote editorial:** lint, tipos, 415 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Las pruebas focalizadas comprueban las 24 identidades nuevas, sus reglas y el contexto conceptual; la huella de evaluación y ejemplos de las 224 actividades sigue intacta. Se registra la huella nueva sin retirar las históricas. No se iniciaron servicios ni se modificó la base; Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.

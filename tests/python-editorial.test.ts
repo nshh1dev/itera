@@ -4,9 +4,9 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonEditorialRevisions } from "../prisma/python-editorial";
 
-test("los lotes editoriales estructuran 84 prácticas sin tocar programas ni proyectos", () => {
+test("los lotes editoriales estructuran 108 prácticas sin tocar programas ni proyectos", () => {
   const slugs = Object.keys(pythonEditorialRevisions);
-  assert.equal(slugs.length, 84);
+  assert.equal(slugs.length, 108);
   for (const slug of slugs) {
     const entry = pythonCatalog.find(item => item.slug === slug)!;
     assert.ok(entry, slug);
@@ -117,6 +117,42 @@ test("retorno y primeros bucles conservan plantillas, formatos y fronteras", () 
   assert.match(text("python-centinela"), /No incluyas ese cero ni los elementos posteriores/);
   assert.match(text("python-centinela"), /No modifiques la entrada/);
   assert.match(text("python-omite-negativos"), /conservando ceros y repeticiones.*valores posteriores/);
+});
+
+test("listas, textos y auxiliares conservan orden, formatos, ayudas conceptuales y ausencias", () => {
+  const text = (slug: string) => pythonEditorialRevisions[slug].statement;
+  const slugs = ["logica-posicion", "logica-indices", "logica-suma-lista", "logica-maximo", "logica-cuenta-condicion", "logica-longitud-texto", "logica-minusculas", "logica-vocales", "logica-invierte", "logica-elimina-caracter", "logica-palabras", "python-ordena-numeros", "python-recorta", "python-une-palabras", "python-desempaqueta", "python-enumera", "python-empareja", "python-retorno-multiple", "logica-ficha-producto", "logica-ausencia", "logica-variable-local", "logica-parametro-exterior", "logica-llamadas-independientes", "logica-sin-estado-global"];
+  for (const slug of slugs) {
+    const entry = pythonCatalog.find(item => item.slug === slug)!;
+    assert.equal(entry.content.level, "BEGINNER", slug);
+    assert.equal(entry.content.statement, text(slug), slug);
+  }
+  assert.match(text("logica-posicion"), /index.*desde cero/);
+  assert.match(text("logica-indices"), /Conserva su estructura.*posición actual/);
+  assert.match(text("logica-suma-lista"), /hasta 1000 enteros.*-1000 y 1000/);
+  assert.match(text("logica-maximo"), /máximo puede ser negativo/);
+  assert.match(text("logica-cuenta-condicion"), /cero no cuenta como positivo/);
+  assert.match(text("logica-longitud-texto"), /ASCII.*1000.*espacios y signos/s);
+  assert.match(text("logica-minusculas"), /ASCII.*100 caracteres/);
+  assert.match(text("logica-vocales"), /mayúsculas.*minúsculas.*acentuadas/);
+  assert.match(text("logica-invierte"), /espacios, signos y mayúsculas/);
+  assert.match(text("logica-elimina-caracter"), /exactamente uno.*Distingue mayúsculas de minúsculas/s);
+  assert.match(text("logica-palabras"), /espacios repetidos no crean palabras vacías/);
+  assert.match(text("python-ordena-numeros"), /sorted\(lista\).*lista.sort\(\).*devuelve None/);
+  assert.match(text("python-ordena-numeros"), /original y ordenados.*No modifiques/);
+  assert.match(text("python-recorta"), /inicio incluido hasta fin excluido.*coinciden.*\[\]/);
+  assert.match(text("python-une-palabras"), /tabulaciones o saltos de línea.*único espacio/s);
+  assert.match(text("python-desempaqueta"), /exactamente dos enteros.*sin modificar.*tupla/s);
+  assert.match(text("python-enumera"), /desde 1.*aparición repetida/);
+  assert.match(text("python-empareja"), /lista más corta.*sin rellenar/);
+  assert.match(text("python-retorno-multiple"), /suma y producto.*no certifican/);
+  assert.match(text("logica-ficha-producto"), /ficha.*diccionario/);
+  assert.match(text("logica-ausencia"), /None.*JSON.*null/);
+  assert.match(text("logica-ausencia"), /cero debe producir 1/);
+  assert.match(text("logica-variable-local"), /Conserva la auxiliar/);
+  assert.match(text("logica-parametro-exterior"), /No cambies exterior/);
+  assert.match(text("logica-llamadas-independientes"), /segunda llamada no hereda.*entre 0 y 1000/s);
+  assert.match(text("logica-sin-estado-global"), /No acumules las tasas.*tasas vacía devuelve \[\]/);
 });
 
 test("grafos y optimización conservan direcciones, desempates, límites y casos frontera", () => {

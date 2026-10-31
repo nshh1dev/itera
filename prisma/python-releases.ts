@@ -42,4 +42,6 @@ export const knownPythonReleases: readonly string[] = [
   "6d7ca69cce0a63d6517931bb43d30986ff597f8e5399f35853b495616139b81b",
   // Cuarto lote editorial: retorno, cálculos, condiciones y primeros bucles.
   "4fa39e0b364efbc4e2d3d12c8f365c92488889b2f833841e288dfd39c48d1ba9",
+  // Quinto lote editorial: listas, textos y funciones auxiliares de principiante.
+  "c69c06fa65d18b7608bac0bd2b982fea01d18d8ff08bd1b6dc5c360a22cd7e34",
 ];
