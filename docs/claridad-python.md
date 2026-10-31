@@ -483,6 +483,38 @@ Una huella previa conserva todos los campos ajenos al lote, incluidos los 224
 enunciados, variantes completas, proyectos, ejemplos, niveles, tiempos y orden.
 La revisión no activa contenido ni cambia las variantes de otros lenguajes.
 
+## Explicaciones de solución: primer lote de diez
+
+`pythonSolutionExplanations` en `prisma/python-vocabulary.ts` revisa únicamente
+la prosa que acompaña a la solución consultada, no la referencia ejecutable ni
+las explicaciones de ejemplos. Sustituye terminología heredada y consejos
+genéricos por el razonamiento del código real y sus casos frontera.
+
+| Actividad | Decisión |
+| --- | --- |
+| `logica-dos-parametros` | Accesos a claves, suma numérica y operación constante. |
+| `python-desempaqueta` | Evaluación previa del lado derecho, tupla devuelta y lista en JSON. |
+| `logica-ficha-resultado` | Ficha como diccionario, significado de claves y comparación sin orden. |
+| `python-recorre-pares` | Orden por clave, desempaquetado, str y formato exacto; vacío. |
+| `logica-notas` | División solo con notas, None/null y media válida igual a cero. |
+| `python-contactos-edita` | Copia de cada ficha, normalización y aceptación del texto vacío sin añadir claves desconocidas. |
+| `logica-prefijos` | Invariante del total acumulado, n + 1 valores y lista vacía. |
+| `logica-copia-anidada` | Filas independientes para celdas enteras; no prometer copia universal ni certificar identidad. |
+| `logica-suma-maxima` | Tramo no vacío, todos negativos y memoria real de data[1:]: O(n), no O(1). |
+| `logica-cuenta-nodos` | None antes del acceso, nodos repetidos contados y espacio proporcional a altura. |
+
+La huella nueva se calculó antes de editar y excluye solo las diez explicaciones
+enumeradas: protege todo el resto del catálogo, incluidas las otras 214
+explicaciones, ejemplos, código, enunciados, ayudas, metadatos y contratos.
+Las huellas anteriores de evaluación y vocabulario se recalcularon sobre el
+catálogo previo excluyendo la prosa de solución; sus valores originales quedan
+documentados en las pruebas. Esta separación permite revisar explicaciones sin
+atribuirlas a cambios de evaluación ni perder la protección del resto de campos.
+
+Este lote no constituye una revisión completa de las 224 explicaciones ni de
+los 433 ejemplos. Quedan especialmente las repeticiones y condiciones ajenas en
+explicaciones de proyectos, además de teoría local y de módulos.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

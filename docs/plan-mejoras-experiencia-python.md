@@ -300,6 +300,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del vocabulario de metadatos:** lint, tipos, 424 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Las 22 revisiones se aplican solo a metadatos/ayudas Python y las dos huellas de conservación siguen aprobando. Se registra la huella nueva sin retirar las históricas. No se iniciaron servicios ni se modificó la base; Piston real, E2E, revisión visual y activación siguen pendientes de autorización.
 
+**Primer lote de explicaciones de solución E:** diez revisiones explícitas aclaran claves/diccionarios, tupla y JSON, None y media cero, copia de fichas/filas, prefijos y recuento de nodos. La explicación de suma máxima distingue el algoritmo sin copia del slice `data[1:]` de la referencia: este último requiere O(n) auxiliar. No se cambia código ejecutable, evaluación, ejemplos ni metadatos. Una huella previa excluye solo esas diez explicaciones y protege todos los demás campos; las huellas anteriores separan ahora prosa de solución y conservan sus valores originales documentados. Las decisiones están en [claridad-python.md](claridad-python.md). No cierra la revisión de explicaciones, ejemplos, teoría ni el conjunto de E/F.
+
+**Verificación del primer lote de explicaciones:** lint, tipos, 426 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Se conserva el historial de huellas de publicación. No se iniciaron servicios ni se modificó la base; las pruebas ejecutan código fijo del repositorio y no acreditan Piston real. E2E, revisión visual, validación real y activación siguen pendientes de autorización.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.

@@ -56,4 +56,6 @@ export const knownPythonReleases: readonly string[] = [
   "bcf406df5e6d37068e7e85c6f07f3e2cf17cf37964e27ff5b9b0d2abf3ee53a4",
   // Vocabulario Python en descripciones, objetivos, restricciones y ayudas.
   "64197867bfcd9bc043a55f704fdb41ed435e3971e312450e4bf81f973961dfc2",
+  // Diez explicaciones de solución: vocabulario y razonamiento de la referencia.
+  "a1a31447dba2f99772dd5d541ab3bbc513098141f2c2b5a3666f1dd51fdf7419",
 ];

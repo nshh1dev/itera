@@ -45,19 +45,20 @@ test("los enunciados distinguen representación Python, JSON, límites y desempa
 });
 
 test("el lote editorial conserva íntegra la evaluación, los ejemplos y los metadatos de recorrido", () => {
-  // Huella anterior al lote, sin enunciados. Complementa las pruebas ejecutables
-  // por actividad; no genera respuestas esperadas con las soluciones.
+  // Huella previa sin enunciados ni prosa de solución (revisada por separado).
+  // La huella original con esa prosa era 1a6daa5e0e984a6c3897bb9b4e0364fd00b2758f3387282d7d95175e7b08dda5.
+  // Complementa las pruebas ejecutables; no genera respuestas con las soluciones.
   const payload = pythonCatalog.map(entry => ({
     slug: entry.slug, category: entry.category, level: entry.content.level,
     minutes: entry.content.minutes, activityType: entry.content.activityType,
     runtimeMode: entry.content.runtimeMode, conceptRule: entry.content.conceptRule,
     variants: entry.content.variants.map(variant => {
-      const { statement: _statement, ...assessment } = variant;
-      void _statement;
+      const { statement: _statement, explanation: _explanation, ...assessment } = variant;
+      void [_statement, _explanation];
       return assessment;
     }),
   }));
-  assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "1a6daa5e0e984a6c3897bb9b4e0364fd00b2758f3387282d7d95175e7b08dda5");
+  assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "f51253a2a21b72ab4d81da95276a2e712de468bd5f34edbb4ea43bd7ce5e9776");
 });
 
 test("el lote avanzado conserva reglas deterministas, límites, ausencias y objetivos de práctica", () => {

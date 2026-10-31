@@ -47,7 +47,13 @@ test("el vocabulario no cambia enunciados, evaluación, archivos, orden, niveles
   const payload = pythonCatalog.map(entry => {
     const { description, objective, hints, constraints, practiceGoals, commonErrors, ...content } = entry.content;
     void [description, objective, hints, constraints, practiceGoals, commonErrors];
-    return { slug: entry.slug, category: entry.category, content };
+    return { slug: entry.slug, category: entry.category, content: { ...content, variants: content.variants.map(variant => {
+      const { explanation, ...rest } = variant;
+      void explanation;
+      return rest;
+    }) } };
   });
-  assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "d10eac0f644da52469a3021241e9319ff874278ad65c05b1059c2b8f495171d8");
+  // La prosa de solución tiene revisión y huella independiente. Huella original:
+  // d10eac0f644da52469a3021241e9319ff874278ad65c05b1059c2b8f495171d8.
+  assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "ec119621085de24c5505fa0e29093b850cc0329c5abf6636f6bcb527a3b42cc0");
 });
