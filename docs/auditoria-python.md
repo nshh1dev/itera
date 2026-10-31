@@ -11,8 +11,10 @@ aclaraciones), **74 de principiante** (59 mantenidas y 15 revisadas) y las prime
 **27 intermedias**, de colecciones (19 mantenidas y 8 revisadas).
 También se revisaron **26 intermedias de proyectos y registros** (18 mantenidas y
 8 revisadas) y las últimas **29 intermedias de algoritmos** (21 mantenidas y ocho
-revisadas). Están revisadas **188/224 actividades**, incluido todo intermedio.
-Quedan **36 avanzadas** por auditar individualmente.
+revisadas). Estos bloques suman **188 actividades**, incluido todo intermedio.
+Se añaden las primeras **12 avanzadas de estructuras y selección** (cinco
+mantenidas y siete revisadas): **200/224 actividades** auditadas. Quedan
+**24 avanzadas** por revisar individualmente.
 Se leyeron objetivo, enunciado, plantilla, referencia, pistas, casos y reglas
 conceptuales. Se mantienen modalidades, entradas, respuestas esperadas,
 visibilidad, reglas conceptuales e identidades; no se añaden casos por volumen.
@@ -371,11 +373,57 @@ los tramos retenidos y deja de prometer que 900 elementos nunca agotan la pila.
 | `logica-sin-repeticiones` | Mantener: contigüidad, vacío y límite izquierdo que no retrocede en abba. | Contar todos los caracteres distintos del texto. |
 | `logica-ranking` | Mantener: frecuencia descendente, desempate ascendente y negativos. | Invertir el desempate numérico. |
 
+## Avanzado: árboles, montículos y selección voraz (12 actividades)
+
+Se revisaron contratos, referencias completas, plantillas, pistas, explicaciones
+y casos de las primeras doce avanzadas. Cinco se mantienen y siete se revisan.
+`tests/python-advanced-structures-audit.test.ts` ejecuta **64 casos** con doce
+referencias, doce plantillas utilizables e incompletas y doce errores educativos
+fijos. Las referencias y plantillas conservan la entrada en estas ejecuciones;
+no se cambia el contrato del juez ni se certifica ausencia de mutaciones en un
+programa arbitrario. Montículos exige una representación concreta tras la
+reparación descrita; no basta con devolver cualquier montículo válido.
+
+Se añaden **cinco casos ocultos**, sin sustituir los históricos. Cinco errores
+antes aceptados ahora fallan: contar valores distintos en vez de nodos,
+comprobar solo hijos inmediatos para validar búsqueda, usar comparaciones de
+valores para hallar ancestro en un árbol no ordenado, perder un elemento cuando
+k es la longitud e inicializar el último fin de actividades en cero. Preorden,
+niveles y búsqueda dejan de mezclar las claves históricas v/izq/der con el
+modelo Python value/left/right. El ancestro explicita que no requiere un árbol
+de búsqueda y que ambos objetivos pueden ser iguales, como ya mostraba un caso.
+
+Las comprobaciones adicionales usan respuestas independientes para límites
+locales: árboles completos de 500 nodos, búsqueda válida equilibrada de 500,
+cadena de profundidad 50, cuenta/ancestro con 100 nodos, montículos de 100,
+prioridades de 100 tareas, k igual a 1000 y 10000 actividades contiguas con
+horarios negativos y positivos. Preorden del árbol completo se obtiene ordenando
+etiquetas de caminos binarios, no invocando otra vez la referencia. Las rutas
+esperadas de reparación de montículos se redactan por índices. Combinar 64
+archivos de tamaño uno cuesta 64 por nivel durante seis niveles: total 384.
+Son pruebas locales de código fijo, no verifican Piston, límites reales de
+memoria/tiempo ni serialización del sandbox. No se inician servicios.
+
+| Actividad | Decisión y fundamento | Error representativo detectado |
+| --- | --- | --- |
+| `logica-cuenta-nodos` | **Añadir caso** con tres valores cero repetidos; se cuentan posiciones, no valores distintos. | Usar un conjunto de valores como contador. |
+| `logica-altura` | Mantener: nodos, no enlaces; vacío, ambas ramas, cadena de 50 y equilibrio. | Sumar cantidades de nodos de ambas ramas. |
+| `logica-preorden` | **Reescribir contrato** solo con claves Python; orden raíz/izquierda/derecha y valores repetidos conservados. | Devolver inorden. |
+| `logica-niveles` | **Reescribir contrato** solo con claves Python; anchura y orden izquierda/derecha. | Devolver profundidad primero. |
+| `logica-arbol-busqueda` | **Aclarar contrato/explicación y añadir caso** de infracción heredada del abuelo. | Comparar solo con los hijos inmediatos. |
+| `logica-ancestro` | **Aclarar y añadir caso** de árbol no ordenado; objetivos existentes e igualdad permitida. | Aplicar el algoritmo exclusivo de árbol de búsqueda. |
+| `logica-monticulo-inserta` | Mantener: vacío, ascenso de varios niveles, igualdad y representación no ordenada. | Ordenar toda la lista tras insertar. |
+| `logica-monticulo-extrae` | Mantener: vacío, mínimo cero, último elemento e hijos empatados con preferencia izquierda. | Ordenar el resto en lugar de reparar. |
+| `logica-prioridad` | Mantener: prioridad negativa, id cero y desempate explícito distinto del orden de llegada. | Ordenar solo por prioridad estable. |
+| `logica-k-mayores` | **Añadir caso** k igual a longitud con repetidos, cero y negativos. | Retener como máximo n−1 elementos. |
+| `logica-actividades` | **Aclarar y añadir caso** de horarios negativos; contacto compatible y entrada conservada. | Inicializar último fin en cero. |
+| `logica-combina-archivos` | Mantener: vacío, único, cero y reinserción de tamaños combinados. | Contar solo una vez la suma inicial. |
+
 ## Límites y siguiente bloque
 
 - No se amplía AST, esquema, dependencias ni modalidades.
 - La ejecución local no verifica sandbox, serialización del ejecutor ni publicación.
 - La revisión de tiempos, teoría duplicada y ergonomía sigue abierta en E/F.
-- Continuar con las 36 actividades avanzadas.
+- Continuar con las 24 actividades avanzadas restantes, desde `logica-potencia`.
   Registrar decisiones individuales y errores relevantes, no solo
   recuentos de casos o cobertura de campos.

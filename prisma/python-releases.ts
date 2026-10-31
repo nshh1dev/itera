@@ -28,4 +28,6 @@ export const knownPythonReleases: readonly string[] = [
   "78e7420aa7ce987b8091aa4187c921fd69083a996c5380d227e47c7d92a0ab46",
   // Auditoría de algoritmos intermedios: desempate, ventanas y límites locales.
   "314b074743f5fac57aeb6ebd979893d93d2b542ba814345a6416044e9ce93d7d",
+  // Auditoría avanzada de árboles, montículos y selección voraz.
+  "b91fdc75b85b194b17b93eb57f9c504bbfadd71e304e983e167f6b307616147d",
 ];

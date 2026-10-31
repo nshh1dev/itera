@@ -52,6 +52,12 @@ const balancedTree = (depth: number, value = 1): Json => depth === 0 ? null : {
   right: balancedTree(depth - 1, value * 2 + 1),
 };
 const pythonOverrides: Record<string, PythonOverride> = {
+  "logica-cuenta-nodos": { extraTests: [{ input: { value: 0, left: { value: 0, left: null, right: null }, right: { value: 0, left: null, right: null } }, expected: 3, explanation: "Los tres nodos cuentan aunque todos guarden el mismo valor cero; no se cuentan valores distintos." }] },
+  "logica-k-mayores": { extraTests: [{ input: { numbers: [-2, 0, -2, 5], k: 4 }, expected: [5, 0, -2, -2], explanation: "Si k es la longitud, se devuelven todos los elementos ordenados, incluidas las repeticiones y los negativos." }] },
+  "logica-actividades": {
+    statementNote: "Los extremos son enteros y pueden ser negativos. Dos actividades son compatibles si la siguiente empieza en el instante de fin de la anterior o después. No modifiques la entrada.",
+    extraTests: [{ input: [[-3, -2], [-2, -1]], expected: 2, explanation: "Los dos intervalos negativos se tocan sin solaparse; no se debe iniciar el último fin en cero." }],
+  },
   "logica-palindromo": { extraTests: [{ input: "a!a?", expected: false, explanation: "Los signos también cuentan: a y ? son distintos en los extremos; no se limpia el texto." }] },
   "logica-pareja": {
     statementNote: "Los índices empiezan en cero. Si hay varias parejas válidas, devuelve la de menor índice i; para ese i, elige el mayor índice j válido. Son dos posiciones distintas, aunque sus valores puedan coincidir. No modifiques la entrada.",
@@ -252,6 +258,7 @@ const pythonOverrides: Record<string, PythonOverride> = {
   },
   "logica-preorden": {
     tree: true,
+    statement: "Recibes un árbol binario o None si está vacío. Cada nodo es un diccionario con value (entero), left y right (otro nodo o None). Devuelve sus valores en preorden: primero la raíz, después todo el subárbol izquierdo y finalmente todo el derecho. Conserva valores repetidos. El árbol vacío devuelve []. Hay hasta 500 nodos y profundidad máxima 50.",
     constraints: ["Hasta 500 nodos y profundidad máxima 50; los casos incluyen una cadena sesgada."],
     extraTests: [
       { input: chainTree(50), expected: Array.from({ length: 50 }, (_, index) => index + 1), explanation: "Una cadena derecha produce los valores en orden creciente." },
@@ -259,6 +266,7 @@ const pythonOverrides: Record<string, PythonOverride> = {
   },
   "logica-niveles": {
     tree: true,
+    statement: "Recibes un árbol binario o None si está vacío. Cada nodo es un diccionario con value (entero), left y right (otro nodo o None). Devuelve una lista de valores por niveles, empezando por la raíz y de izquierda a derecha en cada nivel. Conserva valores repetidos. El árbol vacío devuelve []. Hay hasta 500 nodos y profundidad máxima 50.",
     constraints: ["Hasta 500 nodos y profundidad máxima 50; los casos incluyen una cadena sesgada."],
     extraTests: [
       { input: chainTree(50), expected: Array.from({ length: 50 }, (_, index) => index + 1), explanation: "La cola conserva el orden de una cadena sesgada." },
@@ -266,12 +274,18 @@ const pythonOverrides: Record<string, PythonOverride> = {
   },
   "logica-arbol-busqueda": {
     tree: true,
+    statement: "Recibes un árbol binario con valores enteros distintos o None si está vacío. Cada nodo es un diccionario con value, left y right; sus hijos son otro nodo o None. Devuelve True si todos los valores del subárbol izquierdo de cada nodo son estrictamente menores que su value y todos los del derecho, estrictamente mayores. Respeta los límites heredados de todos los antecesores, no solo los hijos inmediatos. El árbol vacío cumple la propiedad. Hay hasta 500 nodos y profundidad máxima 50. En JSON, True y False se muestran como true y false.",
+    variant: { explanation: "Cada nodo debe respetar el rango impuesto por todos sus antecesores. Al bajar por left, su value pasa a ser el límite superior; al bajar por right, pasa a ser el inferior. Los límites son estrictos. None cumple la propiedad. Comparar solo con los hijos inmediatos no detecta una infracción profunda. La referencia visita cada nodo como máximo una vez: tiempo O(n) y memoria O(h) para las llamadas, con h la altura. La salida no certifica una técnica interna concreta." },
     constraints: ["Hasta 500 nodos, profundidad máxima 50 y valores distintos; los casos incluyen una cadena sesgada válida."],
     extraTests: [
       { input: chainTree(50), expected: true, explanation: "Una cadena derecha con valores crecientes respeta el rango heredado." },
+      { input: { value: 10, left: { value: 5, left: null, right: { value: 12, left: null, right: null } }, right: { value: 15, left: null, right: null } }, expected: false, explanation: "12 supera a su padre 5, pero está en el subárbol izquierdo de 10 y viola el límite heredado de esa raíz." },
     ],
   },
-  "logica-ancestro": { statementNote: "Cada nodo de tree es un diccionario con value, left y right; left y right son otro nodo o None." },
+  "logica-ancestro": {
+    statementNote: "Cada nodo de tree es un diccionario con value, left y right; left y right son otro nodo o None. No se garantiza que sea un árbol de búsqueda: la posición de un nodo no depende de si su valor es mayor o menor. a y b pueden ser iguales.",
+    extraTests: [{ input: { tree: { value: 10, left: { value: 20, left: { value: 30, left: null, right: null }, right: { value: 5, left: null, right: null } }, right: { value: 1, left: null, right: null } }, a: 30, b: 5 }, expected: 20, explanation: "30 y 5 están bajo el nodo 20 aunque sus valores queden a ambos lados de 10. El ancestro se determina por las ramas, no por ordenar valores." }],
+  },
   "logica-asercion-normal": { statementNote: "La comprobación evalúa el resultado; no certifica que la aserción esté presente en tu código." },
   "logica-error-dominio": { statementNote: "La comprobación observa el mensaje; no certifica que uses raise." },
   "logica-inventario": {
