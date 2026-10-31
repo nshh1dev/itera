@@ -112,9 +112,37 @@ presentación y los ejemplos públicos permanecen sin cambios.
 | `logica-mochila` | Objetos del dominio frente a diccionario de entrada; uso único y pesos cero. |
 | `logica-subsecuencia-comun` | Definición de subsecuencia, longitud, repeticiones y vacíos, sin recetar DP. |
 
+## Tercer lote: doce enunciados de grafos y optimización
+
+Completa la estructura editorial de las 36 prácticas avanzadas. Las recetas de
+recorrido, búsqueda y actualización permanecen en las ayudas; el reto define
+datos, resultado y reglas observables. Se mantienen los nombres de claves,
+incluido `dependencies`, sin traducir contratos. No cambian evaluación,
+ejemplos, ayudas, límites, tiempos ni orden; la huella de evaluación de las 224
+actividades sigue siendo la anterior al primer lote.
+
+| Actividad | Revisión editorial |
+| --- | --- |
+| `logica-adyacencia` | Diccionario, hasta 4000 aristas, ambos sentidos y vecinos únicos ordenados. |
+| `logica-alcanzables` | Inicio incluido, ciclos y resultado numérico único sin certificar DFS. |
+| `logica-distancias` | Posiciones por nodo, mínimo de aristas y -1, sin exigir una cola como garantía. |
+| `logica-ciclo-dirigido` | True/False frente a JSON, lazos y componentes desconectadas. |
+| `logica-dependencias` | Menor disponible en cada paso, incluidas recién liberadas; no devolver un orden parcial. |
+| `logica-dijkstra` | Suma de pesos positivos, ambos sentidos y destino cero; no certificar montículo. |
+| `logica-islas` | Lista de listas, conectividad ortogonal, filas vacías y conservación de entrada. |
+| `logica-laberinto` | Cuatro direcciones, esquinas bloqueadas y distancia inicial cero. |
+| `logica-capacidad` | Paquetes indivisibles en orden, capacidad diaria y como máximo los días disponibles. |
+| `logica-edicion` | Diccionario ASCII, coste unitario por operación y ausencia de transposición directa. |
+| `logica-subsecuencia-creciente` | Orden original, crecimiento estricto, longitud y vacío. |
+| `logica-planifica-tareas` | Paralelismo ilimitado, espera de todos los requisitos y ciclos incluso con duración cero. |
+
+Las pruebas editoriales cubren esas reglas y la presencia de las 36 avanzadas.
+Las pruebas ejecutables fijas de la auditoría de grafos siguen comprobando sus
+referencias y límites locales; no equivalen a ejecutar Piston real.
+
 ## Pendientes y límites
 
-- Los dos lotes cubren **48/224 enunciados**, no el cierre editorial del recorrido.
+- Los tres lotes cubren **60/224 enunciados**, no el cierre editorial del recorrido.
 - Quedan los demás enunciados, teoría local y de módulos, vocabulario en otras
   ayudas y objetivos, revisión de ejemplos ya explicados, tiempos y textos de rutas.
 - PROGRAM no se normaliza como FUNCTION. Los proyectos conservan sus contratos

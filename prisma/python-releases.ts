@@ -38,4 +38,6 @@ export const knownPythonReleases: readonly string[] = [
   "7df05db75ed75ec16cff3771d1a3a530cf5840dcc47b2d7594c1cc1f064960e6",
   // Segundo lote editorial: 24 prácticas avanzadas, con evaluación conservada.
   "b16e5f2cda967e1483898a046472cb55e5652a5a0d9cc98f2d9117a8f8dac4a8",
+  // Tercer lote editorial: doce prácticas de grafos y optimización.
+  "6d7ca69cce0a63d6517931bb43d30986ff597f8e5399f35853b495616139b81b",
 ];

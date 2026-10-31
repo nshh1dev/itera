@@ -5,6 +5,66 @@ const statement = (task: string, input: string, output: string) =>
   `Tu tarea\n${task}\n\nEntrada\n${input}\n\nResultado esperado\n${output}`;
 
 export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
+  "logica-adyacencia": { statement: statement(
+    "Representa las conexiones de un grafo no dirigido mediante las listas de vecinos de sus nodos.",
+    "data es un diccionario con n, un entero entre 1 y 1000, y aristas, una lista de hasta 4000 aristas en forma de pares [a, b]. Los nodos se numeran de 0 a n - 1; los extremos son válidos y distintos. Puede haber aristas repetidas, incluso escritas al revés. Cada arista conecta ambos sentidos.",
+    "Devuelve una lista de longitud n: la posición i contiene los vecinos distintos del nodo i en orden numérico ascendente. Un nodo aislado tiene []. No modifiques la entrada.",
+  ) },
+  "logica-alcanzables": { statement: statement(
+    "Encuentra todos los nodos alcanzables desde un inicio en un grafo no dirigido, practicando la búsqueda en profundidad.",
+    "data es un diccionario con n, un entero entre 1 y 1000, aristas, una lista de pares [a, b], e inicio. Los nodos se numeran de 0 a n - 1; inicio y los extremos son índices válidos. Cada arista conecta ambos sentidos. El grafo puede contener ciclos.",
+    "Devuelve una lista de nodos alcanzables en orden numérico ascendente, incluido inicio. Cada nodo debe aparecer una sola vez. Si inicio está aislado, devuelve una lista que solo lo contenga. Los casos comprueban el resultado, no certifican la técnica de recorrido.",
+  ) },
+  "logica-distancias": { statement: statement(
+    "Calcula las distancias mínimas desde un inicio en un grafo sin pesos, practicando el recorrido por niveles.",
+    "data es un diccionario con n, un entero entre 1 y 1000, aristas, una lista de pares [a, b], e inicio. Los nodos se numeran de 0 a n - 1; inicio y los extremos son índices válidos. El grafo es no dirigido: cada arista conecta ambos sentidos.",
+    "Devuelve una lista de longitud n. En la posición i indica la mínima cantidad de aristas desde inicio hasta i, o -1 si no se alcanza. La distancia de inicio a sí mismo es 0. No devuelvas el orden de visita: los casos comprueban distancias, no certifican el uso de una cola.",
+  ) },
+  "logica-ciclo-dirigido": { statement: statement(
+    "Comprueba si un grafo dirigido contiene un ciclo en cualquiera de sus componentes.",
+    "data es un diccionario con n, un entero entre 0 y 100, y aristas, una lista de pares [origen, destino]. Los nodos se numeran de 0 a n - 1 y los extremos son válidos. No hay aristas repetidas; puede haber lazos, aristas de un nodo hacia sí mismo.",
+    "Devuelve True si existe un camino dirigido que vuelve al nodo del que partió, y False si no existe. Un lazo es un ciclo; compartir un descendiente no basta para formar uno. Un grafo sin nodos devuelve False. En JSON, True y False se representan como true y false.",
+  ) },
+  "logica-dependencias": { statement: statement(
+    "Ordena tareas respetando sus dependencias y eligiendo en cada paso la disponible de menor número.",
+    "data es un diccionario con n, un entero entre 0 y 100, y dependencies, una lista de pares [a, b] de índices válidos sin pares repetidos. Las tareas se numeran de 0 a n - 1. Cada par exige completar a antes que b.",
+    "Devuelve una lista con todas las tareas. Una tarea está disponible cuando ya se han completado todos sus requisitos; elige siempre la menor entre las disponibles en ese momento, incluidas las recién liberadas. Si hay un ciclo, devuelve [] en vez de un orden parcial. Sin tareas también devuelve [].",
+  ) },
+  "logica-dijkstra": { statement: statement(
+    "Encuentra el menor coste desde el nodo 0 hasta un destino en un grafo con pesos positivos, practicando el algoritmo de Dijkstra.",
+    "data es un diccionario con n, un entero entre 1 y 200, aristas, una lista de ternas [a, b, peso] con pesos positivos, y destino. Los nodos se numeran de 0 a n - 1; destino y los extremos son índices válidos. El grafo es no dirigido: cada arista conecta ambos sentidos.",
+    "Devuelve la menor suma de pesos de un camino desde 0 hasta destino, no la cantidad de aristas. Si no se puede llegar, devuelve -1. Para destino igual a 0 devuelve 0. Los casos comprueban costes, no certifican el algoritmo ni el uso de un montículo.",
+  ) },
+  "logica-islas": { statement: statement(
+    "Cuenta las islas de una cuadrícula. Una isla es un grupo de celdas de tierra conectadas en horizontal o vertical; las diagonales no conectan islas.",
+    "data es una cuadrícula rectangular de hasta 300 por 300, representada como una lista de listas. Cada celda contiene el entero 1 (tierra) o 0 (agua). Puede no tener filas o tener filas vacías.",
+    "Devuelve el número de islas, no la cantidad de celdas de tierra. Si no hay celdas o todas contienen agua, devuelve 0. No modifiques la cuadrícula recibida: conserva sus valores originales.",
+  ) },
+  "logica-laberinto": { statement: statement(
+    "Encuentra el mínimo número de movimientos desde la esquina superior izquierda hasta la inferior derecha de un laberinto.",
+    "data es una cuadrícula rectangular no vacía de hasta 200 por 200, representada como una lista de listas con enteros 0 (celda libre) y 1 (muro). Puedes avanzar arriba, abajo, izquierda o derecha; no se permiten diagonales ni atravesar muros.",
+    "Devuelve el mínimo número de movimientos, o -1 si no hay camino o alguna esquina es un muro. La celda inicial cuenta como cero movimientos: una única celda libre devuelve 0.",
+  ) },
+  "logica-capacidad": { statement: statement(
+    "Encuentra la capacidad mínima de un transporte para repartir paquetes en los días disponibles, practicando la búsqueda binaria sobre la respuesta.",
+    "data es un diccionario con pesos, una lista no vacía de pesos positivos, y dias, un entero entre 1 y el número de paquetes. Debes repartir los paquetes en su orden original, sin dividir ningún paquete. Cada día puedes transportar un tramo consecutivo de los paquetes pendientes hasta la capacidad elegida.",
+    "Devuelve la menor capacidad que permite repartir todos los paquetes en como máximo dias días. No es necesario usar todos los días. La capacidad limita la suma de pesos transportada cada día, no el número de paquetes. Los casos comprueban el mínimo, no certifican la técnica de búsqueda.",
+  ) },
+  "logica-edicion": { statement: statement(
+    "Calcula el mínimo número de operaciones para transformar un texto en otro.",
+    "data es un diccionario con a y b, textos ASCII de hasta 200 caracteres; cualquiera puede estar vacío. Una operación inserta, elimina o sustituye un solo carácter y cuesta 1.",
+    "Devuelve la menor cantidad total de operaciones para transformar a en b. No se permite intercambiar caracteres como una sola operación. Dos textos iguales requieren 0 operaciones; transformar un texto vacío en otro requiere tantas inserciones como caracteres tenga el segundo.",
+  ) },
+  "logica-subsecuencia-creciente": { statement: statement(
+    "Calcula la longitud de la subsecuencia estrictamente creciente más larga de una lista.",
+    "data es una lista de hasta 500 números enteros. Puede estar vacía y contener repeticiones. Una subsecuencia puede omitir elementos, pero conserva su orden original: no tiene que ser un tramo consecutivo.",
+    "Devuelve la longitud máxima, no la propia subsecuencia. Cada valor elegido debe ser estrictamente mayor que el anterior; los valores iguales no prolongan la subsecuencia. Para la lista vacía devuelve 0.",
+  ) },
+  "logica-planifica-tareas": { statement: statement(
+    "Calcula el tiempo mínimo para terminar todas las tareas respetando sus dependencias, con paralelismo ilimitado.",
+    "data es un diccionario con duraciones, una lista de hasta 100 enteros no negativos, y dependencias, una lista de pares [a, b] de índices válidos. Cada par exige terminar a antes de iniciar b. Las tareas sin requisitos pueden empezar en tiempo cero y no hay límite de tareas simultáneas.",
+    "Devuelve el tiempo mínimo para terminar todas las tareas, o -1 si hay un ciclo. Cada tarea debe esperar a que terminen todos sus requisitos. Sin tareas devuelve 0. No sumes duraciones de tareas que pueden ejecutarse en paralelo; una duración cero sigue respetando las dependencias.",
+  ) },
   "logica-cuenta-nodos": { statement: statement(
     "Cuenta los nodos de un árbol binario, aunque varios tengan el mismo valor.",
     "data es un árbol binario de hasta 100 nodos y profundidad máxima 50, o None si está vacío. Cada nodo es un diccionario con value (entero), left y right (otro nodo o None). En JSON, None se representa como null.",
