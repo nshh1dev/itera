@@ -18,4 +18,6 @@ export const knownPythonReleases: readonly string[] = [
   "158b71f24f4c58e7094e02005764008b2726c611a1e48cb7e24a145b9c13bcd0",
   // Coste concreto u omisión explícita en actividades propias y proyectos Python.
   "0aadf92e9a9d76acc7ccb74e749b8444720b4ac17458bb212cc4a34d0897e4e5",
+  // Aclaraciones de enunciado tras la auditoría individual de iniciación.
+  "525bb2fd44a0485e8474c0aa7ae87c05ba7c64ef7a8fab51b9dca9bbbfd0d550",
 ];

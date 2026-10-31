@@ -50,6 +50,27 @@ const balancedTree = (depth: number, value = 1): Json => depth === 0 ? null : {
   right: balancedTree(depth - 1, value * 2 + 1),
 };
 const pythonOverrides: Record<string, PythonOverride> = {
+  "logica-booleano": {
+    statement: "Cambia el valor de listo a True, el booleano verdadero de Python, no el texto 'True'. Conserva la impresión preparada: convierte el valor a texto en minúsculas para mostrar true. No necesitas modificar str ni lower.",
+  },
+  "logica-dos-parametros": {
+    statement: "data es un diccionario con dos enteros, en las claves a y b. La plantilla ya los guarda en primero y segundo: no necesitas cambiar esos accesos. Devuelve su suma. Los valores pueden ser positivos, negativos o cero.",
+  },
+  "logica-predice-valores": {
+    statement: "Antes de ejecutar, predice qué ocurre si guardas data en x, sumas 3 a x y después multiplicas el valor actualizado por 2. Implementa esa secuencia y devuelve el resultado con return. Contrasta tu predicción con los ejemplos.\n\nEntrada y resultado: data es un entero entre -1000 y 1000; devuelve un entero. La comprobación evalúa el resultado, no si hiciste primero la predicción.",
+  },
+  "logica-tabla-valores": {
+    statement: "Construye una tabla de seguimiento: empieza en data, suma 2 y después multiplica el valor actualizado por 3. Guarda el estado inicial y cada estado posterior en una variable; no necesitas listas ni bucles. Devuelve los tres valores en un texto separados exactamente por ' -> ', con un espacio a cada lado de la flecha. Por ejemplo, desde 2 se obtiene 2 -> 4 -> 12.\n\nEntrada y resultado: data es un entero entre -1000 y 1000; devuelve un texto con los tres estados. La comprobación observa esa traza, no cómo guardaste los estados.",
+  },
+  "logica-perimetro": {
+    statement: "data es un diccionario con base y altura, enteros entre 1 y 1000 que describen un rectángulo. Consulta las medidas con data['base'] y data['altura']. Devuelve su perímetro: la suma de sus cuatro lados, no el área.",
+  },
+  "logica-repara-presupuesto": {
+    statement: "data es un diccionario con precio por unidad, unidades y envio. Consulta cada dato con su clave, por ejemplo data['envio']. La plantilla cobra el envío por cada unidad: corrígela para cobrarlo una sola vez y devuelve el total. precio y unidades van de 0 a 1000; envio, de 0 a 100. Aunque no haya unidades, se cobra el envío.",
+  },
+  "logica-merienda": {
+    statement: "data es un diccionario con unidades y precio, enteros entre 0 y 100. Consulta los valores con data['unidades'] y data['precio']. Calcula el coste y devuelve un texto con 'Total: ' seguido del importe, sin comillas ni salto de línea. No hay descuentos ni envío.",
+  },
   "logica-busqueda-lineal": { level: "BEGINNER", minutes: 12, description: "Recorre una lista sin ordenar y devuelve la primera posición que coincide." },
   "logica-pruebas-limites": {
     description: "Reproduce con pruebas los defectos de vacío y negativos y corrige la función.",

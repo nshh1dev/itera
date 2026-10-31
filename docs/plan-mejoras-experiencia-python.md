@@ -200,6 +200,10 @@ Archivos principales: `src/lib/python-curriculum.ts`, `src/lib/language-curricul
 
 **Aceptación:** las referencias resuelven los contratos revisados, las plantillas requieren trabajo y los errores educativos representativos fallan por la razón esperada. Pasar estos casos no se presenta como prueba formal de dominio o técnica interna.
 
+**Primer bloque de auditoría individual D2:** [auditoria-python.md](auditoria-python.md) registra las 32 actividades de iniciación: 25 mantenidas y 7 con aclaraciones de enunciado, sin cambiar contratos, casos, modalidades ni reglas conceptuales. Se comprobaron localmente sus referencias y plantillas, y un error representativo por actividad contra sus casos existentes. Ninguna plantilla resuelve todo; cada error se distingue de las respuestas esperadas, conservadas de forma independiente. Se aclaran diccionarios, booleanos y el alcance de predicción/trazas. No equivale a volver a validar AST ni Piston real. Quedan 192 actividades por auditar; D2 sigue abierta.
+
+**Verificación del bloque de iniciación:** lint, tipos, 391 pruebas sin omisiones, build y `content:python` sin conexión aprobados. La prueba nueva recorre los 102 casos existentes del bloque para referencias, plantillas y errores fijos. No se iniciaron servicios ni se modificó la base; Piston, E2E y revisión visual siguen pendientes de autorización. Se conserva la huella anterior y se añade la revisión de enunciados.
+
 ## 7. Fase E — Claridad editorial y ayudas
 
 - [ ] Reescribir las revisiones Python con estructura consistente: tarea, entrada, resultado, reglas relevantes y ejemplos. Mantener el reto separado de la receta de resolución.
