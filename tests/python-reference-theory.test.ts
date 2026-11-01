@@ -7,6 +7,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { localTheoryContract } from "./python-local-theory-baseline";
 import { beforePythonReferenceTheory, previousReferenceTheoryTasks, previousReferenceTheoryHints } from "./python-reference-theory-baseline";
+import { beforePythonExceptionTheory } from "./python-exception-theory-baseline";
 
 const reviewed = ["logica-busqueda-lineal", "logica-longitud-texto", "logica-minusculas", "logica-vocales", "logica-invierte", "logica-elimina-caracter", "logica-palabras", "logica-ficha-producto", "logica-ficha-resultado", "logica-opcional", "logica-ausencia", "logica-auxiliares", "logica-variable-local", "logica-parametro-exterior", "logica-llamadas-independientes", "logica-sin-estado-global", "logica-encadena-retornos", "logica-dos-nombres-lista", "logica-reasigna-o-muta", "logica-copia-plana", "logica-conserva-entrada", "logica-registro-compartido", "logica-valida-divisor", "logica-valido-cero-ausente"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -36,7 +37,7 @@ test("la teoría y las pistas distinguen vinculación, copia superficial y cocie
 });
 
 test("el tercer lote común conserva contratos y demás campos salvo tres párrafos y dos pistas concretas", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonExceptionTheory(entry.slug, entry.content) })).map(entry => ({ ...entry, content: {
     ...entry.content,
     ...(entry.slug in previousReferenceTheoryTasks ? { statement: localTheoryContract(entry.content.statement) } : {}),
     hints: entry.content.hints.map((hint, index) => previousReferenceTheoryHints[entry.slug]?.index === index ? "" : hint),

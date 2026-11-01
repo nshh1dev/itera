@@ -94,4 +94,6 @@ export const knownPythonReleases: readonly string[] = [
   "d63d8c433c6871e16d12a250edced4a2d245443b5b213dcdf177c9f23fc29fa6",
   // Teoría local de textos y referencias: tres párrafos y dos pistas Python.
   "3278b3eb916e2dcdcdc1dc8d02e12b638976293e590401302a7aacf1ea695468",
+  // Teoría local de errores, pruebas y agregados: dos aperturas ajustadas.
+  "905a668e2a27773c6ab69b34a67786610d9961bc5aff41dae005e2a4989571a3",
 ];

@@ -1449,13 +1449,69 @@ huella anterior. Las expectativas históricas mantienen sus valores y se añade
 otra huella de publicación sin preparar ni activar la base. Teoría restante,
 ejemplos, vocabulario global, repeticiones y D2/E/F siguen abiertos.
 
+## Teoría local: errores, pruebas y agregados
+
+Se revisan otras **24 comunes**, todas FUNCTION, desde la comprobación de límites
+hasta la importación de un módulo preparado. Se ajustan **dos párrafos Tu tarea**
+y las otras **22 actividades conservan su prosa**. Van **144/224 actividades
+revisadas en teoría local** (48 propias y 96 comunes); quedan **80
+comunes/proyectos**. No se tocan ayudas, contratos, código, casos ni tiempos.
+
+| Actividad | Decisión sobre teoría local |
+| --- | --- |
+| `logica-localiza-error` | Ajustar: hablar del riesgo de excepción al consultar sin límites, no de un fragmento defectuoso que la plantilla no contiene; mantener la comprobación antes del acceso. |
+| `logica-captura-conversion` | Conservar: auxiliar que lanza ValueError por formato y solve que captura solo ese tipo; int sin float y formato completo. |
+| `logica-error-dominio` | Conservar: validar lanza el mensaje de dominio y solve lo captura; el mensaje exacto sigue en el contrato. |
+| `logica-recupera-elementos` | Conservar: un try por elemento, un fallo no detiene el recorrido y valids/rechazados se construyen por separado. |
+| `logica-asercion-normal` | Conservar: una aserción fallida interrumpe y no sustituye el retorno; caso conocido 4 → 12 y retorno del triple. |
+| `logica-pruebas-limites` | Conservar: defecto del candidato cero, aserciones para vacío y negativos, y corrección del primer elemento real. |
+| `logica-reproduce-fallo` | Conservar: caso mínimo [0], supuesto >= 0 incorrecto y comparación estricta sin perder la aserción. |
+| `logica-conserva-regresion` | Ajustar: explicitar entrada y resultado esperado de las dos aserciones en vez de una flecha sin referente; la fórmula de descuento sigue en la pista. |
+| `logica-factorial` | Conservar: producto inicial uno, recorrido 1..n incluido y cero sin vueltas que conserva uno. |
+| `logica-fizzbuzz` | Conservar: orden 15, 3, 5, else; un valor por vuelta y cero como lista vacía. |
+| `logica-mediciones` | Conservar: total, positivos y mayor en un recorrido; mayor ausente solo con lista vacía. |
+| `logica-carrito` | Conservar: subtotal y descuento único; el posible decimal se debe a / y no repite aquí la teoría de división. |
+| `logica-notas` | Conservar: contador de aprobados y suma para la media; None si no hay notas y sin truncar. |
+| `logica-saldo` | Conservar: orden, candidato no negativo, cero válido y distinción explícita frente a la acumulación por producto. |
+| `logica-gastos-registro` | Conservar: total y sumas por categoría, céntimos enteros, sin archivos todavía y diccionario vacío correcto. |
+| `logica-gastos-validacion` | Conservar: validar antes de sumar, continue para el siguiente y rechazados separado de cero válido. |
+| `logica-repetido` | Conservar: conjunto de vistos y consulta antes de añadir; vacío no repite. |
+| `logica-deduplica` | Conservar: orden de primera aparición, conjunto más lista y prohibición de ordenar. |
+| `logica-frecuencias` | Conservar: clave real por letra, inicialización solo al faltar e incremento fuera del if. |
+| `logica-primer-unico` | Conservar: una primera aparición no basta; conteo completo y segundo recorrido en orden. |
+| `logica-anagramas` | Conservar: tablas de 26 claves ya inicializadas, minúsculas sin espacios y comparación de todas las cantidades. |
+| `logica-agrupa-registros` | Conservar: lista por categoría, orden de aparición y nombres repetidos. |
+| `logica-inventario` | Conservar: acumulación por producto con ceros y negativos permitidos; distinción con la regla de saldo. |
+| `logica-importa-preparado` | Conservar: módulo como archivo real, importación de transformar y prohibición de copiar su implementación. |
+
+Solo cambian dos aperturas de `Tu tarea`; las ayudas de ambas actividades se
+conservan. No se alteran contratos, evaluación, ejemplos, archivos de proyecto
+ni la regla de `continue`. Las distinciones saldo/inventario y acumulación por
+producto siguen explícitas para evitar aplicar una restricción global.
+
+`tests/python-exception-theory.test.ts` protege inventario y decisiones y ejecuta
+modelos fijos de límites, formatos válidos e inválidos, error de dominio,
+recuperación por elemento, factorial, FizzBuzz, resumen, descuento, media,
+saldo, validación con `continue`, conjuntos, frecuencias, primer único,
+anagramas, agrupación, inventario negativo y llamada a una función importable.
+No ejecuta código de alumnos ni certifica aislamiento, rendimiento o
+terminación de programas arbitrarios.
+
+La huella previa excluye exactamente los dos párrafos ajustados y protege el
+resto de campos y ayudas. `tests/python-exception-theory-baseline.ts` restaura
+ambos enunciados con sus contratos actuales y recupera íntegra la huella
+anterior; la cadena de reconstrucción incorpora este eslabón antes de la
+revisión de referencias. Se conservan las expectativas históricas y se añade
+otra huella de publicación sin preparar ni activar la base. Teoría restante,
+ejemplos, vocabulario global, repeticiones y D2/E/F siguen abiertos.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Las **224/224 explicaciones de solución** tienen revisión individual; no implica
   que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
-- La teoría local tiene 120/224 actividades revisadas: 48 propias y 72 comunes;
-  quedan 104 comunes/proyectos y las repeticiones entre superficies.
+- La teoría local tiene 144/224 actividades revisadas: 48 propias y 96 comunes;
+  quedan 80 comunes/proyectos y las repeticiones entre superficies.
 - Quedan vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos

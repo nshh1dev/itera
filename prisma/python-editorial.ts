@@ -543,7 +543,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve exactamente el texto ausente si cantidad es None, invalido si es negativa y valido en los demás casos, incluido cero. No añadas tildes, comillas ni espacios a esas etiquetas.",
   ) },
   "logica-localiza-error": { statement: statement(
-    "Localiza un error sin provocarlo: el fragmento conceptual consulta valores[indice] sin comprobar límites. La plantilla solo prepara solve(data); escribe la comprobación antes de consultar la posición.",
+    "Localiza un riesgo sin provocarlo: consultar valores[indice] sin comprobar límites puede lanzar una excepción. La plantilla solo prepara solve(data); escribe la comprobación antes de consultar la posición.",
     "data es un diccionario con valores, una lista de hasta 100 enteros, e indice, un entero. Los enteros están entre -1000 y 1000.",
     "Devuelve el elemento si 0 ≤ indice < longitud de valores. Si indice es negativo o alcanza o supera la longitud, devuelve exactamente el texto indice fuera de rango. Aquí no se aceptan los índices negativos de Python. Una lista vacía no tiene posiciones válidas.",
   ) },
@@ -578,7 +578,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve cuántos elementos son mayores que cero. No cuentes el cero ni sumes los valores; para una lista vacía devuelve 0. Un mensaje que declare que las pruebas pasan no acredita la corrección; los casos comprueban el conteo, no certifican tu explicación del fallo.",
   ) },
   "logica-conserva-regresion": { statement: statement(
-    "Implementa un descuento y conserva pruebas de sus límites. La plantilla solo prepara solve(data), no contiene una implementación defectuosa. Añade aserciones para total 10, limite 10 → 8 y total 0, limite 0 → 0.",
+    "Implementa un descuento y conserva pruebas de sus límites. La plantilla solo prepara solve(data), no contiene una implementación defectuosa. Añade aserciones para la entrada (total 10, limite 10), que debe dar 8, y para (total 0, limite 0), que debe dar 0.",
     "data es un diccionario con total y limite, enteros entre 0 y 1000.",
     "Devuelve el importe después de descontar 2 si total alcanza limite, incluida la igualdad, sin bajar de cero. Si no alcanza el límite, conserva total. La comprobación evalúa el resultado; no certifica que las aserciones de regresión estén presentes.",
   ) },

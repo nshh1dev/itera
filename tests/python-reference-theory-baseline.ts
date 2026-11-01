@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonExceptionTheory } from "./python-exception-theory-baseline";
 
 export const previousReferenceTheoryTasks: Record<string, string> = {
   "logica-parametro-exterior": "Escribe dentro de solve(data) una auxiliar llamada doble que utilice su parámetro, no el valor exterior. La plantilla solo prepara solve(data): añade las operaciones y la auxiliar del reto.",
@@ -11,6 +12,7 @@ export const previousReferenceTheoryHints: Record<string, { index: number; text:
 };
 
 export function beforePythonReferenceTheory(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonExceptionTheory(slug, content);
   if (slug in previousReferenceTheoryTasks) {
     const restore = (text: string) => {
       const index = text.indexOf("\n\nEntrada\n");

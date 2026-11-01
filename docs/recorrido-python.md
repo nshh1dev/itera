@@ -132,6 +132,8 @@ El quinto lote de teoría local revisa otras 24 comunes de seguimiento, condicio
 
 El sexto lote de teoría local revisa otras 24 comunes de textos, funciones y referencias: tres párrafos y dos pistas ajustados en cuatro actividades, con las otras 20 conservadas. Van 120/224 revisadas (48 propias y 72 comunes); quedan 104 comunes/proyectos. Se precisa argumento vinculado sin copia automática, copia superficial y float de / frente a None, manteniendo mutaciones intencionales. La huella previa protege todo salvo esos cinco textos y reconstruye íntegra la entrega anterior, sin cambiar contratos, código ni casos. Las 224 explicaciones siguen revisadas; teoría restante, ejemplos, repeticiones y D2/E/F pendientes. Base sin preparar ni activar; decisiones en [claridad-python.md](claridad-python.md).
 
+El séptimo lote de teoría local revisa otras 24 comunes de errores, pruebas, agregados y conjuntos: dos aperturas ajustadas y 22 conservadas. Van 144/224 revisadas (48 propias y 96 comunes); quedan 80 comunes/proyectos. Se precisa el riesgo de excepción al indexar sin límites y se explicitan entrada y resultado esperado de dos aserciones, sin cambiar ayudas, contratos, código, casos ni las distinciones saldo/inventario. La huella previa excluye solo esos dos párrafos y reconstruye íntegra la entrega anterior con expectativas históricas. Las 224 explicaciones siguen revisadas; teoría restante, ejemplos, repeticiones y D2/E/F pendientes. Base sin preparar ni activar; decisiones en [claridad-python.md](claridad-python.md).
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.
