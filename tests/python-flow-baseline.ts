@@ -1,9 +1,11 @@
 import { logicExercises } from "../prisma/logic-content";
 import { seedVersionContent, type VersionContent } from "../prisma/editorial-revision";
 import { pythonFlowExplanations } from "../prisma/python-flow-explanations";
+import { beforePythonState } from "./python-state-baseline";
 
 // Reconstrucción de prosa para huellas históricas, sin cambiar fuentes comunes.
 export function beforePythonFlow(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonState(slug, content);
   if (!(slug in pythonFlowExplanations)) return content;
   const exercise = logicExercises.find(exercise => exercise.slug === slug);
   if (!exercise) throw new Error(`Falta el ejercicio original de ${slug}`);

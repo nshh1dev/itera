@@ -868,6 +868,67 @@ valores. Se añade la nueva huella sin retirar anteriores ni preparar/activar la
 base. La revisión global de teoría local, ejemplos y repeticiones sigue abierta,
 al igual que E/F y las comprobaciones reales/visuales.
 
+## Explicaciones de textos, auxiliares, referencias y validación
+
+Se revisan las siguientes **24 explicaciones comunes**, desde longitud de texto
+hasta captura de conversión. Hay **17 ajustes** en
+`prisma/python-state-explanations.ts` y **siete textos conservados**. Van
+**145/224 explicaciones revisadas**, con **79 pendientes**.
+
+| Actividad | Decisión |
+| --- | --- |
+| `logica-longitud-texto` | Seguir len con espacio/signo y vacío; retirar comparación incidental de representaciones Unicode y cierre genérico. |
+| `logica-minusculas` | Conservar: normalización A/a, conservación de orden/espacios y conexión con el conteo inmediatamente siguiente. |
+| `logica-vocales` | Conservar: normalización, cinco vocales, contador y casos vacío/consonantes/espacios. |
+| `logica-invierte` | Conservar: traza a/ba/cba y advertencia de construcción potencialmente cuadrática sin adelantar alternativas. |
+| `logica-elimina-caracter` | Precisar todas las coincidencias exactas y contraste A/a, sin normalizar ni detenerse tras la primera. |
+| `logica-palabras` | Seguir transiciones de en_palabra, espacios repetidos y vacío dentro del contrato de separadores simples. |
+| `logica-ficha-producto` | Conservar: ficha como diccionario, consulta por clave y retorno del precio, no de toda la ficha. |
+| `logica-opcional` | Conservar: get usa respaldo solo al faltar clave y conserva cantidad cero. |
+| `logica-ausencia` | Conservar: is None antes de sumar, sin perder el cero válido. |
+| `logica-auxiliares` | Seguir subtotal y envío, no llamarlo descuento; límite 2000, caso 1999 y envío con cantidad cero. |
+| `logica-variable-local` | Distinguir numero recibido y valor fijo 10; seguir ambos retornos sin cierre genérico de sintaxis. |
+| `logica-parametro-exterior` | Corregir explicación de nombres coincidentes ajena a la referencia; contrastar argumento con exterior y posición de resultados. |
+| `logica-llamadas-independientes` | Contador reiniciado dentro de cada llamada, [2,3] frente a acumulación [2,5] y llamada con cero. |
+| `logica-sin-estado-global` | Misma base y cada tasa, no suma acumulada; ejemplo con tasa negativa y lista vacía. |
+| `logica-encadena-retornos` | El retorno de subtotal alimenta embalar y su resultado llega al return exterior; embalaje único incluso con cero unidades. |
+| `logica-dos-nombres-lista` | Alias sin copia, append compartido y mutación intencional de valores; salida no certifica identidad. |
+| `logica-reasigna-o-muta` | Reasignar alias cambia su vínculo a otra lista sin escribir en la recibida. |
+| `logica-copia-plana` | list más append solo sobre copia, incluido vacío; superficial basta por elementos enteros, sin recomendar copia universal. |
+| `logica-conserva-entrada` | Construir ajustados con orden/repetición sin escribir en valores; limitar lo que demuestra comparar contenidos. |
+| `logica-registro-compartido` | Alias de diccionario, cantidad negativa posible y cambio cero; mantener mutación intencional y límite de identidad. |
+| `logica-valida-divisor` | Validar antes de dividir, None/null frente a cero válido y / como retorno float aunque el cociente tenga valor entero. |
+| `logica-valido-cero-ausente` | La clave siempre existe: ausente significa None, no falta de clave; comprobarlo antes de comparar números. |
+| `logica-localiza-error` | Comprobar ambas fronteras antes de acceder; el contrato rechaza índices negativos aunque Python los admita. |
+| `logica-captura-conversion` | Conservar la explicación específica de strip/signo/cifras ASCII, int directo y captura solo de ValueError. |
+
+Se retiran cierres genéricos sobre predicciones/pruebas, bloques extensos que
+repiten ayudas y referencias a técnicas no necesarias. Los textos conservados
+ya justifican sus operaciones; captura de conversión mantiene la revisión
+específica anterior, no la explicación original compartida. No se cambia código,
+gramática aceptada, reglas conceptuales, enunciados, pistas, costes ni ejemplos
+públicos.
+
+`tests/python-state-explanations.test.ts` comprueba inventario y decisiones.
+Ejecuta las 24 referencias fijas con expectativas independientes para textos,
+vacíos, ceros, umbral de envío, parámetros y validación. Los casos de alias de
+lista/diccionario declaran explícitamente la entrada final mutada que exige el
+contrato; los demás conservan sus contenidos al retornar. El cociente se
+comprueba como float cuando es válido y como None ante divisor cero. La
+conversión ASCII rechaza también guiones bajos y cifras no ASCII, sin imponer
+esa restricción a otras prácticas de int nativo. Esto no certifica identidad,
+ausencia de toda mutación intermedia, técnicas de alumnos ni Piston real; D2
+no se da por cerrada por estas comprobaciones locales.
+
+La huella calculada antes de editar excluye solo las 17 explicaciones nuevas y
+protege las siete conservadas, las 121 revisadas previamente, las 79 pendientes
+y todos los demás campos. `tests/python-state-baseline.ts` reconstruye la prosa
+previa desde las variantes Python compartidas sin editar sus fuentes. Se
+comprueba la huella completa de la entrega anterior y se conservan los valores
+históricos. Se añade una huella de publicación sin retirar anteriores ni
+preparar/activar contenido en la base. La revisión global de teoría local,
+ejemplos y repeticiones sigue abierta, al igual que E/F y validación real/visual.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

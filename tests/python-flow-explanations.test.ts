@@ -9,6 +9,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import type { Json } from "../src/lib/types";
 import { beforePythonFlow } from "./python-flow-baseline";
+import { beforePythonState } from "./python-state-baseline";
 
 test("las siguientes 24 explicaciones comunes revisan flujo y listas: 23 ajustes y máximo conservado", () => {
   const common = pythonCatalog.filter(entry => !pythonLessons.has(entry.slug) && !(entry.slug in pythonSolutionExplanations));
@@ -54,7 +55,7 @@ test("las lecturas distinguen acumulador, contador, índice y fronteras sin adel
 });
 
 test("el séptimo lote conserva todo salvo 23 explicaciones y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: entry.content.variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonState(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonFlowExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

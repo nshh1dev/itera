@@ -72,4 +72,6 @@ export const knownPythonReleases: readonly string[] = [
   "5f9896fbe69bf9cd9f7a520953c2629256fe6841fe0d8a4b5992e9a6b84632bc",
   // Condiciones, bucles y primeras listas: 23 ajustes y máximo conservado.
   "9f937492dd05d9c9b454c0a4ed74f0e33f6b322f3d7bf1e022d4f8449b61ab31",
+  // Textos, auxiliares, referencias y validación: 17 ajustes y siete conservadas.
+  "c4cd4da58348831070914d063a99d848544f4c075f9268992b8e059f80214bf0",
 ];

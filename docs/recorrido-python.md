@@ -110,6 +110,8 @@ Un sexto lote revisa las 24 explicaciones comunes iniciales: doce ajustes y doce
 
 El séptimo lote revisa otras 24 explicaciones comunes de condiciones, bucles y listas: 23 ajustes y máximo conservado. Van 121/224 revisadas, con 103 pendientes. Se distinguen acumuladores, contadores e índices mediante trazas y fronteras, sin adelantar técnicas ni modificar contratos, referencias, casos o ayudas. Las 24 referencias fijas tienen comprobaciones editoriales independientes; se conserva la huella completa anterior mediante reconstrucción de prosa. Detalles y límites en [claridad-python.md](claridad-python.md); la base sigue sin prepararse ni activarse y E/F permanecen abiertas.
 
+El octavo lote revisa otras 24 explicaciones de textos, auxiliares, referencias y validación: 17 ajustes y siete conservadas. Van 145/224 revisadas y quedan 79. Se distinguen None/cero/clave ausente y alias/copia, conservando las dos mutaciones intencionales y el retorno float de división válida. Las 24 referencias fijas contrastan esos estados sin certificar identidad ni toda mutación intermedia; D2 permanece parcial. La huella anterior se reconstruye sin cambiar fuentes compartidas. Detalles en [claridad-python.md](claridad-python.md); base sin preparar/activar y E/F abiertas.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.
