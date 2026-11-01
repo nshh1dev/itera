@@ -503,7 +503,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve una lista con ficha['cantidad'] y alias['cantidad'], en ese orden, después del cambio. Ambos valores deben reflejar la cantidad actualizada. La salida muestra el efecto, pero no certifica identidad por sí sola.",
   ) },
   "python-identidad": { statement: statement(
-    "Compara contenido e identidad: == compara contenido; is pregunta si es el mismo objeto. Construye original = list(data['valores']), alias = original y copia = list(original). Conserva antes = list(original) y añade nuevo solo al alias. list(...) crea otra lista; asignar alias no la copia.",
+    "Compara contenido e identidad: == compara contenido; is pregunta si es el mismo objeto. Construye original = list(data['valores']), alias = original y copia = list(original). Conserva antes = list(original) y añade nuevo solo al alias. list(...) crea otra lista exterior; si contiene listas o diccionarios, conserva las referencias a esos elementos interiores: es una copia superficial. Asignar alias no crea ninguna copia. Aquí añades un elemento a la lista exterior, sin modificar elementos interiores.",
     "data es un diccionario con valores, una lista de hasta 100 elementos, y nuevo, el elemento que se añade. No modifiques data.",
     "Devuelve un diccionario con antes, original, copia, igual, misma y copiaMisma. antes y copia conservan los valores previos; original refleja el añadido mediante alias. igual compara original y copia por contenido; misma indica si alias is original; copiaMisma indica si copia is original (False). Los booleanos Python True y False se muestran como true y false en JSON. El JSON muestra los efectos; la identidad se entiende revisando el código y sus comparaciones is.",
   ) },
@@ -513,7 +513,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve una lista con los resultados de ambas llamadas, en el mismo orden. Cada resultado contiene solo el entero de esa llamada; la segunda no hereda el primero. Los casos comprueban las listas devueltas, no certifican la firma ni la técnica interna.",
   ) },
   "python-actualiza-diccionario": { statement: statement(
-    "Actualiza una copia de un diccionario sin cambiar el original. dict(original) copia un diccionario plano; asignar copia[clave] sirve tanto para insertar como para reemplazar, sin eliminar primero la clave.",
+    "Actualiza una copia de un diccionario sin cambiar el original. dict(original) crea un diccionario exterior nuevo y conserva las referencias a sus valores: es una copia superficial. Aquí los valores son enteros inmutables y asignar copia[clave] = nuevo cambia solo esa asociación en la copia, tanto al insertar como al reemplazar, sin eliminar primero la clave. No generalices esta independencia a modificar listas o diccionarios interiores compartidos.",
     "data es un diccionario con valores, un diccionario de hasta 100 claves de texto a enteros, clave, un texto, y nuevo, un entero.",
     "Devuelve una copia de valores con clave asociada a nuevo: reemplaza su valor si ya existía o añade la pareja si faltaba. Conserva las demás parejas y no modifiques el original. Los casos no certifican la técnica interna empleada.",
   ) },
@@ -678,7 +678,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve una lista de parejas con un elemento de a y otro de b, en ese orden y respetando sus posiciones. Termina al agotarse la lista más corta, sin rellenar posiciones con ceros ni None. Si alguna está vacía, devuelve []. Los casos no certifican el uso de zip.",
   ) },
   "python-retorno-multiple": { statement: statement(
-    "Define una función auxiliar que reciba dos enteros y devuelva juntos su suma y su producto. Un return con valores separados por coma devuelve una tupla, que puede desempaquetarse en la llamada; no son dos retornos separados, pues solo se ejecuta el primer return de una llamada.",
+    "Define una función auxiliar que reciba dos enteros y devuelva juntos su suma y su producto. Un return con valores separados por coma devuelve una tupla, que puede desempaquetarse en la llamada; no son dos retornos separados. Ejecutar return termina esa llamada: si hay varios en ramas distintas, la condición decide cuál se alcanza, no su orden de escritura. Una instrucción posterior no continúa esa misma llamada.",
     "data es una lista de exactamente dos enteros. Conserva solve(data) y llama desde ella a la auxiliar.",
     "Devuelve los dos resultados en este orden: suma y producto. Itera representa la tupla como una lista de dos números en JSON. Los casos comprueban los resultados, no certifican la organización en funciones ni el uso de una tupla.",
   ) },

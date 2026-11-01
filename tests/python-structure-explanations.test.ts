@@ -61,7 +61,7 @@ test("las explicaciones siguen las referencias reales, sus costes y las claves d
 });
 
 test("el décimo lote conserva todo salvo 21 explicaciones y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonOptimization(entry.slug, entry.content).variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonOptimization(entry.slug, entry.content), variants: beforePythonOptimization(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonStructureExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

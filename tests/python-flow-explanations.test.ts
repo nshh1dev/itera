@@ -55,7 +55,7 @@ test("las lecturas distinguen acumulador, contador, índice y fronteras sin adel
 });
 
 test("el séptimo lote conserva todo salvo 23 explicaciones y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonState(entry.slug, entry.content).variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonState(entry.slug, entry.content), variants: beforePythonState(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonFlowExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

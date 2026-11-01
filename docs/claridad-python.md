@@ -1137,12 +1137,66 @@ expectativas históricas. Se añade otra huella de publicación sin preparar ni
 activar contenido en la base. D2, el resto de E, F y validación real/visual siguen
 abiertas: completar este inventario no completa el plan.
 
+## Teoría local: primeras 16 actividades propias
+
+Tras revisar las 224 explicaciones de solución, se contrasta la teoría local de
+las primeras **16/48 actividades propias**, integrada en el párrafo Tu tarea.
+Se mantiene la introducción conceptual antes de practicar: no se confunde
+reducir repeticiones con retirar la primera explicación de una herramienta.
+Hay **tres ajustes y trece párrafos conservados** en `prisma/python-editorial.ts`;
+quedan 32 propias, además de la teoría de actividades comunes y proyectos por
+revisar. No se declara aquí revisada la teoría de las otras 208 actividades.
+
+| Actividad | Decisión sobre teoría local |
+| --- | --- |
+| `python-constante` | Conservar: mayúsculas como convención sin bloqueo de reasignación y ejemplo de transferencia a otra equivalencia. |
+| `python-decimal` | Conservar: conversión de texto, contraste con int y .0 de print; no sustituirlo por formato financiero. |
+| `python-condicional` | Conservar: forma genérica de expresión, condición entre alternativas y equivalencia con ramas; pista final concreta aparte. |
+| `python-centinela` | Conservar: break termina el bucle más cercano; las reglas y pistas fijan exclusión del centinela y su comprobación previa. |
+| `python-omite-negativos` | Conservar: continue frente a break, sin repetir la traza de la solución. |
+| `python-ordena-numeros` | Conservar: sorted crea lista y sort muta/devuelve None; resultado por claves ya contextualizado. |
+| `python-recorta` | Conservar: tramo con fin excluido y otra lista frente a un elemento; aquí no se modifican contenidos anidados. |
+| `python-une-palabras` | Conservar: split sin argumento frente a separador literal y join como reconstrucción; no entregar el encadenado completo antes de las pistas. |
+| `python-desempaqueta` | Conservar: aridad exacta y evaluación de la derecha antes de asignar; representación de tupla en JSON en el resultado. |
+| `python-enumera` | Conservar: parejas, inicio explícito y desempaquetado sin buscar posiciones por valor. |
+| `python-empareja` | Conservar: valores correspondientes y fin de la entrada más corta, sin introducir strict o relleno. |
+| `python-retorno-multiple` | Ajustar: return termina la llamada al ejecutarse; una condición decide qué rama se alcanza, no el primer return escrito. Conservar tupla y desempaquetado. |
+| `python-identidad` | Ajustar: list crea otra lista exterior y comparte referencias a contenedores interiores; append exterior no modifica esos contenidos. Conservar alias y comparación is. |
+| `python-opcional-seguro` | Conservar: momento de creación del predeterminado y None como señal para crear por llamada. |
+| `python-actualiza-diccionario` | Ajustar: dict crea diccionario exterior con referencias compartidas; enteros inmutables y reemplazo de asociación justifican la copia superficial de este contrato, no una copia profunda general. |
+| `python-borra-clave` | Conservar: pop con respaldo y valor cero no confundido con clave ausente; pista final conserva el procedimiento. |
+
+Los tres ajustes afectan solo a Tu tarea, tanto común como de variante Python.
+Entrada y Resultado esperado permanecen exactos, así como ayudas, objetivos,
+plantillas, soluciones, ejemplos y sus explicaciones, tiempos y evaluación.
+Las fuentes originales de `python-lessons.ts` se conservan como antecedentes;
+la revisión publicada se compone mediante la proyección editorial existente.
+
+`tests/python-local-theory.test.ts` comprueba inventario y decisiones, y ejecuta
+modelos fijos independientes de return condicional, tupla, alias, append exterior,
+contenedores interiores compartidos y reemplazo de entero en un diccionario.
+En esos modelos se comprueba identidad directamente con is: no se deduce desde
+JSON ni se certifica la identidad de programas enviados. No se ejecuta código de
+alumnos ni se acredita ausencia de toda mutación intermedia o aislamiento real.
+
+La huella previa excluye solo los tres párrafos iniciales, no enunciados enteros:
+protege Entrada/Resultado esperado, los otros 221 enunciados y todos los campos
+ajenos. `tests/python-local-theory-baseline.ts` restaura los tres párrafos previos
+conservando los contratos actuales, de modo que cambios no autorizados en estos
+también rompen la huella histórica. Las pruebas históricas restauran ahora ambas
+copias del enunciado antes de comprobar sus mismas expectativas, sin recalcular
+valores. Se recupera la huella completa anterior y se añade otra de publicación.
+No se prepara ni activa contenido; teoría restante, ejemplos, vocabulario global,
+repeticiones, D2 y F siguen abiertos.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Las **224/224 explicaciones de solución** tienen revisión individual; no implica
   que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
-- Quedan teoría local, vocabulario en otras
+- La teoría local tiene 16/48 propias revisadas; quedan las otras 32, la de
+  actividades comunes/proyectos y las repeticiones entre superficies.
+- Quedan vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
   conservan sus contratos de archivos y persistencia; se retiraron repeticiones

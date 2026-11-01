@@ -1,9 +1,11 @@
 import { logicExercises } from "../prisma/logic-content";
 import { seedVersionContent, type VersionContent } from "../prisma/editorial-revision";
 import { pythonPathExplanations } from "../prisma/python-path-explanations";
+import { beforePythonLocalTheory } from "./python-local-theory-baseline";
 
 // Reconstrucción de seis textos; no cambia las fuentes ni el catálogo activo.
 export function beforePythonPaths(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonLocalTheory(slug, content);
   if (!(slug in pythonPathExplanations)) return content;
   const exercise = logicExercises.find(exercise => exercise.slug === slug);
   if (!exercise) throw new Error(`Falta el ejercicio original de ${slug}`);

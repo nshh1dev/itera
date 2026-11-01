@@ -55,7 +55,7 @@ test("los textos explican copias, desempates, restauración y estados sin promet
 });
 
 test("el undécimo lote conserva todo salvo veinte explicaciones y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonPaths(entry.slug, entry.content).variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonPaths(entry.slug, entry.content), variants: beforePythonPaths(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonOptimizationExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

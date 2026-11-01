@@ -52,7 +52,7 @@ test("los textos siguen referencias concretas sin confundir filtros, orden, ause
 });
 
 test("el quinto lote conserva las 58 explicaciones anteriores y todo salvo 15 textos", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonIntro(entry.slug, entry.content).variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonIntro(entry.slug, entry.content), variants: beforePythonIntro(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonRecordExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

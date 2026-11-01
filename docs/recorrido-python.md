@@ -120,6 +120,8 @@ El undécimo lote revisa otras 24 explicaciones de selección, combinatoria, tab
 
 El duodécimo lote completa **224/224 explicaciones de solución revisadas individualmente**: seis ajustes finales y Dijkstra conservado. Se precisan caminos, frontera de capacidad, edición, subsecuencia y paralelismo; las siete referencias fijas se contrastan con expectativas independientes y se reconstruye la huella anterior sin editar fuentes compartidas. No cambian código, contratos ni casos. Este cierre no completa E: teoría local, ejemplos y repeticiones entre superficies siguen pendientes, al igual que D2/F y validación real/visual. Detalles en [claridad-python.md](claridad-python.md); base sin preparar ni activar.
 
+La revisión de teoría local empieza por 16/48 actividades propias: tres ajustes y trece introducciones conservadas. Se aclaran return alcanzado por una rama y alcance superficial de list/dict, conservando el contexto antes de practicar y las pistas progresivas. Solo cambian tres párrafos de Tu tarea; contratos de entrada/salida y demás superficies conservan huella previa, con reconstrucción histórica de ambos enunciados. Los modelos fijos comprueban identidad directamente, sin inferirla desde JSON ni certificar programas de alumnos. Las 224 explicaciones de solución siguen revisadas; teoría restante, ejemplos, repeticiones, D2/E/F y validación real/visual siguen pendientes. Detalles en [claridad-python.md](claridad-python.md); base sin preparar ni activar.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

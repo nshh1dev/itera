@@ -44,7 +44,7 @@ test("los ajustes distinguen prueba declarada, estado aceptado, orden y memoria 
 });
 
 test("el noveno lote conserva todo salvo diez explicaciones y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonStructures(entry.slug, entry.content).variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonStructures(entry.slug, entry.content), variants: beforePythonStructures(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonSearchExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

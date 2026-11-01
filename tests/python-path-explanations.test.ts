@@ -9,6 +9,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import type { Json } from "../src/lib/types";
 import { beforePythonPaths } from "./python-path-baseline";
+import { beforePythonLocalTheory } from "./python-local-theory-baseline";
 
 const retained = ["logica-dijkstra"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -42,7 +43,7 @@ test("las explicaciones precisan marcas, distancias, fronteras, prefijos y paral
 });
 
 test("el cierre de explicaciones conserva todo salvo seis textos y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: entry.content.variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonLocalTheory(entry.slug, entry.content), variants: beforePythonLocalTheory(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonPathExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

@@ -53,7 +53,7 @@ test("los ajustes siguen la traza y distinguen salida PROGRAM, tipos y retornos"
 });
 
 test("el sexto lote solo cambia doce explicaciones y reconstruye íntegra la entrega previa", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonFlow(entry.slug, entry.content).variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonFlow(entry.slug, entry.content), variants: beforePythonFlow(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonIntroExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

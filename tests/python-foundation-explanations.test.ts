@@ -42,7 +42,7 @@ test("las explicaciones justifican fronteras, retornos, alias y el alcance de la
 });
 
 test("el tercer lote solo cambia 15 explicaciones, conservando las 28 anteriores y todo el resto", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonCollections(entry.slug, entry.content).variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonCollections(entry.slug, entry.content), variants: beforePythonCollections(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonFoundationExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

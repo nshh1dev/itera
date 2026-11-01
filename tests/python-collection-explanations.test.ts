@@ -47,7 +47,7 @@ test("las explicaciones distinguen pertenencia, cantidades, transformación, cop
 });
 
 test("el cuarto lote solo cambia 15 explicaciones y conserva los 43 textos anteriores y demás campos", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonRecords(entry.slug, entry.content).variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonRecords(entry.slug, entry.content), variants: beforePythonRecords(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonCollectionExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;
