@@ -7,6 +7,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { localTheoryContract } from "./python-local-theory-baseline";
 import { beforePythonFlowTheory, previousFlowTheoryTasks } from "./python-flow-theory-baseline";
+import { beforePythonReferenceTheory } from "./python-reference-theory-baseline";
 
 const reviewed = ["logica-predice-valores", "logica-tabla-valores", "logica-minutos-segundos", "logica-perimetro", "logica-repara-presupuesto", "logica-merienda", "logica-elige-mensaje", "logica-signo", "logica-mayor-tres", "logica-dos-requisitos", "logica-alternativas", "logica-tarifa", "logica-uno-n", "logica-cuenta-atras", "logica-suma-uno-n", "logica-tabla", "logica-multiplos", "logica-bucle-roto", "logica-posicion", "logica-indices", "logica-suma-lista", "logica-maximo", "logica-cuenta-condicion", "logica-filtra-lista"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -37,7 +38,7 @@ test("las introducciones explican conjunción y alternativas booleanas sin adela
 });
 
 test("el segundo lote común conserva todo salvo dos párrafos y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => !(entry.slug in previousFlowTheoryTasks) ? entry : ({ ...entry, content: {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonReferenceTheory(entry.slug, entry.content) })).map(entry => !(entry.slug in previousFlowTheoryTasks) ? entry : ({ ...entry, content: {
     ...entry.content, statement: localTheoryContract(entry.content.statement),
     variants: entry.content.variants.map(variant => ({ ...variant, statement: localTheoryContract(variant.statement!) })),
   } }));

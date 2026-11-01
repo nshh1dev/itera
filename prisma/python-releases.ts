@@ -92,4 +92,6 @@ export const knownPythonReleases: readonly string[] = [
   "7437d98d5aaac234358b8e6d4ec9335fcbd8a6090390f0a24fec00f6958ffa29",
   // Teoría local de flujo y listas: dos ajustes y 22 consignas conservadas.
   "d63d8c433c6871e16d12a250edced4a2d245443b5b213dcdf177c9f23fc29fa6",
+  // Teoría local de textos y referencias: tres párrafos y dos pistas Python.
+  "3278b3eb916e2dcdcdc1dc8d02e12b638976293e590401302a7aacf1ea695468",
 ];

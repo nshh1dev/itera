@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonReferenceTheory } from "./python-reference-theory-baseline";
 
 export const previousFlowTheoryTasks: Record<string, string> = {
   "logica-dos-requisitos": "Completa el retorno de la plantilla para combinar dos requisitos que deben cumplirse al mismo tiempo. Las dos comparaciones ya están calculadas; conserva su estructura.",
@@ -7,6 +8,7 @@ export const previousFlowTheoryTasks: Record<string, string> = {
 
 // Reconstruye solo Tu tarea de las dos variantes Python; contratos intactos.
 export function beforePythonFlowTheory(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonReferenceTheory(slug, content);
   if (!(slug in previousFlowTheoryTasks)) return content;
   const restore = (text: string) => {
     const index = text.indexOf("\n\nEntrada\n");

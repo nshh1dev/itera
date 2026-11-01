@@ -1392,13 +1392,70 @@ históricas y se añade otra huella de publicación sin preparar ni activar la
 base. Teoría restante, ejemplos, vocabulario global, repeticiones y D2/E/F
 siguen abiertos.
 
+## Teoría local: textos, funciones y referencias
+
+Se revisan otras **24 comunes**, todas FUNCTION, desde búsqueda lineal hasta
+cantidad válida/cero/ausente. Se ajustan **tres párrafos y dos pistas en cuatro
+actividades**; las otras **20 actividades conservan sus textos**. Van
+**120/224 actividades revisadas en teoría local** (48 propias y 72 comunes);
+quedan 104 comunes/proyectos. No se confunde el número de actividades revisadas
+con el número de campos editados.
+
+| Actividad | Decisión sobre teoría local y pistas |
+| --- | --- |
+| `logica-busqueda-lineal` | Conservar: primera coincidencia en lista no ordenada, índice desde cero y -1 al terminar sin encontrar. |
+| `logica-longitud-texto` | Conservar: cantidad de caracteres ASCII incluidos signos/espacios y vacío, sin introducir distinciones Unicode ajenas al contrato. |
+| `logica-minusculas` | Conservar: conversión produce otro texto y devolución del convertido, manteniendo plantilla y caracteres no alfabéticos. |
+| `logica-vocales` | Conservar: normalización y contador preparados, pertenencia antes de sumar uno. |
+| `logica-invierte` | Conservar: anteponer frente a añadir al final; corregir solo construcción preparada. |
+| `logica-elimina-caracter` | Conservar: recorrido original y salida nueva con caracteres aceptados, todas las coincidencias y distinción de mayúsculas. |
+| `logica-palabras` | Conservar: grupo no vacío, estado dentro/fuera y transición que evita contar espacios repetidos. |
+| `logica-ficha-producto` | Conservar: ficha como diccionario, clave frente a valor y precio cero válido. |
+| `logica-ficha-resultado` | Conservar: diccionario de resultados con nombre y cálculo solo en total. |
+| `logica-opcional` | Conservar: clave ausente frente a cero y respaldo solo al faltar; no se acepta None en este modelo. |
+| `logica-ausencia` | Conservar: ausencia explícita antes de sumar, is None frente a falsedad y representación JSON aparte. |
+| `logica-auxiliares` | Conservar: separación subtotal/envío y frontera 2000, sin repetir la solución concreta. |
+| `logica-variable-local` | Conservar: valor fijo local frente a parámetro recibido y retorno desde la auxiliar. |
+| `logica-parametro-exterior` | Ajustar párrafo y primera pista: parámetro vinculado al objeto argumento, no copia automática; entero inmutable y cálculo no modifican exterior. |
+| `logica-llamadas-independientes` | Conservar: contador por llamada inicializado dentro, cero y ausencia de acumulación heredada. |
+| `logica-sin-estado-global` | Conservar: base/tasa explícitas por llamada y misma base, no acumulación de tasas. |
+| `logica-encadena-retornos` | Conservar: un retorno alimenta la siguiente auxiliar, no print ni variable compartida. |
+| `logica-dos-nombres-lista` | Conservar: alias sin copia, mutación intencional y límite de inferir identidad por contenidos. |
+| `logica-reasigna-o-muta` | Conservar: nuevo vínculo de alias frente a modificar la lista original. |
+| `logica-copia-plana` | Ajustar párrafo: copia exterior superficial suficiente para enteros inmutables y append exterior, no copia profunda de contenedores interiores. |
+| `logica-conserva-entrada` | Conservar: salida nueva sin asignar sobre entrada, orden/repeticiones y límite de comprobar contenidos finales. |
+| `logica-registro-compartido` | Conservar teoría de mutación intencional; ajustar segunda pista de propiedad a valor asociado a clave, sin reasignar alias. |
+| `logica-valida-divisor` | Ajustar párrafo: / produce float aun con cociente de valor entero, incluido 0.0; cero numérico no es None y su representación JSON no conserva necesariamente .0. |
+| `logica-valido-cero-ausente` | Conservar: clave siempre existente y ausencia como None, validación antes de comparar negativos y cero válido. |
+
+Los cambios se proyectan solo en Python mediante `python-editorial.ts`. No se
+cambia entrada, salida, gramática, solución, evaluación, ejemplos ni tiempos.
+Las listas y fichas cuya mutación es intencional la conservan; explicar copia
+superficial no introduce una prohibición global de mutación. La precisión de
+float documenta la referencia existente, no sustituye / por // ni cambia casos.
+
+`tests/python-reference-theory.test.ts` protege inventario y decisiones y ejecuta
+modelos fijos de vinculación de parámetros, modificación frente a reasignación,
+lista exterior separada, referencias interiores compartidas, alias de diccionario
+y división float con cero/negativos. Las comparaciones is observan identidad del
+modelo, no la deducen desde JSON ni certifican programas enviados. No se acredita
+aislamiento ni ausencia de cualquier mutación intermedia de código de alumnos.
+
+La huella previa excluye exactamente tres párrafos y dos posiciones concretas
+de pistas, no listas completas de ayudas. Protege contratos, otras pistas y todos
+los campos ajenos. `tests/python-reference-theory-baseline.ts` restaura esos
+textos y ambos enunciados con sus contratos actuales para recuperar íntegra la
+huella anterior. Las expectativas históricas mantienen sus valores y se añade
+otra huella de publicación sin preparar ni activar la base. Teoría restante,
+ejemplos, vocabulario global, repeticiones y D2/E/F siguen abiertos.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Las **224/224 explicaciones de solución** tienen revisión individual; no implica
   que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
-- La teoría local tiene 96/224 actividades revisadas: 48 propias y 48 comunes;
-  quedan 128 comunes/proyectos y las repeticiones entre superficies.
+- La teoría local tiene 120/224 actividades revisadas: 48 propias y 72 comunes;
+  quedan 104 comunes/proyectos y las repeticiones entre superficies.
 - Quedan vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos

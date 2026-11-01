@@ -488,7 +488,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve un diccionario con original y alias. original conserva todos los valores recibidos, sin cambios; alias contiene únicamente nuevo. Una entrada vacía conserva original como []. Los casos muestran los contenidos, no certifican la identidad de las listas.",
   ) },
   "logica-copia-plana": { statement: statement(
-    "Copia la lista recibida con list(valores) y añade nuevo solo al final de la copia. Practica una copia independiente, no un alias.",
+    "Copia la lista recibida con list(valores) y añade nuevo solo al final de la copia. list crea otra lista exterior: es una copia superficial, no una copia de posibles contenedores interiores. Aquí los elementos son enteros inmutables y solo añades a la lista exterior, por lo que basta para conservar la original. No confundas esta copia con un alias.",
     "data es un diccionario con valores, una lista de enteros que puede estar vacía, y nuevo, otro entero.",
     "Devuelve un diccionario con original y copia. original conserva los valores recibidos sin el elemento nuevo; copia contiene esos valores seguidos de nuevo. La copia debe ser independiente también con entrada vacía. La comparación de contenidos no certifica identidad por sí sola.",
   ) },
@@ -501,7 +501,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Crea un alias de ficha y suma cambio a alias['cantidad']. Aquí se pide modificar intencionalmente el diccionario compartido: ambos nombres observan la misma cantidad.",
     "data es un diccionario con ficha, otro diccionario que contiene cantidad, y cambio. cantidad y cambio son enteros entre -1000 y 1000.",
     "Devuelve una lista con ficha['cantidad'] y alias['cantidad'], en ese orden, después del cambio. Ambos valores deben reflejar la cantidad actualizada. La salida muestra el efecto, pero no certifica identidad por sí sola.",
-  ) },
+  ), hints: ["Ficha y alias son el mismo objeto.", "Cambia el valor asociado a la clave cantidad, no reasignes alias.", "Ambas consultas observan la cantidad actualizada."] },
   "python-identidad": { statement: statement(
     "Compara contenido e identidad: == compara contenido; is pregunta si es el mismo objeto. Construye original = list(data['valores']), alias = original y copia = list(original). Conserva antes = list(original) y añade nuevo solo al alias. list(...) crea otra lista exterior; si contiene listas o diccionarios, conserva las referencias a esos elementos interiores: es una copia superficial. Asignar alias no crea ninguna copia. Aquí añades un elemento a la lista exterior, sin modificar elementos interiores.",
     "data es un diccionario con valores, una lista de hasta 100 elementos, y nuevo, el elemento que se añade. No modifiques data.",
@@ -533,7 +533,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve el total de cantidades como entero. Cada registro cuenta, aunque se repita el nombre o el registro completo: no agrupes ni elimines repeticiones. Para la lista vacía devuelve 0.",
   ) },
   "logica-valida-divisor": { statement: statement(
-    "Valida el divisor antes de calcular un cociente. Distingue un divisor cero de un total cero válido.",
+    "Valida el divisor antes de calcular un cociente. Distingue un divisor cero de un total cero válido. En Python, / produce float aunque el cociente tenga valor entero: 6 / 2 da 3.0 y 0 / 2 da 0.0. Ese cero numérico no es None; JSON puede mostrarlo como 0 sin conservar la escritura decimal del valor Python.",
     "data es un diccionario con total y divisor, enteros entre -1000 y 1000. Cuando divisor no es cero, el cociente es entero.",
     "Devuelve None si divisor es cero; en otro caso devuelve total / divisor. Un total cero con divisor válido devuelve 0. None se representa como null en JSON; no escribas null en el código Python.",
   ) },
@@ -698,10 +698,10 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "La auxiliar debe devolver el número recibido más uno. Devuelve ese resultado, no el valor local fijo de la plantilla.",
   ) },
   "logica-parametro-exterior": { statement: statement(
-    "Escribe dentro de solve(data) una auxiliar llamada doble que utilice su parámetro, no el valor exterior. La plantilla solo prepara solve(data): añade las operaciones y la auxiliar del reto.",
+    "Escribe dentro de solve(data) una auxiliar llamada doble que utilice su parámetro, no el valor exterior. Al llamar a una función, su parámetro queda vinculado al objeto pasado como argumento; no se crea automáticamente una copia de ese objeto. Aquí el argumento es un entero inmutable: calcular su doble no modifica el entero exterior. La plantilla solo prepara solve(data): añade las operaciones y la auxiliar del reto.",
     "data es un diccionario con exterior y argumento, enteros entre -1000 y 1000.",
     "Devuelve una lista con dos enteros: el doble de argumento y el valor original de exterior, en ese orden. No cambies exterior. Los casos comprueban los valores, no certifican el uso interno del parámetro.",
-  ) },
+  ), hints: ["El parámetro recibe el argumento de esa llamada, no una copia automática ni el valor exterior.", "Usa valor dentro de doble.", "Devuelve valor * 2; exterior solo se consulta en el resultado final."] },
   "logica-llamadas-independientes": { statement: statement(
     "Escribe una auxiliar cuyo contador empiece en cero en cada llamada y se incremente n veces. Llámala para cada valor recibido: la segunda llamada no hereda el contador de la primera. La plantilla solo prepara solve(data).",
     "data es una lista de exactamente dos enteros entre 0 y 1000.",
