@@ -7,6 +7,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { localTheoryContract } from "./python-local-theory-baseline";
 import { beforePythonIterationTheory, previousIterationTheoryTasks } from "./python-iteration-theory-baseline";
+import { beforePythonRecordTheory } from "./python-record-theory-baseline";
 
 const reviewed = ["python-recorre-pares", "python-lista-registros", "python-conjunto-seguro", "python-union", "python-interseccion", "python-diferencia", "python-simetrica", "python-subconjunto", "python-crea-grupo", "python-comprension", "python-comprension-filtro", "python-comprension-condicional", "python-comprension-dict", "python-iterador", "python-generador", "python-map"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -37,7 +38,7 @@ test("la teoría distingue llamada de método, pertenencia de tamaño y transfor
 });
 
 test("el segundo lote de teoría conserva todo salvo tres párrafos y reconstruye íntegra la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => !(entry.slug in previousIterationTheoryTasks) ? entry : ({ ...entry, content: {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonRecordTheory(entry.slug, entry.content) })).map(entry => !(entry.slug in previousIterationTheoryTasks) ? entry : ({ ...entry, content: {
     ...entry.content, statement: localTheoryContract(entry.content.statement),
     variants: entry.content.variants.map(variant => ({ ...variant, statement: localTheoryContract(variant.statement!) })),
   } }));

@@ -243,7 +243,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve un texto con exactamente esa cantidad de decimales y punto como separador, siguiendo el formato nativo de Python. Con cero decimales no hay parte decimal. Conserva los ceros finales requeridos. Se usa el redondeo de float, no una regla financiera decimal; los casos no certifican el uso de un f-string.",
   ) },
   "python-consulta-anidada": { statement: statement(
-    "Consulta una nota en un registro anidado. get permite dar un respaldo si falta una clave; un diccionario vacío como respaldo permite continuar la consulta. No uses la falsedad de una nota para decidir si está ausente.",
+    "Consulta una nota en un registro anidado. get(clave, respaldo) usa el respaldo solo si falta la clave, no si su valor es cero o None. Un diccionario vacío como respaldo del alumno ausente permite continuar la consulta del curso; no convierte en diccionario un valor None ya guardado. En este modelo, los valores de alumno son diccionarios y None solo puede ser una nota. No uses la falsedad de una nota para decidir si está ausente.",
     "data es un diccionario con registro, alumno y curso. registro asocia alumnos con diccionarios de curso a nota. Cada nota es un entero entre 0 y 100 o None (null en JSON). Los diccionarios tienen hasta 100 elementos por nivel.",
     "Devuelve la nota del curso, o None si falta el alumno, el curso o su nota. Cero es una nota válida y debe conservarse. Los casos no certifican el uso de get.",
   ) },
@@ -263,7 +263,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve una copia del registro inscribiendo al alumno en el curso con nota None (null en JSON) solo si aún no está inscrito. Crea al alumno si falta. Si el curso ya existe, conserva su nota, incluso cero. No modifiques la entrada. Los casos no certifican el uso de setdefault.",
   ) },
   "python-academia-califica": { statement: statement(
-    "Califica solo una inscripción existente. Inscripción y calificación tienen reglas distintas: valida existencia y rango antes de asignar. Una condición con and puede evitar consultar un alumno ausente.",
+    "Califica solo una inscripción existente. Inscripción y calificación tienen reglas distintas: valida existencia y rango antes de asignar. and evalúa de izquierda a derecha y no continúa cuando una condición es falsa. Comprobar primero que el alumno pertenece al registro permite consultar después su diccionario de cursos sin provocar KeyError por un alumno ausente. Cambiar el orden de esas comprobaciones pierde esa protección.",
     "data es un diccionario con registro, alumno, curso y nota, que es entera. registro asocia alumnos con diccionarios de cursos y notas, con hasta 100 elementos por nivel.",
     "Devuelve una copia: cambia la nota solo si alumno y curso ya existen y 0 ≤ nota ≤ 100, incluidos ambos extremos. En otro caso conserva el registro sin cambios. No inscribas automáticamente ni modifiques la entrada.",
   ) },
@@ -458,7 +458,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve una lista con esos enteros duplicados en el mismo orden, no textos repetidos. Para la lista vacía devuelve []. Los casos no certifican el uso de map ni de una auxiliar.",
   ) },
   "python-filter": { statement: statement(
-    "Selecciona adultos practicando filter y una auxiliar booleana. filter(predicado, registros) conserva los registros cuyo predicado es verdadero, sin transformarlos; después puedes extraer sus nombres.",
+    "Selecciona adultos practicando filter y una auxiliar booleana. filter(predicado, registros) devuelve un iterador: comprueba el predicado al pedir resultados y entrega los registros aceptados sin transformarlos. Para encontrar el siguiente aceptado puede comprobar varios registros; un rechazo no termina el recorrido. Después puedes extraer los nombres. Crear el iterador no construye ya una lista de seleccionados.",
     "data es una lista de hasta 100 registros. Cada registro es un diccionario con nombre y edad, un entero entre 0 y 120.",
     "Devuelve una lista de nombres de quienes tienen al menos 18 años, en orden original y sin quitar repeticiones. Un menor se omite, pero no termina el recorrido: puede haber adultos después. Sin adultos devuelve []. Los casos no certifican el uso de filter.",
   ) },

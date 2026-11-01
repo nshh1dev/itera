@@ -124,6 +124,8 @@ La revisión de teoría local empieza por 16/48 actividades propias: tres ajuste
 
 El segundo lote de teoría local revisa otras 16 propias de conjuntos, comprensiones e iteración: tres ajustes y trece textos conservados; van 32/48 propias. Se precisan llamadas de vistas, inclusión por pertenencia y map bajo demanda, con modelos fijos que observan llamadas al consumir el iterador. Solo cambian tres párrafos de Tu tarea; entrada/salida, ayudas, soluciones y ejemplos conservan huella previa y se reconstruye la entrega anterior. Quedan 16 propias y teoría común/proyectos, además de ejemplos, repeticiones y D2/E/F. Las 224 explicaciones siguen revisadas y la base sin preparar ni activar; detalles en [claridad-python.md](claridad-python.md).
 
+El tercer lote completa la teoría local de **48/48 actividades propias**: tres ajustes y trece introducciones conservadas en las últimas 16, nueve ajustes y 39 conservadas en total. Se precisa filter bajo demanda, respaldo de get y orden de and sin ampliar contratos. Solo cambian tres párrafos de Tu tarea y se conserva entrada/salida y toda otra superficie mediante huella previa y reconstrucción íntegra de la entrega anterior. Las 224 explicaciones siguen revisadas; quedan teoría común/proyectos, ejemplos, repeticiones, D2/E/F y validación real/visual. Base sin preparar ni activar; detalles en [claridad-python.md](claridad-python.md).
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonRecordTheory } from "./python-record-theory-baseline";
 
 export const previousIterationTheoryTasks: Record<string, string> = {
   "python-recorre-pares": "Recorre las parejas de un diccionario. items ofrece parejas; keys y values ofrecen vistas de claves y valores. sorted(d.items()) ordena primero por clave; puedes desempaquetar cada pareja durante el recorrido.",
@@ -9,6 +10,7 @@ export const previousIterationTheoryTasks: Record<string, string> = {
 // Solo restaura tres párrafos previos; mantiene los contratos actuales para que
 // una modificación ajena a teoría siga rompiendo las huellas históricas.
 export function beforePythonIterationTheory(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonRecordTheory(slug, content);
   if (!(slug in previousIterationTheoryTasks)) return content;
   const restore = (text: string) => {
     const index = text.indexOf("\n\nEntrada\n");

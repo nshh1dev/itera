@@ -1233,13 +1233,61 @@ y se añade una huella de publicación, sin preparar ni activar la base. El rest
 de teoría, ejemplos, vocabulario global, repeticiones, D2/E/F y verificación
 real/visual sigue pendiente.
 
+## Teoría local: cierre de las 48 propias
+
+Se revisan las últimas **16 actividades propias**, con **tres ajustes y trece
+introducciones conservadas**. Queda revisada la teoría local de **48/48 propias**:
+nueve párrafos ajustados y 39 conservados entre los tres bloques. Esto no incluye
+la revisión pendiente de teoría local de actividades comunes y proyectos ni la
+revisión global de ejemplos y repeticiones entre superficies.
+
+| Actividad | Decisión sobre teoría local |
+| --- | --- |
+| `python-filter` | Ajustar: iterador consumido bajo demanda, posible comprobación de varios registros para obtener un aceptado y rechazo sin terminar el recorrido; no transforma las fichas ni crea una lista al construirlo. |
+| `python-agrega` | Conservar: neutro de sum y default de extremos vacíos, sin inventar cero. |
+| `python-clave-longitud` | Conservar: pasar len sin ejecutarla por adelantado y estabilidad de claves iguales. |
+| `python-lambda-desempate` | Conservar: expresión como auxiliar, tupla de criterios y signo negativo solo para el criterio numérico. |
+| `python-formato-decimal` | Conservar: texto frente a número, precisión variable y ceros finales; redondeo float, no financiero. |
+| `python-consulta-anidada` | Ajustar: get usa respaldo solo para clave ausente, no para cero/None guardados; el diccionario vacío permite continuar únicamente porque el modelo garantiza diccionarios por alumno. |
+| `python-inventario-valora` | Conservar: céntimos enteros y filas nuevas sin stock ni disco, distinto de proyectos de inventario persistente. |
+| `python-academia-inscribe` | Conservar: modelo alumno/curso/nota, copia interior y setdefault sin sobrescribir calificaciones. |
+| `python-academia-califica` | Ajustar: and de izquierda a derecha con cortocircuito; pertenencia antes de acceso evita KeyError y cambiar ese orden pierde la protección. |
+| `python-academia-resume` | Conservar: None frente a cero, promedio con alguna nota e índice de medias para ordenar nombres. |
+| `python-contactos-crea` | Conservar: normalización antes de duplicados, fichas copiadas y teléfonos de texto con ceros iniciales. |
+| `python-contactos-edita` | Conservar: campos permitidos y comprobación de tipo, no verdad del texto que puede estar vacío. |
+| `python-contactos-borra` | Conservar: misma normalización, pop con respaldo y coincidencia completa del nombre. |
+| `python-contactos-busca` | Conservar: todos los criterios, coincidencia parcial y rechazo temprano sin mutar datos al comparar. |
+| `python-transforma-campo` | Conservar: copia superficial justificada por textos inmutables y transformación puntual sin crear clave ausente. |
+| `python-transforma-registros` | Conservar: reglas transportadas por nombre y captura limitada a conversión numérica, sin extender gramática ASCII de otras actividades a int nativo. |
+
+Los cambios se limitan a tres párrafos de Tu tarea en la proyección Python.
+Entrada/Resultado esperado, ayudas, objetivos, código, ejemplos y tiempos
+conservan sus valores exactos. La advertencia sobre None en get no amplía el
+contrato para aceptar alumnos no representados por diccionarios.
+
+`tests/python-record-theory.test.ts` protege las 16 decisiones y correspondencia
+de las 48 propias con `pythonLessons`. Los modelos fijos observan las llamadas
+del predicado al consumir filter, la identidad de una ficha aceptada, respaldo
+de get con cero/None/clave ausente y diferencias entre consulta segura y consulta
+antes de pertenencia. Incluyen estabilidad, desempate, formato, extremos y
+conversión nativa. Consultan identidad con is en el modelo, no a través de JSON
+ni sobre programas enviados; no acreditan sandbox o técnicas de estudiantes.
+
+La huella previa excluye solo tres párrafos y protege los contratos completos,
+las 32 introducciones revisadas antes, las trece conservadas y todas las otras
+superficies. `tests/python-record-theory-baseline.ts` restaura ambos enunciados
+con sus contratos actuales y recupera la huella íntegra de la entrega anterior;
+las expectativas históricas mantienen sus valores. Se añade otra huella de
+publicación sin preparar ni activar contenido. La teoría común/proyectos,
+ejemplos, vocabulario global, repeticiones y D2/E/F siguen pendientes.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Las **224/224 explicaciones de solución** tienen revisión individual; no implica
   que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
-- La teoría local tiene 32/48 propias revisadas; quedan las otras 16, la de
-  actividades comunes/proyectos y las repeticiones entre superficies.
+- La teoría local tiene 48/48 propias revisadas; queda la de actividades
+  comunes/proyectos y las repeticiones entre superficies.
 - Quedan vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
