@@ -84,4 +84,6 @@ export const knownPythonReleases: readonly string[] = [
   "12607d2d946b057d3a7a3310db969501804e300628b2004e9a402391b590a93d",
   // Teoría local, primeras 16 propias: tres ajustes y trece conservadas.
   "77c893973bab42abb3369ad5a8525f59eb2200ee6afd581ff28071135e550c6d",
+  // Teoría local de conjuntos e iteración: tres ajustes y trece conservadas.
+  "0b39155ec83cb52dde638d4ed540b3b916f8e07e87309798c51cd61343925439",
 ];

@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonIterationTheory } from "./python-iteration-theory-baseline";
 
 // Párrafos vigentes antes del primer lote de teoría local. La reconstrucción
 // mantiene Entrada/Resultado esperado actuales: cualquier cambio allí rompe
@@ -16,6 +17,7 @@ export function localTheoryContract(statement: string): string {
 }
 
 export function beforePythonLocalTheory(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonIterationTheory(slug, content);
   if (!(slug in previousLocalTheoryTasks)) return content;
   const restore = (text: string) => `Tu tarea\n${previousLocalTheoryTasks[slug]}${localTheoryContract(text)}`;
   return { ...content, statement: restore(content.statement), variants: content.variants.map(variant => {

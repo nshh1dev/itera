@@ -122,6 +122,8 @@ El duodécimo lote completa **224/224 explicaciones de solución revisadas indiv
 
 La revisión de teoría local empieza por 16/48 actividades propias: tres ajustes y trece introducciones conservadas. Se aclaran return alcanzado por una rama y alcance superficial de list/dict, conservando el contexto antes de practicar y las pistas progresivas. Solo cambian tres párrafos de Tu tarea; contratos de entrada/salida y demás superficies conservan huella previa, con reconstrucción histórica de ambos enunciados. Los modelos fijos comprueban identidad directamente, sin inferirla desde JSON ni certificar programas de alumnos. Las 224 explicaciones de solución siguen revisadas; teoría restante, ejemplos, repeticiones, D2/E/F y validación real/visual siguen pendientes. Detalles en [claridad-python.md](claridad-python.md); base sin preparar ni activar.
 
+El segundo lote de teoría local revisa otras 16 propias de conjuntos, comprensiones e iteración: tres ajustes y trece textos conservados; van 32/48 propias. Se precisan llamadas de vistas, inclusión por pertenencia y map bajo demanda, con modelos fijos que observan llamadas al consumir el iterador. Solo cambian tres párrafos de Tu tarea; entrada/salida, ayudas, soluciones y ejemplos conservan huella previa y se reconstruye la entrega anterior. Quedan 16 propias y teoría común/proyectos, además de ejemplos, repeticiones y D2/E/F. Las 224 explicaciones siguen revisadas y la base sin preparar ni activar; detalles en [claridad-python.md](claridad-python.md).
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

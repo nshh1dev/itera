@@ -383,7 +383,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve una lista de valores presentes en exactamente una de las entradas, sin duplicados y de menor a mayor. Los compartidos no aparecen; si no hay exclusivos devuelve []. Los casos no certifican el uso del operador ^.",
   ) },
   "python-subconjunto": { statement: statement(
-    "Comprueba si todos los requisitos están disponibles. Para conjuntos, A <= B incluye la igualdad; A < B exige además que no sean iguales. El conjunto vacío es subconjunto de cualquier conjunto.",
+    "Comprueba si todos los requisitos están disponibles. Para conjuntos, A <= B pregunta si cada elemento de A pertenece a B e incluye la igualdad; A < B exige además que no sean iguales. No compara tamaños: dos conjuntos con igual cantidad de elementos pueden contener valores distintos. El conjunto vacío es subconjunto de cualquier conjunto.",
     "data es un diccionario con disponibles y requeridos, listas de hasta 100 textos cada una. Pueden estar vacías.",
     "Devuelve True si todos los requeridos están disponibles y False en otro caso. Las repeticiones no cuentan como unidades: solo importa la pertenencia. Sin requisitos devuelve True. True y False se representan como true y false en JSON. Los casos no certifican el uso del operador <=.",
   ) },
@@ -453,7 +453,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve la suma de los cuadrados como entero. Para una lista vacía devuelve 0. Las pruebas comprueban el resultado, no el consumo de memoria de una implementación alternativa ni el uso de un generador.",
   ) },
   "python-map": { statement: statement(
-    "Practica map con una función auxiliar. map(funcion, valores) aplica la función a cada elemento y devuelve un iterador; pasa la función por nombre, sin llamarla. list materializa los valores para devolver JSON.",
+    "Practica map con una función auxiliar. map(funcion, valores) devuelve un iterador: llama a funcion al pedir cada resultado, no transforma todos los elementos al crearlo. Pasa la función por nombre, sin llamarla por adelantado. list consume ese iterador y construye la lista para devolver JSON; volver a consumir el mismo iterador ya agotado no repite la transformación.",
     "data es una lista de hasta 100 textos que representan enteros válidos entre -100 y 100. No requiere recuperación de errores; puede estar vacía.",
     "Devuelve una lista con esos enteros duplicados en el mismo orden, no textos repetidos. Para la lista vacía devuelve []. Los casos no certifican el uso de map ni de una auxiliar.",
   ) },
@@ -523,7 +523,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve una copia de valores sin clave. Si no existe, conserva todas las parejas. No modifiques el original; si no quedan parejas, devuelve un diccionario vacío. Los casos no certifican el uso de pop.",
   ) },
   "python-recorre-pares": { statement: statement(
-    "Recorre las parejas de un diccionario. items ofrece parejas; keys y values ofrecen vistas de claves y valores. sorted(d.items()) ordena primero por clave; puedes desempaquetar cada pareja durante el recorrido.",
+    "Recorre las parejas de un diccionario. d.items() devuelve una vista de parejas (clave, valor); d.keys() y d.values() ofrecen vistas de claves y valores. Se llaman con paréntesis: d.items sin ellos es el método, no la vista. sorted(d.items()) construye una lista de parejas ordenadas por clave; puedes desempaquetar cada pareja durante el recorrido. Aquí no se modifica d mientras se recorre.",
     "data es un diccionario de hasta 100 claves formadas por letras a-z y valores enteros; puede estar vacío.",
     "Devuelve una lista de textos con el formato 'clave: valor', ordenados por clave ascendente. Respeta los dos puntos y el espacio posterior, sin añadir comillas ni saltos de línea. Para un diccionario vacío devuelve []. Los casos no certifican el uso de items.",
   ) },

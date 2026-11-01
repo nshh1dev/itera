@@ -6,6 +6,7 @@ import { pythonCatalog } from "../prisma/python-content";
 import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { beforePythonLocalTheory, localTheoryContract, previousLocalTheoryTasks } from "./python-local-theory-baseline";
+import { beforePythonIterationTheory } from "./python-iteration-theory-baseline";
 
 const reviewed = ["python-constante", "python-decimal", "python-condicional", "python-centinela", "python-omite-negativos", "python-ordena-numeros", "python-recorta", "python-une-palabras", "python-desempaqueta", "python-enumera", "python-empareja", "python-retorno-multiple", "python-identidad", "python-opcional-seguro", "python-actualiza-diccionario", "python-borra-clave"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -37,7 +38,7 @@ test("la teoría distingue return alcanzado, copia exterior y elementos comparti
 });
 
 test("el primer lote de teoría local conserva contratos y toda superficie salvo tres párrafos de tarea", () => {
-  const payload = pythonCatalog.map(entry => !(entry.slug in previousLocalTheoryTasks) ? entry : ({ ...entry, content: {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonIterationTheory(entry.slug, entry.content) })).map(entry => !(entry.slug in previousLocalTheoryTasks) ? entry : ({ ...entry, content: {
     ...entry.content, statement: localTheoryContract(entry.content.statement),
     variants: entry.content.variants.map(variant => ({ ...variant, statement: localTheoryContract(variant.statement!) })),
   } }));

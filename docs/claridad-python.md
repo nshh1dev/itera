@@ -1189,12 +1189,56 @@ valores. Se recupera la huella completa anterior y se añade otra de publicació
 No se prepara ni activa contenido; teoría restante, ejemplos, vocabulario global,
 repeticiones, D2 y F siguen abiertos.
 
+## Teoría local: conjuntos, comprensiones e iteración
+
+Se revisan las siguientes **16 actividades propias**: **tres ajustes y trece
+introducciones conservadas**. Van **32/48 propias** con teoría local revisada;
+quedan 16 propias y la teoría común/proyectos. Las 224 explicaciones de solución
+mantienen su revisión individual, distinta de esta superficie.
+
+| Actividad | Decisión sobre teoría local |
+| --- | --- |
+| `python-recorre-pares` | Ajustar: items(), keys() y values() son llamadas que devuelven vistas; distinguir método sin paréntesis y lista creada por sorted. No modificar el diccionario durante el recorrido. |
+| `python-lista-registros` | Conservar: ficha como diccionario, campo frente a índice y acumulador antes del bucle, sin introducir agrupación. |
+| `python-conjunto-seguro` | Conservar: add/discard/remove y lista ordenada; el resultado fija el orden de añadir y descartar. |
+| `python-union` | Conservar: pertenencia en al menos un lado y valor compartido una sola vez; pista final concreta aparte. |
+| `python-interseccion` | Conservar: pertenencia en ambos, no cantidad de apariciones. |
+| `python-diferencia` | Conservar: dirección de resta de conjuntos y faltantes frente a sobrantes. |
+| `python-simetrica` | Conservar: exclusivos de ambos lados y contraste con diferencia direccional. |
+| `python-subconjunto` | Ajustar: cada elemento de A debe pertenecer a B; <= no compara tamaños y admite igualdad, a diferencia de <. Conservar vacío. |
+| `python-crea-grupo` | Conservar: copia exterior comparte listas, lista nueva por categoría y setdefault antes de append. |
+| `python-comprension` | Conservar: expresión por posición y equivalencia con bucle, sin filtro ni pérdida de repeticiones. |
+| `python-comprension-filtro` | Conservar: if posterior selecciona, lower permite reconocer mayúsculas; encadenado concreto en pista final. |
+| `python-comprension-condicional` | Conservar: expresión condicional transforma cada posición y filtro elimina posiciones. |
+| `python-comprension-dict` | Conservar: clave: valor distingue diccionario de conjunto y repetición reemplaza asociación. |
+| `python-iterador` | Conservar: único recorrido consumible, materializar agota y no reinicia ni vacía la entrada. |
+| `python-generador` | Conservar: valores bajo demanda y consumo por sum sin lista completa intermedia; sin prometer memoria de cualquier solución. |
+| `python-map` | Ajustar: la función se llama al pedir resultados, no para transformar todos al crear map; list consume y no repite una transformación ya agotada. |
+
+Solo cambian tres párrafos de Tu tarea en la proyección Python. Entrada y
+Resultado esperado, ayudas, objetivos, soluciones, ejemplos y tiempos se
+conservan íntegros. No se añaden excepciones a los contratos ni garantías de
+técnica comprobada. `tests/python-iteration-theory.test.ts` exige las 16
+identidades y contrasta modelos fijos independientes de vistas, pertenencia,
+operaciones de conjuntos, comprensiones y agotamiento. Un registro de llamadas
+confirma que crear map no ejecuta la auxiliar, next consume un elemento y list
+solo consume los restantes. No son programas de alumnos ni pruebas del sandbox.
+
+La huella calculada antes de editar excluye solo tres párrafos, protegiendo los
+contratos completos, las 16 revisadas previamente, las trece conservadas y
+todas las demás superficies. `tests/python-iteration-theory-baseline.ts`
+reconstruye la entrega anterior restaurando ambos enunciados sin tocar sus
+secciones de entrada/salida. Las expectativas históricas mantienen sus valores
+y se añade una huella de publicación, sin preparar ni activar la base. El resto
+de teoría, ejemplos, vocabulario global, repeticiones, D2/E/F y verificación
+real/visual sigue pendiente.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Las **224/224 explicaciones de solución** tienen revisión individual; no implica
   que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
-- La teoría local tiene 16/48 propias revisadas; quedan las otras 32, la de
+- La teoría local tiene 32/48 propias revisadas; quedan las otras 16, la de
   actividades comunes/proyectos y las repeticiones entre superficies.
 - Quedan vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
