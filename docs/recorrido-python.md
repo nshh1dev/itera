@@ -98,6 +98,8 @@ Los minutos orientativos se revisan en [tiempos-python.md](tiempos-python.md): 5
 
 Los títulos/descripciones de los 57 módulos y las descripciones de las cuatro rutas tienen proyección propia en `src/lib/python-route-copy.ts`; criterios e integración en [textos-rutas-python.md](textos-rutas-python.md). Se mantienen títulos de ruta, slugs y secuencia. Listado, detalle y punto de partida usan la descripción Python solo con currículo publicado; el resumen verifica el marcador sin consultar progreso adicional ni alterar el nivel. La teoría, los ejemplos y el catálogo de actividades no cambian; las prácticas FUNCTION de academia/contactos se distinguen de los proyectos multarchivo.
 
+La teoría de los 57 módulos está revisada en [teoria-modulos-python.md](teoria-modulos-python.md): `src/lib/python-module-theory.ts` proyecta 31 teorías y ocho ejemplos nuevos, conservando los otros 26 textos. Las comprobaciones ejecutan los 57 ejemplos fijos localmente con expectativas independientes, sin certificar Piston ni aislamiento. Se mantienen autoevaluaciones, títulos, secuencia y actividades; quedan teoría local y explicaciones de actividades y la revisión visual de F.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

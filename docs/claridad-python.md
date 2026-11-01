@@ -582,10 +582,20 @@ agrupación, archivos, contactos y prácticas frente a proyectos multarchivo.
 Teoría, ejemplos y actividades conservan sus campos; el resto de E/F sigue
 abierto, incluida la revisión visual de los textos nuevos.
 
+## Teoría de módulos
+
+[teoria-modulos-python.md](teoria-modulos-python.md) registra la revisión de las
+57 teorías: 31 ajustes, 26 conservadas y ocho ejemplos sustituidos. Se retiran
+referencias incidentales a otros lenguajes, se definen fichas como diccionarios
+y se alinean None/JSON, árboles, secuencia, archivos y persistencia. Los 57
+ejemplos se comprueban como código fijo local con expectativas independientes;
+no equivalen a Piston. La teoría local y explicaciones de actividades y la
+revisión editorial global siguen pendientes.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
-- Quedan teoría local y de módulos, vocabulario en otras
+- Quedan teoría local, vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
   conservan sus contratos de archivos y persistencia; se retiraron repeticiones

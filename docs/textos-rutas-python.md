@@ -48,7 +48,9 @@ Las descripciones usan verbos de práctica y no se generan uniendo las frases
 «Puedo…» de autoevaluación. Estas últimas permanecen intactas para su función de
 repaso. También permanecen teoría, ejemplos de módulo y títulos de actividades:
 el vocabulario global y la repetición entre esas superficies tienen revisión
-pendiente.
+pendiente. Una revisión posterior de la teoría de módulos se documenta en
+[teoria-modulos-python.md](teoria-modulos-python.md), separada de este lote de
+títulos y descripciones.
 
 ## Integración y protección del catálogo activo
 

@@ -55,8 +55,10 @@ test("las cuatro rutas proyectan solo su descripción con Python activo y conser
   assert.match(projected[2].description, /comprensiones.*iteradores.*registros académicos y contactos/);
 });
 
-test("los textos de rutas y módulos no cambian teoría, orden, contratos ni fuentes comunes", () => {
+test("las proyecciones conservan orden, contratos y fuentes comunes", () => {
   assert.equal(hash({ learningPaths, learningModules }), "f385a8f00ec5c20a7bf4162f5756c251804a1e248aed8a9e1e704c10c1ff8b36");
-  assert.equal(hash(pythonCurriculumUnits.map(({ title, ...rest }) => { void title; return rest; })), "075eae32072d0f51aacfe5a52e54d170827c8bc30d681733b5b6153d35c5398c");
+  // Teoría y ejemplos tienen revisión y huella acotadas en python-module-theory.test.ts.
+  // Huella anterior sin títulos: 075eae32072d0f51aacfe5a52e54d170827c8bc30d681733b5b6153d35c5398c.
+  assert.equal(hash(pythonCurriculumUnits.map(({ title, theory, examples, ...rest }) => { void [title, theory, examples]; return rest; })), "bcf226222d8e646c2353ea5df4fe956f83b956f685574a80397a3af72eff5e1d");
   assert.equal(pythonReleaseFingerprint(pythonCatalog), "361d08526dac58c1dadfac4d939509e75a6f225b8f5355780a488f0a840eb480");
 });
