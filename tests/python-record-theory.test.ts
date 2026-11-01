@@ -7,6 +7,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { localTheoryContract } from "./python-local-theory-baseline";
 import { beforePythonRecordTheory, previousRecordTheoryTasks } from "./python-record-theory-baseline";
+import { beforePythonCommonTheory } from "./python-common-theory-baseline";
 
 const reviewed = ["python-filter", "python-agrega", "python-clave-longitud", "python-lambda-desempate", "python-formato-decimal", "python-consulta-anidada", "python-inventario-valora", "python-academia-inscribe", "python-academia-califica", "python-academia-resume", "python-contactos-crea", "python-contactos-edita", "python-contactos-borra", "python-contactos-busca", "python-transforma-campo", "python-transforma-registros"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -38,7 +39,7 @@ test("la teoría delimita consumo de filter, respaldo de get y orden seguro de a
 });
 
 test("el cierre de teoría propia conserva todo salvo tres párrafos y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => !(entry.slug in previousRecordTheoryTasks) ? entry : ({ ...entry, content: {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonCommonTheory(entry.slug, entry.content) })).map(entry => !(entry.slug in previousRecordTheoryTasks) ? entry : ({ ...entry, content: {
     ...entry.content, statement: localTheoryContract(entry.content.statement),
     variants: entry.content.variants.map(variant => ({ ...variant, statement: localTheoryContract(variant.statement!) })),
   } }));

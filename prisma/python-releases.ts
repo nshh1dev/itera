@@ -88,4 +88,6 @@ export const knownPythonReleases: readonly string[] = [
   "0b39155ec83cb52dde638d4ed540b3b916f8e07e87309798c51cd61343925439",
   // Teoría local: cierre de las 48 propias, tres ajustes y trece conservadas.
   "c1967544da5e2b6be3d8c1689adadcba69ce092fd099be2d94cdcfc1d65a38dc",
+  // Teoría local de las primeras 24 comunes: tres ajustes y 21 conservadas.
+  "7437d98d5aaac234358b8e6d4ec9335fcbd8a6090390f0a24fec00f6958ffa29",
 ];

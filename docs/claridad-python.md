@@ -1281,13 +1281,68 @@ las expectativas históricas mantienen sus valores. Se añade otra huella de
 publicación sin preparar ni activar contenido. La teoría común/proyectos,
 ejemplos, vocabulario global, repeticiones y D2/E/F siguen pendientes.
 
+## Teoría local: primeras 24 actividades comunes
+
+Se revisan los conceptos locales de las primeras **24 actividades comunes**,
+incluidos **20 programas y cuatro funciones**: **tres ajustes y 21 consignas
+conservadas**. No se añade un bloque teórico repetido a cada cálculo sencillo;
+se contrasta el texto con la plantilla y las ayudas que lo acompañan. Van
+**72/224 actividades revisadas en teoría local** (48 propias y 24 comunes);
+quedan 152 comunes, incluidos proyectos.
+
+| Actividad | Decisión sobre teoría local |
+| --- | --- |
+| `logica-saludo` | Conservar: instrucción de impresión y comillas de código frente a caracteres mostrados, con ayudas de paréntesis. |
+| `logica-dos-lineas` | Conservar: una instrucción por línea y orden de ejecución sin introducir retornos. |
+| `logica-orden-mensaje` | Conservar: reorganización concreta y lectura de arriba abajo, no reescritura del problema. |
+| `logica-texto-calculo` | Conservar: expresión numérica sin comillas frente a caracteres entre comillas. |
+| `logica-guarda-nombre` | Conservar: guardar y utilizar variable frente a repetir literal. |
+| `logica-guarda-cantidad` | Conservar: diagnóstico de imprimir nombre entre comillas en vez de su valor, manteniendo asignación. |
+| `logica-actualiza-puntos` | Conservar: valor previo en la derecha antes de actualizar, distinto de reemplazar por incremento. |
+| `logica-intercambia` | Conservar: auxiliar para evitar perder el primer valor; intercambio múltiple se presenta después. |
+| `logica-suma-cantidades` | Conservar: variables numéricas y operador de suma, sin ruido de fórmulas genéricas. |
+| `logica-cambio` | Conservar: pago menos precio y dirección de la resta. |
+| `logica-precio-unidades` | Conservar: multiplicación como suma repetida, con precio y cantidad diferenciados. |
+| `logica-parentesis` | Conservar: precedencia y agrupación de la suma completa antes de duplicar. |
+| `logica-lee-nombre` | Conservar: lectura preparada y unión de texto fijo con variable, espacio incluido. |
+| `logica-lee-doble` | Conservar: entero ya convertido, operación numérica y no repetición de texto; no rehacer entrada. |
+| `logica-lee-suma` | Conservar: dos textos convertidos antes de + frente a concatenación. |
+| `logica-mensaje-resultado` | Conservar: texto fijo más ciudad y espacio del prefijo sin alterar espacios interiores. |
+| `logica-numero-texto` | Conservar: + depende de operandos numéricos o textuales, sin sustituir expresiones por resultados fijos. |
+| `logica-booleano` | Conservar: True sin comillas frente al formato true ya preparado con str/lower. |
+| `logica-igualdad` | Ajustar: == compara y produce booleano; = asigna. Separar valor Python y transformación al texto exacto PROGRAM. |
+| `logica-alcanza` | Conservar: al menos incluye igualdad y lectura/formato preparados, sin adelantar ramas. |
+| `logica-retorno` | Ajustar: return entrega valor al llamador y termina esa llamada, no imprime; la aplicación recoge el retorno. |
+| `logica-parametro` | Conservar: cálculo con dato recibido, firma y negativos/cero; no añadir teoría duplicada de multiplicación. |
+| `logica-dos-parametros` | Conservar: accesos a diccionario ya preparados y combinación de ambos valores, no introducir otra firma. |
+| `logica-imprimir-devolver` | Ajustar: print devuelve None y return print(...) no entrega el número mostrado; devolver el cálculo es distinto de imprimirlo. |
+
+Solo cambian tres párrafos Tu tarea de la proyección Python. No cambian textos
+exactos de salida PROGRAM, secciones Entrada/Resultado esperado, plantillas,
+soluciones, ayudas, ejemplos, tiempos ni modalidades. Las variantes compartidas
+de JavaScript/TypeScript conservan sus fuentes e identidades.
+
+`tests/python-common-theory.test.ts` protege inventario y decisiones, y ejecuta
+modelos fijos de igualdad, asignación, booleanos convertidos a true/false,
+retorno sin impresión, None de print y fin de llamada. La salida se captura y
+contrasta con textos exactos. No son programas de alumnos ni una comprobación
+de técnicas internas, evaluación real o aislamiento.
+
+La huella previa excluye solo tres párrafos y protege los otros 221 enunciados,
+las 48 propias, todos los contratos y demás campos. La reconstrucción de
+`tests/python-common-theory-baseline.ts` restaura ambos enunciados conservando
+Entrada/Resultado esperado actuales; se recupera íntegra la huella anterior y
+se mantienen las expectativas históricas. Se añade otra huella de publicación
+sin preparar ni activar la base. Teoría restante, ejemplos, vocabulario global,
+repeticiones entre superficies, D2/E/F y validación real/visual siguen abiertos.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Las **224/224 explicaciones de solución** tienen revisión individual; no implica
   que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
-- La teoría local tiene 48/48 propias revisadas; queda la de actividades
-  comunes/proyectos y las repeticiones entre superficies.
+- La teoría local tiene 72/224 actividades revisadas: 48 propias y 24 comunes;
+  quedan 152 comunes/proyectos y las repeticiones entre superficies.
 - Quedan vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos

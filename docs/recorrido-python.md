@@ -126,6 +126,8 @@ El segundo lote de teoría local revisa otras 16 propias de conjuntos, comprensi
 
 El tercer lote completa la teoría local de **48/48 actividades propias**: tres ajustes y trece introducciones conservadas en las últimas 16, nueve ajustes y 39 conservadas en total. Se precisa filter bajo demanda, respaldo de get y orden de and sin ampliar contratos. Solo cambian tres párrafos de Tu tarea y se conserva entrada/salida y toda otra superficie mediante huella previa y reconstrucción íntegra de la entrega anterior. Las 224 explicaciones siguen revisadas; quedan teoría común/proyectos, ejemplos, repeticiones, D2/E/F y validación real/visual. Base sin preparar ni activar; detalles en [claridad-python.md](claridad-python.md).
 
+El cuarto lote de teoría local revisa las primeras 24 comunes (20 programas y cuatro funciones), con tres ajustes y 21 consignas conservadas. Van 72/224 actividades, incluidas las 48 propias; quedan 152 comunes/proyectos. Se precisa == frente a = y retorno frente a impresión, incluido None de print, sin cambiar salidas PROGRAM ni contratos. Las huellas protegen todo salvo tres párrafos y reconstruyen la entrega anterior. Las 224 explicaciones siguen revisadas; teoría restante, ejemplos, repeticiones y D2/E/F continúan pendientes. Base sin preparar ni activar; decisiones en [claridad-python.md](claridad-python.md).
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

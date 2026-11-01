@@ -203,7 +203,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Muestra true en una línea terminada, en minúsculas y sin comillas. Aunque el valor Python se escribe True, este programa exige el texto true en la salida.",
   ) },
   "logica-igualdad": { statement: statement(
-    "Completa la comparación de igualdad. La plantilla ya prepara los números y el formato de salida; conserva ambas partes.",
+    "Completa la comparación de igualdad. En Python, == compara dos valores y produce True o False; = asigna un valor a un nombre, no comprueba igualdad. La plantilla ya prepara los números y transforma el booleano al texto de salida requerido; conserva ambas partes.",
     "La entrada estándar contiene dos enteros entre -1000 y 1000, uno por línea.",
     "Muestra true si son iguales y false si son distintos, en una sola línea terminada y sin comillas. Son los textos exactos en minúsculas que exige este programa, no las representaciones True y False de Python. No añadas mensajes para pedir datos.",
   ) },
@@ -713,7 +713,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve una lista con base más cada tasa, en el orden recibido y usando siempre la misma base. No acumules las tasas unas sobre otras. Para tasas vacía devuelve []. La comprobación evalúa los resultados, no la organización interna.",
   ) },
   "logica-retorno": { statement: statement(
-    "Practica cómo entregar un resultado desde solve(data) usando return.",
+    "Practica cómo entregar un resultado desde solve(data) usando return. return entrega el valor a quien llamó a la función y termina esa llamada; no lo muestra por sí solo en la salida del programa. La aplicación recoge ese valor para compararlo.",
     "data es un entero entre -1000 y 1000. La aplicación proporciona ese valor; no necesitas pedirlo con input().",
     "Devuelve el mismo entero recibido, sin modificarlo. Mostrarlo con print no sustituye al retorno.",
   ) },
@@ -728,7 +728,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve la suma de ambos enteros con return. No devuelvas solo uno de ellos ni un texto con la operación.",
   ) },
   "logica-imprimir-devolver": { statement: statement(
-    "Corrige la plantilla: calcula el número recibido más uno, pero lo imprime y devuelve cero. Distingue mostrar un valor de devolverlo.",
+    "Corrige la plantilla: calcula el número recibido más uno, pero lo imprime y devuelve cero. print muestra el valor y su propia llamada devuelve None, no el número mostrado. return entrega el resultado de la función a quien la llamó. Por eso return print(...) tampoco devuelve el cálculo: debes entregar el valor calculado, no el resultado de imprimirlo.",
     "data es el número que proporciona la aplicación a solve(data).",
     "Devuelve con return el número recibido más uno. El valor mostrado con print no es el resultado que compara la evaluación.",
   ) },

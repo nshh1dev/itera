@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonCommonTheory } from "./python-common-theory-baseline";
 
 export const previousRecordTheoryTasks: Record<string, string> = {
   "python-filter": "Selecciona adultos practicando filter y una auxiliar booleana. filter(predicado, registros) conserva los registros cuyo predicado es verdadero, sin transformarlos; después puedes extraer sus nombres.",
@@ -8,6 +9,7 @@ export const previousRecordTheoryTasks: Record<string, string> = {
 
 // Restaura solo Tu tarea; los contratos actuales siguen incluidos en las huellas.
 export function beforePythonRecordTheory(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonCommonTheory(slug, content);
   if (!(slug in previousRecordTheoryTasks)) return content;
   const restore = (text: string) => {
     const index = text.indexOf("\n\nEntrada\n");
