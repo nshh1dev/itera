@@ -1563,13 +1563,66 @@ históricas y se añade otra huella de publicación sin preparar ni activar la b
 Teoría restante, ejemplos, vocabulario global, repeticiones y D2/E/F siguen
 abiertos.
 
+## Teoría local: ventanas, matrices, estructuras y árboles
+
+Se revisan otras **24 comunes**, todas FUNCTION, desde ventanas deslizantes hasta
+recorridos de árboles. **Las 24 conservan su teoría y ayudas** tras contraste
+individual con plantilla, contrato y pistas. Van **192/224 actividades revisadas
+en teoría local** (48 propias y 144 comunes); quedan **32 comunes/proyectos**.
+Este lote no modifica el catálogo: la huella publicada se conserva.
+
+| Actividad | Decisión sobre teoría local |
+| --- | --- |
+| `logica-ventana-fija` | Conservar: primera ventana completa, entra/sale al avanzar y mejor total; negativos sin permitir tramo vacío. |
+| `logica-ventana-suma` | Conservar: ampliar, reducir mientras se alcanza el objetivo, guardar longitud y restar al dejar atrás; positivos. |
+| `logica-celda` | Conservar: primera selección devuelve fila y segunda la posición; no confundir con fila completa ni índices. |
+| `logica-filas` | Conservar: una suma por fila, reinicio en cero y filas vacías que conservan su posición. |
+| `logica-columnas` | Conservar: acumulador por columna, longitud desde una fila y prohibición de devolver sumas de filas. |
+| `logica-diagonales` | Conservar: principal con índice igual y secundaria con tamaño menos uno menos fila; centro en ambas si es impar. |
+| `logica-transpuesta` | Conservar: una fila de salida por columna original e intercambio de índices i/j. |
+| `logica-vecinos` | Conservar: cuatro desplazamientos, comprobación de límites, sin diagonales ni celda propia. |
+| `logica-copia-anidada` | Conservar: copiar cada fila, cambiar solo la copia y no inferir identidad desde contenidos. |
+| `logica-pila` | Conservar: LIFO, apilar al final, desapilar el último y pop vacío ignorado. |
+| `logica-cola` | Conservar: FIFO, añadir al final, atender el primero y pop vacío ignorado. |
+| `logica-delimitadores` | Conservar: pila, comprobación de cima y vacío final; la misma cantidad no basta si el orden o tipo falla. |
+| `logica-deshacer` | Conservar: pila de estados, guardar antes de sumar y deshacer sin historial sin efecto. |
+| `logica-suma-recursiva` | Conservar: base vacía cero, primero más resto y lista más corta; los casos no certifican recursión. |
+| `logica-busqueda-recursiva` | Conservar: intervalo vacío como caso base, exclusión del centro y retorno del índice, no del valor. |
+| `logica-une-intervalos` | Conservar: ordenar, comparar con el último y extender al máximo si se tocan. |
+| `logica-segundo-maximo` | Conservar: dos candidatos, ausencia como None y repetición del máximo sin crear segundo distinto. |
+| `logica-suma-maxima` | Conservar: continuar o reiniciar, mejor actual/global y tramo no vacío aunque todo sea negativo. |
+| `logica-sin-repeticiones` | Conservar: ventana de caracteres distintos, último índice y avance tras la aparición previa. |
+| `logica-ranking` | Conservar: contar antes de ordenar, frecuencia descendente y valor ascendente en empate, incluidos negativos. |
+| `logica-cuenta-nodos` | Conservar: None aporta cero, nodo aporta uno más sus hijos y no se cuentan valores distintos. |
+| `logica-altura` | Conservar: None cero, hoja uno y máximo de hijos más uno; altura en nodos, no enlaces. |
+| `logica-preorden` | Conservar: raíz, izquierda y derecha; lista compartida y valores repetidos. |
+| `logica-niveles` | Conservar: cola, orden de entrada y left antes que right; repetidos conservados. |
+
+No se reescriben textos claros para mostrar actividad: las 24 decisiones quedan
+documentadas y los modelos fijos verifican sus conceptos. Los contratos de
+árboles usan `value`, `left` y `right`; las matrices se describen como listas de
+listas y las estructuras como listas de operaciones. No se añaden límites,
+técnicas obligatorias ni garantías de rendimiento.
+
+`tests/python-structure-theory.test.ts` protege inventario, estructura y
+precisiones conservadas; ejecuta modelos fijos de ventana fija y mínima, celdas,
+filas, columnas, diagonales, transpuesta, vecinos, copia de filas, pila, cola,
+delimitadores, deshacer, suma y búsqueda recursivas, fusión de intervalos,
+segundo máximo, Kadane, subcadena sin repeticiones, ranking, conteo, altura,
+preorden y niveles. No ejecuta envíos de alumnos ni certifica técnicas,
+rendimiento o aislamiento.
+
+Al no haber ediciones, no se añade un eslabón de reconstrucción ni una huella
+nueva: la prueba comprueba que la huella íntegra sigue siendo la anterior. Teoría
+restante, ejemplos, vocabulario global, repeticiones y D2/E/F siguen abiertos.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Las **224/224 explicaciones de solución** tienen revisión individual; no implica
   que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
-- La teoría local tiene 168/224 actividades revisadas: 48 propias y 120 comunes;
-  quedan 56 comunes/proyectos y las repeticiones entre superficies.
+- La teoría local tiene 192/224 actividades revisadas: 48 propias y 144 comunes;
+  quedan 32 comunes/proyectos y las repeticiones entre superficies.
 - Quedan vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
