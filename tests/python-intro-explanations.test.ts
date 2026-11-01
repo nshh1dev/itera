@@ -12,6 +12,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import type { Json } from "../src/lib/types";
 import { beforePythonIntro } from "./python-intro-baseline";
+import { beforePythonFlow } from "./python-flow-baseline";
 
 const retained = ["logica-dos-lineas", "logica-orden-mensaje", "logica-texto-calculo", "logica-guarda-nombre", "logica-guarda-cantidad", "logica-actualiza-puntos", "logica-suma-cantidades", "logica-cambio", "logica-precio-unidades", "logica-parentesis", "logica-mensaje-resultado", "logica-numero-texto"];
 
@@ -52,7 +53,7 @@ test("los ajustes siguen la traza y distinguen salida PROGRAM, tipos y retornos"
 });
 
 test("el sexto lote solo cambia doce explicaciones y reconstruye íntegra la entrega previa", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: entry.content.variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonFlow(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonIntroExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

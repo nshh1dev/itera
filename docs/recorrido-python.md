@@ -108,6 +108,8 @@ Las últimas 16 actividades propias cierran la revisión específica de sus 48 e
 
 Un sexto lote revisa las 24 explicaciones comunes iniciales: doce ajustes y doce textos conservados, total 97/224 revisadas y 127 pendientes. Se contrastan los 20 programas compartidos y cuatro funciones con salidas exactas/retornos independientes; se conservan reglas conceptuales y fuentes de JavaScript/TypeScript. Los ajustes retiran Node y repeticiones, y concretan intercambio, conversiones, booleanos y retorno. Huellas y decisiones en [claridad-python.md](claridad-python.md); no se prepara ni activa contenido en la base y E/F siguen abiertas.
 
+El séptimo lote revisa otras 24 explicaciones comunes de condiciones, bucles y listas: 23 ajustes y máximo conservado. Van 121/224 revisadas, con 103 pendientes. Se distinguen acumuladores, contadores e índices mediante trazas y fronteras, sin adelantar técnicas ni modificar contratos, referencias, casos o ayudas. Las 24 referencias fijas tienen comprobaciones editoriales independientes; se conserva la huella completa anterior mediante reconstrucción de prosa. Detalles y límites en [claridad-python.md](claridad-python.md); la base sigue sin prepararse ni activarse y E/F permanecen abiertas.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

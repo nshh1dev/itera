@@ -70,4 +70,6 @@ export const knownPythonReleases: readonly string[] = [
   "88d30aba0d182bd99656c39d7096bfefcffe1819a22b6b9a616906e649639e42",
   // Explicaciones comunes iniciales: doce ajustes y doce textos conservados.
   "5f9896fbe69bf9cd9f7a520953c2629256fe6841fe0d8a4b5992e9a6b84632bc",
+  // Condiciones, bucles y primeras listas: 23 ajustes y máximo conservado.
+  "9f937492dd05d9c9b454c0a4ed74f0e33f6b322f3d7bf1e022d4f8449b61ab31",
 ];

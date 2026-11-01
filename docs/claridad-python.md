@@ -811,6 +811,63 @@ la nueva huella sin retirar anteriores ni preparar o activar contenido en la bas
 El inventario global de teoría local, ejemplos, explicaciones y repeticiones
 sigue abierto. Este lote no cierra E/F ni sus comprobaciones visuales y reales.
 
+## Explicaciones de condiciones, bucles y primeras listas
+
+Se revisan las siguientes **24 explicaciones comunes**, desde tabla de valores
+hasta búsqueda lineal. Hay **23 ajustes** explícitos en
+`prisma/python-flow-explanations.ts` y **un texto conservado**, el de máximo,
+que ya incluye una traza, negativos y coste ajustado a su código. Van **121/224
+explicaciones revisadas** y quedan **103**.
+
+| Actividad | Decisión |
+| --- | --- |
+| `logica-tabla-valores` | Traza 2 → 4 → 12 y -2 → 0 → 0, conversión con str y separador exacto, sin párrafo genérico de pruebas. |
+| `logica-minutos-segundos` | Vincular multiplicación por 60 con unidades y caso cero; retirar cierre genérico sobre sangría. |
+| `logica-perimetro` | Seguir claves y paréntesis; distinguir 10 de perímetro frente a 6 de área en un caso concreto. |
+| `logica-repara-presupuesto` | Comparar envío único con cobro por unidad y mantener envío aun sin unidades. |
+| `logica-merienda` | Cálculo numérico antes de str y prefijo exacto; retorno de texto sin impresión ni cargos nuevos. |
+| `logica-elige-mensaje` | Primer return termina la llamada; retorno final fuera del if y cero no positivo. |
+| `logica-signo` | Seguir if/elif/else con casos excluyentes y justificar el único entero que llega al else. |
+| `logica-mayor-tres` | Candidato real, negativos y comparaciones independientes; evitar inicializar con cero o saltarse c. |
+| `logica-dos-requisitos` | and de dos booleanos, cero válido y fallos de cada requisito; retirar la anticipación de FizzBuzz. |
+| `logica-alternativas` | Agrupar alternativas antes de negar bloqueo; una invitación no elude un bloqueo. |
+| `logica-tarifa` | Justificar límites 5/6/17/18 y retornos tempranos sin repetir límites inferiores. |
+| `logica-uno-n` | Fin exclusivo de range, append del valor actual, vacío para cero y return después del for. |
+| `logica-cuenta-atras` | Añadir antes de decrementar, incluir cero y terminar en -1; distinguir lista final de contador final. |
+| `logica-suma-uno-n` | Separar acumulador y contador con totales 1/3/6 y contador final 4. |
+| `logica-tabla` | range hasta 11 excluido, productos negativos y diez ceros, no índices ni textos de operaciones. |
+| `logica-multiplos` | Contar coincidencias en 1..n, sin sumar sus valores ni incluir cero; divisor positivo ya garantizado. |
+| `logica-bucle-roto` | Traza 1+2+3+4; avanzar de dos omite valores y no avanzar impide terminar para positivos. |
+| `logica-posicion` | Distinguir posición, valor y lista de un elemento; usar la garantía de índice válido. |
+| `logica-indices` | Delimitar 0/1/2 y fin 3 como traza de [8,3,8], no como longitud fija de cualquier entrada. |
+| `logica-suma-lista` | Sumas parciales con negativos y vacío; retirar reduce y mantener recorrido elemental. |
+| `logica-maximo` | Conservar: traza con repetición, candidato inicial real, negativos, O(n) y O(1) auxiliar. |
+| `logica-cuenta-condicion` | Contador por aparición positiva frente a suma de valores, cero excluido y vacío. |
+| `logica-filtra-lista` | Selección estable con igualdad y repeticiones; seguir append sin adelantar comprensiones. |
+| `logica-busqueda-lineal` | Explicar enumerate desde cero, retorno temprano de primer índice y -1 fuera del recorrido, sin ordenar. |
+
+Se retiran bloques repetidos de razonamiento/pasos/coste/errores e indicaciones
+genéricas de sintaxis ajenas a la explicación particular. Se mantienen los costes
+concretos de referencias que los justifican; las superficies de coste, errores y
+pistas del producto no se alteran. No se renombra ninguna clave ni se cambian
+tipos, límites, plantillas, código, casos, ayudas o reglas conceptuales.
+
+`tests/python-flow-explanations.test.ts` comprueba las 24 identidades, el texto
+conservado y las decisiones. Ejecuta las 24 referencias fijas con casos
+editoriales independientes, incluidos los ocho estados de acceso, ceros,
+negativos, repeticiones y fronteras. Compara tipo de retorno, valor, ausencia de
+impresión y contenido de entrada al retornar. No acredita técnicas de alumnos,
+ausencia de toda mutación intermedia ni límites reales de tiempo o memoria.
+
+La huella calculada antes del lote excluye solo las 23 explicaciones ajustadas;
+protege máximo, las 97 revisadas previamente, las 103 pendientes y todos los
+demás campos. `tests/python-flow-baseline.ts` reconstruye la prosa previa desde
+las variantes Python compartidas sin editar sus fuentes. Una prueba recupera la
+huella completa de la entrega anterior y las huellas históricas conservan sus
+valores. Se añade la nueva huella sin retirar anteriores ni preparar/activar la
+base. La revisión global de teoría local, ejemplos y repeticiones sigue abierta,
+al igual que E/F y las comprobaciones reales/visuales.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

@@ -336,6 +336,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del sexto lote de explicaciones:** lint, tipos, 454 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Las 22 pruebas focalizadas también aprobaron. La ejecución local contrasta únicamente referencias fijas y texto exacto/retornos, no Piston ni código de estudiantes. Las huellas históricas y la reconstrucción íntegra de la entrega anterior se conservan. No se iniciaron servicios ni se modificó la base; E2E, revisión visual, validación real y activación siguen pendientes de autorización.
 
+**Séptimo lote de explicaciones E:** se revisan 24 comunes de condiciones, bucles y primeras listas: 23 ajustes y máximo conservado. Van 121/224 explicaciones revisadas y quedan 103. Se concretan trazas, acumuladores/contadores/índices, cero y fronteras, sin bloques genéricos ni anticipación de FizzBuzz, reduce o comprensiones; el ejemplo de índices se delimita a una lista concreta. [claridad-python.md](claridad-python.md) documenta las 24 decisiones. La huella previa excluye solo 23 explicaciones y protege la conservada, las anteriores, las pendientes y todos los demás campos; se reconstruye íntegra la entrega anterior desde fuentes comunes sin editarlas. Se añade huella de publicación. Código, enunciados, casos, ayudas, tiempos y base no cambian; E/F siguen abiertas.
+
+**Verificación del séptimo lote de explicaciones:** lint, tipos, 458 pruebas sin omisiones, build y `content:python` sin conexión aprobados. Las 26 pruebas focalizadas también aprobaron; los casos de las 24 referencias comparan tipo/valor de retorno, ausencia de impresión y contenido de entrada al retornar, sin certificar técnicas ni toda mutación intermedia. Se conservan huellas históricas y reconstrucción íntegra de la entrega anterior. No se iniciaron servicios ni se modificó la base; Piston, E2E, revisión visual y activación siguen pendientes de autorización.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.
