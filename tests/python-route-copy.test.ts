@@ -60,5 +60,5 @@ test("las proyecciones conservan orden, contratos y fuentes comunes", () => {
   // Teoría y ejemplos tienen revisión y huella acotadas en python-module-theory.test.ts.
   // Huella anterior sin títulos: 075eae32072d0f51aacfe5a52e54d170827c8bc30d681733b5b6153d35c5398c.
   assert.equal(hash(pythonCurriculumUnits.map(({ title, theory, examples, ...rest }) => { void [title, theory, examples]; return rest; })), "bcf226222d8e646c2353ea5df4fe956f83b956f685574a80397a3af72eff5e1d");
-  assert.equal(pythonReleaseFingerprint(pythonCatalog), "905a668e2a27773c6ab69b34a67786610d9961bc5aff41dae005e2a4989571a3");
+  assert.equal(pythonReleaseFingerprint(pythonCatalog), "c7720201bb98fc7c81aa6a646952ba7c73486200121d43d0f8292a9eaf7e9c29");
 });

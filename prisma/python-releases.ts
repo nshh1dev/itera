@@ -96,4 +96,6 @@ export const knownPythonReleases: readonly string[] = [
   "3278b3eb916e2dcdcdc1dc8d02e12b638976293e590401302a7aacf1ea695468",
   // Teoría local de errores, pruebas y agregados: dos aperturas ajustadas.
   "905a668e2a27773c6ab69b34a67786610d9961bc5aff41dae005e2a4989571a3",
+  // Teoría local de módulos, archivos y agregados: una pista Python ajustada.
+  "c7720201bb98fc7c81aa6a646952ba7c73486200121d43d0f8292a9eaf7e9c29",
 ];

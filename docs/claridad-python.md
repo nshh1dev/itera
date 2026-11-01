@@ -1505,13 +1505,71 @@ revisión de referencias. Se conservan las expectativas históricas y se añade
 otra huella de publicación sin preparar ni activar la base. Teoría restante,
 ejemplos, vocabulario global, repeticiones y D2/E/F siguen abiertos.
 
+## Teoría local: módulos, archivos, JSON y agregados
+
+Se revisan otras **24 comunes**, todas FUNCTION, desde la extracción de un módulo
+hasta las sumas por intervalos. Se ajusta **una pista Python** y las otras **23
+actividades conservan su teoría y ayudas**. Van **168/224 actividades revisadas
+en teoría local** (48 propias y 120 comunes); quedan **56 comunes/proyectos**.
+No cambian enunciados, contratos, código, recursos ni casos.
+
+| Actividad | Decisión sobre teoría local y ayudas |
+| --- | --- |
+| `logica-extrae-modulo` | Conservar: regla en `reglas.py`, nombre exportado e importado coincidente y llamada desde `main.py`. |
+| `logica-separa-reglas-io` | Conservar: regla pura calcula, `main` formatea; reglas sin `print` ni entrada. |
+| `logica-repara-importacion` | Conservar: distinguir archivo ausente de nombre no exportado; importar `cuadrado` y no sustituir el módulo local por un paquete. |
+| `logica-organiza-modulos` | Conservar: tres responsabilidades, dependencia del adaptador hacia reglas/formato, sin import circular ni efectos al importar. |
+| `logica-lee-archivo` | Ajustar pista: en Python `-1` ya apunta a la última línea; retirar la normalización multilingüe. Conservar apertura, cierre y procedencia del archivo. |
+| `logica-escribe-archivo` | Conservar: leer, transformar, escribir y reabrir; `w` reemplaza y UTF-8 sin salto añadido. |
+| `logica-valida-json` | Conservar: analizar no valida; ficha con límite entero no negativo y exclusión explícita de `bool` pese a ser subclase de `int`. |
+| `logica-guarda-recupera` | Conservar: `dump`/`load`, cierre de cada recurso y reapertura en el mismo proceso, sin prometer persistencia entre envíos. |
+| `logica-recupera-archivo-invalido` | Conservar: ausencia y JSON roto requieren recuperaciones distintas; los fallos de programación siguen visibles. |
+| `logica-actualiza-persistidos` | Conservar: cargar, añadir, guardar una instantánea y reabrir; sin prometer durabilidad, atomicidad ni persistencia entre procesos. |
+| `logica-inventario-modular` | Conservar: `aplicar` muta el stock y devuelve rechazos; distinción con la actividad que solo suma cambios y admite negativos. |
+| `logica-inventario-persistente` | Conservar: cargar, aplicar, guardar y reabrir; orden de inserción, ceros conservados y segunda llamada en proceso nuevo. |
+| `logica-agenda-operaciones` | Conservar: crear y completar en reglas sin disco; completar no crea tareas. |
+| `logica-agenda-almacenamiento` | Conservar: cargar estado, aplicar, guardar y reabrir; orden y claves `titulo` antes de `hecha`. |
+| `logica-agenda-regresion` | Conservar: conectar carga y reglas sin perder estado; completar dos veces no duplica ni borra. |
+| `logica-busqueda-binaria` | Conservar: índices originales, centro dentro del bucle y retorno del índice, no del valor. |
+| `logica-insercion-posicion` | Conservar: primera posición mayor o igual, mitad abierta a la derecha y longitud si no existe. |
+| `logica-ordena-insercion` | Conservar: tramo ordenado inicial, valor guardado, desplazamiento de mayores y salida nueva. |
+| `logica-ordena-registros` | Conservar: puntos descendentes, nombre ascendente en empate y estabilidad cuando ambos coinciden. |
+| `logica-combina` | Conservar: dos índices, menor primero, resto al agotar una lista y repeticiones. |
+| `logica-palindromo` | Conservar: dos índices hacia el centro, sin normalizar mayúsculas/espacios/signos y vacío aceptado. |
+| `logica-pareja` | Conservar: extremos, avance según la suma, menor `i`/mayor `j` y entrada sin modificar. |
+| `logica-prefijos` | Conservar: longitud n + 1, cero inicial, reutilización del último total y sumas enteras. |
+| `logica-intervalos-suma` | Conservar: prefijos, diferencia `fin + 1` menos `inicio`, orden de consultas y vacío. |
+
+La pista compartida de lectura sigue intacta en la fuente multilingüe; la
+proyección Python la sustituye solo en `python-editorial.ts` para no afirmar que
+Python carece de índices negativos. Los proyectos conservan manifiestos,
+recursos, artefactos y límites declarados. La reapertura descrita no se presenta
+como persistencia entre procesos, durabilidad ni escritura atómica.
+
+`tests/python-file-theory.test.ts` protege inventario y decisiones y ejecuta
+modelos fijos con directorios temporales propios: importación de un módulo real,
+nombre inexistente, lectura por índice negativo, JSON compacto, rechazo de
+booleanos como límite, recuperación separada de ausencia/JSON roto, stock con
+rechazos y ceros, agenda idempotente, búsqueda binaria, inserción a la izquierda,
+ordenación por inserción, orden estable de registros, combinación, palíndromo,
+pareja, prefijos e intervalos. No ejecuta envíos de alumnos ni promete
+persistencia entre procesos o aislamiento.
+
+La huella previa excluye solo la pista ajustada y protege enunciados, contratos,
+las otras ayudas y las fuentes comunes. `tests/python-file-theory-baseline.ts`
+restaura esa pista y recupera íntegra la huella anterior; la cadena incorpora
+este eslabón antes de la revisión de errores. Se conservan las expectativas
+históricas y se añade otra huella de publicación sin preparar ni activar la base.
+Teoría restante, ejemplos, vocabulario global, repeticiones y D2/E/F siguen
+abiertos.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Las **224/224 explicaciones de solución** tienen revisión individual; no implica
   que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
-- La teoría local tiene 144/224 actividades revisadas: 48 propias y 96 comunes;
-  quedan 80 comunes/proyectos y las repeticiones entre superficies.
+- La teoría local tiene 168/224 actividades revisadas: 48 propias y 120 comunes;
+  quedan 56 comunes/proyectos y las repeticiones entre superficies.
 - Quedan vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos

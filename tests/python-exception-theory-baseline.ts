@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonFileTheory } from "./python-file-theory-baseline";
 
 export const previousExceptionTheoryTasks: Record<string, string> = {
   "logica-localiza-error": "Localiza un error sin provocarlo: el fragmento conceptual consulta valores[indice] sin comprobar límites. La plantilla solo prepara solve(data); escribe la comprobación antes de consultar la posición.",
@@ -7,6 +8,7 @@ export const previousExceptionTheoryTasks: Record<string, string> = {
 
 // Reconstruye solo Tu tarea de las dos variantes Python; contratos intactos.
 export function beforePythonExceptionTheory(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonFileTheory(slug, content);
   if (!(slug in previousExceptionTheoryTasks)) return content;
   const restore = (text: string) => {
     const index = text.indexOf("\n\nEntrada\n");

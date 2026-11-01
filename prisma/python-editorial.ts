@@ -51,7 +51,7 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Lee el archivo real datos.txt preparado. No sustituyas su lectura por respuestas escritas en el código. with open(ruta, encoding='utf-8') as archivo permite leer texto y cierra el recurso incluso ante un error.",
     "data es el índice -1, 0 o 1. datos.txt es de solo lectura y contiene Sol y Luna en líneas distintas, con salto tras cada línea.",
     "Devuelve la línea seleccionada sin su salto final. El índice -1 indica la última línea. La respuesta debe proceder del archivo leído, no de una lista fija en el código.",
-  ) },
+  ), hints: ["Abre datos.txt dentro de solve.", "Separa las líneas y elimina el salto final.", "Consulta el índice recibido después de leer; en Python, -1 apunta a la última línea."] },
   "logica-escribe-archivo": { statement: projectStatement(
     "Lee mensaje.txt, concatena el sufijo, escribe resultado.txt, ciérralo y vuelve a abrirlo. with open cierra el recurso; el modo 'w' reemplaza el contenido. Lee y escribe texto con encoding='utf-8'.",
     "data es el texto del sufijo. mensaje.txt es de solo lectura y contiene Hola, sin salto final.",

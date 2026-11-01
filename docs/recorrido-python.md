@@ -134,6 +134,8 @@ El sexto lote de teoría local revisa otras 24 comunes de textos, funciones y re
 
 El séptimo lote de teoría local revisa otras 24 comunes de errores, pruebas, agregados y conjuntos: dos aperturas ajustadas y 22 conservadas. Van 144/224 revisadas (48 propias y 96 comunes); quedan 80 comunes/proyectos. Se precisa el riesgo de excepción al indexar sin límites y se explicitan entrada y resultado esperado de dos aserciones, sin cambiar ayudas, contratos, código, casos ni las distinciones saldo/inventario. La huella previa excluye solo esos dos párrafos y reconstruye íntegra la entrega anterior con expectativas históricas. Las 224 explicaciones siguen revisadas; teoría restante, ejemplos, repeticiones y D2/E/F pendientes. Base sin preparar ni activar; decisiones en [claridad-python.md](claridad-python.md).
 
+El octavo lote de teoría local revisa otras 24 comunes de módulos, archivos, JSON, persistencia y algoritmos de índices: una pista Python ajustada y 23 actividades conservadas. Van 168/224 revisadas (48 propias y 120 comunes); quedan 56 comunes/proyectos. Se evita pedir la normalización de -1 que Python no necesita, manteniendo intacta la fuente multilingüe y las advertencias de persistencia. La huella previa excluye solo esa pista y reconstruye íntegra la entrega anterior con expectativas históricas. Las 224 explicaciones siguen revisadas; teoría restante, ejemplos, repeticiones y D2/E/F pendientes. Base sin preparar ni activar; decisiones en [claridad-python.md](claridad-python.md).
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

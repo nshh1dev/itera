@@ -7,6 +7,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { localTheoryContract } from "./python-local-theory-baseline";
 import { beforePythonExceptionTheory, previousExceptionTheoryTasks } from "./python-exception-theory-baseline";
+import { beforePythonFileTheory } from "./python-file-theory-baseline";
 
 const reviewed = ["logica-localiza-error", "logica-captura-conversion", "logica-error-dominio", "logica-recupera-elementos", "logica-asercion-normal", "logica-pruebas-limites", "logica-reproduce-fallo", "logica-conserva-regresion", "logica-factorial", "logica-fizzbuzz", "logica-mediciones", "logica-carrito", "logica-notas", "logica-saldo", "logica-gastos-registro", "logica-gastos-validacion", "logica-repetido", "logica-deduplica", "logica-frecuencias", "logica-primer-unico", "logica-anagramas", "logica-agrupa-registros", "logica-inventario", "logica-importa-preparado"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -38,7 +39,7 @@ test("las aperturas distinguen un riesgo de índice y explicitan la entrada y el
 });
 
 test("el cuarto lote común conserva todo salvo dos párrafos y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => !(entry.slug in previousExceptionTheoryTasks) ? entry : ({ ...entry, content: {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonFileTheory(entry.slug, entry.content) })).map(entry => !(entry.slug in previousExceptionTheoryTasks) ? entry : ({ ...entry, content: {
     ...entry.content, statement: localTheoryContract(entry.content.statement),
     variants: entry.content.variants.map(variant => ({ ...variant, statement: localTheoryContract(variant.statement!) })),
   } }));
