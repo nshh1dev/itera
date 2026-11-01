@@ -100,6 +100,8 @@ Los títulos/descripciones de los 57 módulos y las descripciones de las cuatro 
 
 La teoría de los 57 módulos está revisada en [teoria-modulos-python.md](teoria-modulos-python.md): `src/lib/python-module-theory.ts` proyecta 31 teorías y ocho ejemplos nuevos, conservando los otros 26 textos. Las comprobaciones ejecutan los 57 ejemplos fijos localmente con expectativas independientes, sin certificar Piston ni aislamiento. Se mantienen autoevaluaciones, títulos, secuencia y actividades; quedan teoría local y explicaciones de actividades y la revisión visual de F.
 
+Las explicaciones de solución tienen 43/224 revisiones específicas: diez prácticas iniciales, 18 proyectos y otras 15 prácticas propias de fundamentos. El último lote conserva la teoría integrada en los enunciados y elimina su copia completa al explicar las soluciones; precisa copias superficiales, fronteras y retornos. Inventario y límites en [claridad-python.md](claridad-python.md). No cambia código, casos, ayudas ni tiempos; el catálogo aún no se prepara ni activa y la revisión global sigue abierta.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

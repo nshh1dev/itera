@@ -5,6 +5,8 @@ import { pythonCatalog, validatePythonCatalog } from "../prisma/python-content";
 import { pythonTimingRevisions } from "../prisma/python-timing";
 import { pythonStepMetadata } from "../src/lib/python-curriculum";
 import { validateProjectDefinition } from "../src/lib/project";
+import { pythonLessons } from "../prisma/python-lessons";
+import { pythonFoundationExplanations } from "../prisma/python-foundation-explanations";
 
 const minutes = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content.minutes;
 
@@ -46,7 +48,15 @@ test("los proyectos distinguen importación preparada, reglas propias, integraci
 });
 
 test("el lote solo cambia minutos de las 54 identidades: evaluación, textos y otros tiempos permanecen intactos", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: Object.fromEntries(Object.entries(entry.content)
-    .filter(([key]) => key !== "minutes" || !(entry.slug in pythonTimingRevisions))) }));
+  const payload = pythonCatalog.map(entry => {
+    // Reconstruye únicamente la prosa anterior de las 15 lecciones revisadas.
+    // Las fuentes de teoría/explicación originales se conservan sin editar.
+    const lesson = entry.slug in pythonFoundationExplanations ? pythonLessons.get(entry.slug) : undefined;
+    const content = lesson ? { ...entry.content, variants: entry.content.variants.map(variant => ({
+      ...variant, explanation: `${lesson.theory}\n\n${lesson.explanation}`,
+    })) } : entry.content;
+    return { ...entry, content: Object.fromEntries(Object.entries(content)
+      .filter(([key]) => key !== "minutes" || !(entry.slug in pythonTimingRevisions))) };
+  });
   assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "3f8b01a762c982f483d984dedd574b0a21c685eca0a52c35265285e8b4e764ed");
 });

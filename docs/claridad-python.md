@@ -592,6 +592,57 @@ ejemplos se comprueban como código fijo local con expectativas independientes;
 no equivalen a Piston. La teoría local y explicaciones de actividades y la
 revisión editorial global siguen pendientes.
 
+## Explicaciones de fundamentos propios y teoría local
+
+Se contrastan las primeras **16 actividades exclusivas de Python** con sus
+enunciados y código de referencia. `python-desempaqueta` conserva la explicación
+del primer lote; las otras **15** reciben una revisión explícita en
+`prisma/python-foundation-explanations.ts`. El total acumulado es de **43/224
+explicaciones revisadas**, no 44: el desempaquetado no se cuenta dos veces.
+
+La teoría local no tiene un campo persistido independiente: la introducción
+conceptual está integrada en los enunciados editoriales. La composición original
+de las actividades propias anteponía además `addition.theory` a la explicación
+de solución. Este lote conserva los enunciados y sustituye esas explicaciones
+completas por lecturas del código; no elimina la teoría de las fuentes ni aplica
+reemplazos globales. Los conceptos necesarios siguen disponibles antes de
+resolver. El inventario de teoría local de las 224 actividades sigue abierto.
+
+| Actividad | Decisión |
+| --- | --- |
+| `python-constante` | Seguir la multiplicación y significado del seis; retirar la segunda analogía de IVA. La convención no queda certificada por la salida. |
+| `python-decimal` | Conversión antes de suma, ejemplo negativo y representación habitual de print, sin formato fijo ni recuperación innecesaria. |
+| `python-condicional` | Igualdad en 18, selección de un valor y equivalencia de resultados con if/else. |
+| `python-centinela` | Comprobación antes de append, cero inicial/ausente y conservación de negativos anteriores. |
+| `python-omite-negativos` | continue frente a break en un caso concreto; conservar cero, orden y repeticiones. |
+| `python-ordena-numeros` | sorted frente al retorno None de sort; original referencia la entrada, no una copia independiente. |
+| `python-recorta` | Seguir los tres accesos y un ejemplo con fin exclusivo, sin volver a copiar la definición del corte. |
+| `python-une-palabras` | Seguir split y join con tabulación, vacío y conservación de mayúsculas/signos. |
+| `python-desempaqueta` | Conservar la explicación previa de evaluación de la derecha, intercambio y tupla representada en JSON. |
+| `python-enumera` | Parejas concretas con palabras repetidas y origen 1 frente al cero predeterminado. |
+| `python-empareja` | Materialización de parejas, orden de origen y corte por la lista más corta sin relleno. |
+| `python-retorno-multiple` | Una llamada y un retorno de tupla, desempaquetado y orden suma/producto. |
+| `python-identidad` | Seguir alias, antes y copia; acotar list(...) a copia exterior superficial. No prometer independencia de contenedores interiores. |
+| `python-opcional-seguro` | Dos llamadas con valores iguales; la lista predeterminada se compartiría entre llamadas a la auxiliar, no afirmar estado entre envíos. |
+| `python-actualiza-diccionario` | Inserción/reemplazo, cero válido y copia superficial suficiente por valores enteros. |
+| `python-borra-clave` | Retorno de pop ignorado, clave ausente, cero y diccionario vacío; devolver la copia, no el valor eliminado. |
+
+`tests/python-foundation-explanations.test.ts` comprueba inventario, aplicación,
+ausencia de la introducción teórica completa repetida y decisiones editoriales.
+Una huella calculada antes de editar excluye solo las 15 explicaciones nuevas y
+conserva los otros 209 textos y todos los campos ajenos: enunciados, variantes,
+código, casos, explicaciones públicas, ayudas, minutos, proyectos y orden.
+Las dos huellas anteriores amplían la exclusión de prosa con valores calculados
+antes del lote; sus valores históricos quedan documentados. La nueva huella
+de publicación se añade sin retirar las anteriores. La prueba histórica de tiempos
+conserva su huella reconstruyendo solo las 15 explicaciones previas desde teoría
+y explicación originales de las lecciones, sin editar esas fuentes. No se prepara ni activa el
+contenido en la base de datos; las pruebas locales de referencias fijas no
+acreditan Piston ni aislamiento.
+
+Esta revisión reduce la repetición entre introducción y solución en estas 16
+actividades; no cierra la revisión global de teoría, ejemplos, ayudas o E/F.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

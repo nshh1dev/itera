@@ -5,6 +5,7 @@ import { pythonCatalog } from "../prisma/python-content";
 import { pythonSolutionExplanations } from "../prisma/python-vocabulary";
 import { validateProjectDefinition, validateExpectedProjectFiles } from "../src/lib/project";
 import { beforePythonTiming } from "./python-timing-baseline";
+import { pythonFoundationExplanations } from "../prisma/python-foundation-explanations";
 
 const slugs = ["logica-dos-parametros", "python-desempaqueta", "logica-ficha-resultado", "python-recorre-pares", "logica-notas", "python-contactos-edita", "logica-prefijos", "logica-copia-anidada", "logica-suma-maxima", "logica-cuenta-nodos"];
 
@@ -29,18 +30,20 @@ test("diez explicaciones de solución usan vocabulario Python y justifican la re
   assert.match(pythonSolutionExplanations["logica-cuenta-nodos"], /antes de consultar claves.*value no interviene/s);
 });
 
-test("los dos lotes solo cambian 28 explicaciones y conservan todos los demás campos del catálogo", () => {
+test("los lotes de prosa conservan los demás campos del catálogo", () => {
   const revised = Object.keys(pythonSolutionExplanations);
   assert.equal(revised.length, 28);
   const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonTiming(entry.slug, entry.content), variants: entry.content.variants.map(variant => {
-    if (!revised.includes(entry.slug)) return variant;
+    if (!revised.includes(entry.slug) && !(entry.slug in pythonFoundationExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;
     return rest;
   }) } }));
   // Huella previa ampliada antes de editar proyectos; la del primer lote era
   // 8e1b81eec7e2574fc026c8e38c26185962e9a9a06e821235f7831ae4e639ffff.
-  assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "0a6bdb1da736d3a1ef256b70566d1e416994170bee66c11fdb90ae6db035551d");
+  // Al revisar fundamentos se excluyen sus 15 textos, conservando la huella previa:
+  // 0a6bdb1da736d3a1ef256b70566d1e416994170bee66c11fdb90ae6db035551d.
+  assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "710349a47cfa0b9f0b66fd3d587dd5adcfe32eef6f83f4e08ddf3776147720be");
 });
 
 test("las 18 explicaciones de proyectos distinguen módulos, artefactos, pruebas propias y segundo proceso", () => {
@@ -86,12 +89,13 @@ test("las 18 explicaciones de proyectos distinguen módulos, artefactos, pruebas
   assert.doesNotMatch(pythonSolutionExplanations["logica-agenda-almacenamiento"], /stock|rechazados/);
 });
 
-test("el segundo lote conserva las diez explicaciones previas y todo salvo la prosa de los 18 proyectos", () => {
+test("proyectos y fundamentos conservan las diez explicaciones previas y los campos ajenos", () => {
   const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonTiming(entry.slug, entry.content), variants: entry.content.variants.map(variant => {
-    if (!variant.project) return variant;
+    if (!variant.project && !(entry.slug in pythonFoundationExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;
     return rest;
   }) } }));
-  assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "44c744619828c94150891e9eb2c44abbe690ef398621c434ed3291e1c4e606ce");
+  // Antes del lote de fundamentos: 44c744619828c94150891e9eb2c44abbe690ef398621c434ed3291e1c4e606ce.
+  assert.equal(createHash("sha256").update(JSON.stringify(payload)).digest("hex"), "9bb75b265c90d0e86c4aa6c943f673d653b4d991ea9e684560c49481dd13d0bf");
 });

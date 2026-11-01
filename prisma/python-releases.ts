@@ -62,4 +62,6 @@ export const knownPythonReleases: readonly string[] = [
   "f9837a6f57e136fb496bed5892f9173ea9e5de2f4d70fd80096dcc09f27ad9b3",
   // Tiempos orientativos: 54 ajustes explícitos, 170 estimaciones conservadas.
   "361d08526dac58c1dadfac4d939509e75a6f225b8f5355780a488f0a840eb480",
+  // Fundamentos propios: 15 explicaciones sin repetir la teoría del enunciado.
+  "3a713639f6d74074a72e133e105598a4df11a0b0f7367ab39dc7f91aedd14e8e",
 ];
