@@ -1048,6 +1048,60 @@ anterior; las pruebas históricas conservan sus valores. Se añade otra huella d
 publicación sin preparar ni activar la base. D2, teoría local, ejemplos,
 repeticiones globales, E/F y comprobaciones reales/visuales siguen abiertas.
 
+## Explicaciones de selección, combinatoria, tablas y grafos
+
+Se revisan otras **24 explicaciones comunes**, desde ancestro hasta
+dependencias: **veinte ajustes** en `prisma/python-optimization-explanations.ts`
+y **cuatro textos conservados**. Van **217/224 explicaciones revisadas**, con
+**siete pendientes**. Los textos explican decisiones de la referencia concreta,
+sin cambiar código ni presentar el resultado como certificación de técnica.
+
+| Actividad | Decisión |
+| --- | --- |
+| `logica-ancestro` | Explicar retorno de nodo/None, coincidencia temprana, objetivos iguales o antecesores y unión de ramas sin ordenar valores. |
+| `logica-monticulo-inserta` | Traza del ascenso y parada con iguales; distinguir reparación logarítmica de la copia lineal y señalar que extraer no se llama. |
+| `logica-monticulo-extrae` | Último valor en raíz, desempate izquierdo y representación concreta; vacío/un elemento y coste total con copia, sin atribuir uso a insertar. |
+| `logica-prioridad` | Tupla numérica prioridad/id, salida solo de ids y ordenación del lote; no describir un montículo que no se usa. |
+| `logica-k-mayores` | Retirar mínimo sobrante, repeticiones y k cero; conservar hasta k + 1 candidatos antes de extraer y ordenar la salida. |
+| `logica-actividades` | Justificar fin más temprano, menos infinito para negativos y contacto permitido; contador, no lista de seleccionadas. |
+| `logica-combina-archivos` | Traza de reinserción y costes acumulados 9 frente a 11; cero/un archivo no combina y no se abren archivos reales. |
+| `logica-potencia` | Invariante y traza de exponente impar, resultado frente a base final, exponente cero y alcance de contar iteraciones con enteros. |
+| `logica-mezcla` | Copia incluso en caso base, comparación y restos; separar memoria simultánea de todas las copias creadas durante la ejecución. |
+| `logica-subconjuntos` | Construir nuevos antes de extender, listas independientes y orden fijado; salida O(n × 2ⁿ), incluido [[]] para vacío. |
+| `logica-permutaciones` | Conservar: selección/restauración, copia de respuesta, orden numérico, vacío y memoria de candidatos por rama. |
+| `logica-combinaciones` | Índice i + 1, corte con positivos ordenados, restauración y copia; ejemplo sin reuso, orden numérico y objetivo cero. |
+| `logica-reinas` | Marcas de columna y dos diagonales, restauración de las tres, conteo en caso base y simetrías no agrupadas. |
+| `logica-fibonacci` | Diccionario por solve compartido por sus llamadas, consulta antes de guardar y reutilización concreta; no caché entre envíos. |
+| `logica-escalera` | Separar por último paso, bases 1/1 distintas de Fibonacci y asignación doble con valores previos; orden de pasos relevante. |
+| `logica-caminos-obstaculos` | Arriba antes de actualizar e izquierda ya actualizada, cortar obstáculos e inicio bloqueado; una celda libre sí tiene un camino. |
+| `logica-monedas` | Mínimo de cantidades frente a número de combinaciones, marcador amount + 1 y reuso; ejemplo no voraz y denominaciones vacías. |
+| `logica-mochila` | Capacidad máxima, recorrido descendente y objeto gratuito usado una vez, incluso con capacidad cero; coste incluye tabla y frontera cero. |
+| `logica-subsecuencia-comun` | Diagonal al coincidir y máximo arriba/izquierda si no; orden sin contigüidad, dos filas simultáneas y prefijos vacíos. |
+| `logica-adyacencia` | Conjunto independiente por nodo, ambos sentidos, duplicados al revés y aislados; ordenar vecinos numéricamente y coste por grados distintos. |
+| `logica-alcanzables` | Conservar: marcado al descubrir, pila, ambos sentidos, orden final y memoria total con conexiones. |
+| `logica-distancias` | Conservar: cola con índice, primer descubrimiento, distancias no orden de visita y memoria de conexiones/vectores. |
+| `logica-ciclo-dirigido` | Estados no visitado/activo/terminado, lazo frente a descendiente compartido y cobertura de todas las componentes. |
+| `logica-dependencias` | Conservar: requisitos pendientes, heapq para mínima disponible y ciclo sin devolver orden parcial. |
+
+`tests/python-optimization-explanations.test.ts` protege el inventario y las
+decisiones editoriales y ejecuta las 24 referencias fijas con expectativas
+independientes. Incluye ancestro en árbol no ordenado, empates de montículo,
+prioridad numérica, repeticiones, horarios negativos, exponentes impares,
+orden combinatorio, monedas reutilizables, objetos gratuitos, subsecuencias
+repetidas y vacías, vecinos duplicados, descendiente compartido y tareas recién
+liberadas. Comprueba tipo/valor de retorno, ausencia de impresión y contenido
+de entrada al retornar; no certifica identidad, mutaciones intermedias,
+complejidad ni límites reales de programas de estudiantes.
+
+La huella previa excluye solo veinte explicaciones: protege las cuatro
+conservadas, las 193 revisadas antes, las siete pendientes y todos los campos
+ajenos. `tests/python-optimization-baseline.ts` restaura los textos originales
+desde las variantes Python compartidas sin editarlas; la huella completa de
+la entrega anterior y las expectativas históricas se conservan. Se añade
+otra huella de publicación, sin preparar ni activar la base. Teoría local,
+ejemplos y repeticiones globales de E, F, D2 y validación real/visual siguen
+pendientes; revisar estas explicaciones no cierra esas tareas.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

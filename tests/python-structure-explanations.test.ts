@@ -9,6 +9,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import type { Json } from "../src/lib/types";
 import { beforePythonStructures } from "./python-structure-baseline";
+import { beforePythonOptimization } from "./python-optimization-baseline";
 
 const retained = ["logica-diagonales", "logica-suma-recursiva", "logica-arbol-busqueda"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -60,7 +61,7 @@ test("las explicaciones siguen las referencias reales, sus costes y las claves d
 });
 
 test("el décimo lote conserva todo salvo 21 explicaciones y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: entry.content.variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonOptimization(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonStructureExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

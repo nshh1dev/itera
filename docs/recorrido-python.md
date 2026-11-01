@@ -116,6 +116,8 @@ El noveno lote revisa otras 24 explicaciones de pruebas, colecciones y búsqueda
 
 El décimo lote revisa otras 24 explicaciones de ventanas, matrices y estructuras: 21 ajustes y tres conservadas. Van 193/224 revisadas y quedan 31. Los costes siguen el código real: slice inicial O(k) en ventana fija, filas vacías contadas, cola con pop(0) y lista de niveles que conserva procesados. Las 24 referencias fijas contrastan casos editoriales sin cambiar contratos ni código; se reconstruye la huella anterior con sus puentes y notas Python. Detalles en [claridad-python.md](claridad-python.md); base sin preparar/activar y D2/E/F abiertas.
 
+El undécimo lote revisa otras 24 explicaciones de selección, combinatoria, tablas y grafos: veinte ajustes y cuatro conservadas. Van 217/224 revisadas y quedan siete. Se separan reparación de montículos y copia completa, se concretan restauración de ramas, bases de Fibonacci/escalera, objetos de peso cero y estados de ciclos. Las 24 referencias fijas tienen expectativas independientes y se reconstruye la huella anterior sin editar fuentes compartidas. No cambian código, contratos ni casos; detalles en [claridad-python.md](claridad-python.md). Base sin preparar/activar y D2/E/F abiertas.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.
