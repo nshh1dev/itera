@@ -643,6 +643,58 @@ acreditan Piston ni aislamiento.
 Esta revisión reduce la repetición entre introducción y solución en estas 16
 actividades; no cierra la revisión global de teoría, ejemplos, ayudas o E/F.
 
+## Explicaciones de colecciones propias
+
+Se contrastan las siguientes **16 actividades exclusivas de Python**, desde
+`python-recorre-pares` hasta `python-map`. Recorrido de pares conserva su texto
+del primer lote; las otras **15** reciben explicaciones individuales en
+`prisma/python-collection-explanations.ts`. Van **58/224 explicaciones revisadas**,
+incluidas las 32 primeras actividades propias, sin volver a contar las dos que
+ya estaban cubiertas por el primer lote.
+
+| Actividad | Decisión |
+| --- | --- |
+| `python-recorre-pares` | Conservar la lectura previa de items, orden por clave, conversión a texto y formato de salida. |
+| `python-lista-registros` | Acumulador y return fuera del bucle; cada ficha aporta aunque se repitan nombres o registros. |
+| `python-conjunto-seguro` | Construcción, add y discard en ese orden; agregar y quitar el mismo valor lo elimina aunque existiera inicialmente. |
+| `python-union` | Eliminar duplicados dentro de cada entrada y entre ambas; ordenar después, sin seguir el orden de aparición. |
+| `python-interseccion` | Pertenencia a ambas listas, no emparejamiento de apariciones ni acumulación de cantidades. |
+| `python-diferencia` | Requeridos menos disponibles; distinguir faltantes de sobrantes y contemplar vacío en ambos lados. |
+| `python-simetrica` | Exclusivos de ambos lados, sin contar apariciones; no sustituir por una sola resta. |
+| `python-subconjunto` | Igualdad incluida y vacío verdadero; requisitos repetidos no representan varias unidades. |
+| `python-crea-grupo` | Copiar cada lista antes de append, conservar categorías ajenas y repetición; dos niveles bastan para nombres de texto. |
+| `python-comprension` | Un cuadrado por posición, con negativos, cero y repeticiones; no se filtra. |
+| `python-comprension-filtro` | Seguir lower y filtro con mayúsculas, signo y vocal repetida dentro del contrato ASCII. |
+| `python-comprension-condicional` | Reemplazar en todas las posiciones; un if posterior al for filtraría y cambiaría el tamaño. |
+| `python-comprension-dict` | Una clave por palabra, incluida la vacía; la repetida reasigna la misma longitud, no crea dos claves. |
+| `python-iterador` | Consumir el mismo iterador dos veces; agotarlo no vacía la entrada ni crea otro recorrido. |
+| `python-generador` | sum consume los cuadrados sin lista intermedia; data ya ocupa una lista, no prometer memoria total constante. |
+| `python-map` | Función por nombre y conversión antes de multiplicar; devolver enteros materializados, no textos repetidos. |
+
+Los enunciados conservan la introducción conceptual necesaria antes de resolver.
+Las nuevas explicaciones siguen operaciones y fronteras concretas, sin copiar
+esa introducción completa. No cambian los 433 ejemplos públicos ni sus ayudas:
+los ejemplos adicionales en estas explicaciones son comprobaciones editoriales,
+no nuevos casos oficiales ni datos ocultos.
+
+`tests/python-collection-explanations.test.ts` protege todos los campos salvo
+estas 15 explicaciones con una huella calculada antes del lote. Conserva las
+43 explicaciones anteriores y las 166 aún pendientes, además de código, casos,
+enunciados, proyectos, ayudas y minutos. Comprueba el inventario y las decisiones
+editoriales y ejecuta casos independientes sobre las **15 referencias fijas**.
+Estos últimos comparan resultados, ausencia de impresión y contenido de entrada
+al retornar; no certifican toda mutación intermedia ni técnicas de alumnos.
+
+`tests/python-collection-baseline.ts` reconstruye solo los 15 textos anteriores
+desde las lecciones originales sin editar, para mantener las huellas históricas
+de soluciones, fundamentos y tiempos. Una comprobación de la huella completa de
+la entrega anterior acredita esa reconstrucción. Se añade la nueva entrega sin
+retirar las anteriores; no se prepara ni activa contenido en la base.
+
+No cierra el inventario global de teoría local, ejemplos, explicaciones o ayudas.
+Las pruebas locales ejecutan únicamente código fijo del repositorio; Piston,
+revisión visual y el resto de E/F siguen pendientes.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

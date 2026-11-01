@@ -6,6 +6,7 @@ import { pythonSolutionExplanations } from "../prisma/python-vocabulary";
 import { validateProjectDefinition, validateExpectedProjectFiles } from "../src/lib/project";
 import { beforePythonTiming } from "./python-timing-baseline";
 import { pythonFoundationExplanations } from "../prisma/python-foundation-explanations";
+import { beforePythonCollections } from "./python-collection-baseline";
 
 const slugs = ["logica-dos-parametros", "python-desempaqueta", "logica-ficha-resultado", "python-recorre-pares", "logica-notas", "python-contactos-edita", "logica-prefijos", "logica-copia-anidada", "logica-suma-maxima", "logica-cuenta-nodos"];
 
@@ -33,7 +34,7 @@ test("diez explicaciones de solución usan vocabulario Python y justifican la re
 test("los lotes de prosa conservan los demás campos del catálogo", () => {
   const revised = Object.keys(pythonSolutionExplanations);
   assert.equal(revised.length, 28);
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonTiming(entry.slug, entry.content), variants: entry.content.variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonTiming(entry.slug, entry.content), variants: beforePythonCollections(entry.slug, entry.content).variants.map(variant => {
     if (!revised.includes(entry.slug) && !(entry.slug in pythonFoundationExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;
@@ -90,7 +91,7 @@ test("las 18 explicaciones de proyectos distinguen módulos, artefactos, pruebas
 });
 
 test("proyectos y fundamentos conservan las diez explicaciones previas y los campos ajenos", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonTiming(entry.slug, entry.content), variants: entry.content.variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...beforePythonTiming(entry.slug, entry.content), variants: beforePythonCollections(entry.slug, entry.content).variants.map(variant => {
     if (!variant.project && !(entry.slug in pythonFoundationExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

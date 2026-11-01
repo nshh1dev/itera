@@ -64,4 +64,6 @@ export const knownPythonReleases: readonly string[] = [
   "361d08526dac58c1dadfac4d939509e75a6f225b8f5355780a488f0a840eb480",
   // Fundamentos propios: 15 explicaciones sin repetir la teoría del enunciado.
   "3a713639f6d74074a72e133e105598a4df11a0b0f7367ab39dc7f91aedd14e8e",
+  // Colecciones propias: 15 explicaciones de registros, conjuntos y recorridos.
+  "cf0e2664948c22a45d6f84e576e7db736aff53bcd89824dac03e4a8120be278d",
 ];

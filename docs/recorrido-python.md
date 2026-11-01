@@ -102,6 +102,8 @@ La teoría de los 57 módulos está revisada en [teoria-modulos-python.md](teori
 
 Las explicaciones de solución tienen 43/224 revisiones específicas: diez prácticas iniciales, 18 proyectos y otras 15 prácticas propias de fundamentos. El último lote conserva la teoría integrada en los enunciados y elimina su copia completa al explicar las soluciones; precisa copias superficiales, fronteras y retornos. Inventario y límites en [claridad-python.md](claridad-python.md). No cambia código, casos, ayudas ni tiempos; el catálogo aún no se prepara ni activa y la revisión global sigue abierta.
 
+Un cuarto lote contrasta las siguientes 16 actividades propias, conserva la explicación de pares ya revisada y ajusta otras 15 de colecciones. Van 58/224 explicaciones con revisión específica, incluidas las primeras 32 actividades propias. Se aclaran pertenencia frente a cantidades, filtro frente a reemplazo, copia por categoría e iteradores sin cambiar código, casos, enunciados ni tiempos. Las pruebas reconstruyen la huella anterior y comprueban ejemplos editoriales sobre referencias fijas; no acreditan Piston, técnica interna ni toda posible mutación. Detalles en [claridad-python.md](claridad-python.md); el catálogo sigue sin prepararse ni activarse.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

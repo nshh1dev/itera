@@ -5,6 +5,7 @@ import { pythonCatalog } from "../prisma/python-content";
 import { pythonLessons } from "../prisma/python-lessons";
 import { pythonFoundationExplanations } from "../prisma/python-foundation-explanations";
 import { pythonSolutionExplanations } from "../prisma/python-vocabulary";
+import { beforePythonCollections } from "./python-collection-baseline";
 
 test("las primeras 16 actividades propias tienen explicaciones revisadas sin copiar la teoría inicial", () => {
   const entries = pythonCatalog.filter(entry => pythonLessons.has(entry.slug)).slice(0, 16);
@@ -41,7 +42,7 @@ test("las explicaciones justifican fronteras, retornos, alias y el alcance de la
 });
 
 test("el tercer lote solo cambia 15 explicaciones, conservando las 28 anteriores y todo el resto", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: entry.content.variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonCollections(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonFoundationExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;
