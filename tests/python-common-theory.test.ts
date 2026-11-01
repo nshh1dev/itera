@@ -7,6 +7,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { localTheoryContract } from "./python-local-theory-baseline";
 import { beforePythonCommonTheory, previousCommonTheoryTasks } from "./python-common-theory-baseline";
+import { beforePythonFlowTheory } from "./python-flow-theory-baseline";
 
 const reviewed = ["logica-saludo", "logica-dos-lineas", "logica-orden-mensaje", "logica-texto-calculo", "logica-guarda-nombre", "logica-guarda-cantidad", "logica-actualiza-puntos", "logica-intercambia", "logica-suma-cantidades", "logica-cambio", "logica-precio-unidades", "logica-parentesis", "logica-lee-nombre", "logica-lee-doble", "logica-lee-suma", "logica-mensaje-resultado", "logica-numero-texto", "logica-booleano", "logica-igualdad", "logica-alcanza", "logica-retorno", "logica-parametro", "logica-dos-parametros", "logica-imprimir-devolver"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -36,7 +37,7 @@ test("las introducciones distinguen igualdad, asignación, impresión y retorno 
 });
 
 test("el primer lote común de teoría conserva todo salvo tres párrafos y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => !(entry.slug in previousCommonTheoryTasks) ? entry : ({ ...entry, content: {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonFlowTheory(entry.slug, entry.content) })).map(entry => !(entry.slug in previousCommonTheoryTasks) ? entry : ({ ...entry, content: {
     ...entry.content, statement: localTheoryContract(entry.content.statement),
     variants: entry.content.variants.map(variant => ({ ...variant, statement: localTheoryContract(variant.statement!) })),
   } }));

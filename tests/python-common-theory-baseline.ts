@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonFlowTheory } from "./python-flow-theory-baseline";
 
 export const previousCommonTheoryTasks: Record<string, string> = {
   "logica-igualdad": "Completa la comparación de igualdad. La plantilla ya prepara los números y el formato de salida; conserva ambas partes.",
@@ -9,6 +10,7 @@ export const previousCommonTheoryTasks: Record<string, string> = {
 // Solo reconstruye los párrafos anteriores de la proyección Python; mantiene
 // intactos los contratos actuales y las fuentes de los otros lenguajes.
 export function beforePythonCommonTheory(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonFlowTheory(slug, content);
   if (!(slug in previousCommonTheoryTasks)) return content;
   const restore = (text: string) => {
     const index = text.indexOf("\n\nEntrada\n");

@@ -90,4 +90,6 @@ export const knownPythonReleases: readonly string[] = [
   "c1967544da5e2b6be3d8c1689adadcba69ce092fd099be2d94cdcfc1d65a38dc",
   // Teoría local de las primeras 24 comunes: tres ajustes y 21 conservadas.
   "7437d98d5aaac234358b8e6d4ec9335fcbd8a6090390f0a24fec00f6958ffa29",
+  // Teoría local de flujo y listas: dos ajustes y 22 consignas conservadas.
+  "d63d8c433c6871e16d12a250edced4a2d245443b5b213dcdf177c9f23fc29fa6",
 ];

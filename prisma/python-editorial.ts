@@ -773,12 +773,12 @@ export const pythonEditorialRevisions: Record<string, EditorialRevision> = {
     "Devuelve exactamente uno de estos textos: positivo si el número es mayor que 0, negativo si es menor que 0, o cero si es 0. No añadas espacios ni cambies las mayúsculas.",
   ) },
   "logica-dos-requisitos": { statement: statement(
-    "Completa el retorno de la plantilla para combinar dos requisitos que deben cumplirse al mismo tiempo. Las dos comparaciones ya están calculadas; conserva su estructura.",
+    "Completa el retorno de la plantilla para combinar dos requisitos que deben cumplirse al mismo tiempo. Con dos valores booleanos, and produce True solo si ambos son True; basta un False para que el resultado sea False. Las dos comparaciones ya están calculadas; conserva su estructura. Aquí combinas booleanos, no las cantidades numéricas que se compararon.",
     "data es un entero entre 0 y 100.",
     "Devuelve True si data es múltiplo de 3 y de 5 a la vez; en otro caso devuelve False. Cero cumple ambas condiciones. Devuelve un booleano, no un texto: en JSON, True y False se representan como true y false.",
   ) },
   "logica-alternativas": { statement: statement(
-    "Decide si una persona puede acceder: basta con tener invitación o entrada comprada, pero el bloqueo impide siempre el acceso. Practica cómo combinar alternativas y negar una condición.",
+    "Decide si una persona puede acceder: basta con tener invitación o entrada comprada, pero el bloqueo impide siempre el acceso. Con valores booleanos, or produce True si al menos uno es True, incluidos ambos; not invierte True y False. Los paréntesis permiten agrupar las alternativas antes de combinarlas con otro requisito. Practica cómo combinar alternativas y negar una condición.",
     "data es un diccionario con invitacion, entrada y bloqueado. Las tres claves siempre existen y contienen booleanos True o False en Python (true o false en JSON).",
     "Devuelve True si hay al menos una de las dos formas de acceso y la persona no está bloqueada; devuelve False en cualquier otro caso. No devuelvas los textos true o false.",
   ) },

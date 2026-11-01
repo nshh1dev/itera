@@ -128,6 +128,8 @@ El tercer lote completa la teoría local de **48/48 actividades propias**: tres 
 
 El cuarto lote de teoría local revisa las primeras 24 comunes (20 programas y cuatro funciones), con tres ajustes y 21 consignas conservadas. Van 72/224 actividades, incluidas las 48 propias; quedan 152 comunes/proyectos. Se precisa == frente a = y retorno frente a impresión, incluido None de print, sin cambiar salidas PROGRAM ni contratos. Las huellas protegen todo salvo tres párrafos y reconstruyen la entrega anterior. Las 224 explicaciones siguen revisadas; teoría restante, ejemplos, repeticiones y D2/E/F continúan pendientes. Base sin preparar ni activar; decisiones en [claridad-python.md](claridad-python.md).
 
+El quinto lote de teoría local revisa otras 24 comunes de seguimiento, condiciones, bucles y listas: dos ajustes y 22 consignas conservadas. Van 96/224 actividades (48 propias y 48 comunes); quedan 128 comunes/proyectos. Se explican conjunción, alternativas inclusivas, negación y agrupación para booleanos, sin generalizar los tipos devueltos por and/or ni adelantar la fórmula completa. Solo cambian dos párrafos Tu tarea, con contratos y demás superficies protegidos por huella previa y reconstrucción íntegra de la entrega anterior. Las 224 explicaciones siguen revisadas; teoría restante, ejemplos, repeticiones y D2/E/F pendientes. Base sin preparar ni activar; decisiones en [claridad-python.md](claridad-python.md).
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

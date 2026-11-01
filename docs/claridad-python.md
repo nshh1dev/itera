@@ -1336,13 +1336,69 @@ se mantienen las expectativas históricas. Se añade otra huella de publicación
 sin preparar ni activar la base. Teoría restante, ejemplos, vocabulario global,
 repeticiones entre superficies, D2/E/F y validación real/visual siguen abiertos.
 
+## Teoría local: seguimiento, condiciones, bucles y listas
+
+Se revisan las siguientes **24 comunes**, todas FUNCTION: **dos ajustes y 22
+consignas conservadas**. Van **96/224 actividades revisadas en teoría local**:
+48 propias y 48 comunes; quedan 128 comunes/proyectos. Se contrasta el concepto
+local con plantilla, contrato y ayudas, sin añadir recetas repetidas a cada
+ejercicio que ya tiene contexto suficiente.
+
+| Actividad | Decisión sobre teoría local |
+| --- | --- |
+| `logica-predice-valores` | Conservar: predicción previa y estado actualizado, sin prometer que el resultado pruebe haber predicho. |
+| `logica-tabla-valores` | Conservar: guardar estado inicial y posteriores sin exigir listas/bucles aún no necesarios. |
+| `logica-minutos-segundos` | Conservar: equivalencia fija de unidades y multiplicación, sin repetir teoría de variables. |
+| `logica-perimetro` | Conservar: suma de lados frente a área y consulta de medidas por clave. |
+| `logica-repara-presupuesto` | Conservar: coste fijo frente a coste por unidad y diagnóstico de plantilla, incluso con cero unidades. |
+| `logica-merienda` | Conservar: separar cálculo de representación, sin envío ni descuentos ajenos al modelo. |
+| `logica-elige-mensaje` | Conservar: corregir solo respuesta interior de if y mantener alternativa preparada. |
+| `logica-signo` | Conservar: casos revisados en orden y completar solo else; no ejecutar todas las ramas. |
+| `logica-mayor-tres` | Conservar: comparaciones y candidato desde dato real, sin introducir lista/bucle por tres valores. |
+| `logica-dos-requisitos` | Ajustar: and sobre dos booleanos exige ambos True; distinguir resultados de comparaciones de las cantidades comparadas. |
+| `logica-alternativas` | Ajustar: or incluye que ambos booleanos sean True, not invierte y paréntesis agrupan alternativas; conservar fórmula concreta en pista final. |
+| `logica-tarifa` | Conservar: tramos, fronteras y orden de comprobación mediante ayudas progresivas. |
+| `logica-uno-n` | Conservar: número de la vuelta frente a constante cero, sin cambiar estructura preparada. |
+| `logica-cuenta-atras` | Conservar: incluir cero, añadir antes de disminuir y condición de finalización. |
+| `logica-suma-uno-n` | Conservar: acumulador frente a contador y actualización que mantiene el avance preparado. |
+| `logica-tabla` | Conservar: multiplicador variable, diez resultados y orden, sin convertir productos a texto. |
+| `logica-multiplos` | Conservar: resto cero, contador condicionado y exclusión de cero del intervalo. |
+| `logica-bucle-roto` | Conservar: progreso del contador de uno en uno y riesgo de no terminar si se elimina el avance. |
+| `logica-posicion` | Conservar: índice desde cero frente a valor, acceso concreto en pista final. |
+| `logica-indices` | Conservar: índice actual frente a primer índice fijo y recorrido ya preparado. |
+| `logica-suma-lista` | Conservar: acumular valor en total, no cantidad de elementos; inicialización/devolución preparadas. |
+| `logica-maximo` | Conservar: candidato y comparación invertida, sin introducir cero que descarte máximos negativos. |
+| `logica-cuenta-condicion` | Conservar: cantidad frente a suma y cero no estrictamente positivo. |
+| `logica-filtra-lista` | Conservar: selección por límite incluido, lista nueva y orden/repeticiones; no detenerse tras un rechazo. |
+
+Las notas de and/or se limitan explícitamente a operandos booleanos de estos
+contratos; no afirman que esos operadores devuelvan siempre un bool con otros
+tipos de operandos Python. No se adelanta la expresión completa del acceso:
+permanece en la pista final. Solo cambian dos párrafos Tu tarea de la proyección
+Python; entradas/salidas, reglas, código, ayudas, ejemplos y tiempos no cambian.
+
+`tests/python-flow-theory.test.ts` protege las 24 identidades y las decisiones.
+Sus modelos fijos contrastan tablas de conjunción/disyunción con expectativas
+literales, negación, las ocho combinaciones de acceso, efecto de agrupar antes
+del requisito de bloqueo, avance del contador, índices frente a valores y
+conteo frente a suma. No ejecutan programas de alumnos ni certifican técnica,
+rendimiento, aislamiento o terminación de cualquier programa enviado.
+
+La huella previa excluye solo dos párrafos: protege los otros 222 enunciados,
+contratos completos y todas las superficies ajenas. La reconstrucción de
+`tests/python-flow-theory-baseline.ts` restaura ambos enunciados sin modificar
+sus contratos y recupera íntegra la huella anterior. Se conservan expectativas
+históricas y se añade otra huella de publicación sin preparar ni activar la
+base. Teoría restante, ejemplos, vocabulario global, repeticiones y D2/E/F
+siguen abiertos.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Las **224/224 explicaciones de solución** tienen revisión individual; no implica
   que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
-- La teoría local tiene 72/224 actividades revisadas: 48 propias y 24 comunes;
-  quedan 152 comunes/proyectos y las repeticiones entre superficies.
+- La teoría local tiene 96/224 actividades revisadas: 48 propias y 48 comunes;
+  quedan 128 comunes/proyectos y las repeticiones entre superficies.
 - Quedan vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
