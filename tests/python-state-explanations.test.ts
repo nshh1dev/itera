@@ -9,6 +9,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import type { Json } from "../src/lib/types";
 import { beforePythonState } from "./python-state-baseline";
+import { beforePythonSearch } from "./python-search-baseline";
 
 const retained = ["logica-minusculas", "logica-vocales", "logica-invierte", "logica-ficha-producto", "logica-opcional", "logica-ausencia", "logica-captura-conversion"];
 
@@ -51,7 +52,7 @@ test("las explicaciones precisan None, claves, copia superficial y mutación int
 });
 
 test("el octavo lote conserva todo salvo 17 explicaciones y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: entry.content.variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonSearch(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonStateExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

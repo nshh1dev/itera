@@ -929,6 +929,67 @@ históricos. Se añade una huella de publicación sin retirar anteriores ni
 preparar/activar contenido en la base. La revisión global de teoría local,
 ejemplos y repeticiones sigue abierta, al igual que E/F y validación real/visual.
 
+## Explicaciones de pruebas, colecciones y búsquedas
+
+Se revisan las siguientes **24 explicaciones comunes**, desde error de dominio
+hasta palíndromo. Hay **diez ajustes** en `prisma/python-search-explanations.ts`
+y **catorce textos conservados**. Van **169/224 explicaciones revisadas**, con
+**55 pendientes**. Se mantienen explicaciones específicas ya incorporadas en
+auditorías anteriores cuando justifican bien el código actual.
+
+| Actividad | Decisión |
+| --- | --- |
+| `logica-error-dominio` | Conservar: raise de ValueError, try de llamada y mensaje recuperado con str(error). |
+| `logica-recupera-elementos` | Conservar: gramática ASCII y recuperación por elemento sin ocultar errores ajenos. |
+| `logica-asercion-normal` | Conservar: auxiliar triple, expectativa fija y AssertionError, sin progreso por declarar aserción. |
+| `logica-pruebas-limites` | Conservar: vacío/negativos revelan candidato inicial incorrecto y justifican la corrección. |
+| `logica-reproduce-fallo` | Conservar: [0] como caso mínimo y regresión del conteo estrictamente positivo. |
+| `logica-conserva-regresion` | Ajustar: explicar cobrar y max de Python, igualdad y suelo cero, sin Math.max ni suponer un defecto inicial de la plantilla. |
+| `logica-factorial` | Conservar: acumulador uno, traza 1/2/6/24 y factorial cero sin vueltas. |
+| `logica-fizzbuzz` | Conservar: caso combinado primero, un valor por vuelta y números no sustituidos. |
+| `logica-mediciones` | Ajustar: claves de diccionario con estados distintos, cortocircuito de None y cero frente a máximo negativo. |
+| `logica-carrito` | Ajustar: subtotal de importes antes del porcentaje, posible fracción y retorno float sin redondeo. |
+| `logica-saldo` | Ajustar: traza de rechazo/aceptación, estado conservado al rechazar y cero válido; distinguir inventario que admite negativos. |
+| `logica-repetido` | Ajustar: pertenencia antes de add, retorno temprano y vacío; no se necesitan frecuencias. |
+| `logica-deduplica` | Conservar: conjunto para pertenencia y lista para orden de primera aparición, traza y coste esperado. |
+| `logica-frecuencias` | Conservar: contadores independientes con traza de banana y máximo 26 claves. |
+| `logica-primer-unico` | Ajustar: dos recorridos y criterio de primero sin insinuar que Python pierde el orden de inserción del diccionario. |
+| `logica-anagramas` | Conservar: normalización, 26 contadores y comparación de cantidades, no solo pertenencia. |
+| `logica-agrupa-registros` | Conservar: setdefault/append, categorías dinámicas, repeticiones y orden por grupo. |
+| `logica-inventario` | Ajustar: diccionario de acumulados, producto con cero y saldo negativo permitido, sin vocabulario de mapa ni cierre genérico. |
+| `logica-busqueda-binaria` | Conservar: extremos inclusivos, +1/-1, vacío y alcance de la comprobación editorial de accesos. |
+| `logica-insercion-posicion` | Ajustar: intervalo de elementos con fin excluido, frontera no consultada y primera posición con duplicados. |
+| `logica-ordena-insercion` | Conservar: copia, invariante del tramo ordenado, peor caso y caso ya ordenado sin prometerlo para cualquier lista casi ordenada. |
+| `logica-ordena-registros` | Conservar: clave compuesta, inversión solo de puntos y estabilidad de empates completos. |
+| `logica-combina` | Ajustar: dos frentes, avance de un solo índice y restos; los slices crean temporales además de la salida. |
+| `logica-palindromo` | Ajustar: dos índices, primera diferencia y vacío/un carácter; conservar signos, espacios y mayúsculas. |
+
+Las diez revisiones siguen decisiones del código en vez de repetir apartados
+genéricos de pasos, coste y errores. La explicación de mezcla no atribuye O(1)
+auxiliar a una referencia que materializa slices de los restos; tampoco se
+cambia su implementación. Se mantienen contratos, ayudas, ejemplos, límites,
+reglas conceptuales y el resto de los metadatos. Las aserciones no se presentan
+como certificación de cobertura ni como sustituto de los casos oficiales.
+
+`tests/python-search-explanations.test.ts` comprueba inventario, vocabulario y
+decisiones; ejecuta las 24 referencias fijas con expectativas independientes.
+Incluye rechazo seguido de conversión válida, cero/ausencia, porcentaje
+fraccionario, movimientos rechazados, orden de aparición, límites de búsqueda,
+duplicados y restos de mezcla. Compara tipo/valor de retorno, ausencia de
+impresión y contenido de entrada al retornar; en carrito confirma float.
+Comparar registros idénticos no certifica su identidad ni la estabilidad de un
+programa de alumno. Tampoco se certifican rendimiento real o toda mutación
+intermedia; no se ejecuta código de estudiantes fuera del sandbox.
+
+La huella previa excluye solo las diez explicaciones ajustadas y protege las
+catorce conservadas, las 145 revisadas antes, las 55 pendientes y todos los demás
+campos. `tests/python-search-baseline.ts` reconstruye la prosa previa desde las
+variantes Python compartidas sin editarlas y se verifica la huella completa de
+la entrega anterior. Las pruebas históricas conservan sus valores y se añade
+otra huella de publicación, sin preparar ni activar contenido en la base.
+La revisión global de teoría local, ejemplos y repeticiones, D2, E/F y validación
+real/visual siguen abiertas.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

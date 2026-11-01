@@ -112,6 +112,8 @@ El séptimo lote revisa otras 24 explicaciones comunes de condiciones, bucles y 
 
 El octavo lote revisa otras 24 explicaciones de textos, auxiliares, referencias y validación: 17 ajustes y siete conservadas. Van 145/224 revisadas y quedan 79. Se distinguen None/cero/clave ausente y alias/copia, conservando las dos mutaciones intencionales y el retorno float de división válida. Las 24 referencias fijas contrastan esos estados sin certificar identidad ni toda mutación intermedia; D2 permanece parcial. La huella anterior se reconstruye sin cambiar fuentes compartidas. Detalles en [claridad-python.md](claridad-python.md); base sin preparar/activar y E/F abiertas.
 
+El noveno lote revisa otras 24 explicaciones de pruebas, colecciones y búsquedas: diez ajustes y catorce conservadas. Van 169/224 revisadas y quedan 55. Se concreta max de Python, estados de diccionario y porcentajes, el orden de primer único y la memoria temporal de los slices de mezcla. Las 24 referencias fijas se contrastan con expectativas independientes; no se cambian contratos ni código y la huella anterior se reconstruye desde fuentes compartidas sin editarlas. Detalles en [claridad-python.md](claridad-python.md); base sin preparar/activar y D2/E/F abiertas.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.
