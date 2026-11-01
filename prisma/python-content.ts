@@ -18,6 +18,7 @@ import { pythonIntroExplanations } from "./python-intro-explanations";
 import { pythonFlowExplanations } from "./python-flow-explanations";
 import { pythonStateExplanations } from "./python-state-explanations";
 import { pythonSearchExplanations } from "./python-search-explanations";
+import { pythonStructureExplanations } from "./python-structure-explanations";
 import { validateProjectDefinition, validateProjectSolution } from "../src/lib/project";
 
 function pythonOnly(content: VersionContent): VersionContent {
@@ -457,6 +458,7 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
   if (slug in pythonFlowExplanations) content.variants[0].explanation = pythonFlowExplanations[slug];
   if (slug in pythonStateExplanations) content.variants[0].explanation = pythonStateExplanations[slug];
   if (slug in pythonSearchExplanations) content.variants[0].explanation = pythonSearchExplanations[slug];
+  if (slug in pythonStructureExplanations) content.variants[0].explanation = pythonStructureExplanations[slug];
   if (slug in pythonTimingRevisions) content.minutes = pythonTimingRevisions[slug].minutes;
   if (slug in pythonCosts) content.complexity = pythonCosts[slug];
   const exampleHelp = pythonSharedCaseHelp[slug];

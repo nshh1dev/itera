@@ -9,6 +9,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import type { Json } from "../src/lib/types";
 import { beforePythonSearch } from "./python-search-baseline";
+import { beforePythonStructures } from "./python-structure-baseline";
 
 const retained = ["logica-error-dominio", "logica-recupera-elementos", "logica-asercion-normal", "logica-pruebas-limites", "logica-reproduce-fallo", "logica-factorial", "logica-fizzbuzz", "logica-deduplica", "logica-frecuencias", "logica-anagramas", "logica-agrupa-registros", "logica-busqueda-binaria", "logica-ordena-insercion", "logica-ordena-registros"];
 
@@ -43,7 +44,7 @@ test("los ajustes distinguen prueba declarada, estado aceptado, orden y memoria 
 });
 
 test("el noveno lote conserva todo salvo diez explicaciones y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: entry.content.variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonStructures(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonSearchExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

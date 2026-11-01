@@ -114,6 +114,8 @@ El octavo lote revisa otras 24 explicaciones de textos, auxiliares, referencias 
 
 El noveno lote revisa otras 24 explicaciones de pruebas, colecciones y búsquedas: diez ajustes y catorce conservadas. Van 169/224 revisadas y quedan 55. Se concreta max de Python, estados de diccionario y porcentajes, el orden de primer único y la memoria temporal de los slices de mezcla. Las 24 referencias fijas se contrastan con expectativas independientes; no se cambian contratos ni código y la huella anterior se reconstruye desde fuentes compartidas sin editarlas. Detalles en [claridad-python.md](claridad-python.md); base sin preparar/activar y D2/E/F abiertas.
 
+El décimo lote revisa otras 24 explicaciones de ventanas, matrices y estructuras: 21 ajustes y tres conservadas. Van 193/224 revisadas y quedan 31. Los costes siguen el código real: slice inicial O(k) en ventana fija, filas vacías contadas, cola con pop(0) y lista de niveles que conserva procesados. Las 24 referencias fijas contrastan casos editoriales sin cambiar contratos ni código; se reconstruye la huella anterior con sus puentes y notas Python. Detalles en [claridad-python.md](claridad-python.md); base sin preparar/activar y D2/E/F abiertas.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

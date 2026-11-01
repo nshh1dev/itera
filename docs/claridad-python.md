@@ -990,6 +990,64 @@ otra huella de publicación, sin preparar ni activar contenido en la base.
 La revisión global de teoría local, ejemplos y repeticiones, D2, E/F y validación
 real/visual siguen abiertas.
 
+## Explicaciones de ventanas, matrices y estructuras
+
+Se revisan las siguientes **24 explicaciones comunes**, desde pareja hasta
+árbol de búsqueda. Hay **21 ajustes** en
+`prisma/python-structure-explanations.ts` y **tres textos conservados**. Van
+**193/224 explicaciones revisadas**, con **31 pendientes**.
+
+| Actividad | Decisión |
+| --- | --- |
+| `logica-pareja` | Justificar movimiento de extremos y desempate menor i/mayor j, con posiciones distintas y salida de índices. |
+| `logica-intervalos-suma` | Traza de prefijos con negativo y fin incluido; sin consultas no equivale a una consulta de una celda. |
+| `logica-ventana-fija` | Sumar entrada/salida de ventana y partir de suma real; el slice inicial ocupa O(k) auxiliar, no O(1). |
+| `logica-ventana-suma` | Extender y encoger con valores positivos, longitud y umbral al menos target, no igualdad exacta. |
+| `logica-celda` | Seguir fila y después columna con matriz rectangular para evitar suponerla cuadrada. |
+| `logica-filas` | Conservar filas vacías y longitudes distintas; tiempo O(f + N) contando filas y celdas, no producto de dimensiones uniformes. |
+| `logica-columnas` | Un acumulador por columna, guarda previa de vacío y contraste con sumas por fila. |
+| `logica-diagonales` | Conservar: índices de ambas diagonales, centro compartido y caso de una celda. |
+| `logica-transpuesta` | Seguir comprensiones exterior/interior y dimensiones 2×3 → 3×2, sin ordenar ni invertir datos. |
+| `logica-vecinos` | Cuatro desplazamientos, límites antes de acceso y salida separada; no usar índices negativos, diagonales ni la celda actual. |
+| `logica-pila` | Pendientes frente a extracciones, LIFO y vacío; coste amortizado de append, sin afirmar O(1) por llamada aislada. |
+| `logica-cola` | FIFO con pop(0), vacío y pendientes no atendidos; peor caso O(o²) de esta referencia, no de una alternativa con deque. |
+| `logica-delimitadores` | Tipo y orden de cima, cierre sin apertura y aperturas restantes; cantidades iguales no bastan. |
+| `logica-deshacer` | Guardar estado antes de cada suma, incluida cero; cada deshacer consume un estado aunque el valor no cambie. |
+| `logica-suma-recursiva` | Conservar: caso base, slices, O(n²) de tiempo/memoria simultánea y límite de profundidad, sin certificar técnica. |
+| `logica-busqueda-recursiva` | Propagar retornos, reducir intervalo original sin slices y resolver vacío antes del acceso. |
+| `logica-une-intervalos` | Orden, contacto por extremo, intervalo contenido y filas nuevas sin escrituras en la entrada. |
+| `logica-segundo-maximo` | Dos candidatos, valores distintos y None, sin inventar un cero inicial que descarte negativos. |
+| `logica-sin-repeticiones` | Última posición y max para que left no retroceda; abba tiene longitud máxima 2. |
+| `logica-ranking` | Diccionario de conteos y orden de claves por frecuencia/valor numérico, sin duplicados ni conversión a texto. |
+| `logica-altura` | None antes de hijos y uno más el máximo, contando nodos y no enlaces; claves Python y memoria de llamadas. |
+| `logica-preorden` | Añadir value antes de left/right, conservar repeticiones y separar lista de salida de pila recursiva. |
+| `logica-niveles` | Índice de cola y orden left/right; los nodos procesados no se eliminan y la memoria no se limita a la anchura pendiente. |
+| `logica-arbol-busqueda` | Conservar: límites estrictos de todos los antecesores, None, coste por nodos/altura y claves Python. |
+
+Los costes describen el código real sin modificarlo: ventana fija conserva su
+slice inicial y la cola conserva pop(0). El recorrido por niveles conserva su
+lista con procesados; no se le atribuye la memoria de una cola que los retire.
+Las dimensiones y límites de cada contrato siguen intactos. Se retiran bloques
+genéricos y vocabulario de mapa, conservando ayudas, ejemplos y reglas.
+
+`tests/python-structure-explanations.test.ts` comprueba inventario, decisiones y
+operaciones concretas del código que justifican los costes. Ejecuta las 24
+referencias fijas con expectativas independientes para negativos, empates,
+matrices rectangulares/filas vacías, FIFO/LIFO, cero en historial, recursión y
+árboles con claves value/left/right. Compara tipo/valor de retorno, ausencia de
+impresión y entrada conservada al retornar. Esos casos no miden límites reales,
+no certifican identidad ni toda mutación intermedia y no prueban técnicas de
+programas enviados por alumnos.
+
+La huella previa excluye solo 21 explicaciones y protege las tres conservadas,
+las 169 revisadas antes, las 31 pendientes y todos los demás campos.
+`tests/python-structure-baseline.ts` reconstruye la prosa anterior desde fuentes
+compartidas, conservando explícitamente el puente de prefijos y la nota Python
+añadida a los tres árboles revisados. Se verifica la huella completa de la entrega
+anterior; las pruebas históricas conservan sus valores. Se añade otra huella de
+publicación sin preparar ni activar la base. D2, teoría local, ejemplos,
+repeticiones globales, E/F y comprobaciones reales/visuales siguen abiertas.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

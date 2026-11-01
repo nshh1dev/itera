@@ -76,4 +76,6 @@ export const knownPythonReleases: readonly string[] = [
   "c4cd4da58348831070914d063a99d848544f4c075f9268992b8e059f80214bf0",
   // Pruebas, colecciones y búsquedas: diez ajustes y catorce conservadas.
   "ad20d0b9d3f6a55fe108d7d2a4bde9d828338a133248823bf39519bb7feab77d",
+  // Ventanas, matrices y estructuras: 21 ajustes y tres conservadas.
+  "d210ff3789c8ffda0e5437f52fede64748bf855cbf77dd05f1dc0e3b73699d28",
 ];
