@@ -10,6 +10,7 @@ import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import type { Json } from "../src/lib/types";
 import { beforePythonCollections } from "./python-collection-baseline";
+import { beforePythonRecords } from "./python-record-baseline";
 
 test("las siguientes 16 actividades propias revisan colecciones sin repetir la teoría inicial", () => {
   const entries = pythonCatalog.filter(entry => pythonLessons.has(entry.slug)).slice(16, 32);
@@ -46,7 +47,7 @@ test("las explicaciones distinguen pertenencia, cantidades, transformación, cop
 });
 
 test("el cuarto lote solo cambia 15 explicaciones y conserva los 43 textos anteriores y demás campos", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: entry.content.variants.map(variant => {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: { ...entry.content, variants: beforePythonRecords(entry.slug, entry.content).variants.map(variant => {
     if (!(entry.slug in pythonCollectionExplanations)) return variant;
     const { explanation, ...rest } = variant;
     void explanation;

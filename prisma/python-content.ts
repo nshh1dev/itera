@@ -13,6 +13,7 @@ import { pythonVocabularyRevisions, pythonSolutionExplanations } from "./python-
 import { pythonTimingRevisions } from "./python-timing";
 import { pythonFoundationExplanations } from "./python-foundation-explanations";
 import { pythonCollectionExplanations } from "./python-collection-explanations";
+import { pythonRecordExplanations } from "./python-record-explanations";
 import { validateProjectDefinition, validateProjectSolution } from "../src/lib/project";
 
 function pythonOnly(content: VersionContent): VersionContent {
@@ -447,6 +448,7 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
   if (slug in pythonSolutionExplanations) content.variants[0].explanation = pythonSolutionExplanations[slug];
   if (slug in pythonFoundationExplanations) content.variants[0].explanation = pythonFoundationExplanations[slug];
   if (slug in pythonCollectionExplanations) content.variants[0].explanation = pythonCollectionExplanations[slug];
+  if (slug in pythonRecordExplanations) content.variants[0].explanation = pythonRecordExplanations[slug];
   if (slug in pythonTimingRevisions) content.minutes = pythonTimingRevisions[slug].minutes;
   if (slug in pythonCosts) content.complexity = pythonCosts[slug];
   const exampleHelp = pythonSharedCaseHelp[slug];

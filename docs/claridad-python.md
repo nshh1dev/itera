@@ -695,6 +695,63 @@ No cierra el inventario global de teoría local, ejemplos, explicaciones o ayuda
 Las pruebas locales ejecutan únicamente código fijo del repositorio; Piston,
 revisión visual y el resto de E/F siguen pendientes.
 
+## Explicaciones de filtros y registros propios
+
+Se contrastan las últimas **16 actividades exclusivas de Python**, desde
+`python-filter` hasta `python-transforma-registros`. Edición de contactos conserva
+la explicación del primer lote; las otras **15** tienen revisiones explícitas en
+`prisma/python-record-explanations.ts`. Quedan revisadas las **48/48 explicaciones
+de actividades propias** y **73/224 del catálogo**: no se vuelven a contar
+desempaquetado, recorrido de pares ni edición de contactos.
+
+| Actividad | Decisión |
+| --- | --- |
+| `python-filter` | Separar selección y extracción de nombre, incluir edad 18 y no detenerse ante un menor ni eliminar nombres repetidos. |
+| `python-agrega` | Extremos reales con negativos; distinguir suma vacía, ausencia de extremo y extremo válido cero. |
+| `python-clave-longitud` | Seguir key=len con empate estable que no se ordena alfabéticamente. |
+| `python-lambda-desempate` | Negar solo la longitud y conservar el alfabético ascendente; reverse=True invertiría ambos criterios. |
+| `python-formato-decimal` | Precisión variable, texto con ceros finales y empate al par de float; sin prometer redondeo financiero. |
+| `python-consulta-anidada` | Respaldo exterior y consulta interior sin escrituras; nota None y claves ausentes comparten resultado, cero no. |
+| `python-inventario-valora` | Filas nuevas con céntimos enteros, orden compuesto y suma; conservar productos de valor cero, sin disco. |
+| `python-academia-inscribe` | Copiar cursos por alumno y aplicar dos setdefault; no reiniciar una nota cero ni sobrescribir otras inscripciones. |
+| `python-academia-califica` | Cortocircuito de and, existencia y límites 0/100; no crear inscripciones ni borrar notas al rechazar -1/101. |
+| `python-academia-resume` | Excluir solo None, conservar media cero y fracciones, evitar división vacía y desempatar por nombre. |
+| `python-contactos-crea` | Normalizar antes de consultar, rechazar vacío/duplicado y conservar ceros del teléfono como texto. |
+| `python-contactos-edita` | Conservar la explicación previa de copias por ficha, campos permitidos y texto vacío válido. |
+| `python-contactos-borra` | Copiar y borrar clave completa normalizada, no coincidencias parciales ni devolver la ficha retirada. |
+| `python-contactos-busca` | Precisar filtro vacío frente a campo ausente y conjunción de todos los filtros; ordenar nombres sin cambiar fichas. |
+| `python-transforma-campo` | Escribir solo la clave existente seleccionada; copia superficial suficiente por textos inmutables. |
+| `python-transforma-registros` | Copias por registro, campos sin regla y errores por campo; int nativo no equivale a la gramática restringida de otra práctica. |
+
+La explicación anterior de búsqueda de contactos ya era específica: se amplía
+para justificar el fragmento vacío y la diferencia con una clave ausente, no se
+declara incorrecta toda su versión histórica. Los otros 14 textos retiran la
+introducción conceptual completa repetida y siguen el código de referencia.
+Los enunciados, las pistas y los 433 ejemplos públicos permanecen intactos.
+
+`tests/python-record-explanations.test.ts` comprueba inventario, cobertura de las
+48 actividades propias y decisiones editoriales. Ejecuta ejemplos independientes
+sobre las 15 referencias fijas: cero y ausencia, fronteras 0/100, empates estables
+y compuestos, rechazo por filtro incompleto y recuperación de conversión sin
+perder otros campos/registros. El caso `1_000` contrasta int nativo con la gramática
+ASCII restringida de captura-conversion, sin cambiar ninguna de las dos reglas.
+Se compara también el contenido de la entrada al retornar y la ausencia de
+impresión. Esto no certifica identidad, técnicas de alumnos, toda mutación
+intermedia ni ejecución real en Piston.
+
+Una huella calculada antes de editar excluye solo las 15 explicaciones nuevas;
+protege las 58 revisadas antes, las 151 pendientes y todos los campos restantes.
+`tests/python-record-baseline.ts` reconstruye esos textos anteriores desde las
+lecciones originales, con una excepción explícita para búsqueda, que tenía una
+revisión aplicada sobre su lección. Se comprueba la huella completa de la entrega
+anterior. Las pruebas históricas de colecciones, fundamentos, soluciones y tiempos
+conservan sus valores mediante esa reconstrucción; se añade una huella de
+publicación sin retirar ninguna anterior ni preparar/activar la base.
+
+Quedan las 151 explicaciones comunes restantes y la revisión global de teoría
+local, ejemplos ya explicados y repeticiones entre superficies; cerrar las 48
+propias no cierra E ni F.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

@@ -104,6 +104,8 @@ Las explicaciones de solución tienen 43/224 revisiones específicas: diez prác
 
 Un cuarto lote contrasta las siguientes 16 actividades propias, conserva la explicación de pares ya revisada y ajusta otras 15 de colecciones. Van 58/224 explicaciones con revisión específica, incluidas las primeras 32 actividades propias. Se aclaran pertenencia frente a cantidades, filtro frente a reemplazo, copia por categoría e iteradores sin cambiar código, casos, enunciados ni tiempos. Las pruebas reconstruyen la huella anterior y comprueban ejemplos editoriales sobre referencias fijas; no acreditan Piston, técnica interna ni toda posible mutación. Detalles en [claridad-python.md](claridad-python.md); el catálogo sigue sin prepararse ni activarse.
 
+Las últimas 16 actividades propias cierran la revisión específica de sus 48 explicaciones: edición de contactos conserva la anterior y otras 15 se ajustan en `prisma/python-record-explanations.ts`. El total del catálogo es 73/224, con 151 explicaciones comunes pendientes. Se contrastan filtros, orden, redondeo nativo, notas cero/None, copias y recuperación por campo con referencias fijas; enunciados, código, casos y ayudas no cambian. Las huellas históricas se conservan y la base sigue sin prepararse ni activarse. Decisiones y límites en [claridad-python.md](claridad-python.md); E/F y la validación real siguen abiertas.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.
