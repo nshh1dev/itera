@@ -20,6 +20,7 @@ import { pythonStateExplanations } from "./python-state-explanations";
 import { pythonSearchExplanations } from "./python-search-explanations";
 import { pythonStructureExplanations } from "./python-structure-explanations";
 import { pythonOptimizationExplanations } from "./python-optimization-explanations";
+import { pythonPathExplanations } from "./python-path-explanations";
 import { validateProjectDefinition, validateProjectSolution } from "../src/lib/project";
 
 function pythonOnly(content: VersionContent): VersionContent {
@@ -461,6 +462,7 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
   if (slug in pythonSearchExplanations) content.variants[0].explanation = pythonSearchExplanations[slug];
   if (slug in pythonStructureExplanations) content.variants[0].explanation = pythonStructureExplanations[slug];
   if (slug in pythonOptimizationExplanations) content.variants[0].explanation = pythonOptimizationExplanations[slug];
+  if (slug in pythonPathExplanations) content.variants[0].explanation = pythonPathExplanations[slug];
   if (slug in pythonTimingRevisions) content.minutes = pythonTimingRevisions[slug].minutes;
   if (slug in pythonCosts) content.complexity = pythonCosts[slug];
   const exampleHelp = pythonSharedCaseHelp[slug];

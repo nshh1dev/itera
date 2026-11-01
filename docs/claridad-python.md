@@ -1102,9 +1102,46 @@ otra huella de publicación, sin preparar ni activar la base. Teoría local,
 ejemplos y repeticiones globales de E, F, D2 y validación real/visual siguen
 pendientes; revisar estas explicaciones no cierra esas tareas.
 
+## Cierre individual de explicaciones: caminos y optimización
+
+Las últimas **siete explicaciones comunes** completan **224/224 identidades
+revisadas**. Se ajustan seis textos en `prisma/python-path-explanations.ts` y se
+conserva Dijkstra. Este cierre abarca explicaciones de solución, no la revisión
+global de teoría local, ejemplos o repeticiones entre superficies de E.
+
+| Actividad | Decisión |
+| --- | --- |
+| `logica-dijkstra` | Conservar: infinito, selección lineal sin montículo, pesos positivos, ambos sentidos y coste total con conexiones. |
+| `logica-islas` | Matriz de visitas separada, marcado al apilar, componentes frente a celdas, diagonales excluidas y cuadrículas sin celdas. |
+| `logica-laberinto` | Distancia fijada antes de encolar, movimientos en cuatro sentidos, inicio cero y meta inalcanzable; la referencia no termina al descubrir la meta y conserva procesados. |
+| `logica-capacidad` | Cotas máximo/suma, carga exacta sin abrir día, tramos ordenados y frontera mínima con alto = medio; se permiten menos días y se cuenta el trabajo inicial. |
+| `logica-edicion` | Bases de inserción/borrado, vecinos de cada transición y comparación como coste 0/1; dos filas simultáneas, vacíos y ausencia de intercambio de coste uno. |
+| `logica-subsecuencia-creciente` | Longitud que termina en cada índice, desigualdad estricta y máximo global, no última celda; orden original sin contigüidad ni algoritmo alternativo supuesto. |
+| `logica-planifica-tareas` | Requisitos pendientes, máximo de finales en paralelo y liberación tras todos los requisitos; duración cero conserva dependencias y ciclo no devuelve un resultado parcial. |
+
+`tests/python-path-explanations.test.ts` exige la correspondencia exacta entre
+el inventario revisado y las 224 identidades del catálogo, sin duplicar las
+actividades propias o ya revisadas por vocabulario. Contrasta las siete
+referencias fijas con expectativas independientes: caminos de menor coste,
+islas diagonales, laberinto que requiere subir, frontera de capacidad, edición
+con inserciones/borrados, subsecuencias no contiguas y tareas paralelas/cíclicas.
+Comprueba tipo/valor de retorno, ausencia de impresión y contenido de entrada al
+retornar; no certifica identidad, toda mutación intermedia, técnica o límites
+reales de ejecución de programas de estudiantes.
+
+La huella previa excluye solo seis explicaciones y protege Dijkstra, las 217
+revisadas antes y todos los campos ajenos. `tests/python-path-baseline.ts`
+reconstruye la prosa anterior desde fuentes compartidas sin editarlas; se
+recupera la huella completa de la entrega anterior y se conservan las
+expectativas históricas. Se añade otra huella de publicación sin preparar ni
+activar contenido en la base. D2, el resto de E, F y validación real/visual siguen
+abiertas: completar este inventario no completa el plan.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
+- Las **224/224 explicaciones de solución** tienen revisión individual; no implica
+  que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
 - Quedan teoría local, vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos

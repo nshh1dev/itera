@@ -80,4 +80,6 @@ export const knownPythonReleases: readonly string[] = [
   "d210ff3789c8ffda0e5437f52fede64748bf855cbf77dd05f1dc0e3b73699d28",
   // Selección, combinatoria, tablas y grafos: veinte ajustes y cuatro conservadas.
   "bcd62b435f85067e305b115f9a1749e8fc1406831f6e63ec364524e5a2507a2e",
+  // Cierre de 224 explicaciones: seis ajustes finales y Dijkstra conservado.
+  "12607d2d946b057d3a7a3310db969501804e300628b2004e9a402391b590a93d",
 ];
