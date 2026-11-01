@@ -752,6 +752,65 @@ Quedan las 151 explicaciones comunes restantes y la revisión global de teoría
 local, ejemplos ya explicados y repeticiones entre superficies; cerrar las 48
 propias no cierra E ni F.
 
+## Explicaciones comunes iniciales
+
+Se revisan las primeras **24 explicaciones comunes pendientes**, desde saludo
+hasta predicción de valores: los 20 programas compartidos y cuatro funciones.
+Se ajustan **12** en `prisma/python-intro-explanations.ts` y se conservan otras
+**12** tras contrastarlas con sus referencias. El total asciende a **97/224
+explicaciones revisadas**, con **127 pendientes**. Revisar no obliga a reescribir
+un texto correcto: las conservadas cuentan como auditadas, no como cambios.
+
+| Actividad | Decisión |
+| --- | --- |
+| `logica-saludo` | Ajustar: print es una función y la expresión la llama; texto y salto final sin función solve. |
+| `logica-dos-lineas` | Conservar: explica ambas llamadas y el orden de ejecución con líneas distintas. |
+| `logica-orden-mensaje` | Conservar: vincula posición y salida, sin certificar cómo se reorganizó el código. |
+| `logica-texto-calculo` | Conservar: distingue tipos y cálculo frente a caracteres entre comillas. |
+| `logica-guarda-nombre` | Conservar: asignación y consulta de variable sin comillas. |
+| `logica-guarda-cantidad` | Conservar: diferencia palabra y valor; existe regla conceptual variable, no solo comparación de salida. |
+| `logica-actualiza-puntos` | Conservar: sigue 8 → 11 y la sustitución del valor, sin crear dos variables. |
+| `logica-intercambia` | Ajustar: seguir 3/8 y auxiliar, mostrando por qué dos asignaciones directas perderían el 3. |
+| `logica-suma-cantidades` | Conservar: números guardados y suma antes de imprimir, frente a expresión entre comillas. |
+| `logica-cambio` | Conservar: justifica pago menos precio mediante el significado de ambos valores. |
+| `logica-precio-unidades` | Conservar: conecta multiplicación, precio unitario y cantidad con el resultado 24. |
+| `logica-parentesis` | Conservar: diferencia duplicar la suma y sumar al doble del segundo término. |
+| `logica-lee-nombre` | Ajustar: seguir input, prefijo con coma/espacio y salida, retirando un segundo bloque teórico redundante. |
+| `logica-lee-doble` | Ajustar: retirar Node y contrastar multiplicación numérica con repetición de texto, cero y negativo. |
+| `logica-lee-suma` | Ajustar: dos conversiones, 6 frente a 42 y error de mezclar texto y entero. |
+| `logica-mensaje-resultado` | Conservar: separador explícito y espacios interiores sin conversión numérica. |
+| `logica-numero-texto` | Conservar: el tipo determina suma o unión de textos. |
+| `logica-booleano` | Ajustar: seguir True → str → lower sin reasignar el booleano, sin justificar salida por otros lenguajes. |
+| `logica-igualdad` | Ajustar: == frente a asignación y formato final true/false, con ejemplos iguales y distintos. |
+| `logica-alcanza` | Ajustar: justificar 9/10/11, igualdad incluida y diferencia con > o ==; conservar formato exacto. |
+| `logica-retorno` | Ajustar: seguir argumento y retorno con cero/negativo, sin input, impresión ni llamada manual. |
+| `logica-parametro` | Ajustar: sustituir plantilla extensa de razonamiento/coste/errores por lectura de data * 2 y fronteras. |
+| `logica-imprimir-devolver` | Ajustar: mostrar 5 no corrige devolver 0; reparar return, no añadir impresiones. |
+| `logica-predice-valores` | Ajustar: seguir x en 2 → 5 → 10 y el caso -3, sin certificar la predicción previa por comparar resultados. |
+
+Los enunciados, pistas, errores comunes y costes permanecen disponibles en sus
+superficies, sin repetirlos todos en la solución. Las reglas conceptuales
+variable, swap y boolean siguen intactas; no se amplían ni se sustituyen por la
+explicación. Se conservan input, impresión, saltos y true/false de PROGRAM, y
+argumento/retorno de FUNCTION. Ninguna revisión afecta JavaScript o TypeScript.
+
+`tests/python-intro-explanations.test.ts` comprueba inventario y textos
+conservados, decisiones y reglas vigentes. Ejecuta las 24 referencias fijas con
+expectativas independientes, comparando salida exacta de los 20 programas y
+retorno sin impresión de las cuatro funciones. No ejecuta código de estudiantes
+ni acredita Piston o revisión conceptual dentro del sandbox.
+
+La huella previa excluye solo las doce explicaciones ajustadas: protege las doce
+conservadas y todos los demás campos, incluidas las 73 revisadas anteriormente,
+las 127 pendientes, fuentes comunes, reglas, código, casos, ayudas y minutos.
+`tests/python-intro-baseline.ts` reconstruye la prosa previa desde la variante
+Python compartida sin editar sus fuentes. Una prueba recupera la huella completa
+de la entrega anterior y las huellas históricas conservan sus valores. Se añade
+la nueva huella sin retirar anteriores ni preparar o activar contenido en la base.
+
+El inventario global de teoría local, ejemplos, explicaciones y repeticiones
+sigue abierto. Este lote no cierra E/F ni sus comprobaciones visuales y reales.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

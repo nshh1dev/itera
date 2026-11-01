@@ -106,6 +106,8 @@ Un cuarto lote contrasta las siguientes 16 actividades propias, conserva la expl
 
 Las últimas 16 actividades propias cierran la revisión específica de sus 48 explicaciones: edición de contactos conserva la anterior y otras 15 se ajustan en `prisma/python-record-explanations.ts`. El total del catálogo es 73/224, con 151 explicaciones comunes pendientes. Se contrastan filtros, orden, redondeo nativo, notas cero/None, copias y recuperación por campo con referencias fijas; enunciados, código, casos y ayudas no cambian. Las huellas históricas se conservan y la base sigue sin prepararse ni activarse. Decisiones y límites en [claridad-python.md](claridad-python.md); E/F y la validación real siguen abiertas.
 
+Un sexto lote revisa las 24 explicaciones comunes iniciales: doce ajustes y doce textos conservados, total 97/224 revisadas y 127 pendientes. Se contrastan los 20 programas compartidos y cuatro funciones con salidas exactas/retornos independientes; se conservan reglas conceptuales y fuentes de JavaScript/TypeScript. Los ajustes retiran Node y repeticiones, y concretan intercambio, conversiones, booleanos y retorno. Huellas y decisiones en [claridad-python.md](claridad-python.md); no se prepara ni activa contenido en la base y E/F siguen abiertas.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

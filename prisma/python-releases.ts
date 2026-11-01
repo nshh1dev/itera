@@ -68,4 +68,6 @@ export const knownPythonReleases: readonly string[] = [
   "cf0e2664948c22a45d6f84e576e7db736aff53bcd89824dac03e4a8120be278d",
   // Últimas actividades propias: 15 explicaciones de filtros y registros.
   "88d30aba0d182bd99656c39d7096bfefcffe1819a22b6b9a616906e649639e42",
+  // Explicaciones comunes iniciales: doce ajustes y doce textos conservados.
+  "5f9896fbe69bf9cd9f7a520953c2629256fe6841fe0d8a4b5992e9a6b84632bc",
 ];
