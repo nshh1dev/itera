@@ -14,8 +14,8 @@ literales. Por eso no se vacían metadatos solo para evitar esa duplicación.
 Las condiciones necesarias y los textos exactos de PROGRAM permanecen visibles
 en el enunciado, aunque se acorte la descripción del catálogo.
 
-El inventario cubre **32/224 actividades**: ocho con ajustes y 24 conservadas.
-Quedan **192 actividades** para el contraste contextual entre superficies.
+El inventario cubre **64/224 actividades**: 16 con ajustes y 48 conservadas.
+Quedan **160 actividades** para el contraste contextual entre superficies.
 Las revisiones individuales anteriores no equivalen a cerrar este inventario.
 
 ## Primer bloque: impresión, variables, entrada y primeros retornos
@@ -55,9 +55,50 @@ Las revisiones individuales anteriores no equivalen a cerrar este inventario.
 | `logica-repara-presupuesto` | Conservar: distinguir precio unitario y envío fijo evita el defecto de la plantilla; no retirar esa condición como repetición. |
 | `logica-merienda` | Conservar: calcular primero y convertir después son etapas distintas de la construcción del retorno. |
 
+## Segundo bloque: condiciones, bucles, listas y textos
+
+Se revisan otras **32 actividades**, con siete descripciones separadas de su
+objetivo y una tercera pista concretada en Python. Las otras 24 actividades se
+conservan; no se retiran explicaciones necesarias para entender los conceptos.
+
+| Actividad | Decisión y motivo |
+| --- | --- |
+| `logica-elige-mensaje` | Conservar: reto de completar una etiqueta; las pistas no sustituyen la decisión por la respuesta literal. |
+| `logica-signo` | Conservar: orden de condiciones y caso final son distintos; no anticipar la etiqueta que falta. |
+| `logica-mayor-tres` | Conservar: candidato inicial y comparaciones posteriores requieren progresión; no inventar cero como máximo. |
+| `logica-dos-requisitos` | Concretar tercera pista en and y conservar comparaciones preparadas; las dos primeras mantienen ambas condiciones frente a una sola. |
+| `logica-alternativas` | Conservar: alternativas y bloqueo tienen alcances diferentes; agrupación y negación evitan saltarse el bloqueo. |
+| `logica-tarifa` | Conservar: tramos y límites son el contrato; las pistas ordenan las decisiones sin añadir condiciones. |
+| `python-condicional` | Separar descripción de objetivo: resumir clasificación de edad y mantener la expresión condicional como habilidad. El enunciado conserva sintaxis, umbral incluido y textos exactos. |
+| `logica-uno-n` | Conservar: generar valores no equivale a recibir una lista; objetivo y pistas distinguen número actual, límite y salida. |
+| `logica-cuenta-atras` | Conservar: incluir cero y terminar requieren tanto condición como avance descendente. |
+| `logica-suma-uno-n` | Conservar: acumulador y contador tienen funciones distintas; la pista final completa esa distinción. |
+| `logica-tabla` | Conservar: diez productos ordenados, recorrido de multiplicadores y cálculo son pasos complementarios. |
+| `logica-multiplos` | Conservar: recorrer, comprobar resto y contar no son instrucciones redundantes. |
+| `logica-bucle-roto` | Conservar: condición, avance y terminación explican el defecto sin cambiar entrada ni resultado. |
+| `python-centinela` | Separar descripción de objetivo: resumir valores anteriores al cero, conservando en el objetivo la terminación por centinela y en el enunciado break y exclusión de lo posterior. |
+| `python-omite-negativos` | Separar descripción de objetivo: resumir qué valores conservar; mantener continue frente a break y la continuidad tras negativos en el enunciado. |
+| `logica-posicion` | Conservar: posición y valor no son equivalentes; las pistas separan acceso al contenedor y al índice. |
+| `logica-indices` | Conservar: límites válidos y valor de cada posición son dificultades diferentes de la plantilla. |
+| `logica-suma-lista` | Conservar: transformar un contador requiere distinguir añadir uno de añadir el valor; vacío conserva suma cero. |
+| `logica-maximo` | Conservar: candidato real y actualización condicional evitan el máximo cero ficticio con negativos. |
+| `logica-cuenta-condicion` | Conservar: conteo frente a suma y cero no positivo son condiciones necesarias. |
+| `logica-filtra-lista` | Conservar: salida vacía inicial, comparación y límite incluido forman pistas progresivas. |
+| `logica-busqueda-lineal` | Conservar: recorrer, devolver primera posición y ausencia -1 no son repeticiones intercambiables. |
+| `logica-longitud-texto` | Conservar: espacios/signos cuentan, no modificar ni devolver número fijo; no anticipar una receta distinta. |
+| `logica-minusculas` | Conservar: la descripción conecta con el siguiente conteo de vocales; la tarea sigue siendo devolver texto convertido, no comparar ni contar. |
+| `logica-vocales` | Conservar: normalización, pertenencia y contador se integran; las pistas no cuentan todas las letras. |
+| `logica-invierte` | Conservar: construir delante frente a detrás requiere el contraste de concatenación; no retirar ese concepto. |
+| `logica-elimina-caracter` | Conservar: construir salida y preservar orden/diferencias del original son responsabilidades distintas. |
+| `logica-palabras` | Conservar: transición a palabra frente a cada letra y espacios repetidos explica por qué hace falta estado. |
+| `python-ordena-numeros` | Separar descripción de objetivo: resumir ambas listas y repeticiones; conservar sorted frente a sort/None, no mutación y vacío en el enunciado. |
+| `python-recorta` | Separar descripción de objetivo: resumir tramo delimitado; conservar límite superior exclusivo y sintaxis de corte en objetivo/enunciado, sin añadir uno a fin. |
+| `python-une-palabras` | Separar descripción de objetivo: resumir espaciado final; conservar split sin argumento frente a split(' '), join, mayúsculas/signos y texto vacío en el enunciado. |
+| `python-desempaqueta` | Separar descripción de objetivo: resumir intercambio de pareja; conservar evaluación de la derecha antes de asignar y tupla frente a lista JSON en el enunciado. |
+
 ## Conservación y límites
 
-Solo cambian **seis descripciones y la tercera pista de dos actividades** en la
+En el primer bloque cambian **seis descripciones y la tercera pista de dos actividades** en la
 proyección Python. No cambian objetivos, objetivos de práctica, introducciones,
 enunciados, condiciones, prerrequisitos, ejemplos ni explicaciones de solución.
 Las primeras dos pistas de las dos actividades permanecen exactas. Tampoco
@@ -69,7 +110,15 @@ distinciones conceptuales conservadas. También verifica la selección existente
 de objetivos sin modificar el componente compartido ni otros lenguajes.
 `tests/python-intro-copy-baseline.ts` reconstruye íntegra la entrega `24bfc2…` y
 se encadena a las reconstrucciones históricas sin sustituir sus expectativas.
-La huella vigente es `24642c…`, sin preparar ni activar la base.
+La huella de ese bloque es `24642c…`.
+
+En el segundo bloque cambian **siete descripciones y la tercera pista de una
+actividad**. La huella previa excluye solo esos ocho campos y conserva todo el
+resto del catálogo, incluidas las otras 24 actividades del bloque y las primeras
+32 revisadas. `tests/python-flow-copy.test.ts` comprueba el inventario y las
+distinciones conceptuales; `tests/python-flow-copy-baseline.ts` reconstruye
+íntegra la entrega `24642c…` y se encadena a las anteriores sin cambiar sus
+expectativas. La huella vigente es `64a0bf…`, sin preparar ni activar la base.
 
 Las pruebas de texto no acreditan calidad pedagógica completa, revisión visual,
 accesibilidad, ejecución real en Piston ni rendimiento. El resto del inventario,

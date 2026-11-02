@@ -6,6 +6,7 @@ import { pythonIntroCopyRevisions } from "../prisma/python-vocabulary";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { learningHelp } from "../src/lib/learning-help";
 import { beforePythonIntroCopy, previousIntroCopy } from "./python-intro-copy-baseline";
+import { beforePythonFlowCopy } from "./python-flow-copy-baseline";
 
 const reviewed = [
   "logica-saludo", "logica-dos-lineas", "logica-orden-mensaje", "logica-texto-calculo",
@@ -65,7 +66,7 @@ test("la ayuda ya evita mostrar juntos objetivo general y su copia como objetivo
 });
 
 test("solo cambian seis descripciones y dos listas de pistas en Python", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: Object.fromEntries(
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonFlowCopy(entry.slug, entry.content) })).map(entry => ({ ...entry, content: Object.fromEntries(
     Object.entries(entry.content).filter(([field]) => !Object.keys(pythonIntroCopyRevisions[entry.slug] ?? {}).includes(field)),
   ) }));
   // Calculada antes de editar; protege también los 24 textos conservados del

@@ -444,6 +444,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del primer contraste de repeticiones:** lint, tipos, 14 pruebas focalizadas, 552 pruebas completas sin omisiones con concurrencia 2, build y `content:python` sin conexión aprobados. Se protege todo salvo seis descripciones y dos listas de pistas; las primeras dos pistas siguen exactas y las expectativas históricas se reconstruyen sin reemplazarlas. La prueba de ayuda confirma el comportamiento existente, no una revisión visual ni un cambio de interfaz. No se iniciaron servicios ni se modificó la base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
 
+**Segundo contraste de repeticiones E:** otras 32 actividades revisadas: siete descripciones separadas de sus objetivos, una tercera pista concretada en and y 24 actividades conservadas. Van 64/224 actividades, con 16 ajustadas y 48 conservadas; quedan 160. [repeticiones-python.md](repeticiones-python.md) registra cada decisión. Se conservan teoría, enunciados, objetivos, primeras pistas, condiciones, ejemplos y soluciones; no se cambia presentación. La huella previa excluye ocho campos y la vigente `64a0bf…` reconstruye íntegra la entrega anterior sin sustituir expectativas históricas. Vocabulario contextual, D2 y F siguen abiertos; base sin preparar/activar.
+
+**Verificación del segundo contraste de repeticiones:** lint, tipos, 14 pruebas focalizadas, 555 pruebas completas sin omisiones con concurrencia 2, build y `content:python` sin conexión aprobados. Se conservan todos los campos ajenos a siete descripciones y una lista de pistas; las primeras dos pistas siguen exactas y la reconstrucción mantiene las expectativas históricas. No se iniciaron servicios ni se modificó la base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.

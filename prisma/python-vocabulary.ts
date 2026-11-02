@@ -79,6 +79,18 @@ export const pythonVocabularyRevisions: Record<string, VocabularyRevision> = {
   },
 };
 
+// Segundo bloque de contraste entre superficies: condiciones, bucles y listas.
+export const pythonFlowCopyRevisions: Record<string, VocabularyRevision> = {
+  "logica-dos-requisitos": { hints: ["No basta con que se cumpla una sola condición.", "Ambas comparaciones ya están guardadas en variables.", "Combina los dos booleanos con and; conserva las comparaciones preparadas."] },
+  "python-condicional": { description: "Clasifica una edad como adulto o menor mediante una expresión condicional." },
+  "python-centinela": { description: "Recoge los valores de una lista que aparecen antes del primer cero." },
+  "python-omite-negativos": { description: "Descarta los negativos sin perder los ceros ni los valores posteriores." },
+  "python-ordena-numeros": { description: "Entrega la lista original y una versión ordenada, conservando las repeticiones." },
+  "python-recorta": { description: "Obtén el tramo de una lista delimitado por inicio y fin." },
+  "python-une-palabras": { description: "Reconstruye un texto con un único espacio entre sus palabras." },
+  "python-desempaqueta": { description: "Intercambia los dos valores de una pareja sin modificar la lista recibida." },
+};
+
 // Resúmenes del bloque inicial: el contrato y la teoría permanecen en el enunciado.
 export const pythonIntroCopyRevisions: Record<string, VocabularyRevision> = {
   "logica-texto-calculo": { description: "Contrasta el resultado de una suma con la impresión de su expresión como texto." },

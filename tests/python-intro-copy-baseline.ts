@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonFlowCopy } from "./python-flow-copy-baseline";
 
 export const previousIntroCopy = {
   "logica-texto-calculo": { description: "Muestra primero el número obtenido al sumar 4 y 6. En la segunda línea muestra el texto literal 4 + 6. El resultado debe tener dos líneas: 10 y 4 + 6. No hay entrada." },
@@ -12,6 +13,7 @@ export const previousIntroCopy = {
 } satisfies Record<string, Partial<VersionContent>>;
 
 export function beforePythonIntroCopy(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonFlowCopy(slug, content);
   const previous = previousIntroCopy[slug as keyof typeof previousIntroCopy];
   return previous ? { ...content, ...previous } : content;
 }

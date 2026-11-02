@@ -110,4 +110,6 @@ export const knownPythonReleases: readonly string[] = [
   "24bfc2a47c51040682bbf2d818f15060ff58b27967faf0784a2a0e5838047caf",
   // Contraste inicial entre superficies: seis resúmenes y dos pistas Python.
   "24642cf0e58f1ea9bcdd7099fe09011dab86eaab8767426f0673005c1b47c008",
+  // Segundo contraste entre superficies: condiciones, bucles, listas y textos.
+  "64a0bfc934b7a6c646df89277df3d89a6c7c4f4ceafc93faf94d625c7f314c33",
 ];
