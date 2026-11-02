@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonFinalExamples } from "./python-final-example-baseline";
 
 export const previousCollectionExamples: Record<string, string> = {
   "python-conjunto-seguro": "El dos repetido aparece una vez; quitar nueve no causa error.",
@@ -9,6 +10,7 @@ export const previousCollectionExamples: Record<string, string> = {
 
 // Solo la explicación pública de orden 0; ni datos ni los demás casos.
 export function beforePythonCollectionExamples(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonFinalExamples(slug, content);
   if (!(slug in previousCollectionExamples)) return content;
   return { ...content, variants: content.variants.map(variant => ({
     ...variant, tests: variant.tests.map(item => item.visible && item.order === 0

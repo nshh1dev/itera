@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { beforePythonCollectionExamples, previousCollectionExamples } from "./python-collection-example-baseline";
+import { beforePythonFinalExamples } from "./python-final-example-baseline";
 
 type ReviewedExamples = { cases: [unknown, unknown][]; reason: RegExp };
 
@@ -61,7 +62,7 @@ test("el cuarto bloque contrasta 64 ejemplos y alcanza 241 ejemplos de 128 activ
 
 test("solo cambian cuatro explicaciones públicas y se reconstruye la entrega anterior", () => {
   assert.equal(Object.keys(previousCollectionExamples).length, 4);
-  const payload = pythonCatalog.map(entry => !(entry.slug in previousCollectionExamples) ? entry : ({ ...entry, content: {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonFinalExamples(entry.slug, entry.content) })).map(entry => !(entry.slug in previousCollectionExamples) ? entry : ({ ...entry, content: {
     ...entry.content, variants: entry.content.variants.map(variant => ({ ...variant, tests: variant.tests.map(item =>
       item.visible && item.order === 0 ? { ...item, explanation: "" } : item),
     })),

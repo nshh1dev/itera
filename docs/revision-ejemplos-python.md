@@ -7,13 +7,14 @@ contrasta cada pareja entrada/salida y su explicación con el contrato Python,
 el orden de aprendizaje y el formato de ejecución. No basta con detectar texto
 no vacío ni con ejecutar la solución que se quiere justificar.
 
-La revisión cubre las primeras **192/224 actividades**, con **369/433 ejemplos
+La revisión cubre las **224/224 actividades**, con **433/433 ejemplos
 públicos**. El primer bloque conserva sus 49 textos; el segundo ajusta tres y
 conserva otros 61; el tercero conserva 64; el cuarto ajusta cuatro y conserva 60;
-el quinto y el sexto conservan 64 cada uno.
+el quinto y el sexto conservan 64 cada uno; el séptimo ajusta dos y conserva 62.
 No cambian datos, salidas, visibilidad, orden, casos ocultos ni fuentes
-compartidas. Quedan **32 actividades y 64 ejemplos** por contrastar
-individualmente.
+compartidas. El contraste individual está completo: **nueve explicaciones
+ajustadas y 424 conservadas**. Esto no cierra la revisión de repeticiones entre
+superficies ni las demás fases del plan.
 
 ## Primer bloque: impresión, datos, retorno y cálculos
 
@@ -302,6 +303,60 @@ No ejecuta referencias ni alumnos, ni verifica tiempos, recursión real o
 aislamiento. El catálogo y la huella `f5d67f…` siguen íntegros, sin nueva revisión
 de contenido ni eslabón histórico adicional.
 
+## Séptimo bloque: árboles, optimización, grafos y síntesis
+
+Se contrastan los últimos **64 ejemplos de 32 actividades**. Se conservan 62 y
+se ajustan las dos explicaciones de capacidad: además de un reparto válido,
+muestran por qué una capacidad inferior no alcanza los días disponibles.
+
+| Actividad | Ejemplos | Decisión y motivo |
+| --- | ---: | --- |
+| `logica-arbol-busqueda` | 2 | Conservar: izquierda menor, derecha mayor y vacío válido. Este árbol sencillo no demuestra por sí solo la comprobación de límites de todos los antecesores. |
+| `logica-ancestro` | 2 | Conservar: dos es más cercano que cinco y un nodo es ancestro de sí mismo. |
+| `logica-monticulo-inserta` | 2 | Conservar: uno asciende por cuatro y dos hasta la raíz, produciendo la representación exigida; vacío crea raíz cero. |
+| `logica-monticulo-extrae` | 2 | Conservar: retirar uno, colocar cuatro y descenderlo mediante dos produce [2,3,4,7]; vacío sin mínimo. No se interpreta como ordenación general del montículo. |
+| `logica-prioridad` | 2 | Conservar: prioridad cero antes de uno, empate numérico de ids uno/tres; vacío sin ids. |
+| `logica-k-mayores` | 2 | Conservar: ambos cincos cuentan y tres completa el grupo; cero pedidos de vacío devuelve []. |
+| `logica-actividades` | 2 | Conservar: cuatro actividades compatibles y ninguna quinta posible; vacío cero. No afirmar que este caso cubre extremos compartidos. |
+| `logica-combina-archivos` | 2 | Conservar: costes sucesivos tres/seis y total nueve, no solo tamaño final; vacío sin coste. Los tamaños no requieren disco. |
+| `logica-potencia` | 2 | Conservar: potencia 2^10 y exponente cero como uno; no acredita reducción por mitades. |
+| `logica-mezcla` | 2 | Conservar: mismos valores ordenados y vacío ya ordenado; no certifica estrategia ni coste. |
+| `logica-subconjuntos` | 2 | Conservar: vacío tiene una elección y un elemento dos; diferencia entre [] y [[]]. No cubre todo el orden de generación con varios elementos. |
+| `logica-permutaciones` | 2 | Conservar: ambos órdenes completos de 1/2, lexicográficos numéricos, y un único orden para [1]. |
+| `logica-combinaciones` | 2 | Conservar: 2+3 y 5 sin reutilizar, ordenados desde entrada no ordenada; objetivo cero con solución vacía. |
+| `logica-reinas` | 2 | Conservar: una reina no amenaza otra y tamaño dos sin solución; devuelve cuenta, no tableros. |
+| `logica-fibonacci` | 2 | Conservar: índices cero/uno son las dos bases; no se presentan como cobertura de recurrencia ni memorización. |
+| `logica-escalera` | 2 | Conservar: cero escalones tiene una secuencia sin pasos y uno solo admite paso uno. |
+| `logica-caminos-obstaculos` | 2 | Conservar: dos caminos por los bordes del obstáculo central y casilla inicial bloqueada sin camino. |
+| `logica-monedas` | 2 | Conservar: tres monedas 5+5+1, ninguna pareja basta; denominación par no obtiene tres. |
+| `logica-mochila` | 2 | Conservar: pesos 2/3 valen 22 y no cabe el único objeto del segundo caso; no promete cobertura pública de pesos cero. |
+| `logica-subsecuencia-comun` | 2 | Conservar: ace conserva orden saltando b/d, longitud tres limitada por el texto corto; vacío sin subsecuencia no vacía. |
+| `logica-adyacencia` | 2 | Conservar: ambas direcciones generan [1]/[0,2]/[1]; nodo único aislado tiene lista interior vacía. |
+| `logica-alcanzables` | 2 | Conservar: cadena conecta todos e inicio aislado se incluye a sí mismo; no certifica búsqueda en profundidad. |
+| `logica-distancias` | 2 | Conservar: tercer nodo a dos aristas y aislados -1; posiciones de salida corresponden a nodos, no a visitas. |
+| `logica-ciclo-dirigido` | 2 | Conservar: camino vuelve a cero frente a descendiente compartido sin regreso; no confundir convergencia con ciclo. |
+| `logica-dependencias` | 2 | Conservar: requisitos 0/1 antes de 2, luego 3; ciclo impide orden completo, no devuelve parcial. |
+| `logica-dijkstra` | 2 | Conservar: coste 2+3 frente a diez directo e inaccesible -1, no cantidad de aristas. |
+| `logica-islas` | 2 | Conservar: grupo de tres y celda diagonal separada son dos islas; agua sin islas. No contar celdas como grupos. |
+| `logica-laberinto` | 2 | Conservar: dos movimientos ortogonales desde origen cero y ruta alternativa inferior pese al muro superior. |
+| `logica-capacidad` | 2 | Ajustar ambos: repartos válidos con nueve/seis y repartos máximos con ocho/cinco que requieren un día de más. Capacidades aún menores tampoco bastan, respetando orden y paquetes indivisibles. |
+| `logica-edicion` | 2 | Conservar: sustitución g/p y dos sustituciones más inserción para kitten/sitting, sin intercambios unitarios. |
+| `logica-subsecuencia-creciente` | 2 | Conservar: [2,3,7,18] conserva posiciones sin contigüidad; iguales no prolongan longitud uno. |
+| `logica-planifica-tareas` | 2 | Conservar: 3/5 en paralelo, espera a ambos y añade dos; vacío sin trabajo. No sumar todas las duraciones. |
+
+Solo cambian las explicaciones públicas de órdenes 0 y 1 de `logica-capacidad`
+en la proyección Python; `prisma/advanced-expansion.ts` permanece intacto para
+JavaScript y TypeScript. La huella previa excluye exactamente esas posiciones;
+se conservan datos, salidas, código, casos ocultos y todos los demás campos.
+`tests/python-final-example-baseline.ts` restaura la entrega íntegra `f5d67f…`
+y se encadena a las reconstrucciones anteriores sin cambiar sus expectativas.
+La nueva huella es `5a6fd6…`, sin preparación ni activación de base.
+
+`tests/python-final-example-review.test.ts` fija las 64 parejas y motivos. Un
+modelo fijo enumera todos los cortes consecutivos de las dos listas pequeñas de
+capacidad, sin usar la búsqueda binaria de la referencia, y contrasta nueve/seis
+como mínimos. No ejecuta alumnos ni acredita rendimiento o Piston real.
+
 ## Verificación y límites
 
 `tests/python-public-example-review.test.ts` fija las 49 parejas públicas desde
@@ -311,6 +366,7 @@ No genera salidas ejecutando referencias ni ejecuta programas de alumnos.
 
 Conservar un texto tras contrastarlo cuenta como revisión, no como reescritura.
 Las comprobaciones no acreditan por sí solas toda la calidad pedagógica,
-aislamiento, Piston real ni revisión visual. No cierran los ejemplos restantes,
-las repeticiones entre superficies ni las fases D2, E o F. El catálogo continúa
+aislamiento, Piston real ni revisión visual. El contraste de los 433 ejemplos
+queda completo; no cierra las repeticiones entre superficies ni las fases D2,
+E o F. El catálogo continúa
 sin preparar ni activar en la base.

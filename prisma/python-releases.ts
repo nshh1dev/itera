@@ -102,4 +102,6 @@ export const knownPythonReleases: readonly string[] = [
   "01eca6dbf731d8cfba0fd748dbcda27c9763654b05b55f18775ed38778852816",
   // Contraste de ejemplos de conjuntos y comprensiones: cuatro explicaciones públicas.
   "f5d67f389e846bb978604ce2a5e9dc8ad695a40699153b79c2edc57bf3834d10",
+  // Cierre del contraste de ejemplos: justificar las dos capacidades mínimas.
+  "5a6fd6efedc8d0e0524abb4382fc7f88c766c18a3f97f4e084a91fe0a4bae06c",
 ];

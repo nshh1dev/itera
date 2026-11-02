@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
+import { beforePythonFinalExamples } from "./python-final-example-baseline";
 
 type Review = { cases: [unknown, unknown][]; reason: RegExp };
 
@@ -81,5 +82,6 @@ test("los ejemplos de disco conservan artefactos exactos y alcance de persistenc
 });
 
 test("el quinto bloque conserva íntegro el catálogo anterior", () => {
-  assert.equal(pythonReleaseFingerprint(pythonCatalog), "f5d67f389e846bb978604ce2a5e9dc8ad695a40699153b79c2edc57bf3834d10");
+  const previous = pythonCatalog.map(entry => ({ ...entry, content: beforePythonFinalExamples(entry.slug, entry.content) }));
+  assert.equal(pythonReleaseFingerprint(previous), "f5d67f389e846bb978604ce2a5e9dc8ad695a40699153b79c2edc57bf3834d10");
 });

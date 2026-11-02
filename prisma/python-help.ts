@@ -106,6 +106,7 @@ export const pythonCaseHelp: Record<string, string[]> = {
 // El índice corresponde al orden editorial del caso, no a su posición visible.
 // Se redactan a partir del contrato y de los datos, sin ejecutar la referencia.
 export const pythonSharedCaseHelp: Record<string, readonly string[]> = {
+  "logica-capacidad": ["Con capacidad 9 se pueden repartir [1, 2, 3] y [4, 5] en dos días, respetando el orden. Con 8, incluso llenando cada día todo lo posible, hacen falta tres: [1, 2, 3], [4] y [5]. Una capacidad menor tampoco sirve; por eso el mínimo es 9.", "Con capacidad 6 los tramos [3, 2], [2, 4] y [1, 4] caben en tres días. Con 5, incluso llenando cada día todo lo posible, se necesitan cuatro: [3, 2], [2], [4, 1] y [4]. Una capacidad menor tampoco sirve; el mínimo es 6."],
   "logica-filtra-lista": ["8 supera el mínimo 5 y 5 lo iguala: ambos se conservan, en ese orden. Se omiten 3 y 1 porque no alcanzan el mínimo.", "Ningún valor alcanza el mínimo."],
   "logica-saludo": ["El saludo ocupa una sola línea: la coma separa Hola de mundo y las comillas del código no se imprimen."],
   "logica-dos-lineas": ["Primera se muestra antes que Segunda; cada instrucción de impresión termina su propia línea."],

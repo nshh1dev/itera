@@ -1707,9 +1707,9 @@ además de D2, F y las comprobaciones reales/visuales autorizadas.
   que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
 - La teoría local tiene **224/224 actividades revisadas**: 48 propias y 176
   comunes; quedan las repeticiones entre superficies, no actividades sin revisar.
-- Quedan vocabulario en otras
-  ayudas y objetivos y revisión de ejemplos ya explicados. El contraste posterior
-  cubre 369/433 ejemplos de 192/224 actividades; decisiones y límites en
+- Queda vocabulario en otras ayudas y objetivos. El contraste posterior de
+  ejemplos está completo: **433/433 ejemplos de 224/224 actividades**, con nueve
+  explicaciones ajustadas y 424 conservadas; decisiones y límites en
   [revision-ejemplos-python.md](revision-ejemplos-python.md).
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
   conservan sus contratos de archivos y persistencia; se retiraron repeticiones
