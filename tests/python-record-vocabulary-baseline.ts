@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonPrerequisiteVocabulary } from "./python-prerequisite-vocabulary-baseline";
 
 export const previousRecordVocabulary = {
   "logica-ficha-producto": { description: "Recibe una ficha con nombre, texto ASCII, y precio, entero de 0 a 1000" },
@@ -30,6 +31,7 @@ export const previousRecordVocabulary = {
 } satisfies Record<string, Partial<VersionContent>>;
 
 export function beforePythonRecordVocabulary(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonPrerequisiteVocabulary(slug, content);
   const previous = previousRecordVocabulary[slug as keyof typeof previousRecordVocabulary];
   return previous ? { ...content, ...previous } : content;
 }

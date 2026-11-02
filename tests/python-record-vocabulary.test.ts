@@ -5,6 +5,7 @@ import { pythonCatalog } from "../prisma/python-content";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { pythonRecordVocabularyRevisions } from "../prisma/python-vocabulary";
 import { beforePythonRecordVocabulary, previousRecordVocabulary } from "./python-record-vocabulary-baseline";
+import { beforePythonPrerequisiteVocabulary } from "./python-prerequisite-vocabulary-baseline";
 
 test("el segundo lote de vocabulario acota ocho actividades y dieciséis campos", () => {
   assert.deepEqual(Object.keys(pythonRecordVocabularyRevisions), Object.keys(previousRecordVocabulary));
@@ -44,7 +45,7 @@ test("las ayudas distinguen diccionarios de nombres y valores de historial", () 
 });
 
 test("el lote conserva todos los campos ajenos y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: Object.fromEntries(
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonPrerequisiteVocabulary(entry.slug, entry.content) })).map(entry => ({ ...entry, content: Object.fromEntries(
     Object.entries(entry.content).filter(([field]) => !Object.keys(pythonRecordVocabularyRevisions[entry.slug] ?? {}).includes(field)),
   ) }));
   // Calculada antes de editar; conserva íntegros enunciados, teoría, ejemplos,

@@ -1735,6 +1735,42 @@ retirarla requiere revisar sus funciones en cada superficie, no sustituirla
 por una definición genérica. Este lote no cierra vocabulario global ni el
 contraste entre todas las superficies; tampoco E, D2 o F.
 
+## Tercer lote de vocabulario: prerrequisitos textuales
+
+La búsqueda de términos heredados se amplía a prerrequisitos y coste, además de
+descripciones, objetivos, enunciados, condiciones, pistas, errores comunes,
+objetivos de práctica, explicaciones de solución y ejemplos públicos. Detecta
+cuatro listas de prerrequisitos que no cubría la prueba inicial de seis campos.
+
+| Actividad | Antes | Ahora |
+| --- | --- | --- |
+| `logica-dos-parametros` | Acceder a propiedades | Consultar claves de un diccionario; conserva suma, variables y return. |
+| `logica-opcional` | Propiedades de objetos y tratamiento de ausencia | Consultar claves y distinguir clave ausente de valor presente, sin confundir cero o None. |
+| `logica-ventana-fija` | Subarreglos contiguos | Tramos consecutivos de una lista; conserva actualización incremental. |
+| `logica-mochila` | Arreglos | Listas; conserva programación dinámica y objetos como elementos físicos. |
+
+Solo cambian esas cuatro listas textuales en Python, no `prerequisiteSlugs`,
+orden, categorías ni acceso. Las identidades, evaluación, archivos, teoría,
+enunciados y los 433 ejemplos quedan exactos. Una huella previa excluye solo las
+cuatro listas; `tests/python-prerequisite-vocabulary-baseline.ts` reconstruye
+íntegra la entrega `c89f4c…` sin cambiar expectativas históricas. La huella vigente
+es `24bfc2…`, sin preparación ni activación en la base.
+
+Se contrastan también los usos en minúsculas de null/true/false: las explicaciones
+FUNCTION se contextualizan con None/True/False y JSON en el propio texto o su
+enunciado. Los tres programas iniciales `logica-booleano`, `logica-igualdad` y
+`logica-alcanza` exigen textos true/false terminados en salto, no literales Python
+en minúsculas; se conservan sus lecturas e impresión preparada. reverse=True y
+ensure_ascii=False son argumentos Python válidos. No se reescriben textos claros
+para repetir JSON en cada ejemplo breve.
+
+`tests/python-prerequisite-vocabulary.test.ts` comprueba estas distinciones y
+amplía el control de arreglos/subarreglos/propiedades/undefined a los textos del
+catálogo completo. No prohíbe objeto ni propiedad de búsqueda, y no trata código,
+recursos o claves JSON como prosa. Estas reglas acotadas no certifican por sí
+solas toda la terminología: sigue abierto el contraste contextual entre
+superficies y la reducción de repeticiones, además de D2 y F.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

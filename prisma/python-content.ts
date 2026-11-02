@@ -9,7 +9,7 @@ import type { Json } from "../src/lib/types";
 import { pythonMistakes, pythonCaseHelp, pythonSharedCaseHelp } from "./python-help";
 import { pythonCosts } from "./python-costs";
 import { pythonEditorialRevisions } from "./python-editorial";
-import { pythonVocabularyRevisions, pythonRecordVocabularyRevisions, pythonSolutionExplanations } from "./python-vocabulary";
+import { pythonVocabularyRevisions, pythonRecordVocabularyRevisions, pythonPrerequisiteVocabulary, pythonSolutionExplanations } from "./python-vocabulary";
 import { pythonTimingRevisions } from "./python-timing";
 import { pythonFoundationExplanations } from "./python-foundation-explanations";
 import { pythonCollectionExplanations } from "./python-collection-explanations";
@@ -454,6 +454,7 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
   if (vocabulary) content = { ...content, ...vocabulary };
   const recordVocabulary = pythonRecordVocabularyRevisions[slug];
   if (recordVocabulary) content = { ...content, ...recordVocabulary };
+  if (slug in pythonPrerequisiteVocabulary) content.prerequisites = pythonPrerequisiteVocabulary[slug];
   if (slug in pythonSolutionExplanations) content.variants[0].explanation = pythonSolutionExplanations[slug];
   if (slug in pythonFoundationExplanations) content.variants[0].explanation = pythonFoundationExplanations[slug];
   if (slug in pythonCollectionExplanations) content.variants[0].explanation = pythonCollectionExplanations[slug];

@@ -152,6 +152,13 @@ contratos y fuentes comunes. La huella vigente `c89f4c…` reconstruye la anteri
 [claridad-python.md](claridad-python.md). Vocabulario global y repeticiones siguen
 abiertos.
 
+El tercer lote de vocabulario adapta cuatro listas de prerrequisitos a claves
+de diccionario, tramos consecutivos y listas. No cambia las dependencias entre
+actividades ni sus contratos. Conserva las representaciones JSON y la salida
+exacta true/false de los tres programas iniciales. Huella vigente `24bfc2…`, con
+reconstrucción íntegra de `c89f4c…`; no hay preparación ni activación de base.
+La revisión contextual de vocabulario y repeticiones sigue abierta.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

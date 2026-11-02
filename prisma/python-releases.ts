@@ -106,4 +106,6 @@ export const knownPythonReleases: readonly string[] = [
   "5a6fd6efedc8d0e0524abb4382fc7f88c766c18a3f97f4e084a91fe0a4bae06c",
   // Vocabulario de fichas y registros: ocho actividades, solo metadatos y ayudas.
   "c89f4cd3841fad9c97a90e9f87ccd31e2255a9c5d5c329cfcb6c2028cdc36392",
+  // Prerrequisitos Python: claves de diccionario, tramos consecutivos y listas.
+  "24bfc2a47c51040682bbf2d818f15060ff58b27967faf0784a2a0e5838047caf",
 ];

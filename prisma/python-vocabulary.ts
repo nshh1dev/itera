@@ -79,6 +79,14 @@ export const pythonVocabularyRevisions: Record<string, VocabularyRevision> = {
   },
 };
 
+// Prerrequisitos textuales: no cambia prerequisiteSlugs ni el orden del recorrido.
+export const pythonPrerequisiteVocabulary: Record<string, string[]> = {
+  "logica-dos-parametros": ["Consultar claves de un diccionario", "Sumar números", "Utilizar variables y return"],
+  "logica-opcional": ["Consultar claves de un diccionario y distinguir una clave ausente de un valor presente."],
+  "logica-ventana-fija": ["Tramos consecutivos de una lista", "Actualización incremental"],
+  "logica-mochila": ["Programación dinámica", "Listas"],
+};
+
 // Segundo lote: distinguir diccionarios, nombres de texto y valores de historial.
 // No cambia claves públicas, código ni los textos exactos de los programas.
 export const pythonRecordVocabularyRevisions: Record<string, VocabularyRevision> = {

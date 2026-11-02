@@ -436,6 +436,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del segundo lote de vocabulario:** lint, tipos, 27 pruebas focalizadas, 544 pruebas completas sin omisiones con concurrencia 2, build y `content:python` sin conexión aprobados. La huella acotada conserva todos los campos ajenos a los 16 autorizados y la reconstrucción recupera íntegra la entrega `5a6fd6…`, incluidas las expectativas históricas de ejemplos. No se iniciaron servicios ni se modificó la base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
 
+**Tercer lote de vocabulario E:** la búsqueda ampliada a prerrequisitos y coste detecta cuatro listas textuales con propiedades/subarreglos/arreglos. Se adaptan a claves de diccionario, tramos consecutivos y listas sin cambiar `prerequisiteSlugs`, acceso, orden o contratos. Se conservan los usos contextuales de None/True/False frente a JSON y los textos exactos true/false de tres programas iniciales. [claridad-python.md](claridad-python.md) documenta decisiones y límites. La huella previa excluye solo esas cuatro listas; la vigente `24bfc2…` reconstruye íntegra la entrega anterior. No cierra vocabulario contextual, repeticiones, D2 ni F; base sin preparar/activar.
+
+**Verificación del tercer lote de vocabulario:** lint, tipos, 16 pruebas focalizadas, 548 pruebas completas sin omisiones con concurrencia 2, build y `content:python` sin conexión aprobados. La primera prueba nueva exigía que None estuviera en el enunciado incluso cuando se explicaba en la solución de valida-json; se corrigió el control para admitir el contexto del propio texto, sin cambiar contenido. La huella acotada y la reconstrucción histórica aprueban. No se iniciaron servicios ni se modificó la base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.
