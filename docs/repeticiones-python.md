@@ -14,8 +14,8 @@ literales. Por eso no se vacían metadatos solo para evitar esa duplicación.
 Las condiciones necesarias y los textos exactos de PROGRAM permanecen visibles
 en el enunciado, aunque se acorte la descripción del catálogo.
 
-El inventario cubre **64/224 actividades**: 16 con ajustes y 48 conservadas.
-Quedan **160 actividades** para el contraste contextual entre superficies.
+El inventario cubre **96/224 actividades**: 28 con ajustes y 68 conservadas.
+Quedan **128 actividades** para el contraste contextual entre superficies.
 Las revisiones individuales anteriores no equivalen a cerrar este inventario.
 
 ## Primer bloque: impresión, variables, entrada y primeros retornos
@@ -96,6 +96,47 @@ conservan; no se retiran explicaciones necesarias para entender los conceptos.
 | `python-une-palabras` | Separar descripción de objetivo: resumir espaciado final; conservar split sin argumento frente a split(' '), join, mayúsculas/signos y texto vacío en el enunciado. |
 | `python-desempaqueta` | Separar descripción de objetivo: resumir intercambio de pareja; conservar evaluación de la derecha antes de asignar y tupla frente a lista JSON en el enunciado. |
 
+## Tercer bloque: parejas, diccionarios, referencias y validación
+
+Se revisan otras **32 actividades**: nueve descripciones separadas de sus
+objetivos, un objetivo y una meta de práctica que aún hablaban de propiedad,
+y una tercera pista concretada en None. Se conservan las otras 20 actividades.
+
+| Actividad | Decisión y motivo |
+| --- | --- |
+| `python-enumera` | Separar descripción de objetivo: presentar numeración de palabras desde uno; mantener enumerate, parejas y posiciones repetidas en teoría y pistas. |
+| `python-empareja` | Separar descripción de objetivo: presentar parejas hasta la lista más corta; mantener zip, desempaquetado y ausencia de relleno. |
+| `python-retorno-multiple` | Separar descripción de objetivo: presentar suma/producto juntos; mantener tupla, desempaquetado y finalización de cada llamada con return. |
+| `logica-ficha-producto` | Corregir objetivo: clave de diccionario, no propiedad por nombre. La ficha ya se define en descripción/enunciado; no cambiar el precio ni su consulta. |
+| `logica-ficha-resultado` | Conservar: total calculado y unidades recibidas tienen responsabilidades distintas dentro del diccionario de resultado. |
+| `logica-opcional` | Corregir objetivo de práctica: clave ausente frente a cantidad cero; conservar respaldo solo si falta la clave. |
+| `logica-ausencia` | Conservar: ausencia explícita, cero y falsedad requieren distinción; la tercera pista usa None y explica JSON. |
+| `logica-auxiliares` | Conservar: subtotal, envío y límite exacto justifican separar operaciones y decisiones. |
+| `logica-variable-local` | Conservar: valor recibido frente a local fijo es el defecto central, no una repetición prescindible. |
+| `logica-parametro-exterior` | Conservar: parámetro y exterior no son la misma fuente; mantener qué dato se usa y cuál no cambia. |
+| `logica-llamadas-independientes` | Conservar: pertenencia del contador a cada llamada y lugar de inicialización son conceptos distintos. |
+| `logica-sin-estado-global` | Conservar: tasa variable y argumentos completos evitan dependencia fija; el resultado acumula retornos, no estado global. |
+| `logica-encadena-retornos` | Conservar: retorno como argumento de otra auxiliar, sin sustituirlo por impresión. |
+| `logica-dos-nombres-lista` | Conservar: asignar alias no copia; la mutación visible desde original requiere ese contraste. |
+| `logica-reasigna-o-muta` | Conservar: cambiar referencia no equivale a append sobre la lista compartida; no retirar la prohibición necesaria. |
+| `logica-copia-plana` | Conservar: lista plana y copia exterior definen el alcance de independencia, no estructuras arbitrarias. |
+| `logica-conserva-entrada` | Conservar: salida nueva y recorrido sin asignaciones a la entrada mantienen responsabilidades distintas. |
+| `logica-registro-compartido` | Conservar: mutación intencional del diccionario y observación por ambos nombres, sin prometer identidad desde JSON. |
+| `python-identidad` | Separar descripción de objetivo: resumir efecto de alias frente a copia; conservar ==/is, instantánea previa, copia superficial y límites de observación. |
+| `python-opcional-seguro` | Separar descripción de objetivo: resumir dos listas independientes; conservar evaluación del valor predeterminado y None como señal por llamada. |
+| `python-actualiza-diccionario` | Separar descripción de objetivo: presentar asociación actualizada y otras parejas conservadas; mantener copia superficial y límites con valores interiores mutables. |
+| `python-borra-clave` | Separar descripción de objetivo: presentar diccionario sin clave aunque faltara; conservar pop, respaldo y cero presente. |
+| `python-recorre-pares` | Separar descripción de objetivo: presentar textos ordenados; mantener vistas, método con paréntesis, conversión numérica y formato exacto. |
+| `python-lista-registros` | Separar descripción de objetivo: presentar total de cantidades sin agrupar nombres; conservar diccionarios, acumulador y repeticiones. |
+| `logica-valida-divisor` | Concretar tercera pista en None y cociente, sin remisión al lenguaje. Conservar primeras dos pistas y teoría de / como float frente a JSON. |
+| `logica-valido-cero-ausente` | Conservar: ausencia, negativo y válido son estados distintos; el orden evita comparar None con números. |
+| `logica-localiza-error` | Conservar: guarda anterior al acceso y rango con dos límites explican por qué no provocar el error. |
+| `logica-captura-conversion` | Conservar: formato completo, signo y cifras ASCII forman validación progresiva; no reemplazar por int nativo que admitiría otra gramática. |
+| `logica-error-dominio` | Conservar: regla de dominio, lugar de lanzamiento/captura y mensaje exacto son responsabilidades separadas. |
+| `logica-recupera-elementos` | Conservar: captura por elemento y contador de rechazados permiten continuar tras un error; las pistas no deben perder ese alcance. |
+| `logica-asercion-normal` | Conservar: aserción conocida y retorno del dato variable son acciones distintas; no convertir salida en conteo de pruebas. |
+| `logica-pruebas-limites` | Conservar: vacío y negativos distinguen supuestos; la corrección requiere candidato real, no máximo cero ficticio. |
+
 ## Conservación y límites
 
 En el primer bloque cambian **seis descripciones y la tercera pista de dos actividades** en la
@@ -118,7 +159,15 @@ resto del catálogo, incluidas las otras 24 actividades del bloque y las primera
 32 revisadas. `tests/python-flow-copy.test.ts` comprueba el inventario y las
 distinciones conceptuales; `tests/python-flow-copy-baseline.ts` reconstruye
 íntegra la entrega `24642c…` y se encadena a las anteriores sin cambiar sus
-expectativas. La huella vigente es `64a0bf…`, sin preparar ni activar la base.
+expectativas. La huella de ese bloque es `64a0bf…`.
+
+En el tercero cambian **nueve descripciones, un objetivo, una meta de práctica y
+la tercera pista de una actividad**. Se conservan los 433 ejemplos, enunciados,
+teoría, código, soluciones, archivos, contratos, orden y tiempos. La huella previa
+excluye solo esos doce campos. `tests/python-reference-copy.test.ts` comprueba el
+inventario y conceptos conservados; `tests/python-reference-copy-baseline.ts`
+reconstruye íntegra la entrega `64a0bf…` y se encadena a las anteriores sin
+cambiar expectativas. La huella vigente es `e9ae5f…`, sin preparar ni activar la base.
 
 Las pruebas de texto no acreditan calidad pedagógica completa, revisión visual,
 accesibilidad, ejecución real en Piston ni rendimiento. El resto del inventario,

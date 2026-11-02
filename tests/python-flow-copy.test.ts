@@ -5,6 +5,7 @@ import { pythonCatalog } from "../prisma/python-content";
 import { pythonFlowCopyRevisions } from "../prisma/python-vocabulary";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { beforePythonFlowCopy, previousFlowCopy } from "./python-flow-copy-baseline";
+import { beforePythonReferenceCopy } from "./python-reference-copy-baseline";
 
 const reviewed = [
   "logica-elige-mensaje", "logica-signo", "logica-mayor-tres", "logica-dos-requisitos",
@@ -54,7 +55,7 @@ test("los resúmenes conservan las distinciones conceptuales y los límites en e
 });
 
 test("solo cambian siete descripciones y una lista de pistas en Python", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: Object.fromEntries(
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonReferenceCopy(entry.slug, entry.content) })).map(entry => ({ ...entry, content: Object.fromEntries(
     Object.entries(entry.content).filter(([field]) => !Object.keys(pythonFlowCopyRevisions[entry.slug] ?? {}).includes(field)),
   ) }));
   // Calculada antes de editar; conserva las otras 24 actividades del bloque,

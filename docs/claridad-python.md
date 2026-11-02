@@ -1780,9 +1780,11 @@ condiciones y los 433 ejemplos. La ayuda ya elige objetivos de práctica o gener
 sin mostrarlos duplicados: no se vacían esos metadatos ni se cambia la interfaz.
 El segundo bloque añade otras 32 revisadas: siete descripciones separadas de sus
 objetivos, una tercera pista concretada en and y 24 actividades conservadas.
-Van **64/224 actividades**, con 16 ajustadas y 48 conservadas. Decisiones
-individuales, huella vigente `64a0bf…` y límites en
-[repeticiones-python.md](repeticiones-python.md). Quedan 160 actividades para este
+El tercero añade 32 revisadas: nueve descripciones, un objetivo, una meta y una
+tercera pista ajustados; 20 actividades conservadas. Van **96/224 actividades**,
+con 28 ajustadas y 68 conservadas. Decisiones individuales, huella vigente
+`e9ae5f…` y límites en
+[repeticiones-python.md](repeticiones-python.md). Quedan 128 actividades para este
 contraste; no se cierra E, D2 ni F.
 
 ## Pendientes y límites

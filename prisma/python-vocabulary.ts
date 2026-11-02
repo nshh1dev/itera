@@ -79,6 +79,22 @@ export const pythonVocabularyRevisions: Record<string, VocabularyRevision> = {
   },
 };
 
+// Tercer bloque: separar tarea y habilidad sin borrar conceptos de referencias.
+export const pythonReferenceCopyRevisions: Record<string, VocabularyRevision> = {
+  "python-enumera": { description: "Numera las palabras de una lista desde uno, conservando su orden." },
+  "python-empareja": { description: "Forma parejas con los valores correspondientes de dos listas hasta agotar la más corta." },
+  "python-retorno-multiple": { description: "Calcula juntos la suma y el producto de dos enteros mediante una auxiliar." },
+  "logica-ficha-producto": { objective: "Seleccionar el valor numérico asociado a una clave de diccionario." },
+  "logica-opcional": { practiceGoals: ["Distinguir una clave ausente de una cantidad igual a cero."] },
+  "python-identidad": { description: "Observa qué cambia al añadir un elemento a un alias y qué conserva una copia." },
+  "python-opcional-seguro": { description: "Obtén dos listas independientes al llamar dos veces a una auxiliar sin pasar una lista inicial." },
+  "python-actualiza-diccionario": { description: "Actualiza una asociación en una copia del diccionario, conservando las demás parejas." },
+  "python-borra-clave": { description: "Devuelve una copia del diccionario sin la clave solicitada, aunque no estuviera presente." },
+  "python-recorre-pares": { description: "Presenta las parejas de un diccionario como textos ordenados por clave." },
+  "python-lista-registros": { description: "Suma las cantidades de las fichas recibidas, incluidas las que repiten nombre." },
+  "logica-valida-divisor": { hints: ["Comprueba el divisor antes de operar.", "Cero en total sí es válido.", "Devuelve None solo cuando divisor vale cero; en otro caso devuelve el cociente."] },
+};
+
 // Segundo bloque de contraste entre superficies: condiciones, bucles y listas.
 export const pythonFlowCopyRevisions: Record<string, VocabularyRevision> = {
   "logica-dos-requisitos": { hints: ["No basta con que se cumpla una sola condición.", "Ambas comparaciones ya están guardadas en variables.", "Combina los dos booleanos con and; conserva las comparaciones preparadas."] },
