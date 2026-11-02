@@ -424,6 +424,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del quinto bloque de ejemplos:** lint, tipos, tres pruebas focalizadas y 535 pruebas completas sin omisiones con concurrencia 2 aprobados. Se reutilizan build y `content:python` sin conexión aprobados en el bloque anterior porque solo cambian documentación y una prueba, no producto, catálogo ni dependencias. La prueba conserva íntegra la huella `f5d67f…`. No se iniciaron servicios ni se modificó la base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
 
+**Revisión posterior de ejemplos E, sexto bloque:** se contrastan y conservan 64 ejemplos de las siguientes 32 actividades: búsqueda, matrices, estructuras y árboles. Van 369/433 ejemplos de 192/224 actividades; quedan 64 ejemplos de 32 actividades. [revision-ejemplos-python.md](revision-ejemplos-python.md) registra cada decisión, incluidos límites de cobertura de empates, técnicas y mutación intermedia. La prueba fija parejas públicas y motivos sin ejecutar referencias ni alumnos. No cambia el catálogo ni la huella `f5d67f…`. E, D2 y F siguen abiertas; base sin preparar/activar.
+
+**Verificación del sexto bloque de ejemplos:** lint, tipos, tres pruebas focalizadas y 538 pruebas completas sin omisiones con concurrencia 2 aprobados. Se reutilizan build y `content:python` sin conexión aprobados en el cuarto bloque: solo cambian documentación y una prueba, no producto, catálogo ni dependencias. La prueba confirma íntegra la huella `f5d67f…`. No se iniciaron servicios ni se modificó la base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.

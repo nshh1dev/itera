@@ -7,12 +7,12 @@ contrasta cada pareja entrada/salida y su explicación con el contrato Python,
 el orden de aprendizaje y el formato de ejecución. No basta con detectar texto
 no vacío ni con ejecutar la solución que se quiere justificar.
 
-La revisión cubre las primeras **160/224 actividades**, con **305/433 ejemplos
+La revisión cubre las primeras **192/224 actividades**, con **369/433 ejemplos
 públicos**. El primer bloque conserva sus 49 textos; el segundo ajusta tres y
 conserva otros 61; el tercero conserva 64; el cuarto ajusta cuatro y conserva 60;
-el quinto conserva 64.
+el quinto y el sexto conservan 64 cada uno.
 No cambian datos, salidas, visibilidad, orden, casos ocultos ni fuentes
-compartidas. Quedan **64 actividades y 128 ejemplos** por contrastar
+compartidas. Quedan **32 actividades y 64 ejemplos** por contrastar
 individualmente.
 
 ## Primer bloque: impresión, datos, retorno y cálculos
@@ -253,6 +253,54 @@ los tres proyectos que la declaran entre procesos. Es una comprobación editoria
 de datos y contratos: no ejecuta disco ni Piston y no acredita aislamiento,
 organización interna ni persistencia real. No cambia el catálogo ni la huella
 `f5d67f…`; no hace falta otro eslabón de reconstrucción histórica.
+
+## Sexto bloque: búsqueda, matrices, estructuras y árboles
+
+Se conservan los **64 ejemplos de las siguientes 32 actividades**, tras el
+contraste individual de datos, resultados, vocabulario y secuencia. Las
+explicaciones concuerdan con sus contratos; conservar no significa omitir la
+revisión ni afirmar que cada pareja pública cubre todas las reglas del reto.
+
+| Actividad | Ejemplos | Decisión y motivo |
+| --- | ---: | --- |
+| `logica-insercion-posicion` | 2 | Conservar: insertar antes de ambos tres, índice uno; vacío solo permite posición cero. |
+| `logica-ordena-insercion` | 2 | Conservar: orden ascendente completo y vacío sin inserciones; no se certifica técnica. |
+| `logica-ordena-registros` | 2 | Conservar: cinco puntos antes de tres y alba antes de bea; vacío sin registros. No presentar el ejemplo como prueba de estabilidad de empates completos. |
+| `logica-combina` | 2 | Conservar: intercalación de ambos orígenes y elemento pendiente de b cuando a está vacía. |
+| `logica-palindromo` | 2 | Conservar: abba simétrico y Aa distinto de aA, sin normalizar mayúsculas. |
+| `logica-pareja` | 2 | Conservar: índices uno/tres, no valores dos/siete; única pareja insuficiente devuelve []. El primer caso no tiene varias soluciones que desempatar. |
+| `logica-prefijos` | 2 | Conservar: acumulación desde cero y prefijo vacío como único elemento; no confundir [] con [0]. |
+| `logica-intervalos-suma` | 2 | Conservar: ambos extremos incluidos y consulta unitaria negativa; vacío sin consultas. |
+| `logica-ventana-fija` | 2 | Conservar: las tres ventanas suman 3/5/7 y ventana única con k uno; no se afirma cobertura pública de negativos. |
+| `logica-ventana-suma` | 2 | Conservar: [4,3] alcanza siete con dos elementos y ningún dato individual llega a siete; segunda lista ni completa alcanza cinco. La explicación breve muestra el tramo, no un algoritmo. |
+| `logica-celda` | 2 | Conservar: fila uno/columna cero seleccionan tres; valor cero de celda existente no es ausencia. |
+| `logica-filas` | 2 | Conservar: sumas independientes 3/12 con filas desiguales y fila vacía que conserva posición con cero. |
+| `logica-columnas` | 2 | Conservar: 5/7/9 por columna, no dos sumas de filas; matriz vacía sin columnas. |
+| `logica-diagonales` | 2 | Conservar: ambas de arriba abajo y celda unitaria incluida en cada lista. |
+| `logica-transpuesta` | 2 | Conservar: columnas como filas, forma 2×3 a 3×2 y caso unitario sin cambio. |
+| `logica-vecinos` | 2 | Conservar: conteos ortogonales 1/2/2/1, sin diagonal ni propia celda; vacío sin posiciones. |
+| `logica-copia-anidada` | 2 | Conservar: cambiar solo celda copiada y mantener original, también con cero/negativo. El contrato delimita identidad y mutaciones intermedias no certificadas por JSON. |
+| `logica-pila` | 2 | Conservar: extracción 2/1 por último en entrar y pop vacío ignorado. |
+| `logica-cola` | 2 | Conservar: extracción 1/2 por primero en entrar, frente a pila anterior; vacío sin valor ficticio. |
+| `logica-delimitadores` | 2 | Conservar: anidación válida y cruce de tipos inválido pese a igual cantidad de aperturas/cierres. |
+| `logica-deshacer` | 2 | Conservar: recuperar tres tras retirar última suma; sin historial mantiene cero. |
+| `logica-suma-recursiva` | 2 | Conservar: descomposición 1+(2+(3+0)) y caso base vacío; no acredita recursión interna. |
+| `logica-busqueda-recursiva` | 2 | Conservar: índice dos, no valor siete; vacío devuelve -1 incluso buscando cero. |
+| `logica-une-intervalos` | 2 | Conservar: solapamiento fusionado y hueco separado; tocar extremo cuatro también fusiona. |
+| `logica-segundo-maximo` | 2 | Conservar: cinco como segundo distinto, no ocho repetido; vacío como None/null. |
+| `logica-suma-maxima` | 2 | Conservar: tramo contiguo suma seis; todos negativos obligan a -2, no cero de tramo vacío. |
+| `logica-sin-repeticiones` | 2 | Conservar: abc contiguo de longitud tres y repetición uniforme limitada a uno; devuelve longitud, no texto. |
+| `logica-ranking` | 2 | Conservar: frecuencia dos antes de uno, desempate numérico 2/4; vacío sin valores. |
+| `logica-cuenta-nodos` | 2 | Conservar: None sin raíz y nodo de value cero que sí se cuenta. |
+| `logica-altura` | 2 | Conservar: hoja con altura uno contando nodos, no enlaces; vacío cero. |
+| `logica-preorden` | 2 | Conservar: raíz/izquierda/derecha 1/2/3 y vacío sin visitas. El árbol público sencillo no distingue por sí solo preorden de niveles. |
+| `logica-niveles` | 2 | Conservar: 1/2/3/4 por niveles, con tres antes de cuatro a diferencia de preorden; vacío sin raíz. |
+
+`tests/python-algorithm-example-review.test.ts` fija las 64 parejas públicas y
+sus motivos, además de límites de técnica, mutación y contenido observable.
+No ejecuta referencias ni alumnos, ni verifica tiempos, recursión real o
+aislamiento. El catálogo y la huella `f5d67f…` siguen íntegros, sin nueva revisión
+de contenido ni eslabón histórico adicional.
 
 ## Verificación y límites
 
