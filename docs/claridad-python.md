@@ -1616,13 +1616,67 @@ Al no haber ediciones, no se añade un eslabón de reconstrucción ni una huella
 nueva: la prueba comprueba que la huella íntegra sigue siendo la anterior. Teoría
 restante, ejemplos, vocabulario global, repeticiones y D2/E/F siguen abiertos.
 
+## Teoría local: árboles, montículos, retroceso y grafos
+
+Se revisan otras **24 comunes**, todas FUNCTION, desde la validación de un árbol
+de búsqueda hasta la detección de ciclos dirigidos. **Las 24 conservan su teoría
+y ayudas** tras contraste individual con plantilla, contrato y pistas. Van
+**216/224 actividades revisadas en teoría local** (48 propias y 168 comunes);
+quedan **8 comunes/proyectos**. Este lote tampoco modifica el catálogo.
+
+| Actividad | Decisión sobre teoría local |
+| --- | --- |
+| `logica-arbol-busqueda` | Conservar: límites heredados de todos los antecesores, no solo comparación con hijos; vacío válido. |
+| `logica-ancestro` | Conservar: nodo como ancestro de sí mismo, objetivos iguales y relación por ramas, no por orden de valores. |
+| `logica-monticulo-inserta` | Conservar: padre en (i − 1) // 2, ascenso estrictamente menor y parada en igualdad; representación concreta. |
+| `logica-monticulo-extrae` | Conservar: guardar raíz, mover último valor, hijo menor e izquierdo en empate, sin intercambiar iguales. |
+| `logica-prioridad` | Conservar: prioridad numérica ascendente e id ascendente en empate; llegada sin efecto. |
+| `logica-k-mayores` | Conservar: k candidatos, repeticiones, cero como [] y longitud completa como todos. |
+| `logica-actividades` | Conservar: ordenar por fin, compartir extremo no solapa y no modificar la entrada. |
+| `logica-combina-archivos` | Conservar: tamaños abstractos, archivo combinado reinsertado y coste cero con menos de dos. |
+| `logica-potencia` | Conservar: reducción por mitades, factor acumulado para impar y exponente cero igual a uno, incluida base cero. |
+| `logica-mezcla` | Conservar: dividir por mitades, combinar ordenado y no modificar la entrada; la técnica no se certifica. |
+| `logica-subconjuntos` | Conservar: orden concreto desde [[]], copias con el nuevo número al final y subconjunto vacío. |
+| `logica-permutaciones` | Conservar: todos los órdenes, comparación numérica y [2, 10] antes de [10, 2]; vacío como [[]]. |
+| `logica-combinaciones` | Conservar: sin reutilizar, valores ordenados dentro de cada combinación, orden exterior numérico y target cero como [[]]. |
+| `logica-reinas` | Conservar: una reina por fila, conflicto por columna/diagonales, simetrías distintas y solo el conteo. |
+| `logica-fibonacci` | Conservar: base 0/1, revisión de memoria y guardado del resultado; los casos no certifican la memoización. |
+| `logica-escalera` | Conservar: pasos 1/2, orden distingue formas y cero escalones como una forma. |
+| `logica-caminos-obstaculos` | Conservar: solo derecha/abajo, obstáculo también en inicio/meta y celda libre única como un camino. |
+| `logica-monedas` | Conservar: reutilización de denominaciones, mínimo de monedas, -1 si es imposible y cero importe como 0. |
+| `logica-mochila` | Conservar: cada objeto una vez, capacidad no exacta y objetos de peso cero elegibles incluso con capacidad cero. |
+| `logica-subsecuencia-comun` | Conservar: orden sin exigir tramo consecutivo, longitud y cero si falta una subsecuencia no vacía. |
+| `logica-adyacencia` | Conservar: lista por nodo, aristas en ambos sentidos, vecinos distintos y orden ascendente. |
+| `logica-alcanzables` | Conservar: inicio incluido, una sola aparición, ciclos sin duplicados y aislado como lista propia. |
+| `logica-distancias` | Conservar: distancia cero al inicio, -1 inalcanzable y mínima cantidad de aristas, no orden de visita. |
+| `logica-ciclo-dirigido` | Conservar: lazo como ciclo, estados no visitado/en curso/terminado y descendiente compartido sin ciclo. |
+
+No se reescriben textos claros: las 24 decisiones quedan documentadas y los
+modelos fijos comprueban sus conceptos. Los árboles usan `value`, `left` y
+`right`; los montículos se representan como listas y los grafos por listas de
+aristas. No se añaden técnicas obligatorias, cotas de complejidad ni garantías
+de rendimiento.
+
+`tests/python-algorithm-theory.test.ts` protege inventario, estructura y
+precisiones conservadas; ejecuta modelos fijos de validez de árbol de búsqueda,
+ancestro común, inserción/extracción de montículo, prioridad, k mayores,
+selección de actividades, coste de combinación, potencia rápida, mezcla,
+subconjuntos, permutaciones, combinaciones, n reinas, Fibonacci, escalera,
+caminos con obstáculos, cambio de monedas, mochila con peso cero, subsecuencia
+común, adyacencia, alcanzables, distancias y ciclo dirigido. No ejecuta envíos
+ni certifica técnicas, complejidad o aislamiento.
+
+Al no haber ediciones, no se añade eslabón ni huella nueva: la prueba comprueba
+que la huella íntegra sigue siendo la anterior. Teoría restante, ejemplos,
+vocabulario global, repeticiones y D2/E/F siguen abiertos.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Las **224/224 explicaciones de solución** tienen revisión individual; no implica
   que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
-- La teoría local tiene 192/224 actividades revisadas: 48 propias y 144 comunes;
-  quedan 32 comunes/proyectos y las repeticiones entre superficies.
+- La teoría local tiene 216/224 actividades revisadas: 48 propias y 168 comunes;
+  quedan 8 comunes/proyectos y las repeticiones entre superficies.
 - Quedan vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
