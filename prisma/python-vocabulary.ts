@@ -79,6 +79,28 @@ export const pythonVocabularyRevisions: Record<string, VocabularyRevision> = {
   },
 };
 
+// Cuarto bloque: resultados de conjuntos y recorridos frente a sus técnicas.
+export const pythonCollectionCopyRevisions: Record<string, VocabularyRevision> = {
+  "python-conjunto-seguro": { description: "Añade y retira valores sin repeticiones, tolerando que el valor retirado no exista." },
+  "python-union": { description: "Reúne los valores de ambas listas sin repeticiones y en orden ascendente." },
+  "python-interseccion": { description: "Obtén los valores compartidos por dos listas, sin repeticiones." },
+  "python-diferencia": { description: "Enumera los requisitos que aún faltan entre los valores disponibles." },
+  "python-simetrica": { description: "Recoge los valores exclusivos de una de las dos entradas, descartando los compartidos." },
+  "python-subconjunto": { description: "Comprueba si dispones de todos los requisitos, sin contar sus repeticiones como unidades." },
+  "logica-repetido": { hints: ["Necesitas recordar los valores anteriores.", "Un conjunto permite preguntar si un valor ya apareció.", "Consulta antes de añadir; si ya existe, devuelve True."] },
+  "logica-anagramas": { hints: ["La inicialización ya crea todas las claves: no hace falta comprobar si existen antes de aumentar sus contadores.", "Recorre a y b en minúsculas por separado; si letra es distinta de ' ', suma uno en la tabla correspondiente.", "Recorre alfabeto y devuelve False ante cualquier contador distinto. Devuelve True fuera de ese bucle, nunca en su primera vuelta."] },
+  "python-crea-grupo": { description: "Añade un nombre al final de su categoría, conservando las listas originales." },
+  "python-comprension": { description: "Devuelve los cuadrados de una lista en el mismo orden, sin perder posiciones." },
+  "python-comprension-filtro": { description: "Extrae las vocales de un texto en minúsculas, conservando orden y repeticiones." },
+  "python-comprension-condicional": { description: "Sustituye los negativos por cero sin eliminar elementos de la lista." },
+  "python-comprension-dict": { description: "Asocia cada palabra recibida con su longitud, sin duplicar claves." },
+  "python-iterador": { description: "Materializa dos veces el mismo iterador y observa qué queda tras el primer recorrido." },
+  "python-generador": { description: "Calcula la suma de cuadrados sin preparar una lista intermedia de cuadrados." },
+  "python-map": { description: "Convierte textos a enteros y devuelve sus dobles en el orden recibido." },
+  "python-filter": { description: "Obtén los nombres de los adultos a partir de sus fichas, sin alterar su orden." },
+  "python-agrega": { description: "Resume una lista con su suma, mínimo y máximo, incluidos los datos vacíos." },
+};
+
 // Tercer bloque: separar tarea y habilidad sin borrar conceptos de referencias.
 export const pythonReferenceCopyRevisions: Record<string, VocabularyRevision> = {
   "python-enumera": { description: "Numera las palabras de una lista desde uno, conservando su orden." },

@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonCollectionCopy } from "./python-collection-copy-baseline";
 
 export const previousReferenceCopy = {
   "python-enumera": { description: "Recorrer índice y valor mediante enumerate." },
@@ -16,6 +17,7 @@ export const previousReferenceCopy = {
 } satisfies Record<string, Partial<VersionContent>>;
 
 export function beforePythonReferenceCopy(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonCollectionCopy(slug, content);
   const previous = previousReferenceCopy[slug as keyof typeof previousReferenceCopy];
   return previous ? { ...content, ...previous } : content;
 }

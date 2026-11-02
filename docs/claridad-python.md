@@ -1782,9 +1782,11 @@ El segundo bloque añade otras 32 revisadas: siete descripciones separadas de su
 objetivos, una tercera pista concretada en and y 24 actividades conservadas.
 El tercero añade 32 revisadas: nueve descripciones, un objetivo, una meta y una
 tercera pista ajustados; 20 actividades conservadas. Van **96/224 actividades**,
-con 28 ajustadas y 68 conservadas. Decisiones individuales, huella vigente
-`e9ae5f…` y límites en
-[repeticiones-python.md](repeticiones-python.md). Quedan 128 actividades para este
+con 28 ajustadas y 68 conservadas. El cuarto añade 32 revisadas: 16 descripciones
+y dos terceras pistas ajustadas; 14 conservadas. Van **128/224 actividades**, con
+46 ajustadas y 82 conservadas. Decisiones individuales, huella vigente
+`55c3bc…` y límites en
+[repeticiones-python.md](repeticiones-python.md). Quedan 96 actividades para este
 contraste; no se cierra E, D2 ni F.
 
 ## Pendientes y límites

@@ -5,6 +5,7 @@ import { pythonCatalog } from "../prisma/python-content";
 import { pythonReferenceCopyRevisions } from "../prisma/python-vocabulary";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { beforePythonReferenceCopy, previousReferenceCopy } from "./python-reference-copy-baseline";
+import { beforePythonCollectionCopy } from "./python-collection-copy-baseline";
 
 const reviewed = [
   "python-enumera", "python-empareja", "python-retorno-multiple", "logica-ficha-producto",
@@ -65,7 +66,7 @@ test("las revisiones mantienen conceptos, pistas progresivas y límites de obser
 });
 
 test("solo cambian nueve descripciones, un objetivo, una meta y una lista de pistas", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: Object.fromEntries(
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonCollectionCopy(entry.slug, entry.content) })).map(entry => ({ ...entry, content: Object.fromEntries(
     Object.entries(entry.content).filter(([field]) => !Object.keys(pythonReferenceCopyRevisions[entry.slug] ?? {}).includes(field)),
   ) }));
   // Calculada antes de editar; conserva las otras 20 actividades del bloque,

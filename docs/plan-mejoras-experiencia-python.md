@@ -452,6 +452,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del tercer contraste de repeticiones:** lint, tipos, 16 pruebas focalizadas, 558 pruebas completas sin omisiones con concurrencia 2, build y `content:python` sin conexión aprobados. La huella previa protege todo salvo nueve descripciones, un objetivo, una meta y una lista de pistas; las primeras dos pistas siguen exactas y la reconstrucción mantiene las expectativas históricas. No se iniciaron servicios ni se modificó la base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
 
+**Cuarto contraste de repeticiones E:** otras 32 actividades de integración, conjuntos, agrupación y recorridos: 16 descripciones separadas de la habilidad y dos terceras pistas concretadas en True/False; 14 conservadas. Van 128/224 actividades, con 46 ajustadas y 82 conservadas; quedan 96. [repeticiones-python.md](repeticiones-python.md) registra cada decisión, incluidos los dos hitos de gastos conservados. Solo cambian 18 campos Python: se mantienen teoría, enunciados, primeras pistas, 433 ejemplos, soluciones, código, manifiestos y límites de certificación de técnicas/memoria. La huella previa protege todo lo demás y la vigente `55c3bc…` reconstruye íntegra la entrega anterior sin sustituir expectativas históricas. Vocabulario contextual, D2 y F siguen abiertos; base sin preparar/activar.
+
+**Verificación del cuarto contraste de repeticiones:** lint, tipos, 12 pruebas focalizadas, 561 pruebas completas sin omisiones con concurrencia 2, build y `content:python` sin conexión aprobados. Las huellas acotadas y reconstrucciones históricas aprueban; las primeras dos pistas siguen exactas. No se iniciaron servicios ni se modificó la base. Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización; el plan se conserva.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.

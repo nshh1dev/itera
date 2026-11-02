@@ -159,12 +159,12 @@ exacta true/false de los tres programas iniciales. Huella vigente `24bfc2…`, c
 reconstrucción íntegra de `c89f4c…`; no hay preparación ni activación de base.
 La revisión contextual de vocabulario y repeticiones sigue abierta.
 
-El contraste de repeticiones entre superficies cubre **96/224 actividades**:
-22 descripciones separadas de sus objetivos, cuatro terceras pistas concretadas,
-un objetivo y una meta de práctica adaptados a claves de diccionario, y 68
+El contraste de repeticiones entre superficies cubre **128/224 actividades**:
+38 descripciones separadas de sus objetivos, seis terceras pistas concretadas,
+un objetivo y una meta de práctica adaptados a claves de diccionario, y 82
 actividades conservadas. No se retiran introducciones, condiciones ni pistas
 progresivas; la ayuda ya evita mostrar juntos objetivos duplicados. Huella
-vigente `e9ae5f…`, con reconstrucción íntegra de `64a0bf…`, sin preparar ni activar la base.
+vigente `55c3bc…`, con reconstrucción íntegra de `e9ae5f…`, sin preparar ni activar la base.
 Inventario y límites: [repeticiones-python.md](repeticiones-python.md).
 
 ## Destino del documento de referencia

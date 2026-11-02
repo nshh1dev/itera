@@ -114,4 +114,6 @@ export const knownPythonReleases: readonly string[] = [
   "64a0bfc934b7a6c646df89277df3d89a6c7c4f4ceafc93faf94d625c7f314c33",
   // Tercer contraste entre superficies: parejas, diccionarios y referencias.
   "e9ae5f4540b6cb805a44ac7ff12952697e0547216a872caba4edfd50fde8b8da",
+  // Cuarto contraste entre superficies: conjuntos, comprensiones e iteradores.
+  "55c3bc1d2324a98370bb9a530cc6a0be9090eb5797202e472dc06ba2d306b875",
 ];

@@ -6,6 +6,7 @@ import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { pythonRecordVocabularyRevisions } from "../prisma/python-vocabulary";
 import { beforePythonRecordVocabulary, previousRecordVocabulary } from "./python-record-vocabulary-baseline";
 import { beforePythonPrerequisiteVocabulary } from "./python-prerequisite-vocabulary-baseline";
+import { beforePythonCollectionCopy } from "./python-collection-copy-baseline";
 
 test("el segundo lote de vocabulario acota ocho actividades y dieciséis campos", () => {
   assert.deepEqual(Object.keys(pythonRecordVocabularyRevisions), Object.keys(previousRecordVocabulary));
@@ -17,7 +18,7 @@ test("el segundo lote de vocabulario acota ocho actividades y dieciséis campos"
     assert.deepEqual(Object.keys(revision), Object.keys(previousRecordVocabulary[slug as keyof typeof previousRecordVocabulary]), slug);
     for (const [field, value] of Object.entries(revision)) {
       assert.ok(["description", "objective", "hints", "practiceGoals"].includes(field), field);
-      assert.deepEqual(entry.content[field as keyof typeof revision], value, `${slug}: ${field}`);
+      assert.deepEqual(beforePythonCollectionCopy(slug, entry.content)[field as keyof typeof revision], value, `${slug}: ${field}`);
       fields++;
     }
   }
