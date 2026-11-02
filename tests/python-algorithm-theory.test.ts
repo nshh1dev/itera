@@ -4,6 +4,7 @@ import { spawnSync } from "node:child_process";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
+import { beforePythonExampleReview } from "./python-example-review-baseline";
 
 const reviewed = ["logica-arbol-busqueda", "logica-ancestro", "logica-monticulo-inserta", "logica-monticulo-extrae", "logica-prioridad", "logica-k-mayores", "logica-actividades", "logica-combina-archivos", "logica-potencia", "logica-mezcla", "logica-subconjuntos", "logica-permutaciones", "logica-combinaciones", "logica-reinas", "logica-fibonacci", "logica-escalera", "logica-caminos-obstaculos", "logica-monedas", "logica-mochila", "logica-subsecuencia-comun", "logica-adyacencia", "logica-alcanzables", "logica-distancias", "logica-ciclo-dirigido"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -48,7 +49,8 @@ test("los textos conservados mantienen límites de árboles, montículos, retroc
 });
 
 test("el lote no cambia el catálogo y conserva la huella publicada", () => {
-  assert.equal(pythonReleaseFingerprint(pythonCatalog), "c7720201bb98fc7c81aa6a646952ba7c73486200121d43d0f8292a9eaf7e9c29");
+  const previous = pythonCatalog.map(entry => ({ ...entry, content: beforePythonExampleReview(entry.slug, entry.content) }));
+  assert.equal(pythonReleaseFingerprint(previous), "c7720201bb98fc7c81aa6a646952ba7c73486200121d43d0f8292a9eaf7e9c29");
 });
 
 test("modelos fijos confirman árboles, montículos, retroceso, programación dinámica y grafos", () => {

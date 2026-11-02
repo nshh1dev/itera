@@ -56,10 +56,10 @@ export const pythonCaseHelp: Record<string, string[]> = {
   "inventario-valora": ["El pan aporta 250 céntimos y el agua 100; se ordenan de mayor a menor valor.", "Sin productos el total es cero y no hay filas de reporte."],
   constante: ["Tres cajas aportan tres grupos de seis: dieciocho lápices.", ""],
   decimal: ["0.5 se convierte en 0.5; al sumar 0.5 el resultado es 1.0 y print conserva el .0.", "-0.5 + 0.5 da 0.0; el signo y el decimal forman parte del float.", "1.5 + 0.5 = 2.0; el texto se convierte antes de sumar.", "0 + 0.5 = 0.5; cero es un decimal válido.", "-2.25 + 0.5 = -1.75; la conversión conserva el signo.", "100 + 0.5 = 100.5; el resultado no se trunca a entero."],
-  condicional: ["Dieciocho pertenece a la rama adulto.", "Diecisiete todavía es menor: comprueba el otro lado del límite."],
+  condicional: ["Con 18 años se alcanza exactamente el mínimo para adulto: la comparación incluye el 18 y se devuelve ese texto, no un booleano.", "Diecisiete todavía es menor: comprueba el otro lado del límite."],
   centinela: ["Se conserva el dos y el cero termina el recorrido antes de llegar al ocho.", "El primer dato ya es el centinela: no se conserva ninguno."],
   "omite-negativos": ["El negativo se omite, pero cero y tres se conservan.", "Una lista vacía no produce vueltas."],
-  "ordena-numeros": ["Se ordenan los valores, conservando los dos treses y la entrada original.", "Las dos listas del resultado pueden estar vacías."],
+  "ordena-numeros": ["Se ordenan los valores, conservando los dos treses y la entrada original.", "La entrada no contiene valores: original conserva [] y ordenados también es [], porque no hay elementos que ordenar."],
   recorta: ["Se copian los índices uno y dos, no el límite tres.", "El tramo vacío de una lista vacía también es válido."],
   "une-palabras": ["Los grupos de espacios se sustituyen por un único separador.", "Tabulación y salto de línea también separan palabras."],
   desempaqueta: ["El segundo valor pasa a la primera posición.", "Valores iguales siguen ocupando las dos posiciones."],
@@ -106,6 +106,7 @@ export const pythonCaseHelp: Record<string, string[]> = {
 // El índice corresponde al orden editorial del caso, no a su posición visible.
 // Se redactan a partir del contrato y de los datos, sin ejecutar la referencia.
 export const pythonSharedCaseHelp: Record<string, readonly string[]> = {
+  "logica-filtra-lista": ["8 supera el mínimo 5 y 5 lo iguala: ambos se conservan, en ese orden. Se omiten 3 y 1 porque no alcanzan el mínimo.", "Ningún valor alcanza el mínimo."],
   "logica-saludo": ["El saludo ocupa una sola línea: la coma separa Hola de mundo y las comillas del código no se imprimen."],
   "logica-dos-lineas": ["Primera se muestra antes que Segunda; cada instrucción de impresión termina su propia línea."],
   "logica-orden-mensaje": ["La preparación precede a la mezcla y esta al servicio; por eso las tres líneas siguen el orden Preparar, Mezclar, Servir."],

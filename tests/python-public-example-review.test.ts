@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
+import { beforePythonExampleReview } from "./python-example-review-baseline";
 
 type ReviewedExamples = { cases: [unknown, unknown][]; reason: RegExp };
 
@@ -65,5 +66,6 @@ test("las explicaciones conservadas justifican operaciones, formatos y fronteras
 test("la revisión editorial inicial de ejemplos no cambia el catálogo", () => {
   // Esta prueba no ejecuta referencias ni código de alumnos. Las tablas fijan
   // los datos públicos revisados; no certifican calidad global ni aislamiento.
-  assert.equal(pythonReleaseFingerprint(pythonCatalog), "c7720201bb98fc7c81aa6a646952ba7c73486200121d43d0f8292a9eaf7e9c29");
+  const previous = pythonCatalog.map(entry => ({ ...entry, content: beforePythonExampleReview(entry.slug, entry.content) }));
+  assert.equal(pythonReleaseFingerprint(previous), "c7720201bb98fc7c81aa6a646952ba7c73486200121d43d0f8292a9eaf7e9c29");
 });

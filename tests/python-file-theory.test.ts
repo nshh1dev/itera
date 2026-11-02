@@ -6,6 +6,7 @@ import { pythonCatalog } from "../prisma/python-content";
 import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { beforePythonFileTheory, previousFileTheoryHints } from "./python-file-theory-baseline";
+import { beforePythonExampleReview } from "./python-example-review-baseline";
 
 const reviewed = ["logica-extrae-modulo", "logica-separa-reglas-io", "logica-repara-importacion", "logica-organiza-modulos", "logica-lee-archivo", "logica-escribe-archivo", "logica-valida-json", "logica-guarda-recupera", "logica-recupera-archivo-invalido", "logica-actualiza-persistidos", "logica-inventario-modular", "logica-inventario-persistente", "logica-agenda-operaciones", "logica-agenda-almacenamiento", "logica-agenda-regresion", "logica-busqueda-binaria", "logica-insercion-posicion", "logica-ordena-insercion", "logica-ordena-registros", "logica-combina", "logica-palindromo", "logica-pareja", "logica-prefijos", "logica-intervalos-suma"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -41,7 +42,7 @@ test("la pista de lectura evita normalizar índices que Python ya admite y conse
 });
 
 test("el quinto lote común conserva todo salvo una pista y reconstruye la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => entry.slug !== "logica-lee-archivo" ? entry : ({ ...entry, content: {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonExampleReview(entry.slug, entry.content) })).map(entry => entry.slug !== "logica-lee-archivo" ? entry : ({ ...entry, content: {
     ...entry.content, hints: entry.content.hints.map((hint, index) => index === 2 ? "" : hint),
   } }));
   // Calculada antes de editar: protege enunciados, contratos, las otras dos

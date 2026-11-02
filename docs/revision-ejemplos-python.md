@@ -7,11 +7,11 @@ contrasta cada pareja entrada/salida y su explicación con el contrato Python,
 el orden de aprendizaje y el formato de ejecución. No basta con detectar texto
 no vacío ni con ejecutar la solución que se quiere justificar.
 
-La revisión comienza por las primeras **32/224 actividades**, con **49/433
-ejemplos públicos**. Se conservan los 49 textos: justifican la salida sin
-contradicciones ni vocabulario de otros lenguajes. No cambian datos, salidas,
-visibilidad, orden, casos ocultos ni fuentes compartidas. Quedan **192 actividades
-y 384 ejemplos** por contrastar individualmente.
+La revisión cubre las primeras **64/224 actividades**, con **113/433 ejemplos
+públicos**. El primer bloque conserva sus 49 textos; el segundo ajusta tres y
+conserva otros 61. No cambian datos, salidas, visibilidad, orden, casos ocultos
+ni fuentes compartidas. Quedan **160 actividades y 320 ejemplos** por contrastar
+individualmente.
 
 ## Primer bloque: impresión, datos, retorno y cálculos
 
@@ -49,6 +49,59 @@ y 384 ejemplos** por contrastar individualmente.
 | `logica-perimetro` | 2 | Conservar: cuatro lados frente a área; cuadrado unitario. |
 | `logica-repara-presupuesto` | 2 | Conservar: un solo envío y envío cobrado incluso sin unidades. |
 | `logica-merienda` | 2 | Conservar: producto y mensaje con espacio; cero unidades conserva prefijo y total cero. |
+
+## Segundo bloque: condiciones, recorridos, listas y textos
+
+Se revisan **64 ejemplos de 32 actividades**. Cambian tres explicaciones en
+tres actividades; las otras 29 conservan todas sus explicaciones. Las tres
+parejas públicas restantes de las actividades editadas también se conservan.
+
+| Actividad | Ejemplos | Decisión y motivo |
+| --- | ---: | --- |
+| `logica-elige-mensaje` | 2 | Conservar: return alcanzado termina la llamada; rama omitida alcanza el retorno final. |
+| `logica-signo` | 2 | Conservar: condición positiva primero y negativa solo al no cumplirla. No afirma que estos ejemplos cubran el cero. |
+| `logica-mayor-tres` | 2 | Conservar: candidato mayor y negativos sin introducir cero ajeno. |
+| `logica-dos-requisitos` | 2 | Conservar: ambas divisibilidades frente a una sola, con True/False y representación JSON. |
+| `logica-alternativas` | 2 | Conservar: invitación suficiente sin bloqueo y bloqueo prevaleciente incluso con ambos permisos. |
+| `logica-tarifa` | 2 | Conservar: cero y último valor antes del primer umbral; no presenta estos ejemplos como cobertura de todas las tarifas. |
+| `python-condicional` | 2 | Ajustar primero: 18 alcanza exactamente el umbral incluido y el resultado es texto, no booleano. Conservar 17 como otro lado del límite. |
+| `logica-uno-n` | 2 | Conservar: límite incluido y caso de un solo elemento. |
+| `logica-cuenta-atras` | 2 | Conservar: cero final incluido y cero inicial como lista de un elemento. |
+| `logica-suma-uno-n` | 2 | Conservar: suma completa frente al límite y acumulador vacío en cero. |
+| `logica-tabla` | 2 | Conservar: diez productos, también diez ceros en vez de lista vacía. |
+| `logica-multiplos` | 2 | Conservar: enumeración de tres múltiplos y exclusión de cero del intervalo vacío. |
+| `logica-bucle-roto` | 2 | Conservar: cada entero una vez y ninguna vuelta si el límite es cero. |
+| `python-centinela` | 2 | Conservar: detenerse antes de cero y excluir los posteriores; centinela inicial sin elementos. |
+| `python-omite-negativos` | 2 | Conservar: omitir negativo sin perder cero y positivo posterior; vacío sin vueltas. |
+| `logica-posicion` | 2 | Conservar: índice uno como segundo elemento y valor cero como dato válido. |
+| `logica-indices` | 2 | Conservar: valores en orden frente a sus posiciones; lista vacía sin accesos. |
+| `logica-suma-lista` | 2 | Conservar: suma de elementos y total inicial cuando faltan. |
+| `logica-maximo` | 2 | Conservar: repetición sin cambiar el máximo y negativos sin candidato cero. |
+| `logica-cuenta-condicion` | 2 | Conservar: solo dos positivos, no suma ni cero contado; vacío sin coincidencias. |
+| `logica-filtra-lista` | 2 | Ajustar primero: justificar 8 y 5, explicar por qué se omiten 3 y 1 y conservar orden. Conservar el segundo sin coincidencias. |
+| `logica-busqueda-lineal` | 2 | Conservar: índice dos como tercer elemento y -1 por ausencia; no confunde índice con cantidad. |
+| `logica-longitud-texto` | 2 | Conservar: cuatro caracteres, incluida mayúscula, y texto vacío. |
+| `logica-minusculas` | 2 | Conservar: solo mayúsculas cambian y se conserva orden. |
+| `logica-vocales` | 2 | Conservar: repeticiones cuentan y mayúscula inicial también. |
+| `logica-invierte` | 2 | Conservar: orden inverso de caracteres, incluidos espacio y posición de mayúsculas, sin cambiar su capitalización. |
+| `logica-elimina-caracter` | 2 | Conservar: tres apariciones eliminadas y resto en orden; vacío sin cambios. |
+| `logica-palabras` | 2 | Conservar: grupos separados y espacios repetidos/exteriores sin palabras vacías. |
+| `python-ordena-numeros` | 2 | Conservar primero con repeticiones y original; ajustar segundo para exigir ambas listas vacías, no decir que pueden estarlo. |
+| `python-recorta` | 2 | Conservar: inicio incluido, fin excluido y corte vacío. |
+| `python-une-palabras` | 2 | Conservar: un separador y equivalencia de tabulación/salto como separación, sin normalizar letras. |
+| `python-desempaqueta` | 2 | Conservar: intercambio y dos posiciones aunque los valores coincidan. |
+
+Los cambios se proyectan solo desde `prisma/python-help.ts`. El filtro no modifica
+la explicación compartida de JavaScript/TypeScript. Se mantienen los demás
+textos de cada lista de ayudas, incluidos los ocultos. No se agregan ejemplos
+ni se atribuye cobertura completa a los dos casos públicos de cada actividad.
+
+`tests/python-condition-example-review.test.ts` fija las 64 parejas revisadas,
+los motivos y la conservación de todos los campos salvo esas tres posiciones.
+La huella de conservación se calculó antes de editar. La reconstrucción de
+`tests/python-example-review-baseline.ts` restaura solo esos textos y recupera
+íntegra la entrega anterior `c772…`, manteniendo expectativas históricas. La
+nueva huella de publicación es `01eca6…`; no prepara ni activa la base.
 
 ## Verificación y límites
 

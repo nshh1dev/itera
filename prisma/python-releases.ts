@@ -98,4 +98,6 @@ export const knownPythonReleases: readonly string[] = [
   "905a668e2a27773c6ab69b34a67786610d9961bc5aff41dae005e2a4989571a3",
   // Teoría local de módulos, archivos y agregados: una pista Python ajustada.
   "c7720201bb98fc7c81aa6a646952ba7c73486200121d43d0f8292a9eaf7e9c29",
+  // Contraste de ejemplos de condiciones y colecciones: tres explicaciones públicas.
+  "01eca6dbf731d8cfba0fd748dbcda27c9763654b05b55f18775ed38778852816",
 ];

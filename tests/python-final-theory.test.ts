@@ -4,6 +4,7 @@ import { spawnSync } from "node:child_process";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
+import { beforePythonExampleReview } from "./python-example-review-baseline";
 
 const reviewed = ["logica-dependencias", "logica-dijkstra", "logica-islas", "logica-laberinto", "logica-capacidad", "logica-edicion", "logica-subsecuencia-creciente", "logica-planifica-tareas"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -37,7 +38,8 @@ test("la teoría final conserva las fronteras que distinguen cada problema", () 
 });
 
 test("el cierre del inventario teórico no modifica el catálogo ni su huella", () => {
-  assert.equal(pythonReleaseFingerprint(pythonCatalog), "c7720201bb98fc7c81aa6a646952ba7c73486200121d43d0f8292a9eaf7e9c29");
+  const previous = pythonCatalog.map(entry => ({ ...entry, content: beforePythonExampleReview(entry.slug, entry.content) }));
+  assert.equal(pythonReleaseFingerprint(previous), "c7720201bb98fc7c81aa6a646952ba7c73486200121d43d0f8292a9eaf7e9c29");
 });
 
 test("modelos fijos contrastan dependencias, costes, cuadrículas y estados finales", () => {

@@ -4,6 +4,7 @@ import { spawnSync } from "node:child_process";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonLessons } from "../prisma/python-lessons";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
+import { beforePythonExampleReview } from "./python-example-review-baseline";
 
 const reviewed = ["logica-ventana-fija", "logica-ventana-suma", "logica-celda", "logica-filas", "logica-columnas", "logica-diagonales", "logica-transpuesta", "logica-vecinos", "logica-copia-anidada", "logica-pila", "logica-cola", "logica-delimitadores", "logica-deshacer", "logica-suma-recursiva", "logica-busqueda-recursiva", "logica-une-intervalos", "logica-segundo-maximo", "logica-suma-maxima", "logica-sin-repeticiones", "logica-ranking", "logica-cuenta-nodos", "logica-altura", "logica-preorden", "logica-niveles"];
 const content = (slug: string) => pythonCatalog.find(entry => entry.slug === slug)!.content;
@@ -46,7 +47,8 @@ test("los textos conservados mantienen las precisiones de ventanas, matrices, es
 
 test("el lote no cambia el catálogo y conserva la huella publicada", () => {
   // Sin ediciones: la huella completa debe seguir siendo la de la entrega anterior.
-  assert.equal(pythonReleaseFingerprint(pythonCatalog), "c7720201bb98fc7c81aa6a646952ba7c73486200121d43d0f8292a9eaf7e9c29");
+  const previous = pythonCatalog.map(entry => ({ ...entry, content: beforePythonExampleReview(entry.slug, entry.content) }));
+  assert.equal(pythonReleaseFingerprint(previous), "c7720201bb98fc7c81aa6a646952ba7c73486200121d43d0f8292a9eaf7e9c29");
 });
 
 test("modelos fijos confirman ventanas, matrices, pilas, recursión, intervalos y árboles", () => {

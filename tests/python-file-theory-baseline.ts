@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonExampleReview } from "./python-example-review-baseline";
 
 export const previousFileTheoryHints: Record<string, { index: number; text: string }> = {
   "logica-lee-archivo": { index: 2, text: "Consulta el índice recibido después de leer; normaliza -1 si tu lenguaje no admite índices negativos." },
@@ -6,6 +7,7 @@ export const previousFileTheoryHints: Record<string, { index: number; text: stri
 
 // Reconstruye solo la pista Python heredada; enunciados y contratos intactos.
 export function beforePythonFileTheory(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonExampleReview(slug, content);
   const hint = previousFileTheoryHints[slug];
   return hint ? { ...content, hints: content.hints.map((text, index) => index === hint.index ? hint.text : text) } : content;
 }

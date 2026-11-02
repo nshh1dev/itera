@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { beforePythonExampleReview } from "./python-example-review-baseline";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonEditorialRevisions } from "../prisma/python-editorial";
 import { validateProjectDefinition, validateExpectedProjectFiles } from "../src/lib/project";
@@ -53,7 +54,7 @@ test("el lote editorial conserva íntegra la evaluación, los ejemplos y los met
     slug: entry.slug, category: entry.category, level: entry.content.level,
     minutes: beforePythonTiming(entry.slug, entry.content).minutes, activityType: entry.content.activityType,
     runtimeMode: entry.content.runtimeMode, conceptRule: entry.content.conceptRule,
-    variants: entry.content.variants.map(variant => {
+    variants: beforePythonExampleReview(entry.slug, entry.content).variants.map(variant => {
       const { statement: _statement, explanation: _explanation, ...assessment } = variant;
       void [_statement, _explanation];
       return assessment;
