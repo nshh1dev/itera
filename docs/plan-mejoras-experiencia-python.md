@@ -400,6 +400,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del séptimo bloque común de teoría:** lint, tipos y 62 pruebas focalizadas aprobados antes de la interrupción; tras reanudar aprobaron las 518 pruebas completas sin omisiones, build y `content:python` sin conexión. Los modelos fijos no ejecutan envíos de alumnos ni verifican aislamiento, rendimiento o técnicas internas. No hay cambios de catálogo y la huella íntegra sigue siendo `c772…`. No se iniciaron servicios ni se preparó o activó la base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
 
+**Cierre individual de teoría local E:** las ocho comunes restantes completan 224/224 actividades revisadas (48 propias y 176 comunes). Se conservan sus textos y pistas: dependencias, Dijkstra, islas, laberinto, capacidad, edición, subsecuencia creciente y planificación paralela. [claridad-python.md](claridad-python.md) registra las decisiones. Las pruebas contrastan fronteras y modelos fijos; no cambia el catálogo ni la huella `c772…`. Se cierra solo este inventario: ejemplos ya explicados, vocabulario pendiente, repeticiones entre superficies, D2, F y validación real/visual siguen abiertos. No se prepara ni activa la base y el plan se conserva.
+
+**Verificación del cierre individual de teoría:** lint, tipos, 47 pruebas focalizadas y 522 pruebas completas sin omisiones aprobados. Se reutilizan build y `content:python` sin conexión aprobados en el lote anterior: las únicas rutas cambiadas son documentación y una prueba, sin cambios en producto, catálogo ni dependencias. La prueba de huella confirma `c772…` íntegra. Los modelos fijos no ejecutan envíos ni certifican aislamiento, rendimiento o mutaciones intermedias. Sin servicios iniciados ni escrituras en base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.

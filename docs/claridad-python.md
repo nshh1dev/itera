@@ -1670,18 +1670,49 @@ Al no haber ediciones, no se añade eslabón ni huella nueva: la prueba comprueb
 que la huella íntegra sigue siendo la anterior. Teoría restante, ejemplos,
 vocabulario global, repeticiones y D2/E/F siguen abiertos.
 
+## Cierre del inventario de teoría local
+
+Las ocho comunes restantes completan **224/224 actividades revisadas**: 48
+propias y 176 comunes, incluidos programas y proyectos. Se conservan los ocho
+textos y sus pistas tras contrastar enunciado, plantilla y explicación. Este
+cierre es del inventario individual, no de toda la fase E.
+
+| Actividad | Decisión sobre teoría local |
+| --- | --- |
+| `logica-dependencias` | Conservar: requisitos pendientes, menor disponible incluso recién liberada y ciclo sin orden parcial. |
+| `logica-dijkstra` | Conservar: pesos positivos en ambos sentidos, suma de pesos y no cantidad de aristas; destino cero e inalcanzable. |
+| `logica-islas` | Conservar: conexión horizontal/vertical, no diagonal; contar componentes sin cambiar la cuadrícula, incluidas filas vacías. |
+| `logica-laberinto` | Conservar: cuatro movimientos, esquinas libres y distancia inicial cero; distinguir movimientos de celdas visitadas. |
+| `logica-capacidad` | Conservar: paquetes indivisibles en orden, capacidad por suma de pesos y como máximo los días disponibles. |
+| `logica-edicion` | Conservar: insertar, borrar y sustituir un carácter; intercambio no cuenta como una operación y prefijos vacíos explícitos. |
+| `logica-subsecuencia-creciente` | Conservar: orden original, saltos permitidos y crecimiento estricto; iguales no prolongan y se devuelve longitud. |
+| `logica-planifica-tareas` | Conservar: esperar a todos los requisitos, paralelismo ilimitado y máximo de finales; duración cero no elimina ciclos. |
+
+`tests/python-final-theory.test.ts` comprueba el inventario final, las fronteras
+editoriales y modelos Python fijos. Incluye una tarea recién liberada menor que
+otra ya disponible, camino más barato con más aristas, islas diagonales,
+esquinas bloqueadas, capacidad exacta, intercambio de caracteres, iguales en
+subsecuencias y dependencias cíclicas de duración cero. Los modelos no ejecutan
+envíos ni acreditan rendimiento, aislamiento o toda mutación intermedia.
+
+No cambia el catálogo: se conserva la huella íntegra `c772…`, sin nueva revisión
+de publicación ni preparación/activación de la base. Quedan la revisión de los
+ejemplos ya explicados, vocabulario pendiente y repeticiones entre superficies,
+además de D2, F y las comprobaciones reales/visuales autorizadas.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Las **224/224 explicaciones de solución** tienen revisión individual; no implica
   que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
-- La teoría local tiene 216/224 actividades revisadas: 48 propias y 168 comunes;
-  quedan 8 comunes/proyectos y las repeticiones entre superficies.
+- La teoría local tiene **224/224 actividades revisadas**: 48 propias y 176
+  comunes; quedan las repeticiones entre superficies, no actividades sin revisar.
 - Quedan vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados.
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
   conservan sus contratos de archivos y persistencia; se retiraron repeticiones
-  internas, no se revisaron aún todas las superficies de ayuda y teoría.
+  internas; el inventario de teoría local está revisado, no todas las repeticiones
+  entre ayudas, objetivos, ejemplos, teoría y soluciones.
 - No modifica el componente de presentación ni acredita revisión visual o
   accesibilidad. La jerarquía visual, teoría desplegable y ergonomía siguen en F.
 - Las revisiones están en fuentes, no preparadas ni activadas en la base. La

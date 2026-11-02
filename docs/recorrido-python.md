@@ -140,6 +140,8 @@ El noveno lote de teoría local revisa otras 24 comunes de ventanas, matrices, e
 
 El décimo lote de teoría local revisa otras 24 comunes de árboles, montículos, retroceso, programación dinámica y grafos: las 24 conservan su teoría y ayudas. Van 216/224 revisadas (48 propias y 168 comunes); quedan 8 comunes/proyectos. Los modelos fijos verifican árbol de búsqueda, ancestro común, montículos, prioridad, k mayores, actividades, coste de combinación, potencia, mezcla, subconjuntos, permutaciones, combinaciones, n reinas, Fibonacci, escalera, caminos con obstáculos, monedas, mochila con peso cero, subsecuencia común, adyacencia, alcanzables, distancias y ciclo dirigido. No hay ediciones de catálogo y se conserva la huella anterior. Las 224 explicaciones siguen revisadas; teoría restante, ejemplos, repeticiones y D2/E/F pendientes. Base sin preparar ni activar; decisiones en [claridad-python.md](claridad-python.md).
 
+La revisión individual de teoría local está completa: **224/224 actividades** (48 propias y 176 comunes). Las ocho últimas conservan sus textos y pistas, con modelos fijos para dependencias, costes, cuadrículas, capacidad, edición, subsecuencias y paralelismo. El catálogo mantiene su huella `c772…`, sin preparación ni activación. Esto no cierra E: quedan ejemplos ya explicados, vocabulario pendiente y repeticiones entre superficies; D2, F y validación real/visual siguen abiertos. Las decisiones se recogen en [claridad-python.md](claridad-python.md).
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.
