@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
+import { beforePythonCollectionExamples } from "./python-collection-example-baseline";
 
 type ReviewedExamples = { cases: [unknown, unknown][]; reason: RegExp };
 
@@ -68,5 +69,6 @@ test("los ejemplos conservados distinguen contenido observable de identidad y t�
 
 test("el tercer bloque conserva íntegra la entrega anterior", () => {
   // No hay cambios de prosa ni nuevo eslabón de reconstrucción en este bloque.
-  assert.equal(pythonReleaseFingerprint(pythonCatalog), "01eca6dbf731d8cfba0fd748dbcda27c9763654b05b55f18775ed38778852816");
+  const previous = pythonCatalog.map(entry => ({ ...entry, content: beforePythonCollectionExamples(entry.slug, entry.content) }));
+  assert.equal(pythonReleaseFingerprint(previous), "01eca6dbf731d8cfba0fd748dbcda27c9763654b05b55f18775ed38778852816");
 });

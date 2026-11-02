@@ -100,4 +100,6 @@ export const knownPythonReleases: readonly string[] = [
   "c7720201bb98fc7c81aa6a646952ba7c73486200121d43d0f8292a9eaf7e9c29",
   // Contraste de ejemplos de condiciones y colecciones: tres explicaciones públicas.
   "01eca6dbf731d8cfba0fd748dbcda27c9763654b05b55f18775ed38778852816",
+  // Contraste de ejemplos de conjuntos y comprensiones: cuatro explicaciones públicas.
+  "f5d67f389e846bb978604ce2a5e9dc8ad695a40699153b79c2edc57bf3834d10",
 ];

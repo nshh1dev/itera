@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { beforePythonExampleReview, previousReviewedExamples } from "./python-example-review-baseline";
+import { beforePythonCollectionExamples } from "./python-collection-example-baseline";
 
 type ReviewedExamples = { cases: [unknown, unknown][]; reason: RegExp };
 
@@ -59,7 +60,7 @@ test("el segundo bloque contrasta 64 ejemplos de las siguientes 32 actividades",
 });
 
 test("el bloque solo cambia tres explicaciones públicas y recupera la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => !(entry.slug in previousReviewedExamples) ? entry : ({ ...entry, content: {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonCollectionExamples(entry.slug, entry.content) })).map(entry => !(entry.slug in previousReviewedExamples) ? entry : ({ ...entry, content: {
     ...entry.content, variants: entry.content.variants.map(variant => ({ ...variant, tests: variant.tests.map(item =>
       item.visible && item.order === previousReviewedExamples[entry.slug].order ? { ...item, explanation: "" } : item),
     })),

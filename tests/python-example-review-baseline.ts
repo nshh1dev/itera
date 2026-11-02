@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonCollectionExamples } from "./python-collection-example-baseline";
 
 // Solo estas tres posiciones públicas cambian en el segundo bloque de ejemplos.
 export const previousReviewedExamples: Record<string, { order: number; text: string }> = {
@@ -8,6 +9,7 @@ export const previousReviewedExamples: Record<string, { order: number; text: str
 };
 
 export function beforePythonExampleReview(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonCollectionExamples(slug, content);
   const previous = previousReviewedExamples[slug];
   if (!previous) return content;
   return { ...content, variants: content.variants.map(variant => ({

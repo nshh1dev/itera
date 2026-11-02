@@ -7,11 +7,12 @@ contrasta cada pareja entrada/salida y su explicación con el contrato Python,
 el orden de aprendizaje y el formato de ejecución. No basta con detectar texto
 no vacío ni con ejecutar la solución que se quiere justificar.
 
-La revisión cubre las primeras **96/224 actividades**, con **177/433 ejemplos
+La revisión cubre las primeras **128/224 actividades**, con **241/433 ejemplos
 públicos**. El primer bloque conserva sus 49 textos; el segundo ajusta tres y
-conserva otros 61; el tercero conserva 64. No cambian datos, salidas, visibilidad,
-orden, casos ocultos ni fuentes compartidas. Quedan **128 actividades y 256
-ejemplos** por contrastar individualmente.
+conserva otros 61; el tercero conserva 64; el cuarto ajusta cuatro y conserva 60.
+No cambian datos, salidas, visibilidad, orden, casos ocultos ni fuentes
+compartidas. Quedan **96 actividades y 192 ejemplos** por contrastar
+individualmente.
 
 ## Primer bloque: impresión, datos, retorno y cálculos
 
@@ -149,6 +150,59 @@ los motivos contrastados. También mantiene explícitos los límites de identida
 tipo Python frente a JSON y certificación de técnicas en los enunciados. No
 ejecuta referencias ni envíos de alumnos. No hay cambios de catálogo: se conserva
 la huella `01eca6…`, sin nueva revisión ni reconstrucción adicional.
+
+## Cuarto bloque: conjuntos, agrupación, comprensiones e iteradores
+
+Se contrastan **64 ejemplos de las siguientes 32 actividades**. Se ajustan cuatro
+explicaciones en cuatro actividades y se conservan las otras 60 del bloque.
+Los ajustes justifican todos los valores del resultado, no solo uno de sus
+campos; en agrupación se conservan las minúsculas exactas de los datos.
+
+| Actividad | Ejemplos | Decisión y motivo |
+| --- | ---: | --- |
+| `logica-reproduce-fallo` | 2 | Conservar: cero no positivo y conteo de elementos frente a suma. |
+| `logica-conserva-regresion` | 2 | Conservar: igualdad activa descuento, pero nunca baja de cero. |
+| `logica-factorial` | 2 | Conservar: producto de todos los factores y neutro uno con cero factores. |
+| `logica-fizzbuzz` | 2 | Conservar: sustituciones de 3/5 y límite incluido; estos casos no se presentan como cobertura de múltiplos de ambos. |
+| `logica-mediciones` | 2 | Conservar: suma, cantidad positiva y máximo; ausencia de máximo frente a suma/conteo cero. |
+| `logica-carrito` | 2 | Conservar: subtotal 20, descuento 2 y cero sin importe nuevo. |
+| `logica-notas` | 2 | Conservar: umbral de aprobado incluido y media de todas las notas, no solo aprobadas; vacío sin media. |
+| `logica-saldo` | 2 | Conservar: movimiento rechazado no cambia saldo ni detiene los posteriores; vacío sin rechazos. |
+| `logica-gastos-registro` | 2 | Conservar: suma por categoría y global; vacío sin categorías inventadas. |
+| `logica-gastos-validacion` | 2 | Conservar: rechazo por importe negativo o categoría no permitida y vacío sin rechazados. |
+| `python-conjunto-seguro` | 2 | Ajustar primero: explicar duplicado 2, añadido 3, retirada ausente 9 y orden final. Conservar añadido y retirada del mismo valor. |
+| `python-union` | 2 | Conservar: compartido una sola vez y dos entradas vacías. |
+| `python-interseccion` | 2 | Conservar: solo compartidos sin contar repeticiones y vacío sin coincidencias. |
+| `python-diferencia` | 2 | Conservar: falta mapa, no oro disponible; sin requisitos no falta nada. |
+| `python-simetrica` | 2 | Conservar: compartido excluido y exclusivo repetido una sola vez. |
+| `python-subconjunto` | 2 | Conservar: pertenencia de todos los requisitos y vacío satisfecho incluso sin disponibles. |
+| `logica-repetido` | 2 | Conservar: primera/tercera aparición y vacío sin repetición, con representación booleana explícita. |
+| `logica-deduplica` | 2 | Conservar: primera aparición en orden, no orden numérico; todas iguales como un único valor. |
+| `logica-frecuencias` | 2 | Conservar: acumular repeticiones por clave y frecuencia uno para caracteres distintos. |
+| `logica-primer-unico` | 2 | Conservar: b antes de c después de descartar a repetida; None si ninguna es única. |
+| `logica-anagramas` | 2 | Conservar: mismas frecuencias pese al orden y contraste concreto entre a y o. |
+| `python-crea-grupo` | 2 | Ajustar primero: categoría a conserva ana y añade bea, sin convertirlos en Ana/Bea. Conservar creación de categoría nueva. |
+| `logica-agrupa-registros` | 2 | Conservar: fruta mantiene orden y pan forma otra lista; vacío sin categorías. |
+| `python-comprension` | 2 | Conservar: un cuadrado por posición, incluido negativo, y vacío. |
+| `python-comprension-filtro` | 2 | Conservar: mayúsculas aceptadas y orden; sin vocales no hay elementos. |
+| `python-comprension-condicional` | 2 | Conservar: sustituir negativo sin eliminar su posición y vacío sin posiciones. |
+| `python-comprension-dict` | 2 | Ajustar primero: explicar sol: 3 y a: 1, además de por qué sol repetida no crea otra clave. Conservar vacío sin asociaciones. |
+| `python-iterador` | 2 | Conservar: primera materialización agota, segunda vacía; vacío en ambas. |
+| `python-generador` | 2 | Conservar: suma de cuadrados, no suma directa, y neutro cero. |
+| `python-map` | 2 | Conservar: convertir antes de duplicar y mantener signo; vacío sin transformación. |
+| `python-filter` | 2 | Conservar: 18 incluido, 17 excluido y salida de nombres; vacío sin resultados. |
+| `python-agrega` | 2 | Ajustar primero: justificar total -6, mínimo -4 y máximo -2 sin introducir cero. Conservar suma neutra y extremos ausentes en vacío. |
+
+Solo cambian cuatro posiciones públicas de `pythonCaseHelp`; los segundos
+ejemplos y las explicaciones ocultas permanecen exactos. No cambian soluciones,
+manifiestos de proyecto, firmas ni formato de resultados. No se añaden garantías
+de identidad, mutación intermedia ni certificación de técnicas.
+
+`tests/python-collection-example-review.test.ts` fija las 64 parejas y motivos;
+la huella calculada antes de editar excluye exactamente cuatro explicaciones.
+`tests/python-collection-example-baseline.ts` restaura esas posiciones y recupera
+íntegra la entrega `01eca6…`. La cadena histórica incorpora ese eslabón sin
+cambiar sus expectativas. La nueva huella es `f5d67f…`, sin preparar/activar base.
 
 ## Verificación y límites
 
