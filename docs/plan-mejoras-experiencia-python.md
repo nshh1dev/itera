@@ -420,6 +420,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del cuarto bloque de ejemplos:** lint, tipos, 30 pruebas focalizadas, 532 pruebas completas sin omisiones con concurrencia 2, build y `content:python` sin conexión aprobados. Se conservan las huellas históricas y la reconstrucción íntegra de la entrega anterior. Las tablas contrastan datos públicos desde contratos y no ejecutan código de alumnos ni acreditan técnicas, aislamiento o rendimiento. No se iniciaron servicios ni se modificó la base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
 
+**Revisión posterior de ejemplos E, quinto bloque:** se contrastan y conservan 64 ejemplos de las siguientes 32 actividades: ordenación, módulos, archivos y aplicaciones. Van 305/433 ejemplos de 160/224 actividades; quedan 128 ejemplos de 64 actividades. [revision-ejemplos-python.md](revision-ejemplos-python.md) registra cada decisión y la distinción entre reapertura en un proceso y persistencia entre procesos. La prueba fija parejas públicas, artefactos exactos y expectativas de segunda llamada sin ejecutar código ni certificar persistencia real. No cambia el catálogo ni la huella `f5d67f…`. E, D2 y F siguen abiertas; base sin preparar/activar.
+
+**Verificación del quinto bloque de ejemplos:** lint, tipos, tres pruebas focalizadas y 535 pruebas completas sin omisiones con concurrencia 2 aprobados. Se reutilizan build y `content:python` sin conexión aprobados en el bloque anterior porque solo cambian documentación y una prueba, no producto, catálogo ni dependencias. La prueba conserva íntegra la huella `f5d67f…`. No se iniciaron servicios ni se modificó la base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.

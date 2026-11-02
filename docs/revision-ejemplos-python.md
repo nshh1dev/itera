@@ -7,11 +7,12 @@ contrasta cada pareja entrada/salida y su explicación con el contrato Python,
 el orden de aprendizaje y el formato de ejecución. No basta con detectar texto
 no vacío ni con ejecutar la solución que se quiere justificar.
 
-La revisión cubre las primeras **128/224 actividades**, con **241/433 ejemplos
+La revisión cubre las primeras **160/224 actividades**, con **305/433 ejemplos
 públicos**. El primer bloque conserva sus 49 textos; el segundo ajusta tres y
-conserva otros 61; el tercero conserva 64; el cuarto ajusta cuatro y conserva 60.
+conserva otros 61; el tercero conserva 64; el cuarto ajusta cuatro y conserva 60;
+el quinto conserva 64.
 No cambian datos, salidas, visibilidad, orden, casos ocultos ni fuentes
-compartidas. Quedan **96 actividades y 192 ejemplos** por contrastar
+compartidas. Quedan **64 actividades y 128 ejemplos** por contrastar
 individualmente.
 
 ## Primer bloque: impresión, datos, retorno y cálculos
@@ -203,6 +204,55 @@ la huella calculada antes de editar excluye exactamente cuatro explicaciones.
 `tests/python-collection-example-baseline.ts` restaura esas posiciones y recupera
 íntegra la entrega `01eca6…`. La cadena histórica incorpora ese eslabón sin
 cambiar sus expectativas. La nueva huella es `f5d67f…`, sin preparar/activar base.
+
+## Quinto bloque: ordenación, módulos, archivos y aplicaciones
+
+Se conservan los **64 ejemplos de las siguientes 32 actividades**, contrastados
+individualmente con sus entradas, resultados y contratos. Los textos de ejemplos
+no necesitan repetir todas las condiciones del enunciado: se mantiene su foco en
+el caso concreto, sin atribuir a una salida garantías sobre la implementación.
+
+| Actividad | Ejemplos | Decisión y motivo |
+| --- | ---: | --- |
+| `python-clave-longitud` | 2 | Conservar: a precede a sol/luz, cuyo empate conserva orden; vacío sin elementos. |
+| `python-lambda-desempate` | 2 | Conservar: longitud descendente y desempate alfabético luz/sol, no estabilidad del ejercicio anterior; vacío. |
+| `python-formato-decimal` | 2 | Conservar: cero final en 3.50 y empate exacto 2.5 hacia par con cero decimales, no redondeo financiero. |
+| `python-consulta-anidada` | 2 | Conservar: nota cero presente y alumno ausente como None, sin acceso directo fallido. |
+| `logica-inventario` | 2 | Conservar: pan termina en cero y mantiene clave, agua suma aparte; vacío sin productos. No trasladar aquí la prohibición de negativos de otros hitos. |
+| `logica-importa-preparado` | 2 | Conservar: multiplicación por cuatro del módulo preparado, incluidos cero y retorno desde main. |
+| `logica-extrae-modulo` | 2 | Conservar: cuadrado de 3 y cero, sin mensajes ni importes adicionales; el resultado no certifica separación de archivos. |
+| `logica-separa-reglas-io` | 2 | Conservar: producto más cargo fijo, prefijo y espacio; cargo también con precio/unidades cero. |
+| `logica-repara-importacion` | 2 | Conservar: cuadrado más uno y nombre público correcto; cero no elimina la suma posterior. |
+| `logica-organiza-modulos` | 2 | Conservar: cuadrado y prefijo Resultado:; cero presente, no ausencia. |
+| `logica-lee-archivo` | 2 | Conservar: índices cero/uno de Sol/Luna y retirada del salto final, no modificación del recurso. |
+| `logica-escribe-archivo` | 2 | Conservar: espacio procedente del sufijo y ausencia de saltos extra; sufijo vacío mantiene Hola tanto en archivo como retorno. |
+| `logica-valida-json` | 2 | Conservar: cantidad cero aceptada por extremo incluido y JSON válido que no satisface estructura de configuración. |
+| `logica-guarda-recupera` | 2 | Conservar: orden de ambos valores y lista vacía frente a None; artefactos compactos [1,2]/[]. Reabrir en el mismo proceso no demuestra persistencia entre procesos. |
+| `logica-recupera-archivo-invalido` | 2 | Conservar: ausencia y JSON roto son fallos distintos con el mismo respaldo cero, no datos parciales. |
+| `logica-actualiza-persistidos` | 2 | Conservar: anteriores 2/4 antes de 6 y conservación sin entradas; artefactos compactos, sin prometer durabilidad ni persistencia entre procesos. |
+| `logica-inventario-modular` | 2 | Conservar: rechazar -4 sin cambiar 3 y aceptar después -1; vacío sin productos/rechazos. Mantener mutación intencional de stock. |
+| `logica-inventario-persistente` | 2 | Conservar: cargar pan 2, retirar uno y añadir sal; sin movimientos no reiniciar. Artefactos y segunda llamada conservan stock y cero rechazos. |
+| `python-inventario-valora` | 2 | Conservar: 250 más 100 forman total 350, filas descendentes en céntimos; vacío con total cero sin filas. |
+| `python-academia-inscribe` | 2 | Conservar: nueva inscripción pendiente y existente con cero sin sobrescribir. |
+| `python-academia-califica` | 2 | Conservar: cero dentro del rango y 101 rechazado conservando ocho. |
+| `python-academia-resume` | 2 | Conservar: media de 0/100 igual a 50; bea sin media ni clasificación; registro vacío sin resultados. |
+| `python-contactos-crea` | 2 | Conservar: clave normalizada y teléfono textual 012; duplicado normalizado sin sustitución. |
+| `python-contactos-edita` | 2 | Conservar: normalización, teléfono vacío válido, campo desconocido ignorado y correo preservado; editar no crea. |
+| `python-contactos-borra` | 2 | Conservar: borrar ana completa, no anabel por coincidencia parcial; agenda vacía sin cambios. |
+| `python-contactos-busca` | 2 | Conservar: ana cumple ambos filtros, insensibles a mayúsculas; vacío sin coincidencias aun sin filtros. |
+| `logica-agenda-operaciones` | 2 | Conservar: crear antes de completar, una ficha True y representación JSON; vacío sin estado previo. |
+| `logica-agenda-almacenamiento` | 2 | Conservar: completar tarea cargada sin duplicar; sin comandos conserva pendiente. Archivo exacto y segunda llamada conservan ambas salidas. |
+| `logica-agenda-regresion` | 2 | Conservar: actualizar una ficha, no duplicar ni perder pendiente sin comandos; artefactos y segunda llamada conservados. El ejemplo de una operación no se anuncia como prueba de completar dos veces. |
+| `python-transforma-campo` | 2 | Conservar: normalizar solo nombre, preservar Quito y no crear campo ausente. |
+| `python-transforma-registros` | 2 | Conservar: nombre a minúsculas y edad entera tras espacios; lista vacía de copias sin reglas. |
+| `logica-busqueda-binaria` | 2 | Conservar: índice tres, no valor siete; ausente devuelve -1, no posición de inserción. |
+
+`tests/python-storage-example-review.test.ts` fija las 64 parejas públicas, los
+motivos, seis pares de artefactos exactos y los resultados de persistencia de
+los tres proyectos que la declaran entre procesos. Es una comprobación editorial
+de datos y contratos: no ejecuta disco ni Piston y no acredita aislamiento,
+organización interna ni persistencia real. No cambia el catálogo ni la huella
+`f5d67f…`; no hace falta otro eslabón de reconstrucción histórica.
 
 ## Verificación y límites
 
