@@ -79,6 +79,18 @@ export const pythonVocabularyRevisions: Record<string, VocabularyRevision> = {
   },
 };
 
+// Resúmenes del bloque inicial: el contrato y la teoría permanecen en el enunciado.
+export const pythonIntroCopyRevisions: Record<string, VocabularyRevision> = {
+  "logica-texto-calculo": { description: "Contrasta el resultado de una suma con la impresión de su expresión como texto." },
+  "logica-guarda-cantidad": { description: "Consulta el valor de una variable numérica sin confundirlo con su nombre." },
+  "logica-actualiza-puntos": { description: "Actualiza una puntuación sumando lo ganado al valor anterior." },
+  "python-constante": { description: "Calcula cuántos lápices hay en varias cajas usando una equivalencia fija." },
+  "logica-mensaje-resultado": { description: "Combina un prefijo fijo con la ciudad recibida, conservando su escritura." },
+  "python-decimal": { description: "Convierte un texto decimal, suma 0.5 y muestra el resultado." },
+  "logica-booleano": { hints: ["Solo necesitas cambiar el valor asignado a listo.", "Un booleano se escribe sin comillas; no es un texto.", "Usa True como valor de listo y conserva la impresión preparada."] },
+  "logica-igualdad": { hints: ["Los dos números ya están disponibles en la plantilla.", "Necesitas una comparación que produzca un booleano, no una asignación.", "Compara a == b y conserva la impresión preparada."] },
+};
+
 // Prerrequisitos textuales: no cambia prerequisiteSlugs ni el orden del recorrido.
 export const pythonPrerequisiteVocabulary: Record<string, string[]> = {
   "logica-dos-parametros": ["Consultar claves de un diccionario", "Sumar números", "Utilizar variables y return"],

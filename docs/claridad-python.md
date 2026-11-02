@@ -1771,6 +1771,17 @@ recursos o claves JSON como prosa. Estas reglas acotadas no certifican por sí
 solas toda la terminología: sigue abierto el contraste contextual entre
 superficies y la reducción de repeticiones, además de D2 y F.
 
+## Primer contraste de repeticiones entre superficies
+
+Se revisan las primeras **32/224 actividades**, con ocho ajustes y 24 conservadas.
+Se acortan seis descripciones y se concretan dos terceras pistas Python,
+conservando introducciones conceptuales, pistas progresivas, enunciados,
+condiciones y los 433 ejemplos. La ayuda ya elige objetivos de práctica o general,
+sin mostrarlos duplicados: no se vacían esos metadatos ni se cambia la interfaz.
+Decisiones individuales, huella `24642c…` y límites en
+[repeticiones-python.md](repeticiones-python.md). Quedan 192 actividades para este
+contraste; no se cierra E, D2 ni F.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

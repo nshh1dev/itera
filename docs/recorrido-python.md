@@ -159,6 +159,13 @@ exacta true/false de los tres programas iniciales. Huella vigente `24bfc2…`, c
 reconstrucción íntegra de `c89f4c…`; no hay preparación ni activación de base.
 La revisión contextual de vocabulario y repeticiones sigue abierta.
 
+El contraste de repeticiones entre superficies cubre **32/224 actividades**:
+seis descripciones resumidas, dos terceras pistas concretadas y 24 actividades
+conservadas. No se retiran introducciones, condiciones ni pistas progresivas;
+la ayuda ya evita mostrar juntos objetivos duplicados. Huella vigente `24642c…`,
+con reconstrucción íntegra de `24bfc2…`, sin preparar ni activar la base.
+Inventario y límites: [repeticiones-python.md](repeticiones-python.md).
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

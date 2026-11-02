@@ -108,4 +108,6 @@ export const knownPythonReleases: readonly string[] = [
   "c89f4cd3841fad9c97a90e9f87ccd31e2255a9c5d5c329cfcb6c2028cdc36392",
   // Prerrequisitos Python: claves de diccionario, tramos consecutivos y listas.
   "24bfc2a47c51040682bbf2d818f15060ff58b27967faf0784a2a0e5838047caf",
+  // Contraste inicial entre superficies: seis resúmenes y dos pistas Python.
+  "24642cf0e58f1ea9bcdd7099fe09011dab86eaab8767426f0673005c1b47c008",
 ];

@@ -5,6 +5,7 @@ import { pythonCatalog } from "../prisma/python-content";
 import { pythonPrerequisiteVocabulary } from "../prisma/python-vocabulary";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { beforePythonPrerequisiteVocabulary, previousPrerequisiteVocabulary } from "./python-prerequisite-vocabulary-baseline";
+import { beforePythonIntroCopy } from "./python-intro-copy-baseline";
 
 test("cuatro prerrequisitos textuales usan claves, tramos y listas de Python", () => {
   assert.deepEqual(Object.keys(pythonPrerequisiteVocabulary), Object.keys(previousPrerequisiteVocabulary));
@@ -69,7 +70,7 @@ test("las minúsculas de JSON y la salida PROGRAM no sustituyen literales Python
 });
 
 test("solo cambian cuatro listas de prerrequisitos, no las dependencias ni los ejemplos", () => {
-  const payload = pythonCatalog.map(entry => !(entry.slug in pythonPrerequisiteVocabulary) ? entry
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonIntroCopy(entry.slug, entry.content) })).map(entry => !(entry.slug in pythonPrerequisiteVocabulary) ? entry
     : { ...entry, content: { ...entry.content, prerequisites: [] } });
   // Calculada antes de editar; incluye prerequisiteSlugs, categorías, orden,
   // versiones, ayudas, ejemplos, código y contratos completos.
