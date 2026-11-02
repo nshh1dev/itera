@@ -1709,7 +1709,7 @@ además de D2, F y las comprobaciones reales/visuales autorizadas.
   comunes; quedan las repeticiones entre superficies, no actividades sin revisar.
 - Quedan vocabulario en otras
   ayudas y objetivos y revisión de ejemplos ya explicados. El contraste posterior
-  cubre 113/433 ejemplos de 64/224 actividades; decisiones y límites en
+  cubre 177/433 ejemplos de 96/224 actividades; decisiones y límites en
   [revision-ejemplos-python.md](revision-ejemplos-python.md).
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
   conservan sus contratos de archivos y persistencia; se retiraron repeticiones

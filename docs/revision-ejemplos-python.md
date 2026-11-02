@@ -7,11 +7,11 @@ contrasta cada pareja entrada/salida y su explicación con el contrato Python,
 el orden de aprendizaje y el formato de ejecución. No basta con detectar texto
 no vacío ni con ejecutar la solución que se quiere justificar.
 
-La revisión cubre las primeras **64/224 actividades**, con **113/433 ejemplos
+La revisión cubre las primeras **96/224 actividades**, con **177/433 ejemplos
 públicos**. El primer bloque conserva sus 49 textos; el segundo ajusta tres y
-conserva otros 61. No cambian datos, salidas, visibilidad, orden, casos ocultos
-ni fuentes compartidas. Quedan **160 actividades y 320 ejemplos** por contrastar
-individualmente.
+conserva otros 61; el tercero conserva 64. No cambian datos, salidas, visibilidad,
+orden, casos ocultos ni fuentes compartidas. Quedan **128 actividades y 256
+ejemplos** por contrastar individualmente.
 
 ## Primer bloque: impresión, datos, retorno y cálculos
 
@@ -102,6 +102,53 @@ La huella de conservación se calculó antes de editar. La reconstrucción de
 `tests/python-example-review-baseline.ts` restaura solo esos textos y recupera
 íntegra la entrega anterior `c772…`, manteniendo expectativas históricas. La
 nueva huella de publicación es `01eca6…`; no prepara ni activa la base.
+
+## Tercer bloque: parejas, referencias, diccionarios y validación
+
+Se conservan los **64 ejemplos de las siguientes 32 actividades**, tras
+contrastar datos, resultados y explicación con su contrato. No hace falta
+reescribirlos para contabilizar la revisión.
+
+| Actividad | Ejemplos | Decisión y motivo |
+| --- | ---: | --- |
+| `python-enumera` | 2 | Conservar: numeración desde uno, orden original y vacío sin posiciones. |
+| `python-empareja` | 2 | Conservar: solo posiciones presentes en ambas listas; entrada vacía sin relleno. |
+| `python-retorno-multiple` | 2 | Conservar: suma antes de producto y producto cero sin perder la suma. |
+| `logica-ficha-producto` | 2 | Conservar: extraer precio, excluir nombre y mantener cero presente. |
+| `logica-ficha-resultado` | 2 | Conservar: producto y cantidad por separado, incluso con precio cero. |
+| `logica-opcional` | 2 | Conservar: respaldo solo ante clave ausente, no ante valor cero. |
+| `logica-ausencia` | 2 | Conservar: null representa None; cero presente se incrementa. |
+| `logica-auxiliares` | 2 | Conservar: envío bajo el umbral y gratuidad exactamente en 2000 céntimos. |
+| `logica-variable-local` | 2 | Conservar: incremento del argumento, incluido cero, no valor fijo. |
+| `logica-parametro-exterior` | 2 | Conservar: duplicar argumento y mantener exterior; negativo y exterior cero. |
+| `logica-llamadas-independientes` | 2 | Conservar: segundo contador reiniciado, no acumulado; primera llamada sin incrementos. |
+| `logica-sin-estado-global` | 2 | Conservar: cada tasa se suma a la misma base, no a un total creciente; sin tasas no hay resultados. |
+| `logica-encadena-retornos` | 2 | Conservar: producto y después embalaje, también con producto cero. |
+| `logica-dos-nombres-lista` | 2 | Conservar: añadido a lista compartida y cero como elemento; el contrato no atribuye identidad a la salida por sí sola. |
+| `logica-reasigna-o-muta` | 2 | Conservar: reasignar alias no cambia original, tampoco si está vacío. |
+| `logica-copia-plana` | 2 | Conservar: añadido solo en copia y original preservado; el enunciado delimita copia superficial e identidad. |
+| `logica-conserva-entrada` | 2 | Conservar: incremento por elemento, original sin cambios y ambas listas vacías cuando no hay elementos. |
+| `logica-registro-compartido` | 2 | Conservar: ambos nombres observan cantidad actualizada; cambio cero no implica ausencia. |
+| `python-identidad` | 2 | Conservar: efecto del alias frente a copia e instantánea; booleanos del resultado según las comparaciones is del código, no deducidos desde JSON. |
+| `python-opcional-seguro` | 2 | Conservar: resultados independientes por llamada y ceros repetidos sin acumulación. |
+| `python-actualiza-diccionario` | 2 | Conservar: insertar conservando otras parejas o reemplazar por cero. |
+| `python-borra-clave` | 2 | Conservar: borrar valor cero y no cambiar contenido si la clave falta. |
+| `python-recorre-pares` | 2 | Conservar: ordenar por clave, no por llegada; vacío como lista sin textos. |
+| `python-lista-registros` | 2 | Conservar: ambos registros cuentan aunque repitan nombre y vacío conserva total cero. |
+| `logica-valida-divisor` | 2 | Conservar: cociente de divisor válido y None ante divisor cero; el contrato explica float y representación JSON sin prometer un int de Python. |
+| `logica-valido-cero-ausente` | 2 | Conservar: cero presente válido y None como ausencia, no clave faltante. |
+| `logica-localiza-error` | 2 | Conservar: índice cero válido en lista unitaria y guarda antes del acceso en lista vacía. |
+| `logica-captura-conversion` | 2 | Conservar: strip y entero válido; palabra inválida produce None sin afirmar que los casos certifican try/except. |
+| `logica-error-dominio` | 2 | Conservar: edad negativa rechazada y cero dentro del dominio válido. |
+| `logica-recupera-elementos` | 2 | Conservar: un fallo no impide convertir el elemento posterior; orden y contador separados, también en vacío. |
+| `logica-asercion-normal` | 2 | Conservar: devolver triple del dato, no conteo de pruebas; cero no cambia por ejecutar una aserción. |
+| `logica-pruebas-limites` | 2 | Conservar: el caso positivo no prueba la corrección para negativos y vacío devuelve None, no candidato cero. |
+
+`tests/python-reference-example-review.test.ts` fija las 64 parejas públicas y
+los motivos contrastados. También mantiene explícitos los límites de identidad,
+tipo Python frente a JSON y certificación de técnicas en los enunciados. No
+ejecuta referencias ni envíos de alumnos. No hay cambios de catálogo: se conserva
+la huella `01eca6…`, sin nueva revisión ni reconstrucción adicional.
 
 ## Verificación y límites
 
