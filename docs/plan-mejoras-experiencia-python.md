@@ -404,6 +404,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del cierre individual de teoría:** lint, tipos, 47 pruebas focalizadas y 522 pruebas completas sin omisiones aprobados. Se reutilizan build y `content:python` sin conexión aprobados en el lote anterior: las únicas rutas cambiadas son documentación y una prueba, sin cambios en producto, catálogo ni dependencias. La prueba de huella confirma `c772…` íntegra. Los modelos fijos no ejecutan envíos ni certifican aislamiento, rendimiento o mutaciones intermedias. Sin servicios iniciados ni escrituras en base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
 
+**Revisión posterior de ejemplos E, primer bloque:** se contrastan los 49 ejemplos públicos de las primeras 32 actividades y se conservan sus explicaciones. [revision-ejemplos-python.md](revision-ejemplos-python.md) registra las 32 decisiones y los motivos: operaciones, líneas y prefijos, variables, conversión, booleanos, cero, retorno, estados y fronteras. Las tablas de prueba fijan entradas y salidas públicas sin ejecutar referencias para generarlas. Quedan 384 ejemplos de 192 actividades; este inventario no se confunde con las 433 explicaciones ya existentes ni cierra E. Catálogo, huella, casos ocultos y fuentes comunes sin cambios; base sin preparar/activar.
+
+**Verificación del primer bloque de ejemplos:** lint, tipos, diez pruebas focalizadas y 525 pruebas completas sin omisiones aprobados. Build y `content:python` sin conexión se reutilizan del último producto verificado: solo cambian documentación y una prueba. La huella íntegra conserva `c772…`. No se iniciaron servicios ni se modificó la base; Piston, E2E y revisión visual no se ejecutaron y siguen pendientes de autorización, al igual que respaldo y activación. El plan se conserva.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.
