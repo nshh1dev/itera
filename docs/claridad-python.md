@@ -1700,6 +1700,41 @@ de publicación ni preparación/activación de la base. Quedan la revisión de l
 ejemplos ya explicados, vocabulario pendiente y repeticiones entre superficies,
 además de D2, F y las comprobaciones reales/visuales autorizadas.
 
+## Segundo lote de vocabulario: fichas, registros y valores
+
+El contraste de metadatos y ayudas de las 224 actividades detecta ocho casos
+donde la denominación del dato no queda clara fuera del enunciado. Se ajustan
+16 campos en una proyección exclusivamente Python; no se cambia la estructura
+de datos ni se exige usar una técnica concreta.
+
+| Actividad | Campos | Decisión |
+| --- | --- | --- |
+| `logica-ficha-producto` | Descripción | Definir ficha como diccionario con nombre y precio, conservando sus tipos y límites. |
+| `logica-ficha-resultado` | Objetivo y objetivo de práctica | Definir ficha como diccionario, no como otro tipo de dato. |
+| `logica-registro-compartido` | Descripción, objetivo, pistas y objetivo de práctica | Usar ficha como nombre del diccionario compartido; mantener objeto como término correcto de identidad y la mutación intencional. |
+| `python-lista-registros` | Pistas | Explicar que registro y ficha nombran aquí un diccionario; conservar que las repeticiones cuentan y las dos pistas posteriores. |
+| `python-crea-grupo` | Descripción, objetivo y objetivo de práctica | El elemento añadido es un nombre de texto, no un registro; el contenedor interior es una lista. |
+| `logica-agrupa-registros` | Descripción | Definir cada registro como diccionario con categoria y nombre. |
+| `logica-ordena-registros` | Descripción | Definir registro como diccionario; conservar nombres, tipos y límites de nombre/puntos. |
+| `logica-actualiza-persistidos` | Descripción, objetivo y objetivos de práctica | Hablar de valores enteros del historial, no de registros que podrían confundirse con diccionarios. Conservar el objetivo de responsabilidades. |
+
+No se sustituyen globalmente ficha, registro u objeto: objeto map e identidad
+son usos de Python válidos; los objetos de mochila son elementos físicos, y un
+registro de historial puede ser un entero. No se renombran variables, claves,
+archivos ni slugs. El lote no altera True/False/None, JSON ni las salidas PROGRAM.
+Las definiciones de los enunciados y los 433 ejemplos revisados quedan exactos.
+
+`tests/python-record-vocabulary.test.ts` comprueba los ocho casos, sus 16 campos,
+la progresión de pistas y una huella calculada antes de editar que excluye solo
+esos campos. `tests/python-record-vocabulary-baseline.ts` reconstruye íntegra la
+entrega `5a6fd6…` y se integra en la cadena histórica sin sustituir expectativas.
+La nueva huella es `c89f4c…`, sin preparación ni activación en la base.
+
+Se conserva por ahora la repetición entre objetivo y objetivo de práctica:
+retirarla requiere revisar sus funciones en cada superficie, no sustituirla
+por una definición genérica. Este lote no cierra vocabulario global ni el
+contraste entre todas las superficies; tampoco E, D2 o F.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.

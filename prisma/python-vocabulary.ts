@@ -79,6 +79,43 @@ export const pythonVocabularyRevisions: Record<string, VocabularyRevision> = {
   },
 };
 
+// Segundo lote: distinguir diccionarios, nombres de texto y valores de historial.
+// No cambia claves públicas, código ni los textos exactos de los programas.
+export const pythonRecordVocabularyRevisions: Record<string, VocabularyRevision> = {
+  "logica-ficha-producto": {
+    description: "Consulta una ficha de producto, representada por un diccionario con nombre (texto ASCII) y precio (entero de 0 a 1000).",
+  },
+  "logica-ficha-resultado": {
+    objective: "Construir una ficha, representada por un diccionario, que agrupa un cálculo y un dato recibido.",
+    practiceGoals: ["Construir una ficha, representada por un diccionario, que agrupa un cálculo y un dato recibido."],
+  },
+  "logica-registro-compartido": {
+    description: "Modifica intencionalmente la ficha, un diccionario compartido con su alias.",
+    objective: "Modificar intencionalmente el diccionario ficha y observar el cambio desde su alias.",
+    hints: ["Ficha y alias son el mismo objeto: ambos nombres apuntan al mismo diccionario.", "Cambia el valor asociado a la clave cantidad, no reasignes alias.", "Ambas consultas observan la cantidad actualizada."],
+    practiceGoals: ["Modificar intencionalmente el diccionario ficha y observar el cambio desde su alias."],
+  },
+  "python-lista-registros": {
+    hints: ["Cada registro, también llamado ficha aquí, es un diccionario y cuenta aunque se repita el nombre.", "Accede a cantidad dentro de cada ficha.", "Acumula ficha['cantidad'] en total y devuelve total al terminar."],
+  },
+  "python-crea-grupo": {
+    description: "Prepara la lista de una categoría antes de añadir un nombre de texto.",
+    objective: "Preparar la lista de una categoría antes de añadir un nombre de texto.",
+    practiceGoals: ["Preparar la lista de una categoría antes de añadir un nombre de texto."],
+  },
+  "logica-agrupa-registros": {
+    description: "Agrupa hasta 100 registros, cada uno representado por un diccionario con categoria y nombre.",
+  },
+  "logica-ordena-registros": {
+    description: "Ordena hasta 100 registros, representados por diccionarios con nombre (letras a-z) y puntos (entero de 0 a 1000).",
+  },
+  "logica-actualiza-persistidos": {
+    description: "Actualiza el historial sin perder los valores enteros anteriores.",
+    objective: "Actualizar el historial conservando los valores enteros anteriores y su orden.",
+    practiceGoals: ["Actualizar el historial conservando los valores enteros anteriores y su orden.", "Comprobar casos límite y explicar el reparto de responsabilidades."],
+  },
+};
+
 const jsonSnapshot = "guardar usa json.dump con ensure_ascii=False y separators=(',', ':'): escribe JSON UTF-8 compacto sin salto final. with cierra el archivo antes de reabrirlo con json.load. El juez comprueba guardado.json además del retorno; devolver los datos sin escribir no basta.";
 const secondProcess = "La segunda llamada solve([]) ocurre en un proceso nuevo sobre el mismo directorio. cargar intenta leer guardado.json y solo ante FileNotFoundError recurre a estado.json; así recupera el estado final sin variables globales ni reiniciar el recurso. Debe conservar guardado.json con el mismo contenido exacto tras ambas llamadas. El siguiente caso reinicia los archivos: no hay persistencia entre casos ni envíos.";
 

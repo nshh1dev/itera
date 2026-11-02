@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { beforePythonFinalExamples } from "./python-final-example-baseline";
+import { beforePythonRecordVocabulary } from "./python-record-vocabulary-baseline";
 
 type Review = { cases: [unknown, unknown][]; reason: RegExp };
 const leaf = (value: number) => ({ value, left: null, right: null });
@@ -63,7 +64,7 @@ test("el último bloque contrasta 64 ejemplos y completa 433 de 224 actividades"
 });
 
 test("solo cambian dos explicaciones públicas y se recupera la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => entry.slug !== "logica-capacidad" ? entry : ({ ...entry, content: {
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonRecordVocabulary(entry.slug, entry.content) })).map(entry => entry.slug !== "logica-capacidad" ? entry : ({ ...entry, content: {
     ...entry.content, variants: entry.content.variants.map(variant => ({ ...variant, tests: variant.tests.map(item =>
       item.visible && (item.order === 0 || item.order === 1) ? { ...item, explanation: "" } : item),
     })),

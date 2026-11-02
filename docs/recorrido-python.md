@@ -144,6 +144,14 @@ La revisión individual de teoría local está completa: **224/224 actividades**
 
 La revisión posterior de ejemplos públicos está completa: **433/433 ejemplos de 224/224 actividades**, con nueve explicaciones ajustadas y 424 conservadas. El último bloque mejora dos explicaciones para justificar la capacidad mínima, no solo un reparto válido. La nueva huella `5a6fd6…` cambia únicamente esas dos posiciones Python y permite reconstruir la entrega anterior, sin preparar ni activar la base. Inventario y decisiones: [revision-ejemplos-python.md](revision-ejemplos-python.md). Este cierre editorial no certifica técnicas internas ni Piston real y no cierra vocabulario pendiente, repeticiones entre superficies o F.
 
+El segundo lote de vocabulario aclara 16 campos de ocho actividades: ficha y
+registro como diccionarios cuando corresponde, nombre de texto en agrupación y
+valores enteros en el historial. Conserva enunciados, teoría, ejemplos, código,
+contratos y fuentes comunes. La huella vigente `c89f4c…` reconstruye la anterior
+`5a6fd6…`; el catálogo sigue sin preparar ni activar. Decisiones y límites en
+[claridad-python.md](claridad-python.md). Vocabulario global y repeticiones siguen
+abiertos.
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

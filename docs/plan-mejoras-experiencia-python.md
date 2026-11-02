@@ -432,6 +432,10 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 **Verificación del cierre de ejemplos:** lint, tipos, 27 pruebas focalizadas, 541 pruebas completas sin omisiones con concurrencia 2, build y `content:python` sin conexión aprobados. Se conservan las huellas históricas mediante reconstrucción, sin reemplazar sus expectativas. La enumeración fija confirma los mínimos de nueve/seis para los dos casos públicos de capacidad; no acredita rendimiento ni ejecución real de alumnos. No se iniciaron servicios ni se modificó la base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
 
+**Segundo lote de vocabulario E:** se contrastan metadatos y ayudas de las 224 actividades y se aclaran 16 campos de ocho: ficha/registro como diccionario, nombre de texto en agrupación y valores enteros del historial. [claridad-python.md](claridad-python.md) registra las decisiones. Se conservan objeto map, identidad y objetos físicos, así como las pistas posteriores, los enunciados, la teoría y los 433 ejemplos revisados. La huella previa excluye solo los campos autorizados y se reconstruye íntegra la entrega anterior sin cambiar expectativas históricas; huella vigente `c89f4c…`. No cierra vocabulario global, repeticiones, D2 ni F; base sin preparar/activar.
+
+**Verificación del segundo lote de vocabulario:** lint, tipos, 27 pruebas focalizadas, 544 pruebas completas sin omisiones con concurrencia 2, build y `content:python` sin conexión aprobados. La huella acotada conserva todos los campos ajenos a los 16 autorizados y la reconstrucción recupera íntegra la entrega `5a6fd6…`, incluidas las expectativas históricas de ejemplos. No se iniciaron servicios ni se modificó la base; Piston, E2E, revisión visual, respaldo y activación siguen pendientes de autorización. El plan se conserva.
+
 ## 8. Fase F — Jerarquía visual y ergonomía
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.

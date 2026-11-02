@@ -104,4 +104,6 @@ export const knownPythonReleases: readonly string[] = [
   "f5d67f389e846bb978604ce2a5e9dc8ad695a40699153b79c2edc57bf3834d10",
   // Cierre del contraste de ejemplos: justificar las dos capacidades mínimas.
   "5a6fd6efedc8d0e0524abb4382fc7f88c766c18a3f97f4e084a91fe0a4bae06c",
+  // Vocabulario de fichas y registros: ocho actividades, solo metadatos y ayudas.
+  "c89f4cd3841fad9c97a90e9f87ccd31e2255a9c5d5c329cfcb6c2028cdc36392",
 ];
