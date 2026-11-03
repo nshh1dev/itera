@@ -17,7 +17,9 @@ mantenidas y siete revisadas). Otras **12 avanzadas de combinatoria y programaci
 dinámica** (cuatro mantenidas y ocho revisadas) elevan el total a **212/224**.
 Las últimas **12 avanzadas de grafos y optimización** (tres mantenidas y nueve
 revisadas) completan **224/224 actividades** con decisión individual. Quedan
-abiertas la validación real del ejecutor, las limitaciones de no mutación y E/F.
+abiertas la validación real del catálogo completo, las limitaciones de no mutación
+y E/F. Los límites de las seis referencias de árboles ya se comprobaron en Piston,
+con el alcance indicado en «Límites reales de árboles Python».
 Se leyeron objetivo, enunciado, plantilla, referencia, pistas, casos y reglas
 conceptuales. Se mantienen modalidades, entradas, respuestas esperadas,
 visibilidad, reglas conceptuales e identidades; no se añaden casos por volumen.
@@ -530,12 +532,63 @@ revisión individual, no la sustituye ni acredita ejecución real en Piston.
 | `logica-subsecuencia-creciente` | Mantener: estricta, no contigua, repetidos, vacío y orden descendente; enumeración independiente. | Contar todos los valores distintos. |
 | `logica-planifica-tareas` | **Añadir caso** de cadena de tres tareas, además de paralelismo, ciclos y cero. | Propagar solo la duración de una dependencia directa. |
 
+## Límites reales de árboles Python
+
+El 3 de noviembre de 2026 se ejecutó
+`tests/python-tree-limits.integration.ts` mediante `piston.ts`, sin Next ni base.
+Son seis pruebas optativas para cuenta, altura, preorden, niveles, propiedad de
+búsqueda y ancestro. Con la opción activa, falta de Piston/runtime es un fallo,
+no una omisión. Sin ella no se contacta el ejecutor. No pertenece a `npm test`.
+
+```powershell
+$env:ITERA_PYTHON_TREE_LIMITS = "1"
+npx.cmd tsx --conditions=react-server --test --test-concurrency=1 tests/python-tree-limits.integration.ts
+Remove-Item Env:ITERA_PYTHON_TREE_LIMITS
+```
+
+Requiere autorización operativa, Piston preparado en 2000 y ninguna otra suite
+del sandbox en paralelo. No inicia servicios ni instala runtimes por sí sola.
+
+Se conservan límites y contratos: cuenta/ancestro hasta **100 nodos**, las otras
+cuatro hasta **500**, todos con profundidad máxima **50**. Se comprueban los casos
+de las fuentes y fronteras adicionales: cadenas izquierda/derecha de 50 nodos,
+árboles completos, máximo de nodos y profundidad simultáneos y búsqueda válida
+equilibrada/sesgada. Los tamaños y profundidades se verifican por separado; el
+preorden esperado del árbol completo sale de las etiquetas de caminos binarios,
+no de ejecutar la referencia. Las entradas/salidas del catálogo no se modifican.
+
+**Resultado:** seis pruebas aprobadas sin omisiones, **62 casos** de referencias
+y doce ejecuciones adicionales (ida/vuelta JSON y sonda por referencia), todas
+en Python **3.12.0** de Piston. En la última ejecución secuencial:
+
+- Máximo por caso observado: **101 ms**, incluido el viaje HTTP. Es una muestra
+  local sin carga artificial, no una garantía de rendimiento ni un benchmark.
+- Salida máxima de las referencias: **2393 bytes**; el árbol de tamaño y
+  profundidad máximos vuelve por JSON en **19397 bytes**, bajo los 65536 de Piston.
+- Las sondas de las referencias observaron **10996–11324 KiB** de RSS máxima del
+  proceso hasta terminar `solve`, con límite de recursión **1000** sin modificar.
+  Esa cifra no incluye el pico posterior de serialización ni el cgroup completo;
+  las ejecuciones normales, sin sonda, también aprobaron con el conductor real.
+- No se elevó recursión, tiempo, memoria o salida: el adaptador mantuvo **3000 ms**
+  y **256 MiB**. Pasar estas referencias no prueba la imposición adversarial de
+  límites, cualquier solución alternativa ni tamaños fuera del contrato.
+
+Se cierra la compatibilidad de los límites declarados de árboles con este
+ejecutor, no la validación de todo el catálogo ni la garantía de no mutación.
+Solo se inició Piston/WSL con autorización y se apagó conservando volúmenes;
+no hubo servidor Next, PostgreSQL, preparación, activación o escrituras en base.
+Verificación adicional: lint, tipos y tres pruebas focalizadas de estructuras
+aprobados. Se reutilizan las 582 pruebas unitarias y el build anteriores: no
+cambiaron producto, catálogo, dependencias ni pruebas de `tests/*.test.ts`.
+
 ## Límites y siguientes fases
 
 - No se amplía AST, esquema, dependencias ni modalidades.
-- La ejecución local no verifica sandbox, serialización del ejecutor ni publicación.
-- La revisión de tiempos, teoría duplicada y ergonomía sigue abierta en E/F.
+- La ejecución local no verifica sandbox ni publicación. La comprobación real
+  anterior acredita solo las seis referencias de árboles y su serialización.
+- Tiempos, vocabulario e inventarios editoriales ya están revisados en fuentes;
+  E/F mantienen pendiente el reparto final de ayudas y la revisión visual completa.
 - La auditoría individual de las 224 actividades está registrada; no equivale al
-  cierre de D2. Completar las garantías y límites del ejecutor real con autorización.
-- Continuar E/F: estructura editorial, vocabulario, explicaciones y ayudas,
-  tiempos, jerarquía visual y accesibilidad. No eliminar el plan antes del cierre.
+  cierre de D2. Quedan garantías de no mutación y validación integrada del catálogo.
+- No eliminar el plan antes de la verificación integrada, activación autorizada
+  y cierre de sus puntos existentes.

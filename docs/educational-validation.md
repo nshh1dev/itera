@@ -17,8 +17,9 @@ comprensión ni se intenta impedir toda solución escrita para memorizar los tes
   versiones antiguas también se deduplican en la presentación, sin cambiar sus tests.
 - Con entrada: ejemplos diferentes y formato exacto. Un JSON null sigue siendo
   una entrada; no se interpreta como ausencia de entrada de un programa.
-- La teoría esencial y los ejemplos de aprendizaje se muestran directamente;
-  Antes de empezar conserva el repaso opcional plegado, sin desplegables anidados.
+- En Python, teoría, objetivos y coste están bajo «Teoría y objetivos», cerrado
+  inicialmente; reto, condiciones y ejemplos siguen visibles. Los otros lenguajes
+  mantienen la teoría visible. Antes de empezar conserva su repaso independiente.
 - Pistas progresivas y errores comunes se consultan bajo demanda. La solución
   completa mantiene una petición autenticada independiente y un botón explícito.
 
@@ -116,6 +117,12 @@ Hallazgos resueltos:
 En desafíos, se evalúan los resultados, no que se copie la técnica de referencia.
 Los textos de coste describen una estrategia orientativa; las pruebas no garantizan
 que una solución use recursión, un montículo o una complejidad concreta.
+
+Los límites declarados de las seis referencias de árboles Python se contrastaron
+en Piston real, incluidos 100/500 nodos y profundidad 50 simultáneos, serialización
+y sondas de memoria. No se elevaron presupuestos ni se certifica cualquier
+implementación o no mutación. Procedimiento, cifras y límites de la medición en
+[auditoria-python.md](auditoria-python.md#límites-reales-de-árboles-python).
 
 ## Actualización y conservación
 
