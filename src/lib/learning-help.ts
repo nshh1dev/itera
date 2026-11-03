@@ -1,4 +1,6 @@
 // Comparación conservadora: omite duplicados literales, no conceptos distintos.
+import type { Language } from "./types";
+
 const normalize = (text: string) => text.trim().toLocaleLowerCase("es").replace(/\s+/g, " ").replace(/[.,;:!?]+$/, "").trim();
 
 export function uniqueHelp(items: string[], alreadyShown: string[] = []) {
@@ -9,6 +11,13 @@ export function uniqueHelp(items: string[], alreadyShown: string[] = []) {
     seen.add(key);
     return true;
   });
+}
+
+export function exerciseConditions(constraints: string[], statement: string, language: Language) {
+  const conditions = uniqueHelp(constraints, statement.split(/\n+/));
+  // Solo este respaldo editorial no añade una regla. No inferir equivalencias
+  // semánticas ni ocultar límites, formatos, técnicas o instrucciones concretas.
+  return language === "python" ? conditions.filter(item => item !== "Usa únicamente los datos y límites descritos en el enunciado.") : conditions;
 }
 
 export function learningHelp({ title = "", statement = "", objective, practiceGoals = [], prerequisites }: { title?: string; statement?: string; objective: string; practiceGoals?: string[]; prerequisites: string[] }) {

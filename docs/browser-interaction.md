@@ -106,6 +106,15 @@ PostgreSQL apagados al terminar, sin tocar el servicio PostgreSQL de Windows.
 Lint y tipos aprobados; se reutilizan pruebas unitarias/build anteriores porque
 solo cambian pruebas E2E y documentación. No hubo preparación ni activación.
 
+Las condiciones concretas siguen junto al reto. El cierre editorial posterior
+omite únicamente el respaldo exacto «Usa únicamente los datos y límites
+descritos en el enunciado.», sin regla propia (52 actividades de fuentes), sin
+tocar datos ni otras condiciones. Los 13 casos de `python-presentation.spec.ts`
+aprobaron tras este cambio: omisión Python en cinco anchos y ambos temas,
+conservación de instrucciones concretas, de la frase en JS/TS, JSON y PROGRAM.
+No amplía por sí solo la revisión visual directa. Procedimiento y límites del
+reparto en [repeticiones-python.md](repeticiones-python.md#reparto-final-de-las-ayudas).
+
 El taller activa estas opciones de presentación solo para Python:
 
 - `Statement` reconoce también las etiquetas exactas «Antes de resolver» y

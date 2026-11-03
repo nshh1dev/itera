@@ -17,7 +17,7 @@ mantenidas y siete revisadas). Otras **12 avanzadas de combinatoria y programaci
 dinámica** (cuatro mantenidas y ocho revisadas) elevan el total a **212/224**.
 Las últimas **12 avanzadas de grafos y optimización** (tres mantenidas y nueve
 revisadas) completan **224/224 actividades** con decisión individual. Quedan
-abiertas la instalación/activación y E/F. Las 224 referencias y plantillas se
+abiertas la instalación/activación y la revisión visual global de F. Las 224 referencias y plantillas se
 validaron en Piston sin base de datos; véase «Catálogo completo en Piston».
 Los límites de las seis
 referencias de árboles y el alcance observable de conservación de entrada ya se
@@ -679,8 +679,8 @@ PostgreSQL, preparación o activación. El log local de esta ejecución reside e
 - No se amplía AST, esquema, dependencias ni modalidades.
 - La ejecución local no verifica sandbox ni publicación. La comprobación real
   del catálogo acredita referencias/plantillas y casos actuales, no instalación.
-- Tiempos, vocabulario e inventarios editoriales ya están revisados en fuentes;
-  E/F mantienen pendiente el reparto final de ayudas y la revisión visual completa.
+- Tiempos, vocabulario, inventarios y reparto final de ayudas ya están revisados
+  en fuentes; F mantiene pendiente la revisión visual completa.
 - La auditoría individual de las 224 actividades y las dos comprobaciones
   pendientes de D2 están registradas, con el catálogo completo validado en Piston;
   siguen pendientes flujos integrados, revisión visual y activación autorizada.

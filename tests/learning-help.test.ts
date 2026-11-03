@@ -2,7 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { learningHelp, uniqueHelp } from "../src/lib/learning-help";
+import { exerciseConditions, learningHelp, uniqueHelp } from "../src/lib/learning-help";
+import { pythonCatalog } from "../prisma/python-content";
 import { LearningGuide } from "../src/components/practice/learning-guide";
 import { ModuleLesson } from "../src/components/practice/module-lesson";
 import { ExerciseNotes } from "../src/components/practice/exercise-notes";
@@ -53,4 +54,26 @@ test("el modo plegable no añade una sección de teoría cuando solo hay prerreq
   const html = renderToStaticMarkup(createElement(LearningGuide, { objective: "", prerequisites: ["Usar return."], collapsibleTheory: true }));
   assert.match(html, /Antes de empezar/);
   assert.doesNotMatch(html, /Teoría y objetivos/);
+});
+
+test("las condiciones Python omiten solo el respaldo genérico y conservan reglas específicas", () => {
+  const generic = "Usa únicamente los datos y límites descritos en el enunciado.";
+  const constraints = [generic, "Hasta 50 nodos.", "Devuelve None si falta.", "Conserva solve(data).", "No modifiques la entrada."];
+  assert.deepEqual(exerciseConditions(constraints, "", "python"), constraints.slice(1));
+  for (const language of ["javascript", "typescript"] as const) assert.deepEqual(exerciseConditions(constraints, "", language), constraints);
+  assert.deepEqual(exerciseConditions([generic], "", "python"), []);
+  assert.deepEqual(exerciseConditions(["Hasta 50 nodos.", "Hasta 50 nodos.", "Hasta 100 nodos."], "Hasta 50 nodos.", "python"), ["Hasta 100 nodos."]);
+  assert.deepEqual(exerciseConditions([`${generic} No uses entrada estándar.`], "", "python"), [`${generic} No uses entrada estándar.`]);
+});
+
+test("las 224 actividades conservan todas las condiciones salvo 52 respaldos sin regla propia", () => {
+  let omitted = 0;
+  for (const { content } of pythonCatalog) {
+    const statement = content.variants[0].statement || content.statement;
+    const previous = uniqueHelp(content.constraints, statement.split(/\n+/));
+    const current = exerciseConditions(content.constraints, statement, "python");
+    omitted += previous.length - current.length;
+    assert.deepEqual(current, previous.filter(item => item !== "Usa únicamente los datos y límites descritos en el enunciado."));
+  }
+  assert.equal(omitted, 52);
 });

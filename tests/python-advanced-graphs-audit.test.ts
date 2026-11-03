@@ -151,7 +151,12 @@ print(json.dumps('ok'))`, entries.map(entry => ({ slug: entry.slug, solution: en
 
 test("la auditoría individual registra exactamente las 224 identidades Python", () => {
   const document = readFileSync("docs/auditoria-python.md", "utf8");
-  const slugs = [...document.matchAll(/^\| `([^`]+)` \|/gm)].map(match => match[1]);
+  // El inventario individual precede a las comprobaciones reales posteriores,
+  // cuyas matrices pueden volver a mencionar una actividad sin duplicarla.
+  const boundary = "\n## Límites reales de árboles Python";
+  assert.ok(document.includes(boundary));
+  const inventory = document.slice(0, document.indexOf(boundary));
+  const slugs = [...inventory.matchAll(/^\| `([^`]+)` \|/gm)].map(match => match[1]);
   assert.equal(slugs.length, 224);
   assert.equal(new Set(slugs).size, 224);
   assert.deepEqual([...slugs].sort(), pythonCatalog.map(entry => entry.slug).sort());

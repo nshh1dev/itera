@@ -15,9 +15,71 @@ Las condiciones necesarias y los textos exactos de PROGRAM permanecen visibles
 en el enunciado, aunque se acorte la descripción del catálogo.
 
 El inventario cubre **224/224 actividades**: 64 con ajustes y 160 conservadas.
-Se completa este contraste de resúmenes, objetivos, enunciados y pistas. No
-equivale a cerrar toda la coherencia terminológica, la presentación de las ayudas
-ni la validación integrada del plan.
+Se completa este contraste de resúmenes, objetivos, enunciados y pistas. El
+reparto final con teoría modular, condiciones y solución se registra abajo;
+su cierre editorial no equivale a completar la revisión visual o la instalación.
+
+## Reparto final de las ayudas
+
+El contraste final reúne las decisiones individuales anteriores de **224
+actividades**, las revisiones de teoría local y solución de
+[claridad-python.md](claridad-python.md) y las teorías/ejemplos actuales de los
+**57 módulos** de [teoria-modulos-python.md](teoria-modulos-python.md). No se abre
+otro inventario de actividades ni se reescribe por aumentar cifras.
+
+| Superficie | Responsabilidad y decisión final |
+| --- | --- |
+| Descripción | Identificar el reto en el catálogo, sin reproducir entrada, receta y respuesta completa. Se conservan las 64 decisiones individuales/65 campos del inventario. |
+| Objetivos | Orientar la habilidad. `learningHelp` elige metas concretas o el objetivo general, no ambos; omite duplicados literales, sin confundir conceptos relacionados. En Python quedan en «Teoría y objetivos». |
+| Introducción local | Explicar lo necesario para empezar, junto a la tarea. Se conservan introducciones de sintaxis y distinciones conceptuales ya revisadas; no se esconden en teoría opcional ni se retiran por repetir un término del módulo. |
+| Teoría y ejemplo del módulo | Presentar herramientas reutilizables y un caso ilustrativo, bajo «Teoría y objetivos» cerrado. No se vuelve a copiar esa teoría en la explicación de cada solución. Los ejemplos no reemplazan contratos, plantillas o casos del ejercicio. |
+| Condiciones | Mantener formatos, límites, excepciones e instrucciones concretas visibles. Se deduplican líneas literales ya presentes en el reto. Solo se omite en Python el respaldo exacto «Usa únicamente los datos y límites descritos en el enunciado.», sin regla propia. |
+| Pistas y errores | Conservar los peldaños y la revelación progresiva; no trasladar allí una condición necesaria para saber qué devolver. Las orientaciones de resolución ya retiradas de los retos permanecen disponibles aquí. |
+| Solución | Explicar el código y sus fronteras con estados/ejemplos concretos, consultada aparte. Se mantienen las 224 decisiones individuales, sin repetir la introducción modular completa ni certificar técnica/identidad por el retorno. |
+
+Contraste de las 57 teorías/ejemplos actuales, agrupado por su responsabilidad:
+
+| Módulos | Qué se conserva y por qué |
+| --- | --- |
+| `instrucciones`, `variables`, `operaciones`, `python-constantes`, `entrada`, `python-decimales`, `tipos-comparaciones` | Ejemplos breves de ejecución, asignación, equivalencia, conversión y tipos. Las primeras actividades guiadas necesitan esa sintaxis; salida exacta y datos propios permanecen en cada reto. |
+| `funciones`, `seguimiento`, `integracion-inicial` | Retorno frente a impresión, traza y combinación de herramientas. El ejemplo de función/operación no sustituye los contratos de las integraciones. |
+| `decisiones`, `python-expresion-condicional`, `repeticion`, `python-control-bucle`, `listas`, `python-busqueda-lineal` | Sintaxis, límites, avance, índices y primera coincidencia. Se mantiene la introducción necesaria y la práctica con otra entrada; no se elimina el umbral o el caso vacío del reto por estar explicado en el módulo. |
+| `textos`, `python-secuencias`, `python-tuplas`, `funciones-datos`, `alcance` | Herramientas de texto, copia/corte, parejas, claves, ausencia y llamadas. Ejemplos de herramienta frente a formatos, repeticiones y respaldos concretos del contrato. |
+| `referencias`, `python-identidad`, `python-diccionarios`, `errores`, `pruebas` | Alias/copia, predeterminados, claves, recuperación y comprobaciones. La repetición del vocabulario introduce distinciones necesarias; no se presenta una salida como prueba de identidad o cobertura. |
+| `integracion-bases`, `integracion-gastos`, `python-conjuntos`, `mapas`, `python-agrupacion` | Integración, pertenencia/frecuencia y grupos. Se distinguen reglas de negocio, acumulación y contenedores; no se retiran pistas para preparar una clave nueva. |
+| `python-comprensiones`, `python-iteradores`, `python-agregacion`, `python-formato`, `python-registros-anidados` | Sintaxis y operaciones pequeñas: transformación/filtro, consumo, claves de orden, texto decimal y consulta. Se conserva la teoría local que introduce la herramienta, sin añadir otra explicación completa de la referencia al módulo. |
+| `python-acumulacion-inventario`, `modulos`, `archivos`, `integracion-inventario`, `python-reporte-inventario` | Acumulación con negativos frente a stock restringido, módulos, reapertura y segundo proceso. Los formatos/archivos y persistencia declarada siguen en el contrato visible; el ejemplo de reapertura no promete persistencia entre procesos. |
+| `python-academia`, `python-contactos`, `integracion-agenda`, `python-transformacion` | Modelos del dominio y herramientas comunes; las reglas de cada operación, datos ajenos y copias siguen en el reto. Contactos no se confunde con tareas y FUNCTION no se describe como almacenamiento. |
+| `busqueda`, `recorridos`, `matrices`, `copias-anidadas`, `estado-recursion`, `integracion-intermedia` | Invariantes/herramientas frente a límites, desempates y resultados concretos. Copia por filas se conserva como concepto tras matrices; las trazas completas de las referencias quedan en sus soluciones. |
+| `arboles`, `prioridades`, `exploracion`, `dinamica`, `grafos`, `integracion-avanzada` | Modelos, casos base, estados y estrategias. No se eliminan convenciones de altura, orden de generación o restricciones necesarias por repetir vocabulario; cada solución explica su recorrido real y sus costes, no una garantía universal. |
+
+La única reducción adicional de presentación es ese respaldo de condiciones:
+**52 actividades** de las fuentes. `exerciseConditions` usa una coincidencia
+exacta, solo en Python; conserva toda otra condición, incluso una frase parecida
+con una instrucción añadida. Si no quedan condiciones, no aparece una sección
+vacía. No se modifican catálogo persistido, huellas, textos JS/TS, reglas,
+ejemplos, soluciones, identidades ni progreso. Las introducciones y ejemplos
+modulares se conservan tras este contraste; no hay un nuevo lote de reescrituras.
+
+Verificación del cierre editorial: **584 unitarias** sin fallos/omisiones, lint,
+tipos, build y validación estructural `content:python` aprobados. Los **13 E2E**
+de `python-presentation.spec.ts` aprobaron: la frase genérica no aparece en
+Python en cinco anchos/ambos temas y sí en JS/TS; las instrucciones concretas,
+JSON y salida PROGRAM se conservan. Copias editoriales temporales en cero al
+terminar, Next/PostgreSQL apagados. No se repite Piston: código evaluado, casos
+y contratos no cambian respecto a las 224 actividades ya validadas allí.
+
+La primera suite unitaria detectó un defecto del lector de documentación:
+contaba nueve menciones de una matriz de observación añadida después del
+inventario. Se acotó a la sección individual original, manteniendo **224**
+entradas, **224** identidades únicas y comparación exacta con el catálogo; no
+se ajustó la expectativa a 233. Tipos detectó además una lista readonly del
+fixture E2E, corregida con una copia mutable para Prisma antes de verificarlo.
+
+Se cierra el reparto editorial de E, no la revisión visual global de F, los
+flujos integrados restantes ni la instalación/activación autorizada. Las nueve
+discrepancias de rutas instaladas documentadas en
+[learning-personalization.md](learning-personalization.md) siguen abiertas.
 
 ## Primer bloque: impresión, variables, entrada y primeros retornos
 
@@ -371,6 +433,7 @@ dos objetivos y dos metas adaptados a vocabulario Python. Son 65 campos de 64
 actividades; las otras 160 se conservan tras contraste individual.
 
 Las pruebas de texto no acreditan calidad pedagógica completa, revisión visual,
-accesibilidad, ejecución real en Piston ni rendimiento. Se completa este
-inventario, no el contraste final de terminología en todas las superficies,
-la jerarquía de ayudas ni las fases D2/F. No se elimina el plan.
+accesibilidad ni rendimiento. El inventario y el reparto editorial están
+cerrados con el alcance anterior; las comprobaciones reales y sus límites se
+registran en la auditoría y la guía de navegador. No se elimina el plan antes
+de la verificación integrada e instalación autorizada.

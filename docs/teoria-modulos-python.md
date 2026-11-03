@@ -15,8 +15,9 @@ por comparar resultados. Los enunciados conservan los límites específicos.
 
 No cambian autoevaluaciones, títulos y descripciones ya revisados, pasos, orden,
 niveles, dependencias ni las 224 actividades. Las teorías locales de las
-actividades y sus explicaciones de solución son superficies distintas y tienen
-trabajo pendiente; esta revisión no las sustituye globalmente.
+actividades y sus explicaciones de solución son superficies distintas: su
+revisión individual y el reparto final están registrados en
+[repeticiones-python.md](repeticiones-python.md#reparto-final-de-las-ayudas).
 
 ## Las 31 decisiones de revisión
 
@@ -101,7 +102,7 @@ siguen intactas; no hace falta registrar otra entrega de contenido persistido.
 
 La interfaz toma esta proyección bajo las condiciones de currículo Python que
 ya aplicaba al resolver sus módulos. No se activa contenido ni se modifica la
-base. Quedan teoría local y explicaciones de actividades, revisión de ejemplos
-públicos ya explicados y repeticiones entre superficies. La presentación de
-teoría desplegable, comprobación visual y accesibilidad pertenecen a F y no se
-dan por aprobadas mediante estas pruebas locales.
+base. La revisión editorial individual y el reparto entre superficies están
+cerrados con el alcance de la documentación enlazada. La comprobación visual
+global y accesibilidad pertenecen a F y no se dan por aprobadas mediante estas
+pruebas locales; la instalación/activación sigue requiriendo autorización.

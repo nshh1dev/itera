@@ -12,6 +12,7 @@ const prefix = `python-presentation-${Date.now()}`;
 const matrixSlug = `${prefix}-matriz`;
 const programSlug = `${prefix}-programa`;
 const json = (value: unknown) => value === null ? Prisma.JsonNull : value as Prisma.InputJsonValue;
+const genericCondition = "Usa únicamente los datos y límites descritos en el enunciado.";
 
 test.beforeAll(async () => {
   await mkdir(".local/screenshots", { recursive: true });
@@ -21,13 +22,13 @@ test.beforeAll(async () => {
   const sharedMatrix = seedVersionContent(logicExercises.find(exercise => exercise.slug === "logica-copia-anidada")!);
   const program = pythonCatalog.find(exercise => exercise.slug === "logica-saludo")!.content;
   for (const [slug, content] of [
-    [matrixSlug, { ...pythonMatrix, variants: [...pythonMatrix.variants, ...sharedMatrix.variants.filter(variant => variant.language !== "python")] }],
+    [matrixSlug, { ...pythonMatrix, constraints: [...pythonMatrix.constraints, genericCondition], variants: [...pythonMatrix.variants, ...sharedMatrix.variants.filter(variant => variant.language !== "python")] }],
     [programSlug, program],
   ] as const) {
     const { variants, ...version } = content;
     await db.exercise.create({ data: {
       slug, category: "Prueba de presentación", order: 20000,
-      versions: { create: { ...version, prerequisiteSlugs: [], published: true, variants: { create: variants.map(({ tests, ...variant }) => ({
+      versions: { create: { ...version, constraints: [...version.constraints], prerequisiteSlugs: [], published: true, variants: { create: variants.map(({ tests, ...variant }) => ({
         ...variant, tests: { create: tests.map(fixture => ({ ...fixture, input: json(fixture.input), expected: json(fixture.expected) })) },
       })) } } },
     } });
@@ -47,6 +48,8 @@ for (const theme of ["light", "dark"] as const) {
       await page.goto(`/ejercicios/${matrixSlug}?lenguaje=python`);
       const example = page.locator(".example-panel").first();
       await expect(example).toBeVisible();
+      await expect(page.getByText(genericCondition, { exact: true })).toHaveCount(0);
+      await expect(page.getByRole("region", { name: "Condiciones del ejercicio", exact: true })).toContainText("La aplicación proporciona data");
       await expect(page.locator("html")).toHaveClass(new RegExp(theme));
       const input = example.locator("pre").nth(0);
       const output = example.locator("pre").nth(1);
@@ -82,6 +85,7 @@ for (const language of ["javascript", "typescript"] as const) {
     await page.goto(`/ejercicios/${matrixSlug}?lenguaje=${language}`);
     const input = page.locator(".example-panel").first().locator("pre").first();
     await expect(input).toBeVisible();
+    await expect(page.getByRole("region", { name: "Condiciones del ejercicio", exact: true }).getByText(genericCondition, { exact: true })).toBeVisible();
     const text = (await input.textContent())!;
     expect(text).toBe(JSON.stringify(JSON.parse(text)));
   });
