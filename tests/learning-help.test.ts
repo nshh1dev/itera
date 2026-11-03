@@ -31,4 +31,26 @@ test("la guía muestra los conceptos directamente y reserva el desplegable para 
 
 test("una guía sin contenido no deja un desplegable vacío aunque reciba hijos nulos", () => {
   assert.equal(renderToStaticMarkup(createElement(LearningGuide, { objective: "", prerequisites: [] }, null, false, "")), "");
+  assert.equal(renderToStaticMarkup(createElement(LearningGuide, { objective: "", prerequisites: [], collapsibleTheory: true }, null, false, "")), "");
+});
+
+test("la teoría opcional se conserva cerrada e inerte sin duplicar objetivos ni plegar el repaso con ella", () => {
+  const html = renderToStaticMarkup(createElement(LearningGuide, {
+    objective: "Consultar una clave.", practiceGoals: ["Consultar una clave."], prerequisites: ["Usar return."], collapsibleTheory: true,
+  }, createElement(ModuleLesson, { lesson: { title: "Diccionarios", objective: "Consultar una clave.", theory: "Una clave identifica un valor <seguro>.", example: "dato = {'a': 2}" }, language: "python" }),
+  createElement(ExerciseNotes, { complexity: "Tiempo O(1) en esta referencia.", commonErrors: [] })));
+  assert.equal((html.match(/<button/g) ?? []).length, 2);
+  assert.equal((html.match(/aria-expanded="false"/g) ?? []).length, 2);
+  assert.equal((html.match(/inert=""/g) ?? []).length, 2);
+  assert.equal((html.match(/Consultar una clave\./g) ?? []).length, 1);
+  assert.ok(html.indexOf("Antes de empezar") < html.indexOf("Teoría y objetivos"));
+  assert.match(html, /Una clave identifica un valor &lt;seguro&gt;/);
+  assert.match(html, /No es la solución del reto/);
+  assert.match(html, /Tiempo O\(1\) en esta referencia/);
+});
+
+test("el modo plegable no añade una sección de teoría cuando solo hay prerrequisitos", () => {
+  const html = renderToStaticMarkup(createElement(LearningGuide, { objective: "", prerequisites: ["Usar return."], collapsibleTheory: true }));
+  assert.match(html, /Antes de empezar/);
+  assert.doesNotMatch(html, /Teoría y objetivos/);
 });

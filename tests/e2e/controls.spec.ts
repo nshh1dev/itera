@@ -14,6 +14,15 @@ for (const theme of ["light", "dark"] as const) {
       await hints.press("Enter");
       await expect(hints).toHaveAttribute("aria-expanded", "false");
       await expect(hints).toBeFocused();
+      const theory = page.getByRole("button", { name: "Teoría y objetivos", exact: true });
+      await expect(theory).toHaveAttribute("aria-expanded", "false");
+      await theory.focus();
+      await theory.press("Space");
+      await expect(theory).toHaveAttribute("aria-expanded", "true");
+      await expect(page.getByRole("region", { name: "Teoría y ejemplo", exact: true })).toBeVisible();
+      await theory.press("Space");
+      await expect(theory).toHaveAttribute("aria-expanded", "false");
+      await expect(theory).toBeFocused();
       await page.goto("/ejercicios");
       if (width < 768) await page.getByRole("button", { name: /^Filtros/ }).click();
       for (const name of ["Lenguaje", "Nivel", "Categoría", "Estado", "Ordenar por"]) {

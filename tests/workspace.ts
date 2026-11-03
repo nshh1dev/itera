@@ -4,6 +4,8 @@ export async function openLearningHelp(page: Page) {
   await expect(page.getByRole("region", { name: "Guía de aprendizaje" })).toBeVisible();
   const review = page.getByRole("button", { name: "Antes de empezar", exact: true });
   if (await review.count() && await review.getAttribute("aria-expanded") !== "true") await review.click();
+  const theory = page.getByRole("button", { name: "Teoría y objetivos", exact: true });
+  if (await theory.count() && await theory.getAttribute("aria-expanded") !== "true") await theory.click();
 }
 
 // La preferencia persiste al cambiar de ejercicio y recargar. No asumir que

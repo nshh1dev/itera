@@ -19,6 +19,39 @@ Recorridos reutilizados:
 - `browser-zoom.spec.ts`: zoom real al 200 %, páginas públicas, taller, cierre/repaso
   con sesión, Configuración y vistas administrativas de una cuenta temporal.
 
+## Teoría opcional en el taller Python
+
+El taller Python muestra «Teoría y objetivos» cerrado por defecto. Contiene
+objetivos de práctica, teoría/ejemplo del módulo y coste, cuando existen. El reto,
+sus condiciones y ejemplos permanecen visibles; no se extrae automáticamente
+teoría del enunciado ni se ocultan instrucciones imprescindibles. El repaso
+«Antes de empezar» es independiente. Pistas, errores comunes y solución quedan
+fuera del desplegable, conservando revelación progresiva y consulta autenticada
+de la solución. JavaScript/TypeScript mantienen la teoría visible por defecto.
+
+Se reutiliza `Disclosure`: contenido plegado con `inert` y `aria-hidden`, estado
+`aria-expanded`, teclado de Radix y preferencia de movimiento reducido. No se
+añaden colores, estilos globales, breakpoints ni preferencias persistidas. Abrir
+o cerrar la teoría no desmonta el editor ni reinicia las pistas reveladas.
+
+Cobertura preparada:
+
+- `learning-help.test.ts`: render inicial cerrado, contenido conservado/escapado,
+  objetivos sin duplicar, repaso separado, ausencia de secciones vacías y modo
+  anterior visible por defecto.
+- `learning-help.spec.ts`: Python cerrado frente a JavaScript/TypeScript visibles;
+  botones de pista y solución disponibles con teoría plegada.
+- `controls.spec.ts`: apertura/cierre con espacio y foco en ambos temas/tamaños.
+- `help-motion.spec.ts`: Enter, movimiento reducido, conservación de pista/editor
+  y retorno de foco desde la solución en ventanas estrechas y bajas.
+- `educational-validation.spec.ts`: estado plegado y salida PROGRAM conservada.
+
+Las suites de navegador están adaptadas pero **no se han ejecutado para este
+cambio**: requieren autorización para iniciar la aplicación y su base preparada.
+Los resultados anteriores de esta guía no acreditan la interacción nueva. Sigue
+pendiente la revisión visual a 390, 768, 1024, 1199 y 1440 px, claro/oscuro y zoom
+real al 200 %. Render estático y build no sustituyen esa comprobación.
+
 ## Cómo se comprueba el zoom real
 
 `tests/fixtures/browser-zoom` es una extensión mínima Manifest V3, solo para pruebas.

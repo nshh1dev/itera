@@ -34,8 +34,16 @@ for (const { width, height, theme } of [
     await editor.evaluate(node => node.setAttribute("data-preserved", "true"));
     const solution = page.getByRole("button", { name: "Ver solución explicada", exact: true });
     const help = page.locator(".workspace-reference");
-    await expect(help.locator(".arc-disclosure-trigger")).toHaveCount(1);
+    await expect(help.locator(".arc-disclosure-trigger")).toHaveCount(2);
+    const theory = help.getByRole("button", { name: "Teoría y objetivos", exact: true });
+    await expect(theory).toHaveAttribute("aria-expanded", "false");
+    await expect(help.getByRole("region", { name: "Teoría y ejemplo" })).not.toBeVisible();
+    await theory.focus();
+    await theory.press("Enter");
     await expect(help.getByRole("region", { name: "Teoría y ejemplo" })).toBeVisible();
+    await theory.press("Enter");
+    await expect(theory).toHaveAttribute("aria-expanded", "false");
+    await expect(theory).toBeFocused();
     await expect(help.getByRole("heading", { name: "Antes de empezar", exact: true })).toBeVisible();
     await expect(page.getByRole("dialog", { name: "Solución explicada", exact: true })).toHaveCount(0);
     const panel = page.getByRole("region", { name: "Pistas", exact: true });
@@ -58,6 +66,10 @@ for (const { width, height, theme } of [
     await solutionPanel.getByRole("button", { name: "Cerrar", exact: true }).click();
     await expect(solution).toBeFocused();
     await expect(firstHint).toBeVisible();
+    await expect(firstHint).toHaveAttribute("data-preserved-hint", "true");
+    await theory.click();
+    await expect(help.getByRole("region", { name: "Teoría y ejemplo" })).toBeVisible();
+    await theory.click();
     await expect(firstHint).toHaveAttribute("data-preserved-hint", "true");
     await expect(editor).toHaveAttribute("data-preserved", "true");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

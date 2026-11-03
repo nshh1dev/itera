@@ -285,7 +285,7 @@ function WorkspaceReady(props: Props) {
           {props.availableLanguages.length < languages.length && <nav aria-label="Continuar en otro lenguaje" className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs"><span className="w-full text-muted-foreground">Este reto tiene variantes propias. Para otros lenguajes, continúa en su ruta:</span>{languages.filter(language => !props.availableLanguages.includes(language)).map(language => <Link key={language} className="text-link" href={`${props.pathSlug ? `/rutas/${encodeURIComponent(props.pathSlug)}` : "/rutas"}?lenguaje=${language}`}>{languageNames[language]} · ir a su ruta</Link>)}</nav>}
           <Button variant="outline" className="mt-6 w-full min-[1200px]:hidden" onClick={()=>{setMobileTab("code");setFocusCodeRequest(value=>value+1);}}>Ir al código<ArrowRight /></Button>
           <div className="workspace-reference">
-          <LearningGuide title={props.title} statement={props.statement} objective={props.objective} prerequisites={props.prerequisites} practiceGoals={props.practiceGoals} previousExercises={props.previousExercises}>
+          <LearningGuide title={props.title} statement={props.statement} objective={props.objective} prerequisites={props.prerequisites} practiceGoals={props.practiceGoals} previousExercises={props.previousExercises} collapsibleTheory={props.language === "python"}>
             {props.lesson && <ModuleLesson lesson={props.lesson} language={props.language} />}
             {props.complexity.trim() && <ExerciseNotes complexity={props.complexity} commonErrors={[]} />}
           </LearningGuide>

@@ -64,7 +64,12 @@ for (const theme of ["light", "dark"] as const) test(`panel educativo: ayudas a 
   await expect(statement.getByText("Ejemplo 2", { exact: true })).toHaveCount(0);
   await expect(statement.getByText("(sin entrada)", { exact: true })).toHaveCount(0);
   await expect(statement.getByRole("button", { name: "Antes de empezar", exact: true })).toHaveAttribute("aria-expanded", "false");
+  const theory = statement.getByRole("button", { name: "Teoría y objetivos", exact: true });
+  await expect(theory).toHaveAttribute("aria-expanded", "false");
+  await expect(statement.getByRole("region", { name: "Teoría y ejemplo", exact: true })).not.toBeVisible();
+  await theory.click();
   await expect(statement.getByRole("region", { name: "Teoría y ejemplo", exact: true })).toBeVisible();
+  await theory.click();
   await expect(page.getByRole("dialog", { name: "Solución explicada", exact: true })).toHaveCount(0);
   await expect(statement.getByText("precio = 13", { exact: false })).toHaveCount(0);
   await mkdir(".local/screenshots", { recursive: true });

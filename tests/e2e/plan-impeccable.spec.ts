@@ -12,10 +12,10 @@ test.afterAll(async () => {
   await db.$disconnect();
 });
 
-test("la teoría está visible y se pide una pista con teclado sin perder código", async ({ page }) => {
+test("la teoría es opcional y se pide una pista con teclado sin perder código", async ({ page }) => {
   await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
   const hint = page.getByRole("button", { name: "Mostrar una pista", exact: true });
-  await expect(page.getByRole("region", { name: "Teoría y ejemplo" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Teoría y ejemplo" })).not.toBeVisible();
   await expect(page.getByRole("heading", { name: "Tu reto", exact: true })).toBeVisible();
   await expect(hint).toBeVisible();
   await openSimpleEditor(page);
@@ -27,6 +27,7 @@ test("la teoría está visible y se pide una pista con teclado sin perder códig
   await expect(page.getByRole("heading", { name: "Pista 1", exact: true })).toBeVisible();
   await expect(editor).toHaveValue(/return data\['a'\] \+ data\['b'\]/);
   await openLearningHelp(page);
+  await expect(page.getByRole("region", { name: "Teoría y ejemplo" })).toBeVisible();
 });
 
 test("la demo muestra la sustitución numérica sin evaluar código ni repetir animaciones con movimiento reducido", async ({ page }) => {

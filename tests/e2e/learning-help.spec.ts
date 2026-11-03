@@ -14,9 +14,18 @@ for (const language of languages) test(`la ayuda esencial y avanzada se separa s
   const firstFamily = (value: string) => value.split(",")[0].trim().replace(/^["']|["']$/g, "");
   expect(firstFamily(fonts.applied)).toBe(firstFamily(fonts.local));
   const help = page.locator(".workspace-reference");
-  await expect(help.locator(".arc-disclosure-trigger")).toHaveCount(1);
+  await expect(help.locator(".arc-disclosure-trigger")).toHaveCount(language === "python" ? 2 : 1);
   await expect(page.getByRole("region", { name: "Condiciones del ejercicio", exact: true })).toBeVisible();
   for (const name of ["Comprender la idea", "Pistas progresivas"]) await expect(help.getByRole("button", { name, exact: true })).toHaveCount(0);
+  if (language === "python") {
+    const theory = help.getByRole("button", { name: "Teoría y objetivos", exact: true });
+    await expect(theory).toHaveAttribute("aria-expanded", "false");
+    await expect(help.getByRole("region", { name: "Teoría y ejemplo" })).not.toBeVisible();
+    await expect(help.getByRole("button", { name: "Mostrar una pista", exact: true })).toBeVisible();
+    await expect(help.getByRole("button", { name: "Ver solución explicada", exact: true })).toBeVisible();
+    await theory.click();
+    await expect(theory).toHaveAttribute("aria-expanded", "true");
+  }
   await expect(help.getByRole("region", { name: "Teoría y ejemplo" })).toBeVisible();
   await expect(help.getByRole("region", { name: "Teoría y ejemplo" }).locator("pre")).not.toBeEmpty();
   await expect(page.getByRole("dialog", { name: "Solución explicada", exact: true })).toHaveCount(0);

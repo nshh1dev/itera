@@ -487,6 +487,10 @@ Archivos principales: `src/components/practice/{workspace,statement,examples,lea
 
 **Aceptación:** la tarea principal se entiende sin leer ayudas duplicadas; ejemplos complejos son legibles; teoría y pistas siguen siendo encontrables; no aparecen desbordamientos ni pérdidas de foco o espacio esencial del editor.
 
+**Primer lote F — teoría opcional:** Python agrupa objetivos de práctica, teoría/ejemplo del módulo y coste bajo «Teoría y objetivos», cerrado inicialmente. Reto, condiciones y ejemplos no se ocultan; «Antes de empezar» sigue independiente. Pistas, errores comunes y solución permanecen fuera, sin cambiar revelación progresiva ni petición autenticada de solución. Se reutiliza Disclosure con inercia del contenido cerrado y movimiento reducido; no cambia editor, paleta, breakpoints ni preferencias. JavaScript/TypeScript mantienen teoría visible. Las pruebas de render cubren ambos modos, contenido escapado, deduplicación y ausencia de secciones vacías; se adaptan recorridos E2E y reales para teclado, foco y conservación de editor/pistas. No se cambia contenido ni huella `52f835…`, ni se prepara/activa base. [browser-interaction.md](browser-interaction.md#teoría-opcional-en-el-taller-python) documenta alcance y límites. Los puntos F permanecen abiertos hasta revisión visual e interacción autorizadas; encabezados, JSON, mensajes repetidos y ergonomía restante siguen pendientes.
+
+**Verificación del primer lote F:** lint, tipos, 25 pruebas focalizadas, 575 pruebas completas sin omisiones con concurrencia 2 y build aprobados. Se reutiliza `content:python` sin conexión aprobado en el cierre terminológico: no cambió el catálogo; su huella íntegra sigue cubierta. E2E, suite real y revisión visual no se ejecutaron porque requieren autorización para iniciar la aplicación/entorno. Los recorridos adaptados están tipados, no se presentan como aprobados en navegador. Sin servicios iniciados, cambios de base ni activación; F/D2 y el plan siguen abiertos.
+
 ## 9. Verificación por lotes y comprobación final
 
 ### Sin iniciar servicios

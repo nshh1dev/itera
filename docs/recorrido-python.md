@@ -180,6 +180,21 @@ ni la validación real. Huella vigente `52f835…`, con reconstrucción íntegra
 `499552…`. Dependencias persistidas, contratos y ejemplos intactos; base sin
 preparar/activar. Alcance y decisiones: [claridad-python.md](claridad-python.md#cierre-del-contraste-terminológico).
 
+## Presentación de ayudas Python
+
+En el taller Python, «Teoría y objetivos» agrupa objetivos de práctica, teoría y
+ejemplo del módulo y coste en un desplegable cerrado inicialmente. El reto,
+condiciones y ejemplos siguen visibles. «Antes de empezar» mantiene su propio
+repaso; pistas, errores comunes y solución permanecen fuera para no obligar a
+recorrer la teoría antes de pedir ayuda. Se conservan la progresión de pistas,
+la petición autenticada independiente de solución y el estado del editor.
+
+JavaScript/TypeScript mantienen su presentación anterior; no cambia contenido,
+huella de catálogo, contratos, AST, ejecución, progreso ni base. Se reutiliza
+`Disclosure` y no se modifican paleta, breakpoints o preferencias. Render inicial
+cubierto por pruebas; interacción/E2E y revisión visual pendientes de autorización.
+Alcance y pruebas preparadas: [browser-interaction.md](browser-interaction.md#teoría-opcional-en-el-taller-python).
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.
