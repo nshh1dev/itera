@@ -120,6 +120,16 @@ test("Progreso prioriza continuidad e historial sin perder archivos, páginas o 
         assert.match(html, new RegExp(`lenguaje=${language}&amp;archivo=1`));
         assert.match(html, new RegExp(`lenguaje=${language}&amp;borradores=1`));
         assert.match(html, /Por categoría/); assert.match(html, /data-state="closed"/);
+        if (language === "python") {
+          assert.equal((html.match(/dominio/g) ?? []).length, 1);
+          assert.match(html, /Solo superar la comprobación de solución completa un ejercicio/);
+          assert.match(html, /ejecutar ejemplos, consultar pistas o leer soluciones no lo completa/);
+          assert.match(html, /Cada ejercicio cuenta una sola vez por lenguaje/);
+          assert.match(html, /Las pistas son parte del aprendizaje\./);
+        } else {
+          assert.match(html, /Completados, no una medida de dominio/);
+          assert.match(html, /este dato no permite medir dominio/);
+        }
       }
     });
     await t.test("los visitantes no consultan datos de cuenta", async () => {

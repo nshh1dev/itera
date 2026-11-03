@@ -77,6 +77,29 @@ literal PROGRAM. Esta suite y la revisión visual/zoom real **no se han ejecutad
 para el cambio por falta de autorización de arranque. No se cambia el breakpoint
 de paneles ni se da por resuelta la ergonomía de 1024–1199 px sin mediciones.
 
+## Avisos de finalización Python
+
+Progreso conserva una explicación estable: los completados registran práctica,
+no dominio; solo superar la comprobación de solución completa un ejercicio,
+no ejecutar ejemplos o consultar ayudas. Cada ejercicio cuenta una vez por
+lenguaje desde ruta o práctica libre. El bloque de ayudas mantiene el dato de
+ejercicios resueltos tras consultar ayuda y una sugerencia de repaso, sin repetir
+la advertencia de dominio.
+
+Los cierres de ruta Python conservan cantidad publicada, lenguaje independiente
+y acceso al repaso, con enlace a Progreso para interpretar el dato. El repaso
+mantiene la invitación a resolver/explicar y que no concede finalización por sí
+mismo, sin repetir el aviso de dominio. En el diálogo de solución queda un único
+aviso breve en la descripción, también durante carga/error; se retira solo el
+duplicado del pie. JavaScript/TypeScript mantienen sus textos anteriores.
+
+Las pruebas de render de rutas y Progreso verifican mensajes, enlaces, cuentas,
+lenguajes y conservación de archivos/paginación. `help-motion.spec.ts` e
+`initial-batch.spec.ts` están adaptadas para verificar el aviso único después de
+cargar la solución, foco de retorno y consulta sin progreso; **no se ejecutaron**
+para este cambio por falta de autorización de arranque. No cambian consultas,
+acciones, criterios de evaluación ni escritura de progreso.
+
 ## Cómo se comprueba el zoom real
 
 `tests/fixtures/browser-zoom` es una extensión mínima Manifest V3, solo para pruebas.

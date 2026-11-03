@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { registerHooks } from "node:module";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { PathReview } from "../src/components/path-review";
+import { PathCompletion, PathReview } from "../src/components/path-review";
 import { modulesForPath } from "../src/lib/learning-modules";
 import { learningPaths, exerciseHref } from "../src/lib/learning-paths";
 import { languages, type ExerciseCard, type Language } from "../src/lib/types";
@@ -83,7 +83,8 @@ test("el cierre de ruta depende del catálogo del usuario y lenguaje, sin escrib
       const html = await render();
       assert.match(html, /Ruta completada en Python/);
       assert.match(html, /los 2 ejercicios publicados/);
-      assert.match(html, /no demuestra por sí solo dominio/);
+      assert.doesNotMatch(html, /dominio/);
+      assert.match(html, /href="\/progreso\?lenguaje=python"/);
       assert.match(html, /href="#path-readiness"/);
       assert.match(html, /id="path-readiness"/);
       assert.match(html, /Continuar con Construye tus bases/);
@@ -123,4 +124,23 @@ test("el cierre de ruta depende del catálogo del usuario y lenguaje, sin escrib
     });
     assert.equal(reads, 8);
   } finally { hooks.deregister(); delete globals[key]; }
+});
+
+test("Python remite a Progreso sin duplicar advertencias; los otros lenguajes conservan sus avisos", () => {
+  for (const language of languages) {
+    const completion = renderToStaticMarkup(createElement(PathCompletion, { language, count: 1 }));
+    const review = renderToStaticMarkup(createElement(PathReview, { pathSlug: "desde-cero", language, modules: [], exercises: [] }));
+    assert.match(completion, /el ejercicio publicado/);
+    assert.match(completion, /El progreso en los otros lenguajes es independiente/);
+    assert.match(completion, /href="#path-readiness"/);
+    if (language === "python") {
+      assert.doesNotMatch(completion + review, /dominio/);
+      assert.match(completion, /href="\/progreso\?lenguaje=python"/);
+      assert.match(review, /explica por qué funciona tu código/);
+    } else {
+      assert.match(completion, /Esto registra tu práctica, no demuestra por sí solo dominio/);
+      assert.match(review, /Completarlos registra práctica, no demuestra por sí solo dominio/);
+      assert.doesNotMatch(completion, /Cómo interpretar tu progreso/);
+    }
+  }
 });

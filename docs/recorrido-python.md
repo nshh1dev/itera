@@ -204,6 +204,14 @@ Python: no modifican catálogo, huella, evaluación ni otros lenguajes. Las prue
 unitarias cubren conservación y escapes; navegador y revisión visual pendientes.
 Detalles: [browser-interaction.md](browser-interaction.md#enunciados-y-json-legible-en-python).
 
+Los avisos de finalización Python se concentran en Progreso: completados no
+equivalen a dominio y solo superar la comprobación de solución concede progreso,
+una vez por ejercicio/lenguaje. Rutas conserva el resumen y repaso sin repetir
+la advertencia; el cierre enlaza a Progreso. El diálogo de solución conserva el
+aviso breve de su descripción, sin duplicarlo al pie. JavaScript/TypeScript
+mantienen sus textos. No cambian consultas ni finalización; revisión en navegador
+pendiente. Alcance: [browser-interaction.md](browser-interaction.md#avisos-de-finalización-python).
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

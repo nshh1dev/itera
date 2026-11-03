@@ -101,6 +101,8 @@ test("la solución explica cada lenguaje sin conceder progreso por consultarla",
     await page.getByRole("button", { name: "Ver solución explicada", exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Solución explicada", exact: true });
     await expect(dialog.getByText(/Razonamiento\s/)).toBeVisible();
+    await expect(dialog.getByText(/Leerla no marca el ejercicio como resuelto\./)).toBeVisible();
+    await expect(dialog.getByText("Leer una solución no marca el ejercicio como resuelto.", { exact: true })).toHaveCount(language === "python" ? 0 : 1);
     await expect(dialog.getByText(/Errores comunes\s/)).toBeVisible();
     await expect(dialog.getByText(language === "python" ? /En Python\s/ : /En JavaScript\s/)).toBeVisible();
     expect(await dialog.locator("p.whitespace-pre-line").evaluate(element => getComputedStyle(element).whiteSpace)).toBe("pre-line");

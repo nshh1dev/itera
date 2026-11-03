@@ -62,7 +62,8 @@ for (const { width, height, theme } of [
     await solution.click();
     const solutionPanel = page.getByRole("dialog", { name: "Solución explicada", exact: true });
     await expect(solutionPanel.locator("pre")).toBeVisible();
-    await expect(solutionPanel.getByText("Leer una solución no marca el ejercicio como resuelto.")).toBeVisible();
+    await expect(solutionPanel.getByText(/Leerla no marca el ejercicio como resuelto\./)).toBeVisible();
+    await expect(solutionPanel.getByText("Leer una solución no marca el ejercicio como resuelto.", { exact: true })).toHaveCount(0);
     await solutionPanel.getByRole("button", { name: "Cerrar", exact: true }).click();
     await expect(solution).toBeFocused();
     await expect(firstHint).toBeVisible();
