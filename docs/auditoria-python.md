@@ -17,7 +17,9 @@ mantenidas y siete revisadas). Otras **12 avanzadas de combinatoria y programaci
 dinámica** (cuatro mantenidas y ocho revisadas) elevan el total a **212/224**.
 Las últimas **12 avanzadas de grafos y optimización** (tres mantenidas y nueve
 revisadas) completan **224/224 actividades** con decisión individual. Quedan
-abiertas la validación real del catálogo completo y E/F. Los límites de las seis
+abiertas la instalación/activación y E/F. Las 224 referencias y plantillas se
+validaron en Piston sin base de datos; véase «Catálogo completo en Piston».
+Los límites de las seis
 referencias de árboles y el alcance observable de conservación de entrada ya se
 comprobaron en Piston, con las limitaciones de las secciones correspondientes.
 Se leyeron objetivo, enunciado, plantilla, referencia, pistas, casos y reglas
@@ -636,14 +638,51 @@ unitarias y el build anteriores: solo cambian esta integración y documentación
 Piston/WSL se apagaron conservando volúmenes; no se inició Next ni PostgreSQL ni
 hubo preparación, activación o escrituras en base.
 
+## Catálogo completo en Piston
+
+El 3 de noviembre de 2026 `tests/python-catalog.integration.ts` validó las
+**224 actividades** de las fuentes actuales, sin importar Prisma ni conectar la
+base. Usa el mismo adaptador, conductores y comparadores que la publicación:
+`runCode`, `checkConcept`, `judge`, `judgeProgram` y `judgeProject`.
+
+```powershell
+$env:ITERA_PYTHON_CATALOG = "1"
+npx.cmd tsx --conditions=react-server --test --test-concurrency=1 tests/python-catalog.integration.ts
+Remove-Item Env:ITERA_PYTHON_CATALOG
+```
+
+Requiere Piston preparado y autorización para iniciarlo. No inicia servicios,
+prepara borradores ni activa contenido. Con la opción activa, falta de ejecutor
+o runtime falla; sin ella se omite y no acredita validación. No ejecutar junto
+a otras suites del sandbox.
+
+**Resultado:** 225 pruebas aprobadas (contenedora y 224 actividades), cero
+fallos/omisiones, Python **3.12.0**, unos **96 segundos**. Se comprobaron **977
+casos**, ejecutando referencia y plantilla en cada uno: **18 proyectos**, **22
+programas completos** y **11 reglas conceptuales**. Las referencias cumplen su
+regla y todos sus casos; las plantillas son ejecutables y ninguna completa su
+actividad, considerando la regla conceptual cuando corresponde. Los proyectos
+validan manifiestos, soluciones, artefactos esperados y persistencia declarada
+con el conductor real. No se regeneran respuestas ejecutando las referencias.
+
+Esto valida fuentes, no la instantánea editorial de PostgreSQL, su publicación
+atómica, idempotencia, conservación de datos ni recorridos de navegador. No se
+modificaron fuentes educativas, contratos, casos, otros lenguajes o huellas.
+Lint y tipos aprobaron; se reutilizan las 582 pruebas unitarias y el build
+anteriores porque solo se añade una integración optativa y documentación.
+Solo se inició Piston/WSL, apagados después conservando volúmenes; sin Next,
+PostgreSQL, preparación o activación. El log local de esta ejecución reside en
+`C:\Users\Admin\AppData\Local\Temp\opencode\python-catalog-real.log`.
+
 ## Límites y siguientes fases
 
 - No se amplía AST, esquema, dependencias ni modalidades.
 - La ejecución local no verifica sandbox ni publicación. La comprobación real
-  anterior acredita solo las seis referencias de árboles y su serialización.
+  del catálogo acredita referencias/plantillas y casos actuales, no instalación.
 - Tiempos, vocabulario e inventarios editoriales ya están revisados en fuentes;
   E/F mantienen pendiente el reparto final de ayudas y la revisión visual completa.
 - La auditoría individual de las 224 actividades y las dos comprobaciones
-  pendientes de D2 están registradas; falta la validación integrada del catálogo.
+  pendientes de D2 están registradas, con el catálogo completo validado en Piston;
+  siguen pendientes flujos integrados, revisión visual y activación autorizada.
 - No eliminar el plan antes de la verificación integrada, activación autorizada
   y cierre de sus puntos existentes.
