@@ -29,17 +29,16 @@ test("Inicio conserva recomendaciones y progreso propios al cambiar lenguaje y c
       await page.goto("/inicio");
       const next = page.getByRole("region", { name: "Tu siguiente paso", exact: true });
       const index = language === "typescript" ? 2 : 1;
-      const label = language === "python" ? "Empezar ejercicio" : "Continuar ejercicio";
-      await expect(next.getByRole("link", { name: label, exact: true })).toHaveAttribute("href", exerciseHref(exercises[index].slug, language, language === "python" ? "desde-cero" : undefined));
+      await expect(next.getByRole("link", { name: "Continuar", exact: true })).toHaveAttribute("href", exerciseHref(exercises[index].slug, language, language === "python" ? "desde-cero" : undefined));
       await expect(next).toContainText(languageNames[language]);
-      await expect(page.getByRole("region", { name: "Tu ruta", exact: true })).toContainText(`${language === "python" ? 1 : 0} de ${exercises.length}`);
+      await expect(page.getByRole("link", { name: `Progreso de Desde cero: ${language === "python" ? 1 : 0} de ${exercises.length} ejercicios completados`, exact: true })).toHaveAttribute("href", `/progreso?lenguaje=${language}`);
     }
     expect(await db.progress.count({ where: { userId: user.id } })).toBe(1);
     await page.context().clearCookies();
     expect((await postAuth(page.request, "/api/auth/sign-up/email", { name: "Otra cuenta temporal", email: emails[1], password: "Itera-catalogo-local-97531" })).ok()).toBe(true);
     await page.goto("/inicio");
-    await expect(page.getByRole("region", { name: "Tu siguiente paso", exact: true }).getByRole("link", { name: "Empezar ejercicio", exact: true })).toHaveAttribute("href", exerciseHref(exercises[0].slug, "python", "desde-cero"));
-    await expect(page.getByRole("region", { name: "Tu ruta", exact: true })).toContainText(`0 de ${exercises.length}`);
-    await expect(page.getByText("Cuando practiques, verás aquí tus últimos ejercicios resueltos y pendientes.", { exact: true })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Tu siguiente paso", exact: true }).getByRole("link", { name: "Continuar", exact: true })).toHaveAttribute("href", exerciseHref(exercises[0].slug, "python", "desde-cero"));
+    await expect(page.getByRole("link", { name: `Progreso de Desde cero: 0 de ${exercises.length} ejercicios completados`, exact: true })).toHaveAttribute("href", "/progreso?lenguaje=python");
+    await expect(page.getByRole("region", { name: "Actividad reciente", exact: true })).toContainText("Aún no hay actividad reciente.");
   } finally { await db.user.deleteMany({ where: { email: { in: emails } } }); }
 });

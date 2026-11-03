@@ -27,6 +27,46 @@ Guardar y empezar completa la bienvenida en la misma transacción que guarda
 las preferencias; guardar para diagnosticar conserva el flujo pendiente.
 No se borran sesiones diagnósticas ni se escribe progreso al completar estos pasos.
 
+### Comprobación de entrada y bienvenida en navegador
+
+El 3 de noviembre de 2026 se ejecutó `onboarding.spec.ts` completo en Next dev
+y PostgreSQL nativo, sin Piston real ni activación. Sus tres escenarios nuevos
+aprobaron: registro desde ejercicio Python conservando ruta/lenguaje y copia de
+invitado, alta sin ejercicio con elección intermedia y compatibilidad de estados
+históricos 1–4/estado completado 0. La cuenta conserva el borrador transferido;
+registrarse desde ejercicio deja la bienvenida pendiente. Guardar nivel o saltar
+el diagnóstico completa la bienvenida sin crear diagnósticos ni progreso.
+Los estados antiguos se simulan solo en cuentas temporales, sin migraciones.
+
+El archivo completo **no aprobó**: nueve recorridos existentes comprobaron una
+instalación anterior (28/36/36 pasos frente a 30/57/53 de las fuentes comunes,
+en las tres primeras rutas y los tres lenguajes). Los otros nueve casos aprobaron.
+No se cambiaron esas expectativas ni se preparó contenido para eludir el fallo;
+no equivale a verificar el catálogo Python de 224 actividades instalado.
+
+También se ejecutaron completos `ux-polish.spec.ts` y `dashboard-catalog.spec.ts`:
+**7/7 aprobados** tras corregir en este último etiquetas antiguas de Inicio
+(acción única «Continuar», enlace de progreso y actividad reciente). Comprueban
+siguiente/retorno con ruta o práctica libre en los tres lenguajes, recuperación
+de contraseña y retorno al ejercicio, borrador retomado desde ruta/Progreso y
+recomendaciones/progreso independientes al cambiar lenguaje/cuenta. Se conserva
+la comparación de destinos concretos y recuentos; no se cambia producto.
+
+Balance de los tres archivos: **16 casos distintos aprobados y nueve fallidos
+por discrepancias de instalación**, sin omisiones automáticas. La primera pasada
+fue 15 aprobados/10 fallidos; el fallo adicional era la expectativa obsoleta de
+Inicio, corregida y repetida en el archivo completo. No se presenta la suite
+integrada como aprobada ni se confunde esta prueba de interfaz con Piston real.
+Logs locales: `python-integrated-flows.log` y `python-continuity-verified.log` en
+`C:\Users\Admin\AppData\Local\Temp\opencode\`.
+
+Las cuentas temporales `bienvenida-retorno-`, `bienvenida-nueva-`,
+`bienvenida-antigua-`, `catalogo-` y `pulido-` quedaron en cero por consulta de
+solo lectura. Los correos temporales de recuperación se limpian por destinatario;
+no se modifican rutas, versiones, envíos o cuentas del propietario. Next y el
+clúster privado se apagaron conservando datos. Lint y tipos aprobados; se
+reutilizan suite unitaria y build anteriores porque solo cambian E2E/documentos.
+
 El diseño conserva las fuentes locales, controles y tonos de Itera. Configuración
 es una página, no una ventana interceptada. Su navegación tiene tres apartados:
 Mi cuenta, Aprendizaje y Apariencia; en pantallas estrechas usa enlaces compactos.
