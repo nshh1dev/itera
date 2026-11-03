@@ -54,12 +54,16 @@ real al 200 %. Render estático y build no sustituyen esa comprobación.
 
 ## Enunciados y JSON legible en Python
 
-El taller activa dos opciones de presentación solo para Python:
+El taller activa estas opciones de presentación solo para Python:
 
 - `Statement` reconoce también las etiquetas exactas «Antes de resolver» y
   «Entrada y resultado», con dos puntos opcionales y cuerpo en la línea siguiente.
-  No infiere secciones por palabras sueltas, ni interpreta HTML, Markdown o
-  identificadores como código. Las etiquetas ya admitidas conservan su render.
+  No infiere secciones por palabras sueltas ni interpreta HTML. Las etiquetas ya
+  admitidas conservan su render. Solo presenta como código el texto delimitado
+  explícitamente por una comilla invertida a cada lado en la misma línea; no
+  deduce identificadores desde la prosa ni admite Markdown general. Marcas vacías,
+  incompletas, multilínea o dobles/triples quedan literales. El contenido sigue
+  escapado por React, también dentro de `code`; no se cambia el texto editorial.
 - `Examples` usa sangrado de dos espacios para diccionarios no vacíos y listas
   que contienen otras listas/diccionarios. Valores simples, listas planas, `[]`
   y `{}` siguen compactos. Se mantienen orden, valores, claves y escapes JSON;
@@ -70,7 +74,10 @@ exactos. Tampoco se formatea el contenido de archivos esperados. La deduplicaci�
 de ejemplos públicos no cambia. JavaScript/TypeScript mantienen presentación
 compacta y reconocimiento anterior de etiquetas.
 
-`python-presentation.test.ts` cubre formatos, conservación, escapes y ambos modos.
+`python-presentation.test.ts` cubre formatos, conservación, escapes, código
+explícito optativo y marcas incompletas/literales. Tras completar código marcado
+aprobaron lint, tipos, diez pruebas focalizadas, las 582 pruebas completas sin
+omisiones (concurrencia 2) y build; no cambió el catálogo.
 `python-presentation.spec.ts` prepara lectura de matrices en 390, 768, 1024, 1199
 y 1440 px y ambos temas, regresión compacta de JavaScript/TypeScript y salida
 literal PROGRAM. Esta suite y la revisión visual/zoom real **no se han ejecutado**

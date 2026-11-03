@@ -59,3 +59,25 @@ test("los encabezados editoriales nuevos son optativos, literales y no interpret
   const original = "Tu tarea\nDevuelve 1.\n\nEntrada\nSin datos.\n\nResultado esperado\nUno.";
   assert.equal(renderToStaticMarkup(createElement(Statement, { text: original })), renderToStaticMarkup(createElement(Statement, { text: original, editorialHeadings: true })));
 });
+
+test("el código en línea es optativo, explícito y seguro en párrafos y secciones", () => {
+  const text = "Usa `data` y `None`, no deduzcas solve(data).\n\nTu tarea:\nConserva `<script>&\"` y ` x ` sin interpretar HTML.";
+  const original = renderToStaticMarkup(createElement(Statement, { text }));
+  assert.doesNotMatch(original, /<code/);
+  assert.match(original, /`data`/);
+  const html = renderToStaticMarkup(createElement(Statement, { text, editorialHeadings: true, inlineCode: true }));
+  assert.equal((html.match(/<code /g) ?? []).length, 4);
+  assert.match(html, /<code[^>]*>data<\/code>/);
+  assert.match(html, /<code[^>]*>None<\/code>/);
+  assert.match(html, /<code[^>]*>&lt;script&gt;&amp;&quot;<\/code>/);
+  assert.match(html, /<code[^>]*> x <\/code>/);
+  assert.match(html, /no deduzcas solve\(data\)/);
+  assert.doesNotMatch(html, /<script>/);
+});
+
+test("marcas vacías, incompletas, multilínea y bloques no se reinterpretan como código en línea", () => {
+  for (const text of ["Sin marcas: data, None.", "Sin cierre `data", "Vacío `` y ` `.", "Doble ``data``.", "```python\nprint(1)\n```", "`dos\nlíneas`", "<b>literal</b>"]) {
+    const render = (inlineCode: boolean) => renderToStaticMarkup(createElement(Statement, { text, inlineCode }));
+    assert.equal(render(true), render(false), text);
+  }
+});

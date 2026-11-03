@@ -199,7 +199,10 @@ El taller Python también presenta con sangrado los diccionarios no vacíos y la
 listas anidadas de los ejemplos. Valores simples y listas planas siguen compactos;
 PROGRAM y archivos esperados conservan su texto exacto. Se reconocen «Antes de
 resolver» y «Entrada y resultado» como encabezados editoriales exactos, sin
-interpretar HTML o inferir sintaxis de código. Son opciones activadas solo para
+interpretar HTML o inferir sintaxis de código. Los fragmentos delimitados por una
+comilla invertida a cada lado en la misma línea se presentan como código escapado;
+marcas vacías, incompletas, dobles/triples o multilínea quedan literales, sin
+interpretar Markdown general. Son opciones activadas solo para
 Python: no modifican catálogo, huella, evaluación ni otros lenguajes. Las pruebas
 unitarias cubren conservación y escapes; navegador y revisión visual pendientes.
 Detalles: [browser-interaction.md](browser-interaction.md#enunciados-y-json-legible-en-python).
