@@ -52,6 +52,31 @@ Los resultados anteriores de esta guía no acreditan la interacción nueva. Sigu
 pendiente la revisión visual a 390, 768, 1024, 1199 y 1440 px, claro/oscuro y zoom
 real al 200 %. Render estático y build no sustituyen esa comprobación.
 
+## Enunciados y JSON legible en Python
+
+El taller activa dos opciones de presentación solo para Python:
+
+- `Statement` reconoce también las etiquetas exactas «Antes de resolver» y
+  «Entrada y resultado», con dos puntos opcionales y cuerpo en la línea siguiente.
+  No infiere secciones por palabras sueltas, ni interpreta HTML, Markdown o
+  identificadores como código. Las etiquetas ya admitidas conservan su render.
+- `Examples` usa sangrado de dos espacios para diccionarios no vacíos y listas
+  que contienen otras listas/diccionarios. Valores simples, listas planas, `[]`
+  y `{}` siguen compactos. Se mantienen orden, valores, claves y escapes JSON;
+  la presentación no modifica las entradas ni las salidas comparadas.
+
+PROGRAM no pasa por el formateador JSON: conserva espacios, saltos y texto
+exactos. Tampoco se formatea el contenido de archivos esperados. La deduplicación
+de ejemplos públicos no cambia. JavaScript/TypeScript mantienen presentación
+compacta y reconocimiento anterior de etiquetas.
+
+`python-presentation.test.ts` cubre formatos, conservación, escapes y ambos modos.
+`python-presentation.spec.ts` prepara lectura de matrices en 390, 768, 1024, 1199
+y 1440 px y ambos temas, regresión compacta de JavaScript/TypeScript y salida
+literal PROGRAM. Esta suite y la revisión visual/zoom real **no se han ejecutado**
+para el cambio por falta de autorización de arranque. No se cambia el breakpoint
+de paneles ni se da por resuelta la ergonomía de 1024–1199 px sin mediciones.
+
 ## Cómo se comprueba el zoom real
 
 `tests/fixtures/browser-zoom` es una extensión mínima Manifest V3, solo para pruebas.

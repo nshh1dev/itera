@@ -195,6 +195,15 @@ huella de catálogo, contratos, AST, ejecución, progreso ni base. Se reutiliza
 cubierto por pruebas; interacción/E2E y revisión visual pendientes de autorización.
 Alcance y pruebas preparadas: [browser-interaction.md](browser-interaction.md#teoría-opcional-en-el-taller-python).
 
+El taller Python también presenta con sangrado los diccionarios no vacíos y las
+listas anidadas de los ejemplos. Valores simples y listas planas siguen compactos;
+PROGRAM y archivos esperados conservan su texto exacto. Se reconocen «Antes de
+resolver» y «Entrada y resultado» como encabezados editoriales exactos, sin
+interpretar HTML o inferir sintaxis de código. Son opciones activadas solo para
+Python: no modifican catálogo, huella, evaluación ni otros lenguajes. Las pruebas
+unitarias cubren conservación y escapes; navegador y revisión visual pendientes.
+Detalles: [browser-interaction.md](browser-interaction.md#enunciados-y-json-legible-en-python).
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.
