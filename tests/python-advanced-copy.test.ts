@@ -5,6 +5,7 @@ import { pythonCatalog } from "../prisma/python-content";
 import { pythonAdvancedCopyRevisions } from "../prisma/python-vocabulary";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { beforePythonAdvancedCopy, previousAdvancedCopy } from "./python-advanced-copy-baseline";
+import { beforePythonDictionaryPrerequisites } from "./python-dictionary-prerequisites-baseline";
 
 const reviewed = [
   "logica-arbol-busqueda", "logica-ancestro", "logica-monticulo-inserta", "logica-monticulo-extrae",
@@ -58,7 +59,7 @@ test("el bloque mantiene representaciones concretas, límites y distinciones ent
 });
 
 test("solo cambia la descripción de permutaciones y se reconstruye íntegra la entrega anterior", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: Object.fromEntries(
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonDictionaryPrerequisites(entry.slug, entry.content) })).map(entry => ({ ...entry, content: Object.fromEntries(
     Object.entries(entry.content).filter(([field]) => !(entry.slug === "logica-permutaciones" && field === "description")),
   ) }));
   // Calculada antes de editar: protege las otras 31 actividades, todos los

@@ -122,4 +122,6 @@ export const knownPythonReleases: readonly string[] = [
   "6614bdbbb0050fb619a218818fc5cc687becf0f5732bef5a478f7a2f469040bb",
   // Último contraste entre superficies: orden numérico de permutaciones.
   "499552ede7872652cf4ec311d10bc19bafe2b06bbc582fa86551463705560c80",
+  // Cierre de vocabulario: prerrequisitos de diccionarios, no objetos genéricos.
+  "52f83501a8b9a61a17383d1b91da85d5169da92e5780d0d6487de01e6c954da1",
 ];

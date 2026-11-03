@@ -9,7 +9,7 @@ import type { Json } from "../src/lib/types";
 import { pythonMistakes, pythonCaseHelp, pythonSharedCaseHelp } from "./python-help";
 import { pythonCosts } from "./python-costs";
 import { pythonEditorialRevisions } from "./python-editorial";
-import { pythonVocabularyRevisions, pythonRecordVocabularyRevisions, pythonPrerequisiteVocabulary, pythonIntroCopyRevisions, pythonFlowCopyRevisions, pythonReferenceCopyRevisions, pythonCollectionCopyRevisions, pythonNestedCopyRevisions, pythonAlgorithmCopyRevisions, pythonAdvancedCopyRevisions, pythonSolutionExplanations } from "./python-vocabulary";
+import { pythonVocabularyRevisions, pythonRecordVocabularyRevisions, pythonPrerequisiteVocabulary, pythonDictionaryPrerequisites, pythonIntroCopyRevisions, pythonFlowCopyRevisions, pythonReferenceCopyRevisions, pythonCollectionCopyRevisions, pythonNestedCopyRevisions, pythonAlgorithmCopyRevisions, pythonAdvancedCopyRevisions, pythonSolutionExplanations } from "./python-vocabulary";
 import { pythonTimingRevisions } from "./python-timing";
 import { pythonFoundationExplanations } from "./python-foundation-explanations";
 import { pythonCollectionExplanations } from "./python-collection-explanations";
@@ -455,6 +455,7 @@ export const pythonCatalog = pythonCurriculumUnits.flatMap(unit => unit.steps.ma
   const recordVocabulary = pythonRecordVocabularyRevisions[slug];
   if (recordVocabulary) content = { ...content, ...recordVocabulary };
   if (slug in pythonPrerequisiteVocabulary) content.prerequisites = pythonPrerequisiteVocabulary[slug];
+  if (slug in pythonDictionaryPrerequisites) content.prerequisites = pythonDictionaryPrerequisites[slug];
   const introCopy = pythonIntroCopyRevisions[slug];
   if (introCopy) content = { ...content, ...introCopy };
   const flowCopy = pythonFlowCopyRevisions[slug];

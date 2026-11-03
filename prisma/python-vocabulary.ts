@@ -79,6 +79,13 @@ export const pythonVocabularyRevisions: Record<string, VocabularyRevision> = {
   },
 };
 
+// Prerrequisitos heredados: aquí el modelo de datos es un diccionario Python.
+export const pythonDictionaryPrerequisites: Record<string, string[]> = {
+  "logica-frecuencias": ["Recorrer cadenas", "Diccionarios", "Contadores"],
+  "logica-delimitadores": ["Recorrer cadenas", "Pilas: añadir y retirar el último elemento", "Diccionarios", "Condiciones y salida anticipada"],
+  "logica-altura": ["Recursión", "Diccionarios anidados"],
+};
+
 // Último bloque: el orden de permutaciones compara números, no sus textos.
 export const pythonAdvancedCopyRevisions: Record<string, VocabularyRevision> = {
   "logica-permutaciones": { description: "Genera todas las permutaciones de una lista de enteros distintos en orden lexicográfico por valores numéricos." },

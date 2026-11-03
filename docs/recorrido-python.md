@@ -170,6 +170,16 @@ Se completa este inventario, no la coherencia terminológica final de todas las
 superficies ni las fases D2/F o la validación real/visual.
 Inventario y límites: [repeticiones-python.md](repeticiones-python.md).
 
+El cierre terminológico posterior aclara tres listas de prerrequisitos:
+frecuencias y delimitadores piden diccionarios; altura pide diccionarios
+anidados. Se conservan identidad/objeto map, objetos físicos de mochila,
+propiedad de búsqueda y el valor literal mapa. Las revisiones previas y el
+barrido final cubren actividades, ayudas, teoría y textos de rutas/módulos;
+se cierran los dos puntos terminológicos de E en fuentes, no su jerarquía visual
+ni la validación real. Huella vigente `52f835…`, con reconstrucción íntegra de
+`499552…`. Dependencias persistidas, contratos y ejemplos intactos; base sin
+preparar/activar. Alcance y decisiones: [claridad-python.md](claridad-python.md#cierre-del-contraste-terminológico).
+
 ## Destino del documento de referencia
 
 «Fusionar» evita duplicar una competencia; nunca significa importar su código sin revisión.

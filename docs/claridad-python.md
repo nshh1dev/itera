@@ -1797,15 +1797,59 @@ conservadas; huella vigente `499552…`. Decisiones y límites en
 [repeticiones-python.md](repeticiones-python.md). Se cierra este contraste,
 no la coherencia terminológica final entre todas las superficies ni E, D2 o F.
 
+## Cierre del contraste terminológico
+
+El contraste final reúne las revisiones individuales anteriores de 224
+actividades, 433 ejemplos, 57 módulos y cuatro rutas con un barrido de términos
+en metadatos, prerrequisitos, enunciados, pistas, objetivos, errores, coste,
+explicaciones de solución/ejemplos y teoría de módulo. No se aplica una
+sustitución global de ficha, registro u objeto.
+
+Se detectan y corrigen únicamente tres listas de prerrequisitos:
+
+| Actividad | Antes | Después y motivo |
+| --- | --- | --- |
+| `logica-frecuencias` | Diccionarios u objetos | Diccionarios: las letras son claves y las frecuencias valores; no se enseña un objeto alternativo. |
+| `logica-delimitadores` | Diccionarios u objetos | Diccionarios: la asociación entre apertura y cierre es el modelo Python; se conservan pila y salida anticipada. |
+| `logica-altura` | Objetos anidados | Diccionarios anidados: cada nodo contiene value, left y right; se conserva recursión. |
+
+Se conservan los demás textos de esas listas. `prerequisiteSlugs`, orden,
+contratos, código, 433 ejemplos y ayudas no cambian. La huella previa excluye
+solo tres listas y el baseline nuevo reconstruye íntegra la entrega `499552…`
+sin sustituir expectativas históricas; huella vigente `52f835…`.
+
+Decisiones contextuales conservadas:
+
+- Objeto designa identidad y vinculación en referencias; objeto map designa el
+  iterador real; objetos en mochila son elementos con peso/valor.
+- Propiedad de búsqueda y propiedad del montículo describen invariantes,
+  no claves de un diccionario. Mapa en diferencia es el requisito literal
+  `'mapa'`, no un tipo de datos heredado.
+- Ficha/registro representa un diccionario en las actividades de campos;
+  los módulos de datos, inventario, academia, contactos y transformación
+  explicitan ese modelo. Registro de gastos también puede nombrar la acción,
+  e historial contiene valores enteros, no necesariamente diccionarios.
+- None/True/False son literales Python; null/true/false aparecen en JSON o en
+  las tres salidas PROGRAM exactas preparadas, sin cambiar su impresión.
+
+`tests/python-dictionary-prerequisites.test.ts` extiende el control léxico a
+teoría de módulo y textos de rutas/módulos, preserva excepciones legítimas y
+comprueba la conservación acotada. Los controles léxicos son apoyo a las
+revisiones contextuales previas, no una certificación de toda interpretación
+pedagógica ni una revisión visual. Se cierran los dos puntos terminológicos de
+E en fuentes; jerarquía/repetición de ayudas y validación integrada siguen abiertas.
+
 ## Pendientes y límites
 
 - Los diez lotes cubren **224/224 enunciados**; la estructura está completa, no E.
 - Las **224/224 explicaciones de solución** tienen revisión individual; no implica
-  que todas se reescriban ni cierra la revisión de repeticiones entre superficies.
+  que todas se reescriban ni cierra la jerarquía/repetición entre teoría y ayudas.
 - La teoría local tiene **224/224 actividades revisadas**: 48 propias y 176
-  comunes; quedan las repeticiones entre superficies, no actividades sin revisar.
-- Queda vocabulario en otras ayudas y objetivos. El contraste posterior de
-  ejemplos está completo: **433/433 ejemplos de 224/224 actividades**, con nueve
+  comunes; el inventario de resúmenes/objetivos/enunciados/pistas también está
+  completo. Queda el reparto final entre teoría de módulo, condiciones y ayudas.
+- El contraste terminológico está completo en fuentes, con las excepciones y
+  límites descritos arriba. El contraste posterior de ejemplos también está
+  completo: **433/433 ejemplos de 224/224 actividades**, con nueve
   explicaciones ajustadas y 424 conservadas; decisiones y límites en
   [revision-ejemplos-python.md](revision-ejemplos-python.md).
 - PROGRAM conserva sus textos exactos y no se convierte en FUNCTION. Los proyectos
