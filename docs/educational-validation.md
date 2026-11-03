@@ -124,6 +124,35 @@ y sondas de memoria. No se elevaron presupuestos ni se certifica cualquier
 implementación o no mutación. Procedimiento, cifras y límites de la medición en
 [auditoria-python.md](auditoria-python.md#límites-reales-de-árboles-python).
 
+### Qué significa conservar la entrada en Python
+
+«No modificar la entrada» es una condición de la actividad y de la referencia,
+no una propiedad que el juez FUNCTION pueda deducir comparando solo el retorno.
+Su conductor entrega a `solve` una entrada JSON nueva por caso y serializa el
+resultado; no devuelve al servidor el estado final de esa entrada. No hay una
+regla AST de no mutación ni se aplican las reglas secuenciales a estas prácticas.
+
+En las actividades centradas en copia, los campos `original`, `copia`,
+`ajustados` u `ordenados` hacen observable la conservación del **contenido
+devuelto**. Detectan, por ejemplo, que un alias cambió también `original`.
+No prueban identidad ni impiden guardar una instantánea para devolverla mientras
+se modifica la entrada real. En `python-crea-grupo`, una copia solo exterior
+puede producir todo el retorno correcto y aun compartir/mutar la lista interior.
+Es un requisito para razonar y revisar el código, no una garantía del veredicto.
+
+La comprobación editorial compatible observa antes/después dentro de Piston con
+referencias fijas. Incluye también `logica-dos-nombres-lista` y
+`logica-registro-compartido`: allí se pide mutar intencionalmente, por lo que una
+prohibición global sería incorrecta. En `python-identidad` se muta una lista
+construida dentro de la función, sin alterar `data`; los booleanos serializados
+tampoco prueban por sí solos identidad.
+
+Las nueve pruebas reales de `python-mutation-contract.integration.ts` aprobaron
+29 casos con observación de referencia y contraejemplos que el juez acepta o
+rechaza por su retorno. La sonda pertenece solo a la verificación editorial: no
+se inserta en envíos de alumnos ni modifica contratos históricos. Procedimiento
+y matriz: [auditoria-python.md](auditoria-python.md#conservación-de-entrada-observada-en-piston).
+
 ## Actualización y conservación
 
 Respaldar antes de migrar. La generación de Prisma no aplica migraciones. Preparar

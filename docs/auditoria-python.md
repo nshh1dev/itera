@@ -17,9 +17,9 @@ mantenidas y siete revisadas). Otras **12 avanzadas de combinatoria y programaci
 dinámica** (cuatro mantenidas y ocho revisadas) elevan el total a **212/224**.
 Las últimas **12 avanzadas de grafos y optimización** (tres mantenidas y nueve
 revisadas) completan **224/224 actividades** con decisión individual. Quedan
-abiertas la validación real del catálogo completo, las limitaciones de no mutación
-y E/F. Los límites de las seis referencias de árboles ya se comprobaron en Piston,
-con el alcance indicado en «Límites reales de árboles Python».
+abiertas la validación real del catálogo completo y E/F. Los límites de las seis
+referencias de árboles y el alcance observable de conservación de entrada ya se
+comprobaron en Piston, con las limitaciones de las secciones correspondientes.
 Se leyeron objetivo, enunciado, plantilla, referencia, pistas, casos y reglas
 conceptuales. Se mantienen modalidades, entradas, respuestas esperadas,
 visibilidad, reglas conceptuales e identidades; no se añaden casos por volumen.
@@ -581,6 +581,61 @@ Verificación adicional: lint, tipos y tres pruebas focalizadas de estructuras
 aprobados. Se reutilizan las 582 pruebas unitarias y el build anteriores: no
 cambiaron producto, catálogo, dependencias ni pruebas de `tests/*.test.ts`.
 
+## Conservación de entrada observada en Piston
+
+`tests/python-mutation-contract.integration.ts` contrasta nueve actividades
+centradas en copia, referencia, identidad o conservación de entrada. No
+cambia fuentes, contratos, AST, conductor de alumnos, casos ni progreso. El juez
+sigue comparando el retorno, no observando el estado final de la entrada.
+
+La sonda fija añade al resultado `before` (copia profunda previa) y `after`
+(entrada después de la llamada), dentro del mismo proceso de Piston. Para la
+referencia se comprueban esos dos estados y el retorno contra expectativas
+independientes. Esto es una prueba editorial de código del repositorio, no una
+validación adicional aplicada a programas enviados.
+
+| Actividad | Observación de la referencia y alcance del contrato |
+| --- | --- |
+| `logica-dos-nombres-lista` | La lista recibida cambia intencionalmente. Construir otra lista con el mismo contenido puede aprobar sin demostrar el alias. |
+| `logica-reasigna-o-muta` | La referencia conserva la entrada; `original` permite rechazar la mutación visible en el retorno. Una instantánea puede ocultar el cambio real. |
+| `logica-copia-plana` | La referencia copia la lista exterior y conserva la entrada. Devolver el alias mutado como `original` falla, pero devolver una instantánea no certifica ausencia de mutación. |
+| `logica-conserva-entrada` | La referencia conserva la entrada y devuelve `original`/`ajustados`. Ajustar la entrada y devolver además su instantánea puede aprobar. |
+| `logica-registro-compartido` | El diccionario recibido cambia intencionalmente. Devolver dos números calculados sin mutarlo también puede aprobar. |
+| `python-identidad` | Se muta la lista local nueva, no `data`. Mutar la lista recibida y devolver las mismas instantáneas/booleanos puede aprobar: JSON no certifica identidad. |
+| `python-ordena-numeros` | La referencia conserva orden de entrada. Ordenar y devolver la lista mutada también como `original` falla; guardar el orden previo puede ocultarlo. |
+| `python-crea-grupo` | La referencia copia cada lista. Una copia solo exterior produce los retornos esperados de todos los casos actuales aunque mute la lista interior recibida. |
+| `logica-copia-anidada` | La referencia copia cada fila y conserva la matriz. El alias visible en `original` falla, pero una instantánea puede ocultar una modificación real. |
+
+El 3 de noviembre de 2026 aprobaron **nueve pruebas sin omisiones**, **29 casos**
+y 102 ejecuciones en Python **3.12.0** de Piston: referencia con sonda,
+contraejemplo normal, contraejemplo con sonda y, donde corresponde, error de
+contenido visible. Los nueve contraejemplos producen retornos aceptados en todos
+sus casos; en cada actividad la sonda distingue al menos un estado de entrada
+contrario al de la referencia. Los cinco errores de contenido son rechazados en
+al menos un caso. No se confunde ese rechazo con prueba formal de no mutación.
+
+```powershell
+$env:ITERA_PYTHON_MUTATION = "1"
+npx.cmd tsx --conditions=react-server --test --test-concurrency=1 tests/python-mutation-contract.integration.ts
+Remove-Item Env:ITERA_PYTHON_MUTATION
+```
+
+Requiere Piston preparado y autorización para iniciarlo; no inicia servicios por
+sí sola. Con la opción activa falla si falta ejecutor, sin convertirlo en una
+omisión. Ejecutar sin otras suites del sandbox en paralelo. Nunca usar esta
+sonda para ejecutar código de alumnos fuera de Piston.
+
+Se cierra la comprobación de coherencia y observación editorial de D2, no una
+garantía universal del evaluador. Para un envío concreto la técnica y ausencia
+de mutaciones no observables requieren revisión humana; no se introduce como
+requisito nuevo certificar cualquier implementación. Se conservan las dos
+mutaciones intencionales y los contratos/versiones históricos.
+
+Lint, tipos y siete pruebas focalizadas aprobaron. Se reutilizan las 582 pruebas
+unitarias y el build anteriores: solo cambian esta integración y documentación.
+Piston/WSL se apagaron conservando volúmenes; no se inició Next ni PostgreSQL ni
+hubo preparación, activación o escrituras en base.
+
 ## Límites y siguientes fases
 
 - No se amplía AST, esquema, dependencias ni modalidades.
@@ -588,7 +643,7 @@ cambiaron producto, catálogo, dependencias ni pruebas de `tests/*.test.ts`.
   anterior acredita solo las seis referencias de árboles y su serialización.
 - Tiempos, vocabulario e inventarios editoriales ya están revisados en fuentes;
   E/F mantienen pendiente el reparto final de ayudas y la revisión visual completa.
-- La auditoría individual de las 224 actividades está registrada; no equivale al
-  cierre de D2. Quedan garantías de no mutación y validación integrada del catálogo.
+- La auditoría individual de las 224 actividades y las dos comprobaciones
+  pendientes de D2 están registradas; falta la validación integrada del catálogo.
 - No eliminar el plan antes de la verificación integrada, activación autorizada
   y cierre de sus puntos existentes.
