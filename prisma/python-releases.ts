@@ -118,4 +118,6 @@ export const knownPythonReleases: readonly string[] = [
   "55c3bc1d2324a98370bb9a530cc6a0be9090eb5797202e472dc06ba2d306b875",
   // Quinto contraste entre superficies: ordenación y registros anidados.
   "e7cc7b332896cf48f1ae0eebe7c827251a0ad6a623861f5feb1305352f3bc109",
+  // Sexto contraste: precisión de conteo de nodos y vocabulario algorítmico.
+  "6614bdbbb0050fb619a218818fc5cc687becf0f5732bef5a478f7a2f469040bb",
 ];

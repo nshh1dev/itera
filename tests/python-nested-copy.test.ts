@@ -5,6 +5,7 @@ import { pythonCatalog } from "../prisma/python-content";
 import { pythonNestedCopyRevisions } from "../prisma/python-vocabulary";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { beforePythonNestedCopy, previousNestedCopy } from "./python-nested-copy-baseline";
+import { beforePythonAlgorithmCopy } from "./python-algorithm-copy-baseline";
 
 const reviewed = [
   "python-clave-longitud", "python-lambda-desempate", "python-formato-decimal", "python-consulta-anidada",
@@ -64,7 +65,7 @@ test("los resúmenes conservan estabilidad, ausencia, validación y recuperació
 });
 
 test("solo cambian catorce descripciones Python sin alterar proyectos ni expectativas históricas", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: Object.fromEntries(
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonAlgorithmCopy(entry.slug, entry.content) })).map(entry => ({ ...entry, content: Object.fromEntries(
     Object.entries(entry.content).filter(([field]) => !Object.keys(pythonNestedCopyRevisions[entry.slug] ?? {}).includes(field)),
   ) }));
   // Calculada antes de editar: conserva las 18 actividades restantes, teoría,

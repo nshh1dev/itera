@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonAlgorithmCopy } from "./python-algorithm-copy-baseline";
 
 export const previousNestedCopy = {
   "python-clave-longitud": { description: "Pasar una función como clave de ordenación." },
@@ -18,6 +19,7 @@ export const previousNestedCopy = {
 } satisfies Record<string, Partial<VersionContent>>;
 
 export function beforePythonNestedCopy(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonAlgorithmCopy(slug, content);
   const previous = previousNestedCopy[slug as keyof typeof previousNestedCopy];
   return previous ? { ...content, ...previous } : content;
 }

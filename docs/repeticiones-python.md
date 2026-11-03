@@ -14,8 +14,8 @@ literales. Por eso no se vacían metadatos solo para evitar esa duplicación.
 Las condiciones necesarias y los textos exactos de PROGRAM permanecen visibles
 en el enunciado, aunque se acorte la descripción del catálogo.
 
-El inventario cubre **160/224 actividades**: 60 con ajustes y 100 conservadas.
-Quedan **64 actividades** para el contraste contextual entre superficies.
+El inventario cubre **192/224 actividades**: 63 con ajustes y 129 conservadas.
+Quedan **32 actividades** para el contraste contextual entre superficies.
 Las revisiones individuales anteriores no equivalen a cerrar este inventario.
 
 ## Primer bloque: impresión, variables, entrada y primeros retornos
@@ -218,6 +218,47 @@ los contratos multarchivo. No se vacían objetivos ni se recortan enunciados.
 | `python-transforma-registros` | Separar descripción de objetivo: presentar transformación con recuperación numérica; conservar nombres de operaciones, ValueError local, orden y gramática de int nativo. |
 | `logica-busqueda-binaria` | Conservar: intervalo inclusivo, índice frente a valor y descarte de mitad son ayudas progresivas; no ordenar ni cortar la entrada. |
 
+## Sexto bloque: algoritmos, matrices y primeros árboles
+
+Se revisan otras **32 actividades**: tres ajustadas en cuatro campos y 29
+conservadas. No se recortan introducciones, condiciones ni pistas: en este bloque
+la tarea observable y la técnica orientativa suelen cumplir funciones distintas.
+
+| Actividad | Decisión y motivo |
+| --- | --- |
+| `logica-insercion-posicion` | Conservar: primera posición admisible, intervalo y repetidos requieren distinguir cualquier igualdad del límite inferior. |
+| `logica-ordena-insercion` | Conservar: tramo ordenado, desplazamiento y hueco son pasos distintos; mantener salida nueva y evaluación del resultado. |
+| `logica-ordena-registros` | Conservar: criterio secundario y estabilidad de empates completos son obligaciones diferentes; no eliminar repetidos. |
+| `logica-combina` | Conservar: salida ordenada y coordinación de índices cumplen funciones distintas; mantener restos de ambas listas y límite de certificación. |
+| `logica-palindromo` | Conservar: extremos, avance y rechazo forman pistas progresivas; mantener mayúsculas/espacios/signos sin normalizar y vacío válido. |
+| `logica-pareja` | Corregir solo errata «cuyo valores» por «cuyos valores». Mantener posiciones distintas y desempate menor i/mayor j en el contrato. |
+| `logica-prefijos` | Conservar: prefijo vacío, suma anterior y posición inicial neutra son necesarios; mantener enteros y longitud n + 1. |
+| `logica-intervalos-suma` | Conservar: consultas inclusivas y fórmula con fin + 1 distinguen índices del prefijo; mantener orden de consultas. |
+| `logica-ventana-fija` | Conservar: primera ventana, entrada/salida y mejor total son responsabilidades diferentes; no permitir tramo vacío con negativos. |
+| `logica-ventana-suma` | Conservar: ampliar, reducir mientras siga válida y guardar longitud son pasos complementarios; mantener enteros positivos y objetivo como mínimo. |
+| `logica-celda` | Conservar: fila completa frente a elemento e índices orientan el acceso sin confundir el resultado. |
+| `logica-filas` | Conservar: suma por fila y recorrido exterior difieren; reiniciar acumulador conserva filas vacías y posiciones. |
+| `logica-columnas` | Conservar: acumulador por columna y recorrido de filas difieren; mantener matriz rectangular y vacío. |
+| `logica-diagonales` | Conservar: relaciones de índices principal/secundaria justifican las pistas; el centro puede pertenecer a ambas. |
+| `logica-transpuesta` | Conservar: columnas como filas y acceso invertido cumplen funciones distintas; mantener dimensiones y posición de cada valor. |
+| `logica-vecinos` | Conservar: desplazamientos, límites y conteo de unos son pasos distintos; no incluir diagonales ni la celda actual. |
+| `logica-copia-anidada` | Conservar: copia exterior frente a filas nuevas es el concepto; mantener límite de observación de identidad y mutaciones intermedias. |
+| `logica-pila` | Conservar: orden LIFO, extremos y vacío son condiciones necesarias; devolver solo extracciones. |
+| `logica-cola` | Conservar: orden FIFO y extremo de salida contrastan con pila; ignorar atención sobre vacío. |
+| `logica-delimitadores` | Conservar: tipo, orden y ausencia de aperturas pendientes son condiciones distintas; igual cantidad no basta. |
+| `logica-deshacer` | Conservar: guardar estado previo y retirarlo al restaurar son responsabilidades distintas; mantener vacío sin cambios. |
+| `logica-suma-recursiva` | Conservar: caso base y reducción requieren pistas separadas; mantener hasta 900 elementos y que el total no certifica recursión. |
+| `logica-busqueda-recursiva` | Conservar: intervalo vacío, centro excluido y retorno propagado son pasos complementarios; mantener índice original. |
+| `logica-une-intervalos` | Conservar: ordenar, comparar con último y extender final son pasos distintos; mantener fusión si comparten extremo. |
+| `logica-segundo-maximo` | Conservar: dos valores distintos y ausencia requieren explicación; no descartar cero ni negativos ni contar máximo repetido. |
+| `logica-suma-maxima` | Conservar: continuar/reiniciar y mejor global son decisiones distintas; mantener resultado negativo cuando todos lo sean. |
+| `logica-sin-repeticiones` | Conservar: ventana válida, última posición y límite sin retroceder requieren progresión; no saltar caracteres. |
+| `logica-ranking` | Adaptar objetivo de comparador a criterios de ordenación y meta de mapa a diccionario de frecuencias. Mantener frecuencia descendente, desempate numérico y valores únicos. |
+| `logica-cuenta-nodos` | Aclarar descripción: el árbol vacío devuelve cero. La versión anterior podía leerse como retorno None, aunque ese None describe la entrada; enunciado, ejemplos y evaluación ya eran correctos y se conservan. |
+| `logica-altura` | Conservar: altura en nodos, vacío cero y hoja uno son convenciones necesarias; no sustituir por conteo de enlaces. |
+| `logica-preorden` | Conservar: raíz antes de hijos y orden izquierda/derecha son obligaciones distintas; mantener valores repetidos. |
+| `logica-niveles` | Conservar: cola, orden de descubrimiento y recorrido por niveles se complementan; mantener izquierda antes de derecha. |
+
 ## Conservación y límites
 
 En el primer bloque cambian **seis descripciones y la tercera pista de dos actividades** en la
@@ -264,8 +305,17 @@ esos campos y protege las otras 18 actividades, las pistas completas, objetivos,
 teoría, 433 ejemplos, soluciones, código, recursos y manifiestos. Las pruebas
 `tests/python-nested-copy.test.ts` fijan inventario, conceptos y límites textuales;
 `tests/python-nested-copy-baseline.ts` reconstruye íntegra la entrega `55c3bc…`
-y se encadena a las anteriores sin sustituir sus expectativas. Huella vigente
-`e7cc7b…`, sin preparar ni activar la base.
+y se encadena a las anteriores sin sustituir sus expectativas. La huella de ese
+bloque es `e7cc7b…`.
+
+En el sexto cambian **dos descripciones, un objetivo y una meta de práctica**.
+La huella previa excluye solo esos cuatro campos y protege las otras 29
+actividades, todos los enunciados, pistas, 433 ejemplos, código y contratos.
+`tests/python-algorithm-copy.test.ts` fija inventario y precisión de resultados;
+`tests/python-algorithm-copy-baseline.ts` reconstruye íntegra la entrega
+`e7cc7b…` y se encadena a las anteriores sin sustituir expectativas. El control
+histórico de vocabulario restaura la descripción anterior de conteo de nodos.
+Huella vigente `6614bd…`, sin preparar ni activar la base.
 
 Las pruebas de texto no acreditan calidad pedagógica completa, revisión visual,
 accesibilidad, ejecución real en Piston ni rendimiento. El resto del inventario,

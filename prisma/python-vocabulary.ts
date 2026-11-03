@@ -79,6 +79,16 @@ export const pythonVocabularyRevisions: Record<string, VocabularyRevision> = {
   },
 };
 
+// Sexto bloque: precisión de resultados y vocabulario de clasificación Python.
+export const pythonAlgorithmCopyRevisions: Record<string, VocabularyRevision> = {
+  "logica-pareja": { description: "Encuentra dos posiciones cuyos valores sumen un objetivo, aprovechando que la lista está ordenada." },
+  "logica-ranking": {
+    objective: "Combinar conteos y criterios de ordenación para construir una clasificación.",
+    practiceGoals: ["Elegir un diccionario de frecuencias y definir un desempate determinista."],
+  },
+  "logica-cuenta-nodos": { description: "Cuenta los nodos de un árbol binario representado por diccionarios; si el árbol está vacío, devuelve cero." },
+};
+
 // Quinto bloque: resúmenes de ordenación y registros sin repetir la habilidad.
 export const pythonNestedCopyRevisions: Record<string, VocabularyRevision> = {
   "python-clave-longitud": { description: "Ordena palabras de menor a mayor longitud, conservando el orden original de los empates." },

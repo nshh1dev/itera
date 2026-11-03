@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { pythonCatalog } from "../prisma/python-content";
 import { pythonVocabularyRevisions } from "../prisma/python-vocabulary";
 import { beforePythonTiming } from "./python-timing-baseline";
+import { beforePythonAlgorithmCopy } from "./python-algorithm-copy-baseline";
 
 const fields = ["description", "objective", "constraints", "hints", "commonErrors", "practiceGoals"] as const;
 
@@ -14,7 +15,7 @@ test("el lote de vocabulario aplica 22 revisiones explícitas solo a metadatos y
     assert.ok(entry, slug);
     for (const [key, value] of Object.entries(revision)) {
       assert.ok(fields.includes(key as typeof fields[number]), `${slug}: ${key}`);
-      assert.deepEqual(entry.content[key as typeof fields[number]], value, `${slug}: ${key}`);
+      assert.deepEqual(beforePythonAlgorithmCopy(slug, entry.content)[key as typeof fields[number]], value, `${slug}: ${key}`);
     }
   }
 });

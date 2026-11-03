@@ -1787,8 +1787,11 @@ y dos terceras pistas ajustadas; 14 conservadas. Van **128/224 actividades**, co
 46 ajustadas y 82 conservadas. El quinto añade 32 revisadas: 14 descripciones
 ajustadas y 18 actividades conservadas, incluidos los contratos multarchivo.
 Van **160/224 actividades**, con 60 ajustadas y 100 conservadas. Decisiones
-individuales, huella vigente `e7cc7b…` y límites en
-[repeticiones-python.md](repeticiones-python.md). Quedan 64 actividades para este
+individuales de cada bloque en el inventario. El sexto añade 32 revisadas:
+dos descripciones, un objetivo y una meta ajustados en tres actividades; 29
+conservadas. Van **192/224 actividades**, con 63 ajustadas y 129 conservadas.
+Huella vigente `6614bd…` y límites en
+[repeticiones-python.md](repeticiones-python.md). Quedan 32 actividades para este
 contraste; no se cierra E, D2 ni F.
 
 ## Pendientes y límites
