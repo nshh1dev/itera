@@ -14,8 +14,8 @@ literales. Por eso no se vacían metadatos solo para evitar esa duplicación.
 Las condiciones necesarias y los textos exactos de PROGRAM permanecen visibles
 en el enunciado, aunque se acorte la descripción del catálogo.
 
-El inventario cubre **128/224 actividades**: 46 con ajustes y 82 conservadas.
-Quedan **96 actividades** para el contraste contextual entre superficies.
+El inventario cubre **160/224 actividades**: 60 con ajustes y 100 conservadas.
+Quedan **64 actividades** para el contraste contextual entre superficies.
 Las revisiones individuales anteriores no equivalen a cerrar este inventario.
 
 ## Primer bloque: impresión, variables, entrada y primeros retornos
@@ -177,6 +177,47 @@ y dos terceras pistas concretadas en True/False. Se conservan las otras 14.
 | `python-filter` | Separar descripción de objetivo: presentar nombres adultos en orden; conservar predicado sobre fichas, edad 18 incluida y extracción posterior. |
 | `python-agrega` | Separar descripción de objetivo: presentar resumen incluso vacío; conservar None para extremos ausentes y negativos/cero. |
 
+## Quinto bloque: ordenación, módulos, archivos y registros anidados
+
+Se revisan otras **32 actividades**: 14 descripciones pasan de repetir la
+habilidad a presentar la tarea; se conservan las otras 18 actividades, incluidos
+los contratos multarchivo. No se vacían objetivos ni se recortan enunciados.
+
+| Actividad | Decisión y motivo |
+| --- | --- |
+| `python-clave-longitud` | Separar descripción de objetivo: presentar longitud ascendente y empates estables; conservar función sin llamada y límites de certificación de key. |
+| `python-lambda-desempate` | Separar descripción de objetivo: presentar longitudes descendentes y empates alfabéticos; conservar lambda, tuplas y dirección independiente de criterios. |
+| `python-formato-decimal` | Separar descripción de objetivo: presentar texto con precisión solicitada y ceros finales; conservar float frente a regla financiera y round frente a formato. |
+| `python-consulta-anidada` | Separar descripción de objetivo: presentar consulta de nota; conservar respaldo solo si falta clave, modelo de diccionarios interiores y cero frente a None. |
+| `logica-inventario` | Conservar: acumular cambios y permitir negativos distingue este ejercicio del inventario modular que rechaza movimientos. |
+| `logica-importa-preparado` | Conservar: módulo preparado y llamada al nombre importado son el contrato del proyecto; las ayudas distinguen nombre, archivo y resultado. |
+| `logica-extrae-modulo` | Conservar: función en reglas y llamada desde main enseñan responsabilidades distintas; no recortar firmas ni alcance de la comprobación por retorno. |
+| `logica-separa-reglas-io` | Conservar: regla numérica y texto del adaptador tienen responsabilidades distintas; mantener Total: y espacio exactos. |
+| `logica-repara-importacion` | Conservar: nombre disponible frente al importado es el defecto central; conservar recurso de solo lectura y suma adicional. |
+| `logica-organiza-modulos` | Conservar: tres responsabilidades justifican el resumen; enunciado mantiene Resultado:, dirección de dependencias y límites de certificación. |
+| `logica-lee-archivo` | Conservar: recurso real y selección por índice no equivalen a respuesta fija; mantener -1, saltos y cierre del recurso. |
+| `logica-escribe-archivo` | Conservar: lectura, escritura y reapertura son operaciones diferentes; mantener artefacto evaluado y recurso inicial intacto. |
+| `logica-valida-json` | Conservar: analizar JSON y validar estructura son habilidades distintas; mantener bool excluido del límite entero y textos exactos. |
+| `logica-guarda-recupera` | Conservar: serialización y análisis tras reapertura tienen funciones distintas; mantener JSON compacto y límite de mismo proceso. |
+| `logica-recupera-archivo-invalido` | Conservar: ausencia y JSON roto requieren recuperaciones distintas; no ocultar errores arbitrarios ni responder por nombre. |
+| `logica-actualiza-persistidos` | Conservar: valores enteros previos, orden y actualización no son redundantes; mantener recurso inicial y no prometer durabilidad ni persistencia entre procesos. |
+| `logica-inventario-modular` | Conservar: hito sin almacenamiento y mutación intencional de stock son necesarios; mantener rechazo previo y productos con cero. |
+| `logica-inventario-persistente` | Conservar: continuidad de reglas y almacenamiento tiene funciones distintas; mantener carga preferente, mutación declarada y segunda llamada en proceso nuevo. |
+| `python-inventario-valora` | Separar descripción de objetivo: presentar valoración y productos ordenados; conservar céntimos enteros, total y desempate por nombre. |
+| `python-academia-inscribe` | Separar descripción de objetivo: presentar inscripción pendiente sin borrar notas; conservar copia interior y setdefault frente a calificación. |
+| `python-academia-califica` | Separar descripción de objetivo: presentar nota válida sin crear inscripciones; conservar cortocircuito, existencia y rango incluido. |
+| `python-academia-resume` | Separar descripción de objetivo: presentar medias/clasificación sin descartar cero; conservar None para ausencia y desempates. |
+| `python-contactos-crea` | Separar descripción de objetivo: presentar alta sin vacío ni repetición normalizada; conservar copia de fichas y teléfonos de texto. |
+| `python-contactos-edita` | Separar descripción de objetivo: presentar teléfono/correo con textos; conservar texto vacío válido, None ignorado y contacto ausente sin cambios. |
+| `python-contactos-borra` | Separar descripción de objetivo: presentar copia sin un contacto; conservar normalización, coincidencia completa y ausencia tolerada. |
+| `python-contactos-busca` | Separar descripción de objetivo: presentar nombres filtrados y ordenados; conservar todos los filtros, coincidencia parcial y campo ausente distinto de texto vacío. |
+| `logica-agenda-operaciones` | Conservar: crear/completar y reparto de módulos orientan el primer hito; mantener booleanos Python frente a JSON, orden e idempotencia. |
+| `logica-agenda-almacenamiento` | Conservar: almacenamiento añade responsabilidad distinta; mantener copia explícita, carga inicial y persistencia entre procesos declarada. |
+| `logica-agenda-regresion` | Conservar: fallo de conexión y pruebas de regresión son objetivos complementarios; mantener datos anteriores, completar dos veces y recuperación en proceso nuevo. |
+| `python-transforma-campo` | Separar descripción de objetivo: presentar limpieza del campo sin cambiar otros; conservar copia suficiente para textos inmutables y clave ausente sin crear. |
+| `python-transforma-registros` | Separar descripción de objetivo: presentar transformación con recuperación numérica; conservar nombres de operaciones, ValueError local, orden y gramática de int nativo. |
+| `logica-busqueda-binaria` | Conservar: intervalo inclusivo, índice frente a valor y descarte de mitad son ayudas progresivas; no ordenar ni cortar la entrada. |
+
 ## Conservación y límites
 
 En el primer bloque cambian **seis descripciones y la tercera pista de dos actividades** en la
@@ -216,7 +257,15 @@ actividades. `tests/python-collection-copy.test.ts` fija inventario y conceptos;
 `tests/python-collection-copy-baseline.ts` reconstruye íntegra la entrega
 `e9ae5f…` y se encadena a las anteriores sin sustituir expectativas. El control
 histórico de vocabulario de `python-crea-grupo` usa esa reconstrucción, no la
-descripción posterior. Huella vigente `55c3bc…`, sin preparar ni activar la base.
+descripción posterior. Huella de ese bloque `55c3bc…`.
+
+En el quinto cambian **14 descripciones**. La huella previa excluye únicamente
+esos campos y protege las otras 18 actividades, las pistas completas, objetivos,
+teoría, 433 ejemplos, soluciones, código, recursos y manifiestos. Las pruebas
+`tests/python-nested-copy.test.ts` fijan inventario, conceptos y límites textuales;
+`tests/python-nested-copy-baseline.ts` reconstruye íntegra la entrega `55c3bc…`
+y se encadena a las anteriores sin sustituir sus expectativas. Huella vigente
+`e7cc7b…`, sin preparar ni activar la base.
 
 Las pruebas de texto no acreditan calidad pedagógica completa, revisión visual,
 accesibilidad, ejecución real en Piston ni rendimiento. El resto del inventario,

@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonNestedCopy } from "./python-nested-copy-baseline";
 
 export const previousCollectionCopy = {
   "python-conjunto-seguro": { description: "Actualizar un conjunto sin fallar por un elemento ausente." },
@@ -22,6 +23,7 @@ export const previousCollectionCopy = {
 } satisfies Record<string, Partial<VersionContent>>;
 
 export function beforePythonCollectionCopy(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonNestedCopy(slug, content);
   const previous = previousCollectionCopy[slug as keyof typeof previousCollectionCopy];
   return previous ? { ...content, ...previous } : content;
 }

@@ -79,6 +79,24 @@ export const pythonVocabularyRevisions: Record<string, VocabularyRevision> = {
   },
 };
 
+// Quinto bloque: resúmenes de ordenación y registros sin repetir la habilidad.
+export const pythonNestedCopyRevisions: Record<string, VocabularyRevision> = {
+  "python-clave-longitud": { description: "Ordena palabras de menor a mayor longitud, conservando el orden original de los empates." },
+  "python-lambda-desempate": { description: "Ordena palabras de mayor a menor longitud y alfabéticamente cuando midan lo mismo." },
+  "python-formato-decimal": { description: "Devuelve un número como texto con la cantidad solicitada de decimales, incluidos los ceros finales." },
+  "python-consulta-anidada": { description: "Busca la nota de un alumno en un curso, conservando el cero y distinguiendo la ausencia." },
+  "python-inventario-valora": { description: "Calcula el valor del inventario en céntimos y presenta los productos de mayor a menor valor." },
+  "python-academia-inscribe": { description: "Inscribe a un alumno en un curso con nota pendiente, sin borrar las notas existentes." },
+  "python-academia-califica": { description: "Asigna una nota válida a una inscripción existente, sin crear alumnos ni cursos." },
+  "python-academia-resume": { description: "Calcula las medias de los alumnos y clasifica a quienes tengan alguna nota, sin descartar el cero." },
+  "python-contactos-crea": { description: "Añade un contacto a una copia de la agenda si su nombre normalizado no está vacío ni repetido." },
+  "python-contactos-edita": { description: "Actualiza solo el teléfono y el correo de un contacto existente cuando los cambios sean textos." },
+  "python-contactos-borra": { description: "Devuelve una copia de la agenda sin el contacto indicado, conservando los demás." },
+  "python-contactos-busca": { description: "Encuentra los nombres de los contactos que cumplen todos los filtros y devuélvelos ordenados." },
+  "python-transforma-campo": { description: "Quita espacios exteriores y pasa a minúsculas el texto de un campo, sin cambiar los demás." },
+  "python-transforma-registros": { description: "Transforma los campos indicados de cada registro y conserva los demás, aunque una conversión numérica falle." },
+};
+
 // Cuarto bloque: resultados de conjuntos y recorridos frente a sus técnicas.
 export const pythonCollectionCopyRevisions: Record<string, VocabularyRevision> = {
   "python-conjunto-seguro": { description: "Añade y retira valores sin repeticiones, tolerando que el valor retirado no exista." },

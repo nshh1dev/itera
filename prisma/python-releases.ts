@@ -116,4 +116,6 @@ export const knownPythonReleases: readonly string[] = [
   "e9ae5f4540b6cb805a44ac7ff12952697e0547216a872caba4edfd50fde8b8da",
   // Cuarto contraste entre superficies: conjuntos, comprensiones e iteradores.
   "55c3bc1d2324a98370bb9a530cc6a0be9090eb5797202e472dc06ba2d306b875",
+  // Quinto contraste entre superficies: ordenación y registros anidados.
+  "e7cc7b332896cf48f1ae0eebe7c827251a0ad6a623861f5feb1305352f3bc109",
 ];

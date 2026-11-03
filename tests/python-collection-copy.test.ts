@@ -5,6 +5,7 @@ import { pythonCatalog } from "../prisma/python-content";
 import { pythonCollectionCopyRevisions } from "../prisma/python-vocabulary";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { beforePythonCollectionCopy, previousCollectionCopy } from "./python-collection-copy-baseline";
+import { beforePythonNestedCopy } from "./python-nested-copy-baseline";
 
 const reviewed = [
   "logica-reproduce-fallo", "logica-conserva-regresion", "logica-factorial", "logica-fizzbuzz",
@@ -71,7 +72,7 @@ test("los resúmenes conservan conceptos, vacíos, orden y evaluación diferida"
 });
 
 test("solo cambian dieciséis descripciones y dos listas de pistas en Python", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: Object.fromEntries(
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonNestedCopy(entry.slug, entry.content) })).map(entry => ({ ...entry, content: Object.fromEntries(
     Object.entries(entry.content).filter(([field]) => !Object.keys(pythonCollectionCopyRevisions[entry.slug] ?? {}).includes(field)),
   ) }));
   // Calculada antes de editar; protege los demás campos y las 14 actividades
