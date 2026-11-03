@@ -4,6 +4,7 @@ import { test, expect, type BrowserContext } from "@playwright/test";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../src/generated/prisma/client";
 import { postAuth } from "./auth-request";
+import { openSimpleEditor } from "../workspace";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 const email = `help-motion-${Date.now()}@example.test`;
@@ -89,5 +90,54 @@ for (const { width, height, theme } of [
     await expect(editor).toHaveAttribute("data-preserved", "true");
     const user = await db.user.findUniqueOrThrow({ where: { email } });
     expect(await db.progress.count({ where: { userId: user.id } })).toBe(0);
+  });
+}
+
+for (const theme of ["light", "dark"] as const) {
+  test(`las ayudas Python se pueden abrir y cerrar con entrada táctil: ${theme}`, async ({ browser }) => {
+    const context = await browser.newContext({ baseURL: "http://127.0.0.1:3000", viewport: { width: 390, height: 844 }, hasTouch: true, colorScheme: theme, reducedMotion: "reduce" });
+    try {
+      await context.addCookies(cookies);
+      await context.addInitScript(value => localStorage.setItem("theme", value), theme);
+      const page = await context.newPage();
+      await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python");
+      await page.getByRole("button", { name: "Código", exact: true }).tap();
+      await openSimpleEditor(page);
+      const editor = page.getByRole("textbox", { name: "Editor sencillo de Python" });
+      const code = "# Conservado al consultar ayudas por tacto\ndef solve(data):\n    return 0\n";
+      await editor.fill(code);
+      await page.getByRole("button", { name: "Enunciado", exact: true }).tap();
+      const theory = page.getByRole("button", { name: "Teoría y objetivos", exact: true });
+      await expect(theory).toHaveAttribute("aria-expanded", "false");
+      await theory.tap();
+      await expect(page.getByRole("region", { name: "Teoría y ejemplo", exact: true })).toBeVisible();
+      await theory.tap();
+      await expect(theory).toHaveAttribute("aria-expanded", "false");
+      const hint = page.getByRole("button", { name: "Mostrar una pista", exact: true });
+      await hint.tap();
+      await expect(page.getByRole("heading", { name: "Pista 1", exact: true })).toBeVisible();
+      const solution = page.getByRole("button", { name: "Ver solución explicada", exact: true });
+      for (const control of [theory, solution]) {
+        const bounds = (await control.boundingBox())!;
+        expect(bounds.width).toBeGreaterThanOrEqual(44);
+        expect(bounds.height).toBeGreaterThanOrEqual(44);
+      }
+      await solution.tap();
+      const dialog = page.getByRole("dialog", { name: "Solución explicada", exact: true });
+      await expect(dialog.locator("pre")).toBeVisible();
+      const close = dialog.getByRole("button", { name: "Cerrar", exact: true });
+      const closeBounds = (await close.boundingBox())!;
+      expect(closeBounds.width).toBeGreaterThanOrEqual(44);
+      expect(closeBounds.height).toBeGreaterThanOrEqual(44);
+      await expect(page.locator("html")).toHaveClass(new RegExp(theme));
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await mkdir(".local/screenshots", { recursive: true });
+      await page.screenshot({ path: `.local/screenshots/python-touch-${theme}.png` });
+      await close.tap();
+      await expect(dialog).toHaveCount(0);
+      await expect(solution).toBeFocused();
+      await page.getByRole("button", { name: "Código", exact: true }).tap();
+      await expect(editor).toHaveValue(code);
+    } finally { await context.close(); }
   });
 }

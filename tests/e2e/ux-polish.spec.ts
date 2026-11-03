@@ -82,6 +82,7 @@ test("la recuperación y el inicio de sesión devuelven al ejercicio y lenguaje 
 });
 
 test("el módulo activo retoma el borrador y los integradores no duplican filas", async ({ page }) => {
+  test.setTimeout(120000);
   const user = await db.user.findUniqueOrThrow({ where: { email } });
   const variant = await db.exerciseVariant.findFirstOrThrow({ where: { language: "python", version: { published: true, exercise: { slug: "logica-dos-parametros" } } }, orderBy: { version: { number: "desc" } } });
   await db.draft.create({ data: { userId: user.id, variantId: variant.id, code: variant.starter } });
@@ -97,13 +98,15 @@ test("el módulo activo retoma el borrador y los integradores no duplican filas"
   await expect(page.getByRole("link", { name: "Retomar: Calcula con dos parámetros", exact: true })).toHaveAttribute("href", exerciseHref("logica-dos-parametros", "python"));
   await expect(page.locator(".activity-journal")).toContainText("Aquí aparecerán tus ejecuciones");
   await mkdir(".local/screenshots/pulido", { recursive: true });
-  for (const theme of ["light", "dark"] as const) for (const width of [390, 1440]) {
+  for (const theme of ["light", "dark"] as const) for (const width of [390, 768, 1024, 1199, 1440]) {
+    await page.evaluate(value => localStorage.setItem("theme", value), theme);
     await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
     await page.setViewportSize({ width, height: 900 });
     for (const [name, url] of [["progreso", "/progreso?lenguaje=python"], ["ruta", "/rutas/desde-cero?lenguaje=python"], ["editor", exerciseHref("logica-dos-parametros", "python", "desde-cero")], ["ejercicios", "/ejercicios?lenguaje=python"]]) {
       await page.goto(url);
       if (url.includes("/ejercicios/") && width >= 1200) await page.locator(".monaco-editor").first().waitFor({ state: "visible" });
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await expect(page.locator("html")).toHaveClass(new RegExp(theme));
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({ path: `.local/screenshots/pulido/${name}-${theme}-${width}.png`, fullPage: true, animations: "disabled" });
     }

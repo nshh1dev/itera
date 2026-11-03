@@ -258,6 +258,59 @@ recuentos y huellas originales cuando se verifique conservación integral. En el
 lote del 3 de noviembre se usó la base nativa con datos temporales, no una copia
 integral ni una comparación de todas las tablas. No detener servicios ajenos.
 
+## Matriz visual y entrada táctil Python
+
+La comprobación posterior amplía `ux-polish.spec.ts` a **390, 768, 1024,
+1199 y 1440 px**, altura 900, claro/oscuro y movimiento reducido. Recorre
+Progreso con borrador sin intentos, Desde cero con módulo activo, enunciado
+Python y catálogo: **40 capturas**, sin desbordamiento horizontal de página.
+Se fija la preferencia en localStorage antes de navegar y se comprueba la clase
+real del tema; no basta con emular `prefers-color-scheme`. No se acumulan scripts
+de inicialización de temas cuyo orden de ejecución sería indeterminado.
+
+Se inspeccionaron directamente ocho composiciones locales de esas capturas
+(una por superficie/tema, cinco anchos ordenados de menor a mayor), más los
+originales `editor-light-1440`, `editor-dark-1199`, `progreso-dark-1440` y
+`ruta-light-1024` en `.local/screenshots/pulido/`. Las composiciones
+`revision-*.png` reducen cada imagen a 300 px: sirven para comparar jerarquía y
+reflujo, no para certificar legibilidad de todo el texto a tamaño nativo.
+No se observaron solapamientos ni controles fuera de página en esta muestra.
+Se mantienen reto/condiciones/ejemplos antes de la teoría cerrada y la
+separación tonal existente. A 1199 se conserva el panel de pestañas; a 1440,
+Monaco y resultados mantienen su espacio propio. Las descripciones truncadas
+en filas móviles no impiden identificar título, estado y acción Continuar.
+
+`help-motion.spec.ts` añade dos contextos Chromium con `hasTouch: true`,
+390 × 844, tema explícito y movimiento reducido. Con `tap()` abre/cierra teoría,
+revela una pista, consulta/cierra solución y vuelve al editor sencillo sin perder
+el código. Teoría, acceso a solución y cierre del diálogo miden al menos
+44 × 44 CSS px; el foco vuelve al acceso a solución. Se revisaron directamente
+`python-touch-light.png` y `python-touch-dark.png`: diálogo contenido dentro de
+la pantalla, cierre disponible y explicación con desplazamiento interno. Es
+entrada táctil emulada, no una prueba en teléfono físico ni auditoría de todos
+los objetivos táctiles. Se reutiliza la cobertura anterior de teclado y zoom
+real al 200 %, sin volver a atribuirla a estas pruebas.
+
+Los dos archivos completos aprobaron **12/12**, sin omisiones, con la app
+compilada (`ITERA_E2E_PRODUCTION=1`). Se reutilizó el build anterior porque no
+cambió producto ni catálogo; lint y tipos aprobados. La primera ejecución
+aprobó diez casos y agotó dos nuevos: intentaban consultar `boundingBox()` de
+controles exteriores mientras el diálogo los dejaba inertes. Las mediciones
+se movieron antes de abrirlo; no se cambió el producto ni se suprimieron las
+aserciones. Dos repeticiones completas aprobaron, la última también con la
+preferencia de tema sin scripts acumulados. El aviso previo de Better Auth
+sobre IP no se silenció ni se trató como fallo de producto.
+
+Al terminar quedaron cero cuentas `help-motion-` y `pulido-`; se detuvieron
+Next y PostgreSQL privado conservando datos. No se inició Piston ni se
+preparó/activó contenido. Los recuentos capturados (136 publicados; rutas
+28/36/36/36) corresponden a la instalación anterior, no a las 224 fuentes:
+las nueve discrepancias de onboarding siguen abiertas. Esta muestra amplía
+F, pero no cierra su revisión global: faltan estados/superficies restantes,
+incluidos repaso/cierre de ruta y configuración en la matriz integrada. No
+acredita conservación integral de la base, lectores de pantalla, contraste
+medido ni pruebas físicas.
+
 ## Interpretar fallos y límites
 
 - No sustituir las expectativas de conservación por recargas que descarten código.
