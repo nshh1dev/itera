@@ -4,11 +4,12 @@ import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { chromium, test, expect, type Page, type Worker } from "@playwright/test";
-import { PrismaClient } from "../../src/generated/prisma/client";
+import { PrismaClient, Prisma } from "../../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { modulesForPath } from "../../src/lib/learning-modules";
 import { openSimpleEditor } from "../workspace";
 import { postAuth } from "./auth-request";
+import { pythonCatalog } from "../../prisma/python-content";
 
 const baseURL = "http://127.0.0.1:3000";
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
@@ -175,6 +176,121 @@ for (const theme of ["light", "dark"] as const) {
           await db.auditLog.deleteMany({ where: { user: { email } } });
           await db.user.deleteMany({ where: { email } });
         } finally { await rm(profile, { recursive: true, force: true }); }
+      }
+    }
+  });
+
+  test(`encabezados y ayudas Python con zoom real al 200 %: ${theme}`, async () => {
+    test.setTimeout(180000);
+    const tempRoot = process.platform === "win32" && process.env.LOCALAPPDATA
+      ? join(process.env.LOCALAPPDATA, "Temp", "opencode") : tmpdir();
+    await mkdir(tempRoot, { recursive: true });
+    await mkdir(".local/screenshots", { recursive: true });
+    const profile = await mkdtemp(join(tempRoot, "itera-python-zoom-"));
+    const slug = `python-zoom-${randomUUID()}`;
+    const email = `${slug}@example.test`;
+    const extension = resolve("tests/fixtures/browser-zoom");
+    const context = await chromium.launchPersistentContext(profile, {
+      channel: "chromium", headless: true, baseURL,
+      viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1,
+      colorScheme: theme, reducedMotion: "reduce",
+      args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`],
+    });
+    try {
+      // Texto sintético de presentación: prueba opciones que no se deben insertar
+      // en contenido del propietario para hacerlas aparecer en el navegador.
+      const { variants, ...version } = pythonCatalog.find(entry => entry.slug === "logica-dos-parametros")!.content;
+      const statement = "Antes de resolver\nConsulta `data` sin interpretar <script>window.editorialInjected = true</script>.\n\nEntrada y resultado\nDevuelve `data['a'] + data['b']`. Conserva literales las marcas ``dobles`` y `incompleta.";
+      const json = (value: unknown) => value === null ? Prisma.JsonNull : value as Prisma.InputJsonValue;
+      await db.exercise.create({ data: { slug, category: "Prueba de presentación", order: 20000,
+        versions: { create: { ...version, statement, prerequisiteSlugs: [], published: true,
+          variants: { create: variants.map(({ tests, ...variant }) => ({ ...variant, statement,
+            tests: { create: tests.map(fixture => ({ ...fixture, input: json(fixture.input), expected: json(fixture.expected) })) },
+          })) } } },
+      } });
+      const worker = context.serviceWorkers()[0] ?? await context.waitForEvent("serviceworker");
+      const page = context.pages()[0];
+      const errors: string[] = [];
+      page.on("pageerror", error => errors.push(error.message));
+      await page.addInitScript(value => localStorage.setItem("theme", value), theme);
+      const checkStatement = async () => {
+        const statementPanel = page.locator("#exercise-statement");
+        for (const name of ["Antes de resolver", "Entrada y resultado"]) await expect(statementPanel.getByRole("heading", { name, exact: true })).toBeVisible();
+        await expect(statementPanel.locator("code")).toHaveText(["data", "data['a'] + data['b']"]);
+        await expect(statementPanel).toContainText("<script>window.editorialInjected = true</script>");
+        await expect(statementPanel).toContainText("``dobles`` y `incompleta.");
+        await expect(statementPanel.locator("script")).toHaveCount(0);
+        expect(await page.evaluate(() => "editorialInjected" in window)).toBe(false);
+        await expect(page.locator("html")).toHaveClass(new RegExp(theme));
+        await fits(page, `encabezados Python ${theme}`);
+      };
+      for (const width of [390, 768, 1024, 1199, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(`/ejercicios/${slug}?lenguaje=python`);
+        await checkStatement();
+        await capture(page, `.local/screenshots/python-headings-${theme}-${width}.png`);
+      }
+      const signup = await postAuth(context.request, "/api/auth/sign-up/email", { email, name: "Prueba de ayudas ampliadas", password: "Itera-python-zoom-27643" });
+      expect(signup.ok(), await signup.text()).toBe(true);
+      const user = await db.user.findUniqueOrThrow({ where: { email } });
+      const variant = await db.exerciseVariant.findFirstOrThrow({ where: { language: "python", version: { published: true, exercise: { slug: "logica-dos-parametros" } } }, orderBy: { version: { number: "desc" } } });
+      await db.submission.create({ data: { userId: user.id, variantId: variant.id, mode: "examples", status: "FAILED", code: "# prueba temporal", idempotencyKey: email, passedCount: 0, totalCount: 2 } });
+      for (const width of [1440, 780, 640]) {
+        await setZoom(worker, page, width);
+        await page.goto(`/ejercicios/${slug}?lenguaje=python`);
+        await checkStatement();
+        await capture(page, `.local/screenshots/python-headings-zoom-${theme}-${width}.png`);
+        // El ejercicio publicado aporta contexto modular real, sin modificarlo.
+        await page.goto("/ejercicios/logica-dos-parametros?lenguaje=python&ruta=desde-cero");
+        await page.getByRole("button", { name: "Código", exact: true }).click();
+        await openSimpleEditor(page);
+        const editor = page.getByRole("textbox", { name: "Editor sencillo de Python" });
+        const code = "def solve(data):\n    return data['a'] + data['b']\n";
+        await editor.fill(code);
+        await page.getByRole("button", { name: "Enunciado", exact: true }).click();
+        const help = page.locator(".workspace-reference");
+        const theory = help.getByRole("button", { name: "Teoría y objetivos", exact: true });
+        await expect(theory).toHaveAttribute("aria-expanded", "false");
+        await theory.focus(); await theory.press("Space");
+        const moduleTheory = help.getByRole("region", { name: "Teoría y ejemplo", exact: true });
+        await expect(moduleTheory).toBeVisible();
+        await expect(moduleTheory.locator("pre")).not.toBeEmpty();
+        await fits(page, `teoría Python ${theme} ${width / 2}px`);
+        await moduleTheory.scrollIntoViewIfNeeded();
+        await capture(page, `.local/screenshots/python-theory-zoom-${theme}-${width}.png`);
+        await theory.press("Space");
+        await expect(theory).toBeFocused();
+        const hints = page.getByRole("region", { name: "Pistas", exact: true });
+        await hints.getByRole("button", { name: "Mostrar una pista", exact: true }).click();
+        await expect(hints.getByRole("heading", { name: "Pista 1", exact: true })).toBeVisible();
+        const solution = page.getByRole("button", { name: "Ver solución explicada", exact: true });
+        await solution.focus(); await solution.press("Enter");
+        const dialog = page.getByRole("dialog", { name: "Solución explicada", exact: true });
+        await expect(dialog.locator("pre")).toBeVisible();
+        await expect(dialog).toContainText("Leerla no marca el ejercicio como resuelto.");
+        expect(await dialog.evaluate(node => node.scrollWidth <= node.clientWidth)).toBe(true);
+        await capture(page, `.local/screenshots/python-solution-zoom-${theme}-${width}.png`);
+        await dialog.locator("pre").scrollIntoViewIfNeeded();
+        await expect(dialog.locator("pre")).toBeInViewport();
+        await capture(page, `.local/screenshots/python-solution-code-zoom-${theme}-${width}.png`);
+        await page.keyboard.press("Escape");
+        await expect(dialog).toHaveCount(0);
+        await expect(solution).toBeFocused();
+        await expect(hints.getByRole("heading", { name: "Pista 1", exact: true })).toBeVisible();
+        await page.getByRole("button", { name: "Código", exact: true }).click();
+        await expect(editor).toHaveValue(code);
+        await fits(page, `editor Python ${theme} ${width / 2}px`);
+      }
+      expect(await db.progress.count({ where: { userId: user.id } })).toBe(0);
+      expect(errors).toEqual([]);
+    } finally {
+      try { await context.close(); }
+      finally {
+        try { await db.user.deleteMany({ where: { email } }); }
+        finally {
+          try { await db.exercise.deleteMany({ where: { slug } }); }
+          finally { await rm(profile, { recursive: true, force: true }); }
+        }
       }
     }
   });

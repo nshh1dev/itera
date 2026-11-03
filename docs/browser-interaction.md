@@ -49,12 +49,62 @@ Cobertura ejecutada el 3 de noviembre de 2026:
 Con autorización, aprobaron los 39 casos de `controls`, `help-motion`,
 `initial-batch`, `learning-help`, `plan-impeccable`, `python-presentation` y
 `browser-zoom` usando Next dev y PostgreSQL nativo. El zoom real global al 200 %
-aprobó en ambos temas; ese recorrido usa el editor TypeScript, no acredita por sí
-solo todas las ayudas Python ampliadas. También aprobaron los cinco casos de
+aprobó en ambos temas; ese recorrido usa el editor TypeScript. La ampliación
+Python posterior se documenta abajo, sin atribuirle toda la revisión visual.
+También aprobaron los cinco casos de
 `educational-validation` contra Piston real, separados de las pruebas con destino
 HTTP 2001. No es la suite E2E completa ni una certificación de accesibilidad.
 
 ## Enunciados y JSON legible en Python
+
+### Encabezados y ayudas Python ampliadas: comprobación posterior
+
+El 3 de noviembre de 2026 se amplió `browser-zoom.spec.ts` con dos recorridos
+Python, uno por tema. El archivo completo terminó con **4/4 pruebas aprobadas**
+sin omisiones en Next dev/Chromium, unos 96 segundos en la ejecución final.
+No usa Piston real: no evalúa programas y el servidor conserva su destino HTTP
+2001. No se inició Piston ni WSL para esta comprobación.
+
+- Una identidad editorial temporal, derivada de la fuente Python actual, permite
+  mostrar «Antes de resolver»/«Entrada y resultado» y marcas de código sin cambiar
+  identidades del propietario. Comprueba encabezados, dos elementos `code`, HTML
+  literal sin ejecución y marcas dobles/incompletas conservadas en **390, 768,
+  1024, 1199 y 1440 px**, ambos temas, sin desbordamiento horizontal de página.
+- Con la extensión local y perfil desechable comprueba zoom real **2**, DPR **2**
+  y anchura útil de **720, 390 y 320 px** (ventanas 1440/780/640), sin cambiar el
+  tamaño raíz. En cada ancho vuelve a comprobar los encabezados y abre las ayudas
+  del ejercicio publicado `logica-dos-parametros`: teoría cerrada inicialmente,
+  apertura/cierre con espacio, ejemplo modular, pista, solución con Enter,
+  desplazamiento hasta el código, Escape y retorno del foco. Conserva código del
+  editor sencillo al alternar paneles y deja progreso en cero.
+- El ejercicio publicado verifica la presentación del contenido **instalado**,
+  no la activación de las revisiones actuales. La cuenta y el intento temporal
+  permiten consultar la solución sin cambiar progreso ni envíos del propietario.
+  No modifica textos, contratos ni revisiones activas del propietario.
+
+Revisión visual directa de siete capturas: encabezados claro 390/1024 y oscuro
+ampliado 780; teoría oscuro ampliado 640 y claro ampliado 1440; solución claro
+ampliado 640 y su código oscuro ampliado 640. Se ven reflujo, jerarquía y foco;
+el código largo conserva desplazamiento interno, no se promete ajuste de línea.
+No equivale a inspeccionar todas las capturas, accesibilidad completa, lector de
+pantalla, zoom en otros navegadores o toda la interfaz afectada por el plan.
+Las capturas locales `python-headings-*`, `python-theory-zoom-*` y
+`python-solution*-zoom-*` no forman parte de la entrega.
+
+La primera ejecución completó los cuatro casos, pero no cerró el comando y
+agotó 20 minutos: **no se contó como suite aprobada**. La repetición inmediata
+falló al arrancar por conexión PostgreSQL interrumpida. Tras detener y arrancar
+explícitamente solo el clúster privado, el archivo completo aprobó dos veces;
+la última incluye la captura del código de solución desplazado. No se cambió
+producto ni configuración para ocultar esos fallos. Los avisos de Motion sobre
+movimiento reducido no impidieron las comprobaciones. Logs locales en
+`C:\Users\Admin\AppData\Local\Temp\opencode\python-zoom-browser*.log`.
+
+Limpieza verificada en base: cero ejercicios/cuentas con el prefijo temporal
+`python-zoom-`. Contextos y perfiles desechables cerrados/eliminados; Next y
+PostgreSQL apagados al terminar, sin tocar el servicio PostgreSQL de Windows.
+Lint y tipos aprobados; se reutilizan pruebas unitarias/build anteriores porque
+solo cambian pruebas E2E y documentación. No hubo preparación ni activación.
 
 El taller activa estas opciones de presentación solo para Python:
 
