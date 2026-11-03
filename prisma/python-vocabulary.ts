@@ -79,6 +79,11 @@ export const pythonVocabularyRevisions: Record<string, VocabularyRevision> = {
   },
 };
 
+// Último bloque: el orden de permutaciones compara números, no sus textos.
+export const pythonAdvancedCopyRevisions: Record<string, VocabularyRevision> = {
+  "logica-permutaciones": { description: "Genera todas las permutaciones de una lista de enteros distintos en orden lexicográfico por valores numéricos." },
+};
+
 // Sexto bloque: precisión de resultados y vocabulario de clasificación Python.
 export const pythonAlgorithmCopyRevisions: Record<string, VocabularyRevision> = {
   "logica-pareja": { description: "Encuentra dos posiciones cuyos valores sumen un objetivo, aprovechando que la lista está ordenada." },

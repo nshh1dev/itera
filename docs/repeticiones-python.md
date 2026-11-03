@@ -14,9 +14,10 @@ literales. Por eso no se vacían metadatos solo para evitar esa duplicación.
 Las condiciones necesarias y los textos exactos de PROGRAM permanecen visibles
 en el enunciado, aunque se acorte la descripción del catálogo.
 
-El inventario cubre **192/224 actividades**: 63 con ajustes y 129 conservadas.
-Quedan **32 actividades** para el contraste contextual entre superficies.
-Las revisiones individuales anteriores no equivalen a cerrar este inventario.
+El inventario cubre **224/224 actividades**: 64 con ajustes y 160 conservadas.
+Se completa este contraste de resúmenes, objetivos, enunciados y pistas. No
+equivale a cerrar toda la coherencia terminológica, la presentación de las ayudas
+ni la validación integrada del plan.
 
 ## Primer bloque: impresión, variables, entrada y primeros retornos
 
@@ -259,6 +260,46 @@ la tarea observable y la técnica orientativa suelen cumplir funciones distintas
 | `logica-preorden` | Conservar: raíz antes de hijos y orden izquierda/derecha son obligaciones distintas; mantener valores repetidos. |
 | `logica-niveles` | Conservar: cola, orden de descubrimiento y recorrido por niveles se complementan; mantener izquierda antes de derecha. |
 
+## Séptimo bloque: árboles, optimización, grafos y planificación
+
+Las últimas **32 actividades** completan el inventario. Se aclara el orden
+numérico en la descripción de permutaciones y se conservan las otras 31.
+
+| Actividad | Decisión y motivo |
+| --- | --- |
+| `logica-arbol-busqueda` | Conservar: restricciones heredadas y violaciones profundas distinguen propiedad global de comparación solo con hijos. |
+| `logica-ancestro` | Conservar: coincidencias por ramas, nodo como ancestro de sí mismo y objetivos iguales necesitan explicación; no ordenar valores como si fuera árbol de búsqueda. |
+| `logica-monticulo-inserta` | Conservar: ascendencia y parada en igualdad fijan una representación concreta, no cualquier montículo válido. |
+| `logica-monticulo-extrae` | Conservar: raíz retirada, último valor y descenso por hijo menor son pasos distintos; mantener desempate izquierdo y vacío. |
+| `logica-prioridad` | Conservar: prioridad numérica y desempate por id difieren del orden de llegada; no comparar como texto. |
+| `logica-k-mayores` | Conservar: candidatos limitados y eliminación del menor orientan la técnica; mantener k cero y repeticiones. |
+| `logica-actividades` | Conservar: final más temprano y compatibilidad justifican elección local; compartir un extremo no es solaparse. |
+| `logica-combina-archivos` | Conservar: tamaño combinado vuelve al problema y coste se acumula; no confundir tamaños abstractos con archivos reales. |
+| `logica-potencia` | Conservar: mitad, cuadrado y factor impar son pasos distintos; mantener entero y exponente cero incluso con base cero. |
+| `logica-mezcla` | Conservar: caso mínimo, división y combinación aportan progresión; los casos no certifican técnica ni complejidad. |
+| `logica-subconjuntos` | Conservar: copias independientes y orden de duplicación forman parte del contrato; no agrupar por tamaño ni retirar vacío. |
+| `logica-permutaciones` | Aclarar descripción: lista de enteros y orden lexicográfico por valores numéricos, no alfabético. Mantener contrato, ejemplo 2 frente a 10, vacío y pistas de restauración. |
+| `logica-combinaciones` | Conservar: índice siguiente evita reutilizar; ordenar candidatos y restaurar elección tienen funciones distintas. Mantener objetivo cero y orden numérico. |
+| `logica-reinas` | Conservar: fila, columna y ambas diagonales necesitan marcas separadas y restauración; contar simetrías y no devolver tableros. |
+| `logica-fibonacci` | Conservar: subproblema repetido, consulta previa y guardado son responsabilidades distintas; no certificar técnica por el resultado. |
+| `logica-escalera` | Conservar: estado, transición y dos acumulados difieren; mantener orden de pasos y una forma para cero escalones. |
+| `logica-caminos-obstaculos` | Conservar: aporte superior/izquierdo y puesta a cero en obstáculo son conceptos distintos; mantener inicio/meta y una celda libre. |
+| `logica-monedas` | Conservar: mínimo por cantidad difiere de contar combinaciones; mantener repetición ilimitada, imposible -1 y cero sin monedas. |
+| `logica-mochila` | Conservar: estado por capacidad y recorrido descendente evitan reutilización; mantener objetos de peso cero una vez incluso con capacidad cero. |
+| `logica-subsecuencia-comun` | Conservar: emparejar o avanzar requieren estados distintos; una subsecuencia puede saltar caracteres, no es un tramo contiguo. |
+| `logica-adyacencia` | Conservar: dos extremos y eliminación de duplicados son tareas distintas; mantener nodos aislados y vecinos ordenados numéricamente. |
+| `logica-alcanzables` | Conservar: marcar evita ciclos y duplicados; incluir inicio aunque esté aislado y no certificar DFS por salida. |
+| `logica-distancias` | Conservar: distancia inicial, descubrimiento y propagación difieren; no devolver orden de visita ni prometer certificación de cola. |
+| `logica-ciclo-dirigido` | Conservar: en curso frente a terminado es la distinción central; mantener lazos, componentes y grafo vacío. |
+| `logica-dependencias` | Conservar: pendientes, disponibilidad y menor nodo en cada paso son obligaciones distintas; incluir recién liberadas y no devolver orden parcial ante ciclo. |
+| `logica-dijkstra` | Conservar: distancia pendiente y relajación difieren; mantener pesos positivos, coste frente a número de aristas y límites de certificación. |
+| `logica-islas` | Conservar: componente iniciada y marcado del grupo difieren; mantener adyacencia sin diagonales y cuadrícula original intacta. |
+| `logica-laberinto` | Conservar: esquina bloqueada, cero inicial y cuatro vecinos son condiciones necesarias; no contar la celda inicial como movimiento. |
+| `logica-capacidad` | Conservar: cotas y prueba intermedia orientan sin adelantar toda la comprobación; mantener orden, paquetes indivisibles y máximo de días, no cantidad obligatoria. |
+| `logica-edicion` | Conservar: prefijos y alternativas de operación tienen funciones distintas; mantener costes unitarios y excluir intercambio como operación única. |
+| `logica-subsecuencia-creciente` | Conservar: estado que termina en cada posición y extensión desde valores menores difieren; mantener desigualdad estricta y vacío. |
+| `logica-planifica-tareas` | Conservar: espera máxima y propagación de fin difieren; no sumar tareas paralelas ni ignorar dependencias con duración cero. |
+
 ## Conservación y límites
 
 En el primer bloque cambian **seis descripciones y la tercera pista de dos actividades** en la
@@ -315,8 +356,21 @@ actividades, todos los enunciados, pistas, 433 ejemplos, código y contratos.
 `tests/python-algorithm-copy-baseline.ts` reconstruye íntegra la entrega
 `e7cc7b…` y se encadena a las anteriores sin sustituir expectativas. El control
 histórico de vocabulario restaura la descripción anterior de conteo de nodos.
-Huella vigente `6614bd…`, sin preparar ni activar la base.
+Huella de ese bloque `6614bd…`.
+
+En el séptimo cambia **una descripción**. La huella previa excluye únicamente
+ese campo y protege las otras 31 actividades, objetivos, pistas, enunciados,
+433 ejemplos, código, evaluación y contratos. `tests/python-advanced-copy.test.ts`
+fija el último bloque y el orden numérico; `tests/python-advanced-copy-baseline.ts`
+reconstruye íntegra la entrega `6614bd…` y se encadena a las anteriores sin
+sustituir expectativas. Huella vigente `499552…`, sin preparar ni activar la base.
+
+Balance del inventario: 52 descripciones separadas de sus objetivos, tres
+descripciones corregidas por precisión/errata, seis terceras pistas concretadas,
+dos objetivos y dos metas adaptados a vocabulario Python. Son 65 campos de 64
+actividades; las otras 160 se conservan tras contraste individual.
 
 Las pruebas de texto no acreditan calidad pedagógica completa, revisión visual,
-accesibilidad, ejecución real en Piston ni rendimiento. El resto del inventario,
-el vocabulario contextual y las fases D2/F siguen abiertos. No se elimina el plan.
+accesibilidad, ejecución real en Piston ni rendimiento. Se completa este
+inventario, no el contraste final de terminología en todas las superficies,
+la jerarquía de ayudas ni las fases D2/F. No se elimina el plan.

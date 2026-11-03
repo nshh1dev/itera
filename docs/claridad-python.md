@@ -1790,9 +1790,12 @@ Van **160/224 actividades**, con 60 ajustadas y 100 conservadas. Decisiones
 individuales de cada bloque en el inventario. El sexto añade 32 revisadas:
 dos descripciones, un objetivo y una meta ajustados en tres actividades; 29
 conservadas. Van **192/224 actividades**, con 63 ajustadas y 129 conservadas.
-Huella vigente `6614bd…` y límites en
-[repeticiones-python.md](repeticiones-python.md). Quedan 32 actividades para este
-contraste; no se cierra E, D2 ni F.
+El séptimo completa las últimas 32: una descripción ajustada para distinguir
+orden numérico de alfabético en permutaciones y 31 actividades conservadas.
+Inventario completo de **224/224 actividades**, con 64 ajustadas y 160
+conservadas; huella vigente `499552…`. Decisiones y límites en
+[repeticiones-python.md](repeticiones-python.md). Se cierra este contraste,
+no la coherencia terminológica final entre todas las superficies ni E, D2 o F.
 
 ## Pendientes y límites
 

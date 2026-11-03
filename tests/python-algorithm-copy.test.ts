@@ -5,6 +5,7 @@ import { pythonCatalog } from "../prisma/python-content";
 import { pythonAlgorithmCopyRevisions } from "../prisma/python-vocabulary";
 import { pythonReleaseFingerprint } from "../prisma/python-releases";
 import { beforePythonAlgorithmCopy, previousAlgorithmCopy } from "./python-algorithm-copy-baseline";
+import { beforePythonAdvancedCopy } from "./python-advanced-copy-baseline";
 
 const reviewed = [
   "logica-insercion-posicion", "logica-ordena-insercion", "logica-ordena-registros", "logica-combina",
@@ -63,7 +64,7 @@ test("los textos distinguen diccionario de frecuencias, árbol vacío y contrato
 });
 
 test("solo cambian dos descripciones, un objetivo y una meta Python con historia íntegra", () => {
-  const payload = pythonCatalog.map(entry => ({ ...entry, content: Object.fromEntries(
+  const payload = pythonCatalog.map(entry => ({ ...entry, content: beforePythonAdvancedCopy(entry.slug, entry.content) })).map(entry => ({ ...entry, content: Object.fromEntries(
     Object.entries(entry.content).filter(([field]) => !Object.keys(pythonAlgorithmCopyRevisions[entry.slug] ?? {}).includes(field)),
   ) }));
   // Calculada antes de editar: protege las otras 29 actividades del bloque,

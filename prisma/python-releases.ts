@@ -120,4 +120,6 @@ export const knownPythonReleases: readonly string[] = [
   "e7cc7b332896cf48f1ae0eebe7c827251a0ad6a623861f5feb1305352f3bc109",
   // Sexto contraste: precisión de conteo de nodos y vocabulario algorítmico.
   "6614bdbbb0050fb619a218818fc5cc687becf0f5732bef5a478f7a2f469040bb",
+  // Último contraste entre superficies: orden numérico de permutaciones.
+  "499552ede7872652cf4ec311d10bc19bafe2b06bbc582fa86551463705560c80",
 ];

@@ -1,4 +1,5 @@
 import type { VersionContent } from "../prisma/editorial-revision";
+import { beforePythonAdvancedCopy } from "./python-advanced-copy-baseline";
 
 export const previousAlgorithmCopy = {
   "logica-pareja": { description: "Encuentra dos posiciones cuyo valores sumen un objetivo, aprovechando que la lista está ordenada." },
@@ -10,6 +11,7 @@ export const previousAlgorithmCopy = {
 } satisfies Record<string, Partial<VersionContent>>;
 
 export function beforePythonAlgorithmCopy(slug: string, content: VersionContent): VersionContent {
+  content = beforePythonAdvancedCopy(slug, content);
   const previous = previousAlgorithmCopy[slug as keyof typeof previousAlgorithmCopy];
   return previous ? { ...content, ...previous } : content;
 }
