@@ -3,14 +3,29 @@ import { randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
 import { hashPassword } from "better-auth/crypto";
 import { test, expect, type Page } from "@playwright/test";
-import { PrismaClient } from "../../src/generated/prisma/client";
+import { PrismaClient, Prisma } from "../../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { languages, languageNames } from "../../src/lib/types";
 import { postAuth } from "../e2e/auth-request";
 import { openSimpleEditor } from "../workspace";
+import { logicExercises } from "../../prisma/logic-content";
+import { seedVersionContent } from "../../prisma/editorial-revision";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 const ids: string[] = [];
+const changeSlug = `educacion-cambio-${randomUUID()}`;
+test.beforeAll(async () => {
+  // La regla conceptual de las fuentes puede no estar activada en la base local.
+  // Ensayarla en una copia temporal no modifica el catálogo del propietario.
+  const { variants, ...version } = seedVersionContent(logicExercises.find(exercise => exercise.slug === "logica-cambio")!);
+  const json = (value: unknown) => value === null ? Prisma.JsonNull : value as Prisma.InputJsonValue;
+  await db.exercise.create({ data: {
+    slug: changeSlug, category: "Prueba educativa", order: 20001,
+    versions: { create: { ...version, prerequisiteSlugs: [], published: true, variants: { create: variants.map(({ tests, ...variant }) => ({
+      ...variant, tests: { create: tests.map(fixture => ({ ...fixture, input: json(fixture.input), expected: json(fixture.expected) })) },
+    })) } } },
+  } });
+});
 async function account(page: Page) {
   const id = randomUUID(), email = `educacion-${id}@example.test`, password = "Itera-educacion-12345";
   ids.push(id);
@@ -20,17 +35,20 @@ async function account(page: Page) {
   return id;
 }
 test.afterEach(async () => { await db.user.deleteMany({ where: { id: { in: ids } } }); ids.length = 0; });
-test.afterAll(async () => { await db.$disconnect(); });
+test.afterAll(async () => {
+  await db.exercise.deleteMany({ where: { slug: changeSlug } });
+  await db.$disconnect();
+});
 
 for (const language of languages) test(`cambio: ejemplos no completan y una respuesta fija no aprueba en ${language}`, async ({ page }) => {
   const userId = await account(page);
-  await page.goto(`/ejercicios/logica-cambio?lenguaje=${language}`);
+  await page.goto(`/ejercicios/${changeSlug}?lenguaje=${language}`);
   await openSimpleEditor(page);
   const editor = page.getByRole("textbox", { name: `Editor sencillo de ${languageNames[language]}` });
   const fixed = language === "python" ? "print(7)" : "console.log(7);";
   await editor.fill(fixed);
   await expect(page.getByRole("button", { name: "Ejecutar ejemplos", exact: true })).toHaveCount(0);
-  const variant = await db.exerciseVariant.findFirstOrThrow({ where: { language, version: { published: true, exercise: { slug: "logica-cambio" } } }, orderBy: { version: { number: "desc" } } });
+  const variant = await db.exerciseVariant.findFirstOrThrow({ where: { language, version: { published: true, exercise: { slug: changeSlug } } }, orderBy: { version: { number: "desc" } } });
   const examples = await page.request.post("/api/executions", { headers: { origin: "http://127.0.0.1:3000" }, data: { variantId: variant.id, code: fixed, mode: "examples", idempotencyKey: randomUUID() } });
   expect(examples.status()).toBe(202);
   const { id } = await examples.json();

@@ -192,8 +192,9 @@ la petición autenticada independiente de solución y el estado del editor.
 JavaScript/TypeScript mantienen su presentación anterior; no cambia contenido,
 huella de catálogo, contratos, AST, ejecución, progreso ni base. Se reutiliza
 `Disclosure` y no se modifican paleta, breakpoints o preferencias. Render inicial
-cubierto por pruebas; interacción/E2E y revisión visual pendientes de autorización.
-Alcance y pruebas preparadas: [browser-interaction.md](browser-interaction.md#teoría-opcional-en-el-taller-python).
+cubierto por pruebas; interacción por teclado, pistas/editor conservados y retorno
+de foco comprobados en navegador con autorización. Alcance y límites de los 39
+E2E y cinco recorridos educativos reales aprobados: [browser-interaction.md](browser-interaction.md#teoría-opcional-en-el-taller-python).
 
 El taller Python también presenta con sangrado los diccionarios no vacíos y las
 listas anidadas de los ejemplos. Valores simples y listas planas siguen compactos;
@@ -204,7 +205,10 @@ comilla invertida a cada lado en la misma línea se presentan como código escap
 marcas vacías, incompletas, dobles/triples o multilínea quedan literales, sin
 interpretar Markdown general. Son opciones activadas solo para
 Python: no modifican catálogo, huella, evaluación ni otros lenguajes. Las pruebas
-unitarias cubren conservación y escapes; navegador y revisión visual pendientes.
+unitarias cubren conservación y escapes; los 13 casos de navegador aprobaron en
+cinco anchos y ambos temas con copias temporales, sin activar el catálogo. Se
+mantienen pestañas a 1024–1199 px tras medir su espacio; revisión visual parcial,
+no certificación completa de todas las superficies.
 Detalles: [browser-interaction.md](browser-interaction.md#enunciados-y-json-legible-en-python).
 
 Los avisos de finalización Python se concentran en Progreso: completados no
@@ -212,8 +216,8 @@ equivalen a dominio y solo superar la comprobación de solución concede progres
 una vez por ejercicio/lenguaje. Rutas conserva el resumen y repaso sin repetir
 la advertencia; el cierre enlaza a Progreso. El diálogo de solución conserva el
 aviso breve de su descripción, sin duplicarlo al pie. JavaScript/TypeScript
-mantienen sus textos. No cambian consultas ni finalización; revisión en navegador
-pendiente. Alcance: [browser-interaction.md](browser-interaction.md#avisos-de-finalización-python).
+mantienen sus textos. No cambian consultas ni finalización; el aviso único y la
+consulta sin progreso aprobaron en navegador. Alcance: [browser-interaction.md](browser-interaction.md#avisos-de-finalización-python).
 
 ## Destino del documento de referencia
 

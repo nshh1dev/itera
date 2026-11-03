@@ -476,11 +476,11 @@ Archivos principales: `prisma/python-content.ts`, `prisma/python-lessons.ts`, `p
 
 - [ ] Mantener paleta, componentes, fuentes locales, Monaco y preferencias existentes. Mejorar jerarquía y densidad antes que añadir superficies o tarjetas.
 - [ ] Priorizar reto y ejemplos en el panel de enunciado. Situar la teoría contextual bajo una sección desplegable claramente identificada; mantener a la vista cualquier instrucción imprescindible para comenzar.
-- [ ] Facilitar el acceso a pistas y solución sin recorrer primero todos los bloques secundarios; conservar revelación progresiva y petición autenticada independiente de la solución.
+- [x] Facilitar el acceso a pistas y solución sin recorrer primero todos los bloques secundarios; conservar revelación progresiva y petición autenticada independiente de la solución. Comprobado en navegador con teclado, conservación de editor/pistas y retorno de foco.
 - [ ] Mejorar `Statement` con encabezados editoriales reconocibles, incluidos «Antes de resolver» y «Entrada y resultado», y presentación segura de identificadores/código cuando el formato lo indique. Implementado solo en Python, incluido código delimitado explícitamente con comillas invertidas simples en una línea; no interpreta HTML/Markdown general ni deduce sintaxis. Marcas vacías, incompletas, dobles/triples y multilínea quedan literales. Pendiente revisión en navegador.
-- [ ] Mostrar JSON anidado con sangrado y saltos de línea; mantener valores simples compactos y la representación exacta de texto PROGRAM. Preservar navegación por teclado y lectura en pantallas estrechas.
-- [ ] Revisar 1024–1199 px: medir ancho útil de ambos paneles y decidir si puede ofrecerse vista dividida sin perjudicar lectura/editor. Mantener pestañas donde no quepan; no cambiar el breakpoint sin evidencia visual.
-- [ ] Consolidar mensajes sobre finalización y dominio: una explicación estable en Progreso y avisos breves solo cuando importen. Eliminar repeticiones dentro del diálogo de solución.
+- [x] Mostrar JSON anidado con sangrado y saltos de línea; mantener valores simples compactos y la representación exacta de texto PROGRAM. Trece casos de navegador aprobados en cinco anchos/ambos temas, regresión compacta de otros lenguajes y texto PROGRAM; revisión visual parcial documentada.
+- [x] Revisar 1024–1199 px: medidos 960/1135 px por panel en pestañas con navegación contraída, ambos temas y Monaco visible. Se mantienen pestañas y breakpoint de 1200 px: no hay evidencia suficiente para reducir el espacio útil dividiéndolo. No se afirma que otra distribución sea imposible.
+- [x] Consolidar mensajes sobre finalización y dominio: explicación estable en Progreso y avisos breves; diálogo sin duplicados comprobado en navegador, sin progreso por consulta. Otros lenguajes conservados.
 - [ ] Revisar claro/oscuro, foco, teclado, ampliación del texto/zoom real, movimiento reducido, diálogos y controles táctiles de las pantallas modificadas.
 
 Archivos principales: `src/components/practice/{workspace,statement,examples,learning-guide,module-lesson,exercise-notes}.tsx`, `src/components/path-review.tsx`, páginas de Progreso/Rutas y `src/app/globals.css`.
@@ -512,6 +512,8 @@ Archivos principales: `src/components/practice/{workspace,statement,examples,lea
 - [ ] Reutilizar resultados válidos cuando el código comprobado no cambie. No añadir pruebas para cada ajuste cosmético reversible ni repetir toda la suite por cambios solo documentales.
 
 ### Con entorno autorizado
+
+Estado comprobado el 3 de noviembre de 2026: 39 E2E de siete archivos y cinco recorridos educativos con Piston real aprobados; además, 12 pruebas del adaptador real sin omisiones. Las copias temporales evitan depender de revisiones aún no activadas en la base nativa; no se preparó ni activó el catálogo. Mediciones y muestra visual, fallos iniciales de instalación/expectativas obsoletas y límites quedan en [browser-interaction.md](browser-interaction.md). Resto de E2E, revisión visual completa, D2, activación y cierre siguen pendientes; la autorización operativa ya se concedió. Servicios iniciados apagados conservando datos.
 
 - [ ] Probar navegación, registro desde ejercicio, retorno de invitado, bienvenida antigua/nueva, configuración y continuidad de rutas con cuentas temporales.
 - [ ] Ejecutar los archivos E2E afectados completos cuando sean secuencias con estado. Elegir los scripts correspondientes al entorno; el E2E nativo inicia su propio servidor y requiere permiso.
