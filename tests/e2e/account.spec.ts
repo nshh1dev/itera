@@ -99,7 +99,10 @@ test("los enlaces antiguos de cuenta conservan foco, edición pendiente e histor
     await expect(page.getByRole("navigation", { name: "Secciones de configuración" }).getByRole("link", { name: "Mi cuenta", exact: true })).toHaveAttribute("aria-current", "page");
     await page.getByLabel("Nombre", { exact: true }).fill("Edición pendiente");
     await page.getByRole("navigation", { name: "Secciones de configuración" }).getByRole("link", { name: "Aprendizaje", exact: true }).click();
+    await expect(page).toHaveURL(/\/configuracion\?seccion=aprendizaje$/);
+    await expect(page.getByRole("region", { name: "Aprendizaje", exact: true })).toBeVisible();
     await page.goBack();
+    await expect(page).toHaveURL(new RegExp(`/configuracion\\?seccion=${section}$`));
     await expect(page.getByRole("heading", { name: heading, exact: true })).toBeFocused();
     await expect(page.getByLabel("Nombre", { exact: true })).toHaveValue("Edición pendiente");
     await page.goForward();

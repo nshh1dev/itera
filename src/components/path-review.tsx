@@ -9,7 +9,7 @@ export function PathCompletion({ language, count }: { language: Language; count:
   return <section className="surface-panel mt-6 rounded-xl bg-surface p-5 wrap-anywhere" aria-labelledby="path-completion">
     <h2 id="path-completion" className="text-lg font-semibold">Ruta completada en {languageNames[language]}</h2>
     <p className="mt-2 max-w-prose text-sm leading-6 text-muted-foreground">Has completado {count === 1 ? "el ejercicio publicado" : `los ${count} ejercicios publicados`} de esta ruta en {languageNames[language]}.{language !== "python" && " Esto registra tu práctica, no demuestra por sí solo dominio."} El progreso en los otros lenguajes es independiente.</p>
-    {language === "python" && <Link className="text-link mt-3 text-sm" href="/progreso?lenguaje=python">Cómo interpretar tu progreso</Link>}
+    {language === "python" && <Link className="text-link mt-3 mr-4 text-sm" href="/progreso?lenguaje=python">Cómo interpretar tu progreso</Link>}
     <a className="text-link mt-4 text-sm" href="#path-readiness">Repasar lo aprendido<ArrowRight className="size-4" aria-hidden="true" /></a>
   </section>;
 }

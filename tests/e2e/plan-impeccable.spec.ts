@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { mkdir } from "node:fs/promises";
 import { test, expect } from "@playwright/test";
 import { PrismaClient } from "../../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -6,9 +7,10 @@ import { openLearningHelp, openSimpleEditor } from "../workspace";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 const email = `impeccable-${Date.now()}@example.test`;
+const matrixEmail = `python-superficies-${Date.now()}@example.test`;
 
 test.afterAll(async () => {
-  await db.user.deleteMany({ where: { email } });
+  await db.user.deleteMany({ where: { email: { in: [email, matrixEmail] } } });
   await db.$disconnect();
 });
 
@@ -94,4 +96,88 @@ test("una cuenta nueva entiende el progreso y distingue cambios pendientes de pr
   await expect(panel.getByText("Cambios sin guardar", { exact: true })).toBeVisible();
   await page.getByRole("navigation", { name: "Navegación principal" }).getByRole("link", { name: "Progreso", exact: true }).click();
   await expect(page).toHaveURL(/\/progreso$/);
+});
+
+test("configuración, cierre y repaso Python conservan reflujo, teclado y progreso en ambos temas", async ({ page }) => {
+  test.setTimeout(180000);
+  const signup = await page.request.post("/api/auth/sign-up/email", {
+    headers: { origin: "http://127.0.0.1:3000" },
+    data: { email: matrixEmail, password: "Itera-superficies-12345", name: "Revisión de superficies Python" },
+  });
+  expect(signup.ok(), await signup.text()).toBe(true);
+  const user = await db.user.findUniqueOrThrow({ where: { email: matrixEmail } });
+  const path = await db.learningPath.findUniqueOrThrow({ where: { slug: "desde-cero" }, select: { items: { select: { exerciseId: true } } } });
+  expect(path.items.length).toBeGreaterThan(0);
+  // Estado visual simulado solo para esta cuenta: no acredita una evaluación.
+  await db.progress.createMany({ data: path.items.map(item => ({ userId: user.id, exerciseId: item.exerciseId, language: "python", attempts: 1, firstPassedAt: new Date() })) });
+  const snapshot = () => db.progress.findMany({ where: { userId: user.id }, orderBy: { exerciseId: "asc" } });
+  const before = await snapshot();
+  const preferences = await db.userPreference.findUnique({ where: { userId: user.id } });
+  await mkdir(".local/screenshots/python-superficies", { recursive: true });
+  await page.goto("/configuracion");
+  for (const theme of ["light", "dark"] as const) for (const width of [390, 768, 1024, 1199, 1440]) {
+    await page.evaluate(value => localStorage.setItem("theme", value), theme);
+    await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+    await page.setViewportSize({ width, height: 900 });
+    const capture = async (name: string) => {
+      await expect(page.locator("html")).toHaveClass(new RegExp(theme));
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${name}, ${theme}, ${width}`).toBe(true);
+      await page.screenshot({ path: `.local/screenshots/python-superficies/${name}-${theme}-${width}.png`, animations: "disabled" });
+    };
+    for (const [section, title] of [["cuenta", "Mi cuenta"], ["aprendizaje", "Aprendizaje"], ["apariencia", "Apariencia"]]) {
+      await page.goto(`/configuracion?seccion=${section}`);
+      await expect(page.getByRole("region", { name: title, exact: true })).toBeVisible();
+      const navigation = page.getByRole("navigation", { name: "Secciones de configuración" });
+      const link = navigation.getByRole("link", { name: title, exact: true });
+      await expect(link).toHaveAttribute("aria-current", "page");
+      await link.focus();
+      await expect(link).toBeFocused();
+      expect(await link.evaluate(node => getComputedStyle(node).outlineStyle)).not.toBe("none");
+      await capture(section);
+    }
+    await page.goto("/configuracion?seccion=seguridad");
+    const password = page.getByRole("button", { name: "Cambiar contraseña", exact: true });
+    await password.focus();
+    await password.press("Enter");
+    const dialog = page.getByRole("dialog", { name: "Cambiar contraseña", exact: true });
+    await expect(dialog.getByLabel("Contraseña actual")).toBeFocused();
+    await expect(dialog).toHaveCSS("transform", "none");
+    await capture("seguridad");
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+    await expect(password).toBeFocused();
+
+    await page.goto("/rutas/desde-cero?lenguaje=python");
+    const completion = page.getByRole("region", { name: "Ruta completada en Python", exact: true });
+    await expect(completion).toContainText("El progreso en los otros lenguajes es independiente.");
+    await expect(completion.getByRole("link", { name: "Cómo interpretar tu progreso", exact: true })).toHaveAttribute("href", "/progreso?lenguaje=python");
+    await completion.scrollIntoViewIfNeeded();
+    const interpretationBounds = (await completion.getByRole("link", { name: "Cómo interpretar tu progreso", exact: true }).boundingBox())!;
+    const reviewBounds = (await completion.getByRole("link", { name: "Repasar lo aprendido", exact: true }).boundingBox())!;
+    if (reviewBounds.y < interpretationBounds.y + interpretationBounds.height) {
+      expect(reviewBounds.x - (interpretationBounds.x + interpretationBounds.width)).toBeGreaterThanOrEqual(16);
+    } else {
+      expect(reviewBounds.y).toBeGreaterThanOrEqual(interpretationBounds.y + interpretationBounds.height);
+    }
+    await capture("cierre");
+    const reviewLink = completion.getByRole("link", { name: "Repasar lo aprendido", exact: true });
+    await reviewLink.focus();
+    await reviewLink.press("Enter");
+    await expect(page.getByRole("heading", { name: "Pon en práctica lo aprendido", exact: true })).toBeFocused();
+    const review = page.getByRole("button", { name: "Repasar por módulo", exact: true });
+    await page.keyboard.press("Tab");
+    await expect(review).toBeFocused();
+    await review.press("Enter");
+    await expect(review).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByText(/Este repaso no marca ejercicios como completados:/)).toBeVisible();
+    await capture("repaso");
+    await review.press("Enter");
+    await expect(review).toHaveAttribute("aria-expanded", "false");
+    await expect(review).toBeFocused();
+    await page.getByRole("navigation", { name: "Lenguaje de la ruta" }).getByRole("link", { name: "JavaScript", exact: true }).click();
+    await expect(page.getByRole("heading", { name: /Ruta completada en/ })).toHaveCount(0);
+    expect(await snapshot()).toEqual(before);
+  }
+  expect(await db.userPreference.findUnique({ where: { userId: user.id } })).toEqual(preferences);
+  expect(await db.submission.count({ where: { userId: user.id } })).toBe(0);
 });

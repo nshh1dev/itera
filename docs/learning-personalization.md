@@ -78,6 +78,18 @@ encabezado, sin cambiar la URL ni añadir una entrada al historial. Los tres
 paneles y sus formularios permanecen montados al navegar para conservar las
 ediciones pendientes. No se añaden exportación ni restauración de datos.
 
+La comprobación integrada posterior de `account.spec.ts` y
+`plan-impeccable.spec.ts` aprobó **14/14** en app compilada: preferencias,
+correo/contraseña, revocación de sesiones, desactivación/reactivación y
+conservación de datos de cuentas temporales. La primera pasada de cuenta
+detectó una carrera del fixture al volver antes de completarse la navegación
+a Aprendizaje; se espera URL/panel sin rebajar foco ni edición pendiente.
+La matriz de configuración/cierre/repaso conserva las filas completas de progreso
+simulado y preferencias de su cuenta, con cero envíos; no prueba evaluación ni
+conservación histórica integral. Alcance visual, corrección de separación de
+enlaces Python y límites en [browser-interaction.md](browser-interaction.md#configuración-cierre-y-repaso-comprobación-integrada).
+No resuelve las nueve discrepancias de instalación anteriores.
+
 ## Declaración, orientación y progreso
 
 - `UserPreference.language`: lenguaje preferido. `level` mantiene compatibilidad

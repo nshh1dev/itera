@@ -306,10 +306,62 @@ Next y PostgreSQL privado conservando datos. No se inició Piston ni se
 preparó/activó contenido. Los recuentos capturados (136 publicados; rutas
 28/36/36/36) corresponden a la instalación anterior, no a las 224 fuentes:
 las nueve discrepancias de onboarding siguen abiertas. Esta muestra amplía
-F, pero no cierra su revisión global: faltan estados/superficies restantes,
-incluidos repaso/cierre de ruta y configuración en la matriz integrada. No
+F, pero no cierra su revisión global. La comprobación siguiente incorpora
+repaso/cierre de ruta y configuración a la matriz integrada. Ninguna de las dos
 acredita conservación integral de la base, lectores de pantalla, contraste
 medido ni pruebas físicas.
+
+## Configuración, cierre y repaso: comprobación integrada
+
+`plan-impeccable.spec.ts` incorpora una cuenta temporal `python-superficies-`
+y el estado de ruta terminada mediante filas de progreso simuladas **solo para
+esa cuenta**. Usa los ejercicios de la ruta instalada, sin modificarla ni
+añadir versiones; no acredita evaluación, activación ni los 224 pasos de fuentes.
+En cinco anchos (390/768/1024/1199/1440), ambos temas explícitos y movimiento
+reducido comprueba:
+
+- Mi cuenta, Aprendizaje y Apariencia: panel, enlace activo, foco y contorno visible.
+- Contraseña: apertura con Enter, foco en contraseña actual, ausencia de
+  transformación con movimiento reducido, cierre con Escape y retorno de foco.
+- Cierre Python: interpretación del progreso y acceso al repaso distinguibles;
+  el enlace de interpretación mantiene `/progreso?lenguaje=python`.
+- Repaso: ancla enfocada, Tab al control, apertura/cierre con Enter y aviso de
+  que repasar no concede finalización. Cambiar a JavaScript no muestra cierre.
+- Las filas completas de progreso de la cuenta son idénticas después de cada
+  combinación; preferencias sin cambios y cero envíos al terminar.
+
+Se capturan **60 vistas de 900 px de altura**, no páginas completas, en
+`.local/screenshots/python-superficies/`. Se inspeccionaron directamente doce
+composiciones (seis estados por tema, cinco anchos, reducidas a 390 px por
+columna), además de los originales `cierre-light-768`, `cierre-dark-1440`,
+`seguridad-dark-390` y `repaso-light-1024`. La revisión de composiciones no
+certifica todo el texto a tamaño nativo ni el contenido por debajo del recorte:
+en repaso estrecho se observa principalmente la cabecera/instrucción, no toda
+la lista de criterios. Se conservan esos límites para el cierre visual global.
+
+La inspección encontró los enlaces del cierre Python pegados desde 768 px.
+`PathCompletion` añade solo `mr-4` al enlace exclusivo de Python; JS/TS, textos,
+destinos y progreso no cambian. La nueva comprobación geométrica detectó **0 px**
+con el build anterior y pasó tras recompilar: al compartir línea exige al menos
+16 px; si se apilan, comprueba que no se solapen. Se volvieron a inspeccionar
+las dos composiciones de cierre y sus originales citados después del arreglo.
+
+Se ejecutó además `account.spec.ts` completo. La primera pasada aprobó seis
+casos y falló uno de enlaces antiguos: la traza mostraba `goBack()` mientras
+la URL aún era `seccion=seguridad`, antes de completar la navegación a
+Aprendizaje. Se espera explícitamente la URL y el panel de destino antes de
+volver; se conservan las comprobaciones de foco, edición pendiente y navegación
+atrás/adelante. No se cambió configuración en producto para corregir este caso.
+
+Repetidos ambos archivos completos contra el build nuevo: **14/14 aprobados**,
+sin omisiones; también **584 unitarias**, lint, tipos y build aprobados. La suite
+de cuenta incluye guardado de preferencias, cambios de correo/contraseña,
+revocación de sesiones y conservación de borrador/progreso/envío temporal al
+desactivar/reactivar, sin atribuirlo a conservación integral de datos históricos.
+Los avisos de Better Auth de IP/credenciales de los casos negativos siguen
+visibles. Cero cuentas `python-superficies-`, `impeccable-` y `cuenta-` al terminar;
+Next/PostgreSQL apagados conservando datos. Sin Piston ni preparación/activación.
+Las nueve discrepancias de instalación de onboarding permanecen abiertas.
 
 ## Interpretar fallos y límites
 
