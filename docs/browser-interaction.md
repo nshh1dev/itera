@@ -363,6 +363,25 @@ visibles. Cero cuentas `python-superficies-`, `impeccable-` y `cuenta-` al termi
 Next/PostgreSQL apagados conservando datos. Sin Piston ni preparación/activación.
 Las nueve discrepancias de instalación de onboarding permanecen abiertas.
 
+## Consulta de archivos históricos Python
+
+El recorrido de conservación de versiones detectó un bloque vacío en Progreso
+para borradores multarchivo con `code` vacío. Tras leer la instantánea `files`,
+la consulta conserva los nombres, contenidos y recursos de lectura originales,
+sin aplicar el manifiesto nuevo ni leer la solución editorial. Se reutilizan
+Disclosure y el bloque de código con foco; no se añaden tarjetas o controles.
+Alcance funcional y pruebas: [project-execution.md](project-execution.md#consulta-de-instantáneas-históricas-python).
+
+Se inspeccionaron directamente las cuatro capturas
+`.local/screenshots/python-historical-{light,dark}-{390,1440}.png`: se distinguen
+el archivo de entrada anterior, auxiliar y recurso, con el mismo contenido en
+ambos temas. En esas combinaciones aprobaron foco del bloque, tema efectivo y
+ausencia de desbordamiento horizontal de página, con movimiento reducido. Se
+mantiene el desplazamiento local de código; no se promete adaptación de línea
+ni apariencia idéntica para cualquier archivo largo. No se ejecutó nuevamente
+zoom real ni la matriz completa de F para este bloque; estas cuatro vistas no
+cierran la revisión visual global.
+
 ## Interpretar fallos y límites
 
 - No sustituir las expectativas de conservación por recargas que descarten código.

@@ -123,6 +123,42 @@ de contenido aprobaron; la auditoría de dependencias de producción no informó
 vulnerabilidades. Los avisos conocidos de Better Auth en pruebas y el aviso de
 actualización de npm no implicaron cambios de dependencias.
 
+## Consulta de instantáneas históricas Python
+
+Los borradores multarchivo se guardan en `Draft.files` con `code` vacío. Progreso
+consulta esos archivos, además de los de envíos archivados, **solo para Python**:
+los muestra como texto escapado con nombre de archivo y marca de lectura,
+manteniendo orden y contenido de la instantánea. Conserva el bloque de código
+simple cuando no hay archivos válidos. JavaScript/TypeScript no cambian su
+presentación ni consultan esos campos adicionales en esta página.
+
+La consulta cubre borradores de versiones anteriores de ejercicios activos y
+borradores/envíos de ejercicios retirados. No lee la solución editorial privada,
+no convierte archivos al manifiesto actual ni los copia automáticamente al editor.
+El texto con nombres de archivo es una vista de consulta, no un programa combinado
+para ejecutar. Se mantienen aislamiento por cuenta/lenguaje y páginas de 20.
+
+`tests/e2e/python-version-preservation.spec.ts` crea dos ejercicios/cuentas
+temporales: cambio FUNCTION → PROGRAM y revisión multarchivo con otro punto de
+entrada y recursos. Antes y después compara la versión antigua completa con
+variantes/casos, borradores de tres lenguajes, envío con resultados/archivos y
+filas de progreso. La revisión Python publicada se selecciona; un borrador
+posterior no publicado se ignora; JS/TS siguen en la versión anterior. Editar la
+revisión nueva no cambia las filas antiguas ni su copia local. Historial y API
+conservan el envío anterior. Progreso permite consultar su borrador antiguo y,
+tras retirar solo el ejercicio temporal, sus borradores/envío archivados.
+
+Primera pasada: un caso aprobado y otro fallido porque el bloque histórico
+multarchivo estaba vacío aun teniendo `files` en base. Se corrigió la lectura,
+sin migraciones ni cambios de datos o plantillas. Después aprobaron ambos casos
+y los doce de `draft-sync.spec.ts`, archivos completos: **14/14**. También
+**587 unitarias**, lint, tipos y build aprobados. Los históricos y publicaciones
+son fixtures simulados, no una evaluación ni la activación atómica de las 224
+actividades. No se inicia Piston ni el doble HTTP; las pruebas no envían programas.
+Cero cuentas `python-version-`/`autoguardado-` y ejercicios `python-version-`
+al terminar, Next/PostgreSQL apagados. La comparación del conjunto real de datos
+antes/después de activar continúa pendiente de autorización.
+
 ## Alcance y límites
 
 - `tests/real-runner.integration.ts` cubre módulos, recursos, reapertura,
