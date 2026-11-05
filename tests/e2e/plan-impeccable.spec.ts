@@ -126,7 +126,8 @@ test("configuración, cierre y repaso Python conservan reflujo, teclado y progre
     };
     for (const [section, title] of [["cuenta", "Mi cuenta"], ["aprendizaje", "Aprendizaje"], ["apariencia", "Apariencia"]]) {
       await page.goto(`/configuracion?seccion=${section}`);
-      await expect(page.getByRole("region", { name: title, exact: true })).toBeVisible();
+      const panel = page.getByRole("region", { name: title, exact: true });
+      await expect(panel).toBeVisible();
       const navigation = page.getByRole("navigation", { name: "Secciones de configuración" });
       const link = navigation.getByRole("link", { name: title, exact: true });
       await expect(link).toHaveAttribute("aria-current", "page");
@@ -134,6 +135,8 @@ test("configuración, cierre y repaso Python conservan reflujo, teclado y progre
       await expect(link).toBeFocused();
       expect(await link.evaluate(node => getComputedStyle(node).outlineStyle)).not.toBe("none");
       await capture(section);
+      // El recorte de 900 px no cubre seguridad/datos ni el final de Aprendizaje.
+      await panel.screenshot({ path: `.local/screenshots/python-superficies/${section}-completo-${theme}-${width}.png`, animations: "disabled" });
     }
     await page.goto("/configuracion?seccion=seguridad");
     const password = page.getByRole("button", { name: "Cambiar contraseña", exact: true });
@@ -171,6 +174,12 @@ test("configuración, cierre y repaso Python conservan reflujo, teclado y progre
     await expect(review).toHaveAttribute("aria-expanded", "true");
     await expect(page.getByText(/Este repaso no marca ejercicios como completados:/)).toBeVisible();
     await capture("repaso");
+    const reviewPanel = page.getByRole("region", { name: "Pon en práctica lo aprendido", exact: true });
+    const criteria = reviewPanel.locator('section[aria-label^="Repaso:"] li');
+    expect(await criteria.count()).toBeGreaterThan(0);
+    // Todos los criterios se conservan visibles, no solo los del primer recorte.
+    for (const criterion of await criteria.all()) await expect(criterion).toBeVisible();
+    await reviewPanel.screenshot({ path: `.local/screenshots/python-superficies/repaso-completo-${theme}-${width}.png`, animations: "disabled" });
     await review.press("Enter");
     await expect(review).toHaveAttribute("aria-expanded", "false");
     await expect(review).toBeFocused();

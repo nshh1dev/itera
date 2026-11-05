@@ -339,6 +339,38 @@ certifica todo el texto a tamaño nativo ni el contenido por debajo del recorte:
 en repaso estrecho se observa principalmente la cabecera/instrucción, no toda
 la lista de criterios. Se conservan esos límites para el cierre visual global.
 
+La ampliación posterior del mismo recorrido añade **40 capturas de regiones
+completas**, sin limitar su altura a 900 px: `cuenta`, `aprendizaje`, `apariencia`
+y `repaso`, con sufijo `-completo-{light,dark}-{390,768,1024,1199,1440}.png` en
+el mismo directorio. Se inspeccionaron directamente las 40 imágenes originales,
+sin composiciones reducidas. Se revisaron Mi cuenta hasta datos/desactivación,
+Aprendizaje hasta el aviso del lenguaje guardado, Apariencia hasta las
+preferencias del espacio de práctica, y el repaso completo de Desde cero:
+ocho módulos, sus 16 criterios y los enlaces/avisos inferiores. No se observaron
+texto recortado, solapamientos ni controles cortados en esas regiones. El foco
+del desplegable de repaso y los saltos de línea de los enlaces largos se
+mantienen en ambos temas. La prueba exige además que todos los criterios
+renderizados sigan visibles; esto no sustituye la inspección de las imágenes.
+
+Queda cerrado el límite del recorte inferior para **estos estados**. La cuenta
+no tiene diagnósticos anteriores y la ayuda «Dónde encontrar el enlace» queda
+cerrada: no se atribuye inspección de esos estados a estas capturas. El repaso
+corresponde al catálogo instalado, con módulos comunes; no acredita los 57
+módulos Python de fuentes ni las cuatro rutas tras activación. El módulo
+«Seguimiento y diagnóstico» conserva visible «Este módulo todavía no tiene
+ejercicios publicados para repasar», coherente con las discrepancias de
+instalación ya registradas; no se ocultó ni se alteró contenido del propietario.
+
+El archivo `plan-impeccable.spec.ts` completo aprobó **7/7**, sin omisiones,
+contra el build de la corrección de archivos históricos Python. Lint y tipos
+aprobados; se reutilizan las **587 unitarias y build** de esa corrección porque
+solo cambian esta ampliación E2E y documentación. No se repitieron zoom real,
+entrada táctil ni Piston: conservan el alcance de las comprobaciones anteriores.
+Progreso y preferencias de la cuenta temporal permanecen idénticos, sin envíos;
+cero cuentas `python-superficies-`/`impeccable-` al terminar y Next/PostgreSQL
+apagados. Sin preparación ni activación. La reconciliación global de F debe
+mantener separados revisión de presentación e instalación pendiente.
+
 La inspección encontró los enlaces del cierre Python pegados desde 768 px.
 `PathCompletion` añade solo `mr-4` al enlace exclusivo de Python; JS/TS, textos,
 destinos y progreso no cambian. La nueva comprobación geométrica detectó **0 px**
@@ -380,7 +412,7 @@ ausencia de desbordamiento horizontal de página, con movimiento reducido. Se
 mantiene el desplazamiento local de código; no se promete adaptación de línea
 ni apariencia idéntica para cualquier archivo largo. No se ejecutó nuevamente
 zoom real ni la matriz completa de F para este bloque; estas cuatro vistas no
-cierran la revisión visual global.
+cierran por sí solas la revisión visual global.
 
 ## Interpretar fallos y límites
 
