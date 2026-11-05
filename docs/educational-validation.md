@@ -195,3 +195,51 @@ Pruebas: `tests/concept-validation.test.ts`, `tests/learning-revisions.test.ts`,
   con movimiento reducido, controles de ayuda cerrados inicialmente y revelación
   de solución explícita también mediante teclado. PostgreSQL vuelve a quedar
   sin puerto publicado al terminar la suite.
+
+### Protocolo integrado Python con doble HTTP
+
+`tests/e2e/python-evaluation.spec.ts` verifica Next, endpoints, evaluación
+asíncrona y PostgreSQL con un ejercicio temporal FUNCTION de dos casos (uno
+visible y uno oculto), tres variantes y una cuenta nueva por escenario. No
+prepara revisiones de identidades del propietario ni modifica sus rutas.
+El proveedor HTTP de 2001 **no ejecuta, compila ni interpreta código**: entrega
+respuestas fijas según marcadores. No sustituye la validación de las 224 fuentes
+en Piston real registrada en [auditoria-python.md](auditoria-python.md).
+
+Los **cuatro casos completos aprobaron**, sin omisiones:
+
+- Ejemplos aprobados evalúan solo el caso visible; un envío de diagnóstico
+  aprobado evalúa ambos. Ninguno crea progreso de práctica.
+- Un fallo de resultado oculto muestra en navegador la depuración visible y
+  el resumen 0/1, sin datos ocultos. Tanto ese fallo como un error de ejecución
+  oculto dejan en API y `Submission.results` solo índice, visibilidad, veredicto
+  y estado del caso oculto: no entrada, esperado, real, depuración ni stderr.
+  El payload público del ejercicio tampoco contiene el marcador de entrada
+  oculta. El error de ejecución se comprueba en API/base, no en una segunda
+  captura o interacción del navegador.
+- Dos POST concurrentes con la misma clave reciben 202 y el mismo id; solo se
+  ejecutan dos casos y se registra un intento. Repetir POST/GET no reevalúa ni
+  incrementa progreso. Reutilizar la clave con otro código da 409. Aprobar
+  después JavaScript y TypeScript crea tres filas independientes, un intento
+  por lenguaje. Es evidencia de este escenario, no una prueba exhaustiva de
+  todas las carreras posibles.
+- Proveedor indisponible antes de reservar: 503 sin envío. Fallo tras reservar:
+  ERROR, sin progreso ni respuesta incorrecta. Repetir esa clave conserva el
+  ERROR sin reevaluar; una clave nueva con proveedor disponible aprueba y deja
+  un solo intento de práctica, no dos.
+
+La pasada final completa aprobó contra la app compilada; lint, tipos y **22
+pruebas focalizadas** de ciclo de ejecución/juez aprobados. Se reutilizan las
+584 unitarias y build del arreglo de cierre Python: solo se añaden E2E y
+documentación, sin cambios de producto ni catálogo. Lint detectó inicialmente
+el nombre `use` del callback del fixture como un hook; se renombró a `runTest`
+sin silenciar reglas. El fallo de infraestructura genera el evento operativo
+esperado de fase `execution.case`; los avisos de Better Auth siguen visibles.
+
+Se comprobaron cero cuentas/ejercicios `python-evaluation-` al terminar; Next,
+doble HTTP y PostgreSQL privado apagados, sin iniciar Piston/WSL. No se ejecutó
+`flows.spec.ts`: es serial y sus pasos editoriales crean borradores sobre
+identidades instaladas del propietario. Este archivo aislado cubre el punto
+de evaluación/progreso sin ampliar esas escrituras. No acredita publicación,
+conservación integral de la base ni instalación/activación; las nueve
+discrepancias de onboarding siguen abiertas.
