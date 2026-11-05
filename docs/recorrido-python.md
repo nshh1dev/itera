@@ -14,6 +14,37 @@ La secuencia está en `src/lib/python-curriculum.ts`. `prisma/python-content.ts`
 - Las versiones exclusivas se consultan en administración, pero no se guardan desde el formulario de tres lenguajes. Los importadores compartidos no deben sobrepasarlas.
 - Las soluciones siguen siendo privadas; el espacio de trabajo solo recibe casos visibles. Las técnicas sugeridas no se certifican mediante AST salvo las reglas iniciales ya existentes.
 
+## Estado de la revisión de experiencia y fuentes
+
+La revisión iniciada el 30 de octubre está implementada en
+`feat/experiencia-recorrido-python`, **sin fusión ni preparación/activación** de
+sus revisiones. Publicar código en GitHub no publica el catálogo en PostgreSQL.
+Este estado prevalece sobre los pendientes mencionados al describir lotes
+anteriores más abajo.
+
+| Área | Evidencia vigente y límite |
+| --- | --- |
+| Fuentes y conservación de otros lenguajes | 224 identidades, niveles 32/74/82/36, 433 ejemplos explicados, cuatro rutas y 57 módulos revisados. Validación estructural y huella `52f83501a8b9a61a17383d1b91da85d5169da92e5780d0d6487de01e6c954da1` aprobadas; fuentes sin cambios posteriores. Las pruebas reconstruyen expectativas históricas sin reemplazarlas y protegen JS/TS. |
+| Evaluación educativa real | 225 pruebas sin omisiones, 224 referencias/plantillas y 977 casos en Piston Python 3.12.0, más límites de árboles y sondas editoriales de conservación. [Auditoría](auditoria-python.md#catálogo-completo-en-piston); no acredita activación ni certifica técnicas internas. |
+| Protocolo y progreso | Cuatro escenarios aislados aprobados con doble HTTP: ocultos filtrados, ejemplos/diagnóstico sin progreso, idempotencia y finalización por lenguaje, infraestructura/reintento. [Validación educativa](educational-validation.md#protocolo-integrado-python-con-doble-http); el doble no ejecuta código. |
+| Entrada, continuidad y cuenta | Registro/transferencia, bienvenida antigua/nueva, continuación y cuenta comprobados con datos temporales. Nueve pruebas de rutas instaladas siguen fallando: no se rebajaron expectativas. [Personalización](learning-personalization.md#comprobación-de-entrada-y-bienvenida-en-navegador). |
+| Versiones y borradores | Dos escenarios de cambio de contrato y doce de sincronización aprobados. Conservan registros antiguos y permiten consultar archivos históricos Python sin aplicarlos al contrato nuevo. [Proyectos](project-execution.md#consulta-de-instantáneas-históricas-python); no es comparación integral de la base real tras activar. |
+| Presentación | Teoría opcional, encabezados/código escapado, JSON, avisos y enlaces comprobados. Matrices de cinco anchos/ambos temas, teclado, zoom real y tacto emulado con alcances distintos; Configuración y repaso instalado inspeccionados hasta su final. [Interacción](browser-interaction.md#balance-de-la-revisión-python); no certifica accesibilidad universal ni instalación. |
+| Comprobaciones del código | 587 unitarias sin omisiones, lint, tipos y build aprobados sobre la última corrección de producto (`7182494`). Las ampliaciones posteriores solo E2E/documentales reutilizan suite y build; no son nuevas ejecuciones de esas comprobaciones. |
+
+La instalación nativa comprobada conserva 136 ejercicios y rutas comunes de
+28/36/36/36 elementos, distintas de las fuentes actuales. La activación Docker
+del 27 de octubre documentada al final es otra base y otra entrega: no demuestra
+que esta revisión esté instalada en modo nativo ni en Docker. Activar solo Python
+no resuelve automáticamente las diferencias de rutas JavaScript/TypeScript.
+
+Quedan pendientes la cobertura visual del bloque histórico añadido después de
+la matriz de zoom, y, con autorización explícita, respaldo, preparación/activación,
+comparación integral de datos, comprobación de instalación y fusión/cierre.
+No se exige revisar exhaustivamente cada módulo en cada combinación visual: las
+muestras y sus límites deben quedar explícitos, sin confundir fuentes con catálogo
+publicado. No eliminar el plan mientras esos puntos permanezcan abiertos.
+
 ## Matriz de conceptos
 
 Las filas indican conocimientos previos → introducción/práctica → integración y límites. Los contratos individuales y sus casos se mantienen junto a cada actividad en las fuentes anteriores.
@@ -284,7 +315,7 @@ Las notas describen la referencia, no cualquier solución aceptada: distinguen r
 
 `pythonSharedCaseHelp`, en `prisma/python-help.ts`, contiene explicaciones editoriales para las revisiones Python de actividades compartidas. Se aplican por slug y orden del caso, solo a ejemplos visibles, sin modificar entradas, respuestas, visibilidad ni explicaciones de casos ocultos. Las fuentes y variantes de JavaScript/TypeScript permanecen intactas. Una prueba comprueba la correspondencia entre órdenes y ayudas y exige cobertura del bloque revisado; las explicaciones no se generan ejecutando soluciones.
 
-Los 433 ejemplos públicos de las 224 actividades tienen explicación (se completaron 278 antes vacíos). Se explican las operaciones concretas, límites, orden de visita, índices, efectos sobre las copias y estados iniciales de proyectos y persistencia. En los programas que imprimen `true`/`false`, se distingue ese texto de los valores Python `True`/`False`; en FUNCTION se aclara la representación JSON cuando resulta relevante. No se presenta la observación de una salida como certificación de la técnica interna. La prueba exige cobertura completa y conservación de los casos; no acredita la calidad pedagógica por sí sola. El resto de la revisión editorial sigue pendiente en el plan.
+Los 433 ejemplos públicos de las 224 actividades tienen explicación (se completaron 278 antes vacíos). Se explican las operaciones concretas, límites, orden de visita, índices, efectos sobre las copias y estados iniciales de proyectos y persistencia. En los programas que imprimen `true`/`false`, se distingue ese texto de los valores Python `True`/`False`; en FUNCTION se aclara la representación JSON cuando resulta relevante. No se presenta la observación de una salida como certificación de la técnica interna. La prueba exige cobertura completa y conservación de los casos; no acredita la calidad pedagógica por sí sola. La revisión editorial de fuentes está cerrada en las auditorías individuales, [claridad-python.md](claridad-python.md) y [repeticiones-python.md](repeticiones-python.md); su instalación sigue pendiente.
 
 - `tests/python-curriculum.test.ts`: identidades, orden, grupos, categorías proyectadas, prerrequisitos anteriores y sin ciclos, cobertura, compatibilidad, referencias fijas, contratos prioritarios, modelo de árboles y plantillas nuevas.
 - `tests/python-install.test.ts`: doble transaccional para idempotencia, conservación y conflictos; no sustituye PostgreSQL real.
@@ -292,7 +323,7 @@ Los 433 ejemplos públicos de las 224 actividades tienen explicación (se comple
 - La validación real pasa por `src/server/execution/piston.ts`. Pruebas locales de referencias no acreditan publicación ni sandbox.
 - Las pruebas de resultado no certifican técnicas internas, complejidad, identidad ni presencia de aserciones. Las observaciones de salida fija requieren revisar el código; el modelo de árboles se comprueba con las entradas y referencias de la revisión Python.
 
-## Activación en la instalación local
+## Activación anterior en la instalación Docker (27 de octubre)
 
 El 27 de octubre de 2026 se respaldó la base Docker en `.local/backups/itera-1793142065906.dump`, se prepararon 61 borradores (48 incorporaciones y 13 revisiones), se validaron las 224 referencias y plantillas en Piston Python —909 casos para cada conjunto— y se activó el lote. Preparar de nuevo creó cero borradores. Lectura posterior: Python 224, JavaScript 176, TypeScript 176; ningún borrador exclusivo pendiente.
 
@@ -304,4 +335,4 @@ La suite Docker completa produjo 47 aprobadas y tres fallidas: dos expectativas 
 
 Lint, tipos, suite unitaria completa (364/364, sin omisiones) y builds finales de Windows/Docker aprobados. Un build intermedio detectó una incompatibilidad de tipos en la comparación de huellas, corregida antes de cerrar; un intento Windows agotó su límite de 120 segundos y el reintento completo aprobó. La huella normalizada del catálogo publicado coincide con la entrega registrada, incluida la normalización del orden de propiedades JSON de PostgreSQL. Al terminar se detuvieron los servicios y Ubuntu quedó apagado, como al inicio; `docker-iniciar` recupera la imagen actualizada y el catálogo activado.
 
-El 30 de octubre de 2026 se revisaron las fuentes del orden, los metadatos, los prerrequisitos, los contratos prioritarios y el modelo de árboles descritos arriba. Esta revisión no se ha preparado ni activado en la base: la instantánea publicada sigue siendo la del 27 de octubre. La entrega de fuentes se valida con `npm run content:python`; la activación requiere Piston y el procedimiento de publicación atómica.
+Las revisiones de fuentes iniciadas el 30 de octubre, incluido el trabajo editorial y de evaluación posterior, no se han preparado ni activado en esta tarea. La publicación Docker anterior no acredita su instalación; tampoco describe la base nativa usada en las pruebas recientes. La entrega de fuentes se valida con `npm run content:python`; la activación requiere autorización explícita, Piston y el procedimiento de publicación atómica.

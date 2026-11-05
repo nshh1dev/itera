@@ -19,6 +19,39 @@ Recorridos reutilizados:
 - `browser-zoom.spec.ts`: zoom real al 200 %, páginas públicas, taller, cierre/repaso
   con sesión, Configuración y vistas administrativas de una cuenta temporal.
 
+## Balance de la revisión Python
+
+La evidencia siguiente se acumula por alcances, no sumando ejecuciones como si
+fueran casos distintos. La presentación implementada conserva paleta, fuentes
+locales, Monaco, preferencias y breakpoint de 1200 px; la teoría opcional,
+encabezados/código escapado, JSON y avisos se limitan a Python. Los únicos
+arreglos posteriores de producto son el espaciado del enlace de cierre Python
+y la consulta de instantáneas históricas Python, documentados abajo.
+
+- Cinco anchos (390/768/1024/1199/1440), ambos temas: matrices del taller,
+  Progreso, catálogo, ruta, Configuración, cierre y repaso. Las composiciones
+  generales son muestras; las 40 regiones completas posteriores sí incluyen
+  la parte inferior de Configuración y todos los criterios del repaso instalado
+  de Desde cero en esos estados.
+- Zoom real al 200 %: `browser-zoom.spec.ts` completo aprobó 4/4 con extensión y
+  perfiles desechables. Teclado, foco, movimiento reducido y dos contextos de
+  tacto emulado tienen sus comprobaciones separadas. No se presentan como prueba
+  en dispositivos físicos, lectores de pantalla o certificación WCAG.
+- Bloque histórico multarchivo: cuatro capturas revisadas a 390/1440, ambos
+  temas, después de añadir la lectura de `files`. **Pendiente** completar los
+  anchos 768/1024/1199 y el zoom real para ese bloque nuevo; no se le atribuyen
+  los resultados anteriores a su implementación.
+- Instalación: las nueve discrepancias de rutas permanecen abiertas. La muestra
+  instalada usa módulos comunes y no acredita la proyección Python revisada tras
+  activar. Esa comprobación pertenece a la instalación autorizada, no exige una
+  inspección exhaustiva de los 57 módulos en toda la matriz.
+
+El cierre global de presentación queda acotado por el bloque histórico pendiente;
+el cierre de entrega requiere además comprobar la instalación. Las capturas con
+la ayuda de recuperación cerrada y sin diagnósticos históricos no se anuncian
+como revisión de esos estados. No se añaden requisitos nuevos a partir de estos
+límites de la muestra.
+
 ## Teoría opcional en el taller Python
 
 El taller Python muestra «Teoría y objetivos» cerrado por defecto. Contiene
@@ -202,8 +235,11 @@ ejercicio publicado existente. No se certifica activación del catálogo nuevo.
 
 Solo se escribieron cuentas/contenido/datos temporales de pruebas; no hubo seed,
 migraciones, preparación ni activación. Se apagaron PostgreSQL privado, Piston y
-la tarea manual de WSL conservando volúmenes. Sigue pendiente validar el catálogo
-Python completo y sus límites, la instalación activa y el resto de E2E/visual.
+la tarea manual de WSL conservando volúmenes. La validación posterior del catálogo
+Python completo y sus límites está aprobada en
+[auditoria-python.md](auditoria-python.md#catálogo-completo-en-piston): 977 casos,
+sin preparación ni activación. La instalación activa y los límites de revisión
+visual siguen separados en el balance de esta guía.
 Tras los ajustes exclusivos de pruebas/documentación aprobaron lint, tipos y
 build. Se reutilizan las 582 pruebas unitarias de la entrega anterior porque no
 cambiaron producto, catálogo ni pruebas unitarias. Los avisos observados de

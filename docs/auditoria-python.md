@@ -679,10 +679,13 @@ PostgreSQL, preparación o activación. El log local de esta ejecución reside e
 - No se amplía AST, esquema, dependencias ni modalidades.
 - La ejecución local no verifica sandbox ni publicación. La comprobación real
   del catálogo acredita referencias/plantillas y casos actuales, no instalación.
-- Tiempos, vocabulario, inventarios y reparto final de ayudas ya están revisados
-  en fuentes; F mantiene pendiente la revisión visual completa.
-- La auditoría individual de las 224 actividades y las dos comprobaciones
-  pendientes de D2 están registradas, con el catálogo completo validado en Piston;
-  siguen pendientes flujos integrados, revisión visual y activación autorizada.
+- Tiempos, vocabulario, inventarios y reparto final de ayudas están revisados
+  en fuentes. El [balance visual](browser-interaction.md#balance-de-la-revisión-python)
+  distingue las matrices ejecutadas del bloque histórico pendiente y de instalación.
+- La auditoría individual de las 224 actividades, límites de árboles y sondas de
+  conservación cierran D2 con el catálogo completo validado en Piston. Evaluación
+  y progreso también tienen [cuatro escenarios integrados con doble HTTP](educational-validation.md#protocolo-integrado-python-con-doble-http),
+  sin ejecución de código. No están cerradas las nueve discrepancias de rutas
+  instaladas ni la activación autorizada y conservación integral de la base real.
 - No eliminar el plan antes de la verificación integrada, activación autorizada
   y cierre de sus puntos existentes.

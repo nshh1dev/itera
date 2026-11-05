@@ -43,9 +43,11 @@ borradores, soluciones, intentos ni finalizaciones existentes.
 
 ## Pantallas
 
-- **Editor:** enunciado, ejemplos, objetivos y teoría esencial visibles; repaso previo
-  opcional plegado, pistas de una en una y solución voluntaria en un diálogo. Consultar
-  ayuda no completa el ejercicio. Los diagnósticos técnicos quedan disponibles
+- **Editor:** reto, condiciones y ejemplos visibles. En Python, objetivos,
+  teoría/ejemplo del módulo y coste quedan en «Teoría y objetivos», cerrado
+  inicialmente; JavaScript/TypeScript conservan su presentación anterior.
+  Repaso previo opcional plegado, pistas de una en una y solución voluntaria en un
+  diálogo. Consultar ayuda no completa el ejercicio. Los diagnósticos técnicos quedan disponibles
   detrás de una orientación breve. Se conservan paneles ajustables, atajos,
   preferencias, pestañas móviles y sincronización optimista de borradores.
 - **Inicio:** una recomendación principal, accesos secundarios a ruta y práctica
@@ -66,6 +68,12 @@ borradores, soluciones, intentos ni finalizaciones existentes.
   actual y devuelve solo su código y resultado global, nunca casos ocultos.
   Los archivos y borradores históricos son secundarios y se paginan de veinte
   en veinte, sin descartar registros más antiguos.
+
+En Progreso, las instantáneas multarchivo históricas Python se consultan con sus
+nombres y contenidos originales, también tras retirar el ejercicio. No se aplican
+al manifiesto nuevo ni sustituyen el borrador actual. Los cambios de contrato y
+sus límites de verificación se describen en
+[project-execution.md](project-execution.md#consulta-de-instantáneas-históricas-python).
 
 Resolver mide finalización de práctica, no dominio. La interfaz evita interpretar
 los intentos, la ayuda consultada o las barras de avance como una evaluación de
