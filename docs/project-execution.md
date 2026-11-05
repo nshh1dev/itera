@@ -156,8 +156,13 @@ y los doce de `draft-sync.spec.ts`, archivos completos: **14/14**. También
 son fixtures simulados, no una evaluación ni la activación atómica de las 224
 actividades. No se inicia Piston ni el doble HTTP; las pruebas no envían programas.
 Cero cuentas `python-version-`/`autoguardado-` y ejercicios `python-version-`
-al terminar, Next/PostgreSQL apagados. La comparación del conjunto real de datos
-antes/después de activar continúa pendiente de autorización.
+al terminar, Next/PostgreSQL apagados. La ampliación de presentación completa los
+cinco anchos/ambos temas y zoom real del bloque histórico: `browser-zoom` y
+`python-version-preservation` completos aprobaron 8/8, sin nuevas ejecuciones de
+programas. Procedimiento, capturas y límites en
+[browser-interaction.md](browser-interaction.md#consulta-de-archivos-históricos-python).
+La comparación del conjunto real de datos antes/después de activar continúa
+pendiente de autorización.
 
 ## Alcance y límites
 

@@ -10,6 +10,7 @@ import { modulesForPath } from "../../src/lib/learning-modules";
 import { openSimpleEditor } from "../workspace";
 import { postAuth } from "./auth-request";
 import { pythonCatalog } from "../../prisma/python-content";
+import type { ProjectFile } from "../../src/lib/project";
 
 const baseURL = "http://127.0.0.1:3000";
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
@@ -176,6 +177,122 @@ for (const theme of ["light", "dark"] as const) {
           await db.auditLog.deleteMany({ where: { user: { email } } });
           await db.user.deleteMany({ where: { email } });
         } finally { await rm(profile, { recursive: true, force: true }); }
+      }
+    }
+  });
+
+  test(`archivos históricos Python con zoom real al 200 %: ${theme}`, async () => {
+    test.setTimeout(180000);
+    const tempRoot = process.platform === "win32" && process.env.LOCALAPPDATA
+      ? join(process.env.LOCALAPPDATA, "Temp", "opencode") : tmpdir();
+    await mkdir(tempRoot, { recursive: true });
+    await mkdir(".local/screenshots", { recursive: true });
+    const profile = await mkdtemp(join(tempRoot, "itera-historical-zoom-"));
+    const slug = `python-historical-zoom-${randomUUID()}`;
+    const email = `${slug}@example.test`;
+    const extension = resolve("tests/fixtures/browser-zoom");
+    const context = await chromium.launchPersistentContext(profile, {
+      channel: "chromium", headless: true, baseURL,
+      viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1,
+      colorScheme: theme, reducedMotion: "reduce",
+      args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`],
+    });
+    try {
+      const signup = await postAuth(context.request, "/api/auth/sign-up/email", { email, name: "Prueba de histórico ampliado", password: "Itera-historical-zoom-27643" });
+      expect(signup.ok(), await signup.text()).toBe(true);
+      const user = await db.user.findUniqueOrThrow({ where: { email } });
+      const files: ProjectFile[] = [
+        { path: "anterior.py", content: "# Trabajo histórico\ndef solve(data):\n    return data['valor']\n" },
+        { path: "reglas.py", content: "# Auxiliar histórico conservado\n" },
+        { path: "estado.json", content: '{"revision":"anterior"}', readOnly: true },
+      ];
+      const title = "Contrato histórico multarchivo ampliado";
+      const content = { title, description: "Fixture de consulta histórica.", statement: "Devuelve valor.", level: "INITIATION" as const, minutes: 5, constraints: [], hints: [], published: true };
+      const exercise = await db.exercise.create({ data: { slug, category: "Prueba de histórico", order: 20000,
+        versions: { create: [
+          { ...content, number: 1, variants: { create: [{ language: "python", starter: files[0].content, solution: files[0].content, explanation: "Referencia privada anterior.",
+            project: { version: 1, entrypoint: "anterior.py", files } as unknown as Prisma.InputJsonValue,
+          }] } },
+          { ...content, number: 2, title: "Contrato actual", variants: { create: [{ language: "python", starter: "def solve(data):\n    return 0\n", solution: "def solve(data):\n    return 0\n", explanation: "Referencia actual." }] } },
+        ] },
+      }, include: { versions: { orderBy: { number: "asc" }, include: { variants: true } } } });
+      const variantId = exercise.versions[0].variants[0].id;
+      await db.draft.create({ data: { userId: user.id, variantId, code: "", files: files as unknown as Prisma.InputJsonValue, revision: 7 } });
+      // Envío simulado para consulta; no acredita ejecución ni progreso.
+      await db.submission.create({ data: { userId: user.id, variantId, code: "", files: files as unknown as Prisma.InputJsonValue, mode: "submit", status: "PASSED", passedCount: 1, totalCount: 1, idempotencyKey: randomUUID(), finishedAt: new Date() } });
+      const snapshot = async () => ({
+        drafts: await db.draft.findMany({ where: { userId: user.id }, orderBy: { id: "asc" } }),
+        submissions: await db.submission.findMany({ where: { userId: user.id }, orderBy: { id: "asc" } }),
+        progress: await db.progress.findMany({ where: { userId: user.id } }),
+      });
+      const before = await snapshot();
+      const worker = context.serviceWorkers()[0] ?? await context.waitForEvent("serviceworker");
+      const page = context.pages()[0];
+      const errors: string[] = [];
+      const executions: string[] = [];
+      page.on("pageerror", error => errors.push(error.message));
+      page.on("request", request => { if (request.method() === "POST" && new URL(request.url()).pathname === "/api/executions") executions.push(request.url()); });
+      await page.addInitScript(value => localStorage.setItem("theme", value), theme);
+      await page.goto("/progreso?lenguaje=python");
+      expect(await page.evaluate(() => ({ width: innerWidth, dpr: devicePixelRatio }))).toEqual({ width: 1440, dpr: 1 });
+      for (const width of [1440, 780, 640]) {
+        await setZoom(worker, page, width);
+        await page.goto("/progreso?lenguaje=python");
+        await expect(page.locator("html")).toHaveClass(new RegExp(theme));
+        const archive = page.getByRole("button", { name: "Borradores de versiones anteriores", exact: true });
+        await archive.focus(); await archive.press("Enter");
+        const version = page.getByRole("button", { name: `${title} · Versión 1`, exact: true });
+        await version.focus(); await version.press("Enter");
+        const historical = page.getByLabel(`Borrador de ${title}, versión 1`, { exact: true });
+        for (const file of files) await expect(historical).toContainText(`${file.path}${file.readOnly ? " · lectura" : ""}\n${file.content}`);
+        await historical.focus();
+        await expect(historical).toBeFocused();
+        expect(await historical.evaluate(node => getComputedStyle(node).outlineStyle)).not.toBe("none");
+        await historical.scrollIntoViewIfNeeded();
+        await expect(historical).toBeInViewport();
+        if (await historical.evaluate(node => node.scrollWidth > node.clientWidth)) {
+          await historical.press("ArrowRight");
+          await expect.poll(() => historical.evaluate(node => node.scrollLeft)).toBeGreaterThan(0);
+          await historical.press("ArrowLeft");
+          await expect.poll(() => historical.evaluate(node => node.scrollLeft)).toBe(0);
+        }
+        await fits(page, `archivos históricos ${theme} ${width / 2}px`);
+        await capture(page, `.local/screenshots/python-historical-zoom-${theme}-${width}.png`);
+        await version.press("Enter");
+        await expect(version).toHaveAttribute("aria-expanded", "false");
+        await expect(historical).not.toBeVisible();
+        await expect(version).toBeFocused();
+      }
+      await db.exercise.update({ where: { id: exercise.id }, data: { published: false } });
+      await page.goto("/progreso?lenguaje=python");
+      const retired = page.getByRole("button", { name: "Tu catálogo anterior", exact: true });
+      await retired.focus(); await retired.press("Enter");
+      for (const [kind, label] of [["Borrador", "Código guardado de"], ["Intento", "Código enviado a"]]) {
+        const toggle = page.getByRole("button", { name: `${kind} · ${title} · Python`, exact: true });
+        await toggle.focus(); await toggle.press("Enter");
+        const code = page.getByLabel(`${label} ${title}`, { exact: true });
+        for (const file of files) await expect(code).toContainText(file.content);
+        await code.focus();
+        await expect(code).toBeFocused();
+        await code.scrollIntoViewIfNeeded();
+        await fits(page, `archivo retirado ${kind} ${theme}`);
+        await capture(page, `.local/screenshots/python-historical-retired-zoom-${kind.toLowerCase()}-${theme}.png`);
+        await toggle.press("Enter");
+        await expect(code).not.toBeVisible();
+        await expect(toggle).toBeFocused();
+      }
+      expect(await snapshot()).toEqual(before);
+      expect(before.progress).toEqual([]);
+      expect(executions).toEqual([]);
+      expect(errors).toEqual([]);
+    } finally {
+      try { await context.close(); }
+      finally {
+        try { await db.exercise.deleteMany({ where: { slug } }); }
+        finally {
+          try { await db.user.deleteMany({ where: { email } }); }
+          finally { await rm(profile, { recursive: true, force: true }); }
+        }
       }
     }
   });

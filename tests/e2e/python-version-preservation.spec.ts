@@ -134,7 +134,7 @@ for (const project of [false, true]) {
     if (project) for (const file of oldFiles) await expect(page.getByLabel(`Borrador de ${oldTitle}, versión 1`, { exact: true })).toContainText(file.content);
     if (project) {
       await mkdir(".local/screenshots", { recursive: true });
-      for (const theme of ["light", "dark"] as const) for (const width of [390, 1440]) {
+      for (const theme of ["light", "dark"] as const) for (const width of [390, 768, 1024, 1199, 1440]) {
         await page.evaluate(value => localStorage.setItem("theme", value), theme);
         await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
         await page.setViewportSize({ width, height: 900 });

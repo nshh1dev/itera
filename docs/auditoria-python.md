@@ -681,7 +681,8 @@ PostgreSQL, preparación o activación. El log local de esta ejecución reside e
   del catálogo acredita referencias/plantillas y casos actuales, no instalación.
 - Tiempos, vocabulario, inventarios y reparto final de ayudas están revisados
   en fuentes. El [balance visual](browser-interaction.md#balance-de-la-revisión-python)
-  distingue las matrices ejecutadas del bloque histórico pendiente y de instalación.
+  reúne las matrices ejecutadas y la cobertura del bloque histórico; la instalación
+  de las revisiones sigue pendiente de autorización.
 - La auditoría individual de las 224 actividades, límites de árboles y sondas de
   conservación cierran D2 con el catálogo completo validado en Piston. Evaluación
   y progreso también tienen [cuatro escenarios integrados con doble HTTP](educational-validation.md#protocolo-integrado-python-con-doble-http),

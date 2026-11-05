@@ -33,20 +33,21 @@ y la consulta de instantáneas históricas Python, documentados abajo.
   generales son muestras; las 40 regiones completas posteriores sí incluyen
   la parte inferior de Configuración y todos los criterios del repaso instalado
   de Desde cero en esos estados.
-- Zoom real al 200 %: `browser-zoom.spec.ts` completo aprobó 4/4 con extensión y
+- Zoom real al 200 %: `browser-zoom.spec.ts` completo aprobó 6/6 con extensión y
   perfiles desechables. Teclado, foco, movimiento reducido y dos contextos de
   tacto emulado tienen sus comprobaciones separadas. No se presentan como prueba
   en dispositivos físicos, lectores de pantalla o certificación WCAG.
-- Bloque histórico multarchivo: cuatro capturas revisadas a 390/1440, ambos
-  temas, después de añadir la lectura de `files`. **Pendiente** completar los
-  anchos 768/1024/1199 y el zoom real para ese bloque nuevo; no se le atribuyen
-  los resultados anteriores a su implementación.
+- Bloque histórico multarchivo: cinco anchos y ambos temas comprobados, incluidas
+  las seis capturas intermedias que faltaban. Dos recorridos nuevos de zoom real
+  verifican el bloque tras la lectura de `files`, también borradores/envíos de un
+  ejercicio temporal retirado. Foco, teclado, datos y ausencia de desbordamiento
+  de página aprobados; capturas y límites en la sección de consulta histórica.
 - Instalación: las nueve discrepancias de rutas permanecen abiertas. La muestra
   instalada usa módulos comunes y no acredita la proyección Python revisada tras
   activar. Esa comprobación pertenece a la instalación autorizada, no exige una
   inspección exhaustiva de los 57 módulos en toda la matriz.
 
-El cierre global de presentación queda acotado por el bloque histórico pendiente;
+La revisión de presentación implementada queda cerrada con estos alcances;
 el cierre de entrega requiere además comprobar la instalación. Las capturas con
 la ayuda de recuperación cerrada y sin diagnósticos históricos no se anuncian
 como revisión de esos estados. No se añaden requisitos nuevos a partir de estos
@@ -440,15 +441,48 @@ sin aplicar el manifiesto nuevo ni leer la solución editorial. Se reutilizan
 Disclosure y el bloque de código con foco; no se añaden tarjetas o controles.
 Alcance funcional y pruebas: [project-execution.md](project-execution.md#consulta-de-instantáneas-históricas-python).
 
-Se inspeccionaron directamente las cuatro capturas
-`.local/screenshots/python-historical-{light,dark}-{390,1440}.png`: se distinguen
-el archivo de entrada anterior, auxiliar y recurso, con el mismo contenido en
-ambos temas. En esas combinaciones aprobaron foco del bloque, tema efectivo y
-ausencia de desbordamiento horizontal de página, con movimiento reducido. Se
-mantiene el desplazamiento local de código; no se promete adaptación de línea
-ni apariencia idéntica para cualquier archivo largo. No se ejecutó nuevamente
-zoom real ni la matriz completa de F para este bloque; estas cuatro vistas no
-cierran por sí solas la revisión visual global.
+`python-version-preservation.spec.ts` amplía su matriz a los cinco anchos
+390/768/1024/1199/1440, ambos temas y movimiento reducido, sin quitar las
+comparaciones completas de datos anteriores. Las cuatro capturas iniciales a
+390/1440 y las seis intermedias se inspeccionaron directamente en
+`.local/screenshots/python-historical-{light,dark}-{ancho}.png`: se distinguen
+entrada, auxiliar y recurso anterior, sin solapamientos observados. Foco, tema
+efectivo y ausencia de desbordamiento horizontal de página aprobados.
+
+`browser-zoom.spec.ts` incorpora dos escenarios independientes, uno por tema,
+con cuentas/ejercicios temporales `python-historical-zoom-`. Usa la extensión y
+perfiles desechables existentes: línea base 1440 px/DPR 1; zoom confirmado por
+`chrome.tabs.getZoom() = 2`, DPR 2, raíz de 16 px y ventanas de 1440/780/640
+(720/390/320 CSS px útiles). Abre ambos desplegables con Enter, consulta todos
+los nombres/contenidos y marca de lectura, enfoca el bloque con contorno visible
+y vuelve al control al cerrar. Si el código supera el ancho local, comprueba
+desplazamiento con flechas derecha/izquierda; no se exige adaptar sus líneas ni
+se confunde ese desplazamiento con desbordamiento de página. Después retira
+solo el ejercicio temporal y consulta borrador/envío archivados a 320 CSS px.
+Las instantáneas completas de borrador, envío y progreso permanecen idénticas;
+no hay progreso ni peticiones de ejecución. El envío es simulado, no evaluado.
+
+Se inspeccionaron directamente las seis capturas
+`python-historical-zoom-{light,dark}-{1440,780,640}.png` y las cuatro
+`python-historical-retired-zoom-{borrador,intento}-{light,dark}.png`: texto
+ampliado legible, encabezados con reflujo y foco distinguible en ambos temas.
+Se permite el desplazamiento local de una línea larga; no se promete que cualquier
+archivo se vea entero simultáneamente ni apariencia idéntica en otros navegadores.
+Las capturas con zoom usan CDP sin clips CSS, como las otras pruebas de zoom.
+
+Ambos archivos completos aprobaron **8/8**, sin omisiones: seis casos de zoom
+(cuatro anteriores y dos nuevos) y dos de conservación de versiones. La repetición
+con la comprobación de flechas también aprobó 8/8. Lint y tipos aprobados;
+reutilizadas 587 unitarias/build de la última corrección de producto porque solo
+cambian E2E/documentación. Cero cuentas/ejercicios temporales de esos archivos y
+perfiles de zoom al terminar; Next/PostgreSQL apagados. No se inició Piston ni
+su doble HTTP, no se preparó ni activó catálogo. Log local:
+`C:\Users\Admin\AppData\Local\Temp\opencode\python-historical-zoom-final.log`.
+
+Se cierra el hueco del bloque histórico añadido después de las matrices previas,
+y con ello la revisión de presentación de F con su alcance de muestras. La
+proyección y contenido revisados aún deben comprobarse en la instalación tras
+activación autorizada; las nueve discrepancias existentes no se dan por resueltas.
 
 ## Interpretar fallos y límites
 
